@@ -126,6 +126,15 @@ Schriftfarbe auf das dunkle Fenster — „Vorzeigen" war dort nicht zu erkennen
 Auf hellem Grund trägt Rot den Text, Gold wird zur Kante. Wer hier eine Farbe
 ändert, rechnet nach.
 
+**Rot traegt die Fensterleiste, nicht die Flaeche.** Zwischenstand war ein
+durchgehend roter Kopf ueber Bild, Name und Begruessung - gut hundert Pixel
+Rot, und das Fenster sah aus, als waere etwas schiefgegangen. FANG macht es
+umgekehrt: ein schmaler Streifen plus die Farbe der Knoepfe, der Rest hell.
+Hier heisst das: `.window-header` rot mit Goldkante, der Kopf des Bogens hell
+mit rotem Namen, und von drei Knoepfen ist nur die Hauptaktion gefuellt - die
+beiden anderen tragen nur einen Rand. Drei rote Balken nebeneinander waeren
+dieselbe Flaeche wie vorher und sagten ausserdem nicht, welcher gemeint ist.
+
 **Die Einstellungen haben ein eigenes Fenster** (`laden-einstellungen.js`).
 Sie standen im Bogen in einem `<details>` und füllten aufgeklappt das halbe
 Fenster; die Auslage kam darunter nicht mehr vor. Eingestellt wird ein Laden

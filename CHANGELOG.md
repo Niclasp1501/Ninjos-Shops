@@ -44,8 +44,8 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   zufällig wahr.
 
 ### Geändert
-- **Der Bogen ist gestaltet wie FANG** — helles Papier, serifenlos, rote
-  Kopfleiste mit Goldkante, weiße Karten, dünne graue Ränder, dieselben Werte
+- **Der Bogen ist gestaltet wie FANG** — helles Papier, serifenlos, das Rot in
+  der Fensterleiste statt als Fläche, weiße Karten, dünne graue Ränder, dieselben Werte
   wie `fang.css`. Die Zwischenstufe „Ladenbuch aus Pergament" ist damit
   überholt.
 - **Ladenbuch (überholt):** Pergament, Tinte, Messinglinien und eine
