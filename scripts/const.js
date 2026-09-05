@@ -69,6 +69,33 @@ export const SOCKET = {
   STAND: "stand"        // Spielleiter -> alle offenen Fenster: neuer Bestand
 };
 
+/**
+ * Merkmale an einer Ware im Ladeninventar (flags.ninjos-shops.*).
+ *
+ * Eine Zeichenkette an einer Stelle: Ein Tippfehler legt sonst still ein
+ * zweites, leeres Merkmal an und die Auslage reagiert auf nichts.
+ */
+export const WARE = {
+  /** Festpreis in Kupfer; fehlt = Aufschlag auf den Grundpreis. */
+  FESTPREIS: "festpreis",
+  /** Ein Satz des Haendlers unter dem Namen. */
+  HINWEIS: "hinweis",
+  /** Unter der Theke - Spieler sehen es nicht. */
+  VERBORGEN: "verborgen",
+  /** Dienstleistung: kostet Geld, wechselt nicht den Besitzer. */
+  DIENST: "dienst"
+};
+
+/**
+ * User-Flag: UUID des Ladens, den dieser Benutzer gerade vorgezeigt bekommt.
+ *
+ * Ein geoeffneter Laden bleibt offen bis zum Schliessen - auch nach einem
+ * Neuladen des Clients (KONZEPT-shops.md, Abschnitt 6). Immer nur einer:
+ * ein neuer ersetzt den vorherigen.
+ */
+export const OFFENER_LADEN = "offenerLaden";
+
+
 /** Kaufmodus je Laden. Ab Werk "freigabe". */
 export const KAUFMODUS = {
   GESPERRT: "gesperrt",   // ansehen ja, kaufen nein

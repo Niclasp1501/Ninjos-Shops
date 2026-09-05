@@ -7,27 +7,30 @@ Ladenmodul und nicht dieses.
 
 ## Stand am 05.09.2026
 
-Gebaut sind die Schritte 1 bis 3 aus Abschnitt 11 des Konzepts.
+Gebaut sind die Schritte 1 bis **4** aus Abschnitt 11 des Konzepts.
 
 | Datei | Zustand |
 |---|---|
-| `scripts/preise.js` | **fertig**, geprüft |
-| `scripts/kasse.js` | **fertig**, geprüft |
-| `tools/kasse.test.mjs` | 43 Fälle, laufen |
-| `scripts/const.js` | fertig |
+| `scripts/preise.js` | **fertig**, geprueft |
+| `scripts/kasse.js` | **fertig**, geprueft |
+| `tools/kasse.test.mjs` | 43 Faelle, laufen |
+| `scripts/const.js` | fertig (`WARE`, `OFFENER_LADEN`, Socket-Konstanten) |
 | `scripts/laden-model.js` | Untertyp `ninjos-shops.laden` und sein `TypeDataModel` |
-| `scripts/laden-bogen.js` | Verwaltungsansicht: Ware, Preise, Verborgenes, Dienste |
-| `templates/laden-kopf.hbs`, `laden-ware.hbs` | dazu |
-| `styles/shops.css` | Bogen gestaltet; die Schauansicht fehlt darin noch |
-| `scripts/main.js` | Einstellungen, Untertyp, Bogen, Willkommensfenster |
+| `scripts/laden-bogen.js` | Verwaltungsansicht + Vorzeigen (wer sieht / zeigen / schliessen) |
+| `templates/laden-kopf.hbs`, `laden-ware.hbs`, `laden-vorzeigen.hbs` | dazu |
+| `scripts/spieler-fenster.js` | Spielerfenster (ApplicationV2) |
+| `templates/spieler-fenster.hbs` | Auslage, Boerse, Kauf-Stub |
+| `scripts/vorzeigen.js` | ZEIGEN / SCHLIESSEN / Flag / OBSERVER |
+| `scripts/socket.js` | Socket-Listener + STAND bei Inventaraenderung |
+| `styles/shops.css` | Bogen + Spielerfenster; die Schauansicht fehlt darin noch |
+| `scripts/main.js` | Einstellungen, Untertyp, Bogen, Socket, Willkommen |
 | `scripts/willkommen.js` | eingebaut, Texte stehen |
-| Vorzeigen, Spielerfenster, Kauf, Marktbuch, Schauansicht | existiert nicht |
+| Kauf, Marktbuch, Schauansicht | existiert nicht (Schritte 5–6) |
 
-**Keine Zeile davon lief je in einer Welt.** Der Bogen ist geschrieben und
-sprachlich vollständig, aber nicht geöffnet worden — was hier steht, ist
-geprüfter Quelltext, kein geprüftes Verhalten.
+**Vorzeigen und Spielerfenster sind geschrieben, aber noch nicht in einer
+laufenden Welt geprueft.** Der Verwaltungsbogen aus Schritt 3 ebenfalls.
 
-Nichts ist bisher in Git; das Repository auf GitHub gibt es noch nicht.
+Repository: https://github.com/Niclasp1501/Ninjos-Shops
 
 ## Vor jeder Änderung an preise.js oder kasse.js
 
@@ -104,8 +107,8 @@ Einstellung zurück. Im Manifest steht `relationships.recommends`, niemals
 
 ## Versionierung
 
-`<foundry-major>.<YYMM>.<patch>` wie in den anderen Modulen — `14.2609.1` ist der
-Stand nach Schritt 3. Die erste Zahl ist die **Foundry**-Hauptversion, nicht unsere.
+`<foundry-major>.<YYMM>.<patch>` wie in den anderen Modulen — `14.2609.2` ist der
+Stand nach Schritt 4. Die erste Zahl ist die **Foundry**-Hauptversion, nicht unsere.
 
 ## Willkommensfenster
 
@@ -120,5 +123,4 @@ zeigt auf `/modules`. **Vor der ersten Veröffentlichung** gehört der Eintrag i
   Manifest ist bis dahin bewusst nicht gesetzt, statt eine zu raten. Die
   anderen Ninjo-Module stehen unter MIT.
 - Forge-Eintrag anlegen und `slug` in `scripts/willkommen.js` setzen.
-- GitHub-Repository anlegen; die URLs im Manifest zeigen bereits auf
-  `Niclasp1501/Ninjos-Shops`.
+- GitHub-Repository liegt unter `Niclasp1501/Ninjos-Shops`.

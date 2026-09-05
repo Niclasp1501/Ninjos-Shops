@@ -305,3 +305,182 @@
   outline: 2px dashed var(--shops-gold);
   outline-offset: -4px;
 }
+
+
+/* ── Vorzeigen (GM-Bogen) ─────────────────────────────────────────── */
+
+.ninjos-shops .shops-vorzeigen {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--shops-gold);
+  border-radius: 4px;
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.ninjos-shops .shops-vorzeigen h3 {
+  margin: 0 0 0.4rem;
+  color: var(--shops-rot);
+  font-size: 0.95rem;
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen button {
+  flex: 1 1 auto;
+  min-width: 8rem;
+}
+
+.ninjos-shops .shops-zuschauer {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ninjos-shops .shops-zuschauer li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+  border-top: 1px solid var(--shops-linie);
+}
+
+.ninjos-shops .shops-zuschauer button {
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  border: 1px solid var(--shops-linie);
+  background: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-zuschauer button:hover {
+  border-color: var(--shops-rot);
+  color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-online {
+  color: #2e7d32;
+  font-size: 0.55rem;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+.shops-wahl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shops-wahl-zeile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+/* ── Spielerfenster ───────────────────────────────────────────────── */
+
+.ninjos-shops.spieler-fenster .shops-spieler-kopf {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--shops-rot);
+}
+
+.ninjos-shops.spieler-fenster .shops-spieler-kopf h2 {
+  margin: 0;
+  border: none;
+  padding: 0;
+  font-size: 1.25rem;
+  color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-boerse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--shops-gold);
+  border-radius: 4px;
+  background: rgba(139, 0, 0, 0.04);
+}
+
+.ninjos-shops .shops-boerse-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.ninjos-shops .shops-boerse-muenzen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-boerse-leer {
+  justify-content: center;
+}
+
+.ninjos-shops .shops-hinweiszeile {
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.85;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ninjos-shops .shops-spieler-ware .shops-menge {
+  flex: 0 0 2.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-spieler-ware .shops-preis {
+  flex: 0 0 6.5rem;
+  text-align: right;
+  font-weight: 700;
+}
+
+.ninjos-shops .shops-kaufen {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--shops-linie);
+  border-radius: 3px;
+  background: none;
+  opacity: 0.55;
+  cursor: not-allowed;
+  font-size: 0.8rem;
+}
+
+.ninjos-shops .shops-ausverkauft {
+  opacity: 0.45;
+}
+
+.ninjos-shops .shops-dienst .shops-warenname i {
+  color: var(--shops-rot);
+  margin-left: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.ninjos-shops .shops-spieler-fuss {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.7;
+  text-align: center;
+}

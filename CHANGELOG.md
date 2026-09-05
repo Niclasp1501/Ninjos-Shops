@@ -3,6 +3,23 @@
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
+## [14.2609.2] - 2026-09-05
+
+### Hinzugefügt
+- **Schritt 4: Vorzeigen und Spielerfenster.** Die Spielleitung zeigt einen
+  Laden allen oder ausgewählten Benutzern; Empfänger öffnen das Spielerfenster
+  mit Auslage (ohne Verborgenes), Preisen, Hinweiszeile, Diensten und eigener
+  Börse. Kaufknopf ist ein Stub für Schritt 5 — kein Geld bewegt sich.
+- Socket-Kanäle `ZEIGEN`, `SCHLIESSEN`, `STAND` (und Stub `KAUFEN`); offener
+  Laden bleibt im User-Flag über Client-Reload erhalten; immer nur einer.
+- Verwaltungsbogen: wer sieht diesen Laden gerade, Allen zeigen / Auswahl /
+  Schließen.
+- Fehlende Konstanten `WARE` und `OFFENER_LADEN` in `const.js`.
+
+### Geändert
+- `AGENTS.md`: Stand Schritt 4; GitHub-Repository existiert.
+- Version `14.2609.1` → `14.2609.2`.
+
 ## [Unveröffentlicht]
 
 ### Hinzugefügt

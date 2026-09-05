@@ -2,8 +2,8 @@
  * Der Bogen eines Ladens - die Verwaltungsansicht aus Abschnitt 8 des Konzepts.
  *
  * Was die Spielleitung hier tut: einen Laden einrichten, Ware hineinziehen,
- * Preise setzen, Verborgenes verbergen. Das Vorzeigen, der Kauf und die
- * Schauansicht kommen in den Schritten 4 bis 6 dazu.
+ * Preise setzen, Verborgenes verbergen, den Laden vorzeigen. Der Kauf und
+ * die Schauansicht kommen in den Schritten 5 und 6 dazu.
  *
  * **Das Hineinziehen ist geerbt, nicht selbst gebaut.** `ActorSheetV2` bringt
  * in v14 einen vollstaendigen Drop-Empfaenger mit (`_onDropItem` in
@@ -19,6 +19,13 @@
 
 import { MODULE_ID, LADEN_TYP, WARE, KAUFMODUS } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, KUPFERWERT } from "./preise.js";
+import {
+  werSieht,
+  vorzeigbareBenutzer,
+  ladenZeigen,
+  ladenSchliessen,
+  benutzerWaehlen
+} from "./vorzeigen.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -37,12 +44,17 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     actions: {
       wareOeffnen: LadenBogen.#wareOeffnen,
       wareLoeschen: LadenBogen.#wareLoeschen,
-      wareSchalter: LadenBogen.#wareSchalter
+      wareSchalter: LadenBogen.#wareSchalter,
+      zeigenAllen: LadenBogen.#zeigenAllen,
+      zeigenAuswahl: LadenBogen.#zeigenAuswahl,
+      schliessenAllen: LadenBogen.#schliessenAllen,
+      schliessenUser: LadenBogen.#schliessenUser
     }
   };
 
   static PARTS = {
     kopf: { template: `modules/${MODULE_ID}/templates/laden-kopf.hbs` },
+    vorzeigen: { template: `modules/${MODULE_ID}/templates/laden-vorzeigen.hbs` },
     ware: {
       template: `modules/${MODULE_ID}/templates/laden-ware.hbs`,
       // Ohne diese Angabe wirft jeder Klick auf einen Schalter die Liste
@@ -59,6 +71,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     return Object.assign(ctx, {
       laden,
       bearbeitbar: this.isEditable,
+      istGM: game.user.isGM,
       begruessung: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         laden.begruessung ?? "", { relativeTo: this.document }
       ),
@@ -69,7 +82,10 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       muenzen: Object.keys(KUPFERWERT).map(sorte => ({
         sorte, kuerzel: kuerzel(sorte), wert: laden.kasse?.[sorte] ?? 0
       })),
-      ware: this.#wareAufbereiten(laden)
+      ware: this.#wareAufbereiten(laden),
+      zuschauer: werSieht(this.document.uuid).map(u => ({
+        id: u.id, name: u.name, active: u.active
+      }))
     });
   }
 
@@ -214,6 +230,38 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!item) return;
     const merkmal = ziel.dataset.merkmal;
     await item.setFlag(MODULE_ID, merkmal, !(item.flags?.[MODULE_ID]?.[merkmal] === true));
+  }
+
+  /** Allen aktiven Spielern vorzeigen (ohne Spielleitung). */
+  static async #zeigenAllen() {
+    const ids = vorzeigbareBenutzer({ inklGm: false }).map(u => u.id);
+    if (!ids.length) {
+      return ui.notifications.warn(game.i18n.localize("SHOPS.Vorzeigen.NiemandDa"));
+    }
+    await ladenZeigen(this.document, ids);
+    this.render(false);
+  }
+
+  /** Dialog: ausgewaehlte Benutzer. */
+  static async #zeigenAuswahl() {
+    const ids = await benutzerWaehlen(this.document);
+    if (!ids?.length) return;
+    await ladenZeigen(this.document, ids);
+    this.render(false);
+  }
+
+  /** Allen Zuschauern dieses Ladens schliessen. */
+  static async #schliessenAllen() {
+    await ladenSchliessen(this.document.uuid, "alle");
+    this.render(false);
+  }
+
+  /** Einem einzelnen Zuschauer schliessen. */
+  static async #schliessenUser(ereignis, ziel) {
+    const userId = ziel.dataset.userId;
+    if (!userId) return;
+    await ladenSchliessen(this.document.uuid, [userId]);
+    this.render(false);
   }
 }
 
