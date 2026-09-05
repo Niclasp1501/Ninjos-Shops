@@ -341,7 +341,15 @@
   scrollbar-gutter: stable;
   list-style: none;
   margin: 0;
-  padding: 8px 12px;
+  /*
+   * **Kein Innenabstand an der Liste.** Der klebende Spaltenkopf haftet am
+   * oberen Rand des Sichtfensters, nicht am Inhalt - ein Abstand darueber ist
+   * also ein Streifen, durch den die erste Karte hindurchscrollt, waehrend der
+   * Kopf darunter klebt. Genau das sah man: "Dolch" stand halb ueber der
+   * Beschriftung. Der Abstand liegt jetzt an den Karten, damit der Kopf von
+   * Kante zu Kante deckt.
+   */
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -353,6 +361,9 @@
  * einer Liste aus Linien, in der jede Eingabe im Nichts haengt.
  */
 .ninjos-shops .shops-zeile {
+  /* Der seitliche Abstand sass frueher an der Liste - siehe dort, warum er
+     hierher gewandert ist. */
+  margin: 0 12px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -884,11 +895,17 @@
 .ninjos-shops li.shops-spalten {
   position: sticky;
   top: 0;
-  z-index: 1;
-  padding: 2px 8px 5px;
+  z-index: 2;
+  /* 20 = die 12 der ehemaligen Listenkante plus die 8 der Karte; der
+     unsichtbare Rand ergaenzt das eine Pixel des Kartenrandes. */
+  padding: 8px 20px 5px;
   border: 1px solid transparent;
+  border-bottom-color: var(--shops-rand);
   background: var(--shops-bg);
 }
+
+/* Luft am Ende der Liste, die vorher der Innenabstand gab */
+.ninjos-shops .shops-ware > li:last-child { margin-bottom: 8px; }
 
 /* Im Kopf ist die Werkzeuggruppe keine Bedienung, sondern Beschriftung */
 .ninjos-shops li.shops-spalten .shops-werkzeuge { opacity: 1; }
