@@ -1,15 +1,13 @@
 {{!--
-  Kopf des Ladenbogens: Bild, Name, Begruessung und die sieben Einstellungen.
+  Kopf des Ladenbogens: Bild, Name, Begruessung, Zahnrad.
 
-  Die Einstellungen stehen in einem <details>, ab Werk zu. Sie werden einmal
-  gesetzt und danach selten angefasst; die Auslage darunter ist das, was die
-  Spielleitung jedes Mal sieht.
---}}
+  Die Einstellungen standen hier einmal in einem <details> und fuellten
+  aufgeklappt das halbe Fenster - sieben Felder mit je zwei Zeilen Erklaerung,
+  und die Auslage kam darunter nicht mehr vor. Sie haben jetzt ein eigenes
+  Fenster (laden-einstellungen.js); hier steht nur noch der Knopf dorthin.
 
-{{!--
-  Ein einziges Wurzelelement: HandlebarsApplicationMixin verlangt je PART genau
-  eines und wirft sonst beim Zeichnen ("must render a single HTML element").
-  Aufgefallen beim ersten Oeffnen in der Welt, nicht beim Schreiben.
+  Ein einziges Wurzelelement je PART, sonst wirft HandlebarsApplicationMixin
+  beim Zeichnen. Siehe AGENTS.md.
 --}}
 <div class="shops-teil-kopf">
   <header class="shops-kopf">
@@ -28,70 +26,12 @@
         {{else}}<span class="shops-leer">{{localize "SHOPS.Bogen.KeineBegruessung"}}</span>{{/if}}
       </p>
     </div>
+
+    {{#if istGM}}
+      <button type="button" class="shops-zahnrad" data-action="einstellungenOeffnen"
+              title="{{localize 'SHOPS.Bogen.EinstellungenOeffnen'}}">
+        <i class="fa-solid fa-sliders"></i>
+      </button>
+    {{/if}}
   </header>
-
-  <details class="shops-einstellungen">
-    <summary>{{localize "SHOPS.Bogen.Einstellungen"}}</summary>
-
-    <div class="shops-felder">
-      <label>
-        <span>{{localize "SHOPS.Feld.Aufschlag"}}</span>
-        <input type="number" name="system.aufschlag" value="{{laden.aufschlag}}"
-               min="0" step="0.05" {{#unless bearbeitbar}}disabled{{/unless}}>
-        <small>{{localize "SHOPS.Feld.AufschlagHinweis"}}</small>
-      </label>
-
-      <label>
-        <span>{{localize "SHOPS.Feld.Ankauf"}}</span>
-        <input type="number" name="system.ankauf" value="{{laden.ankauf}}"
-               min="0" step="0.05" {{#unless bearbeitbar}}disabled{{/unless}}>
-        <small>{{localize "SHOPS.Feld.AnkaufHinweis"}}</small>
-      </label>
-
-      <label>
-        <span>{{localize "SHOPS.Feld.Kaufmodus"}}</span>
-        <select name="system.kaufmodus" {{#unless bearbeitbar}}disabled{{/unless}}>
-          {{#each kaufmodi}}
-            <option value="{{wert}}" {{#if gewaehlt}}selected{{/if}}>{{name}}</option>
-          {{/each}}
-        </select>
-        <small>{{localize "SHOPS.Feld.KaufmodusHinweis"}}</small>
-      </label>
-
-      <label>
-        <span>{{localize "SHOPS.Feld.Hoechstmenge"}}</span>
-        <input type="number" name="system.hoechstmenge" value="{{laden.hoechstmenge}}"
-               min="0" step="1" {{#unless bearbeitbar}}disabled{{/unless}}>
-        <small>{{localize "SHOPS.Feld.HoechstmengeHinweis"}}</small>
-      </label>
-
-      <label class="shops-breit">
-        <span>
-          <input type="checkbox" name="system.eigeneKasse" {{checked laden.eigeneKasse}}
-                 {{#unless bearbeitbar}}disabled{{/unless}}>
-          {{localize "SHOPS.Feld.EigeneKasse"}}
-        </span>
-        <small>{{localize "SHOPS.Feld.EigeneKasseHinweis"}}</small>
-      </label>
-
-      {{#if laden.eigeneKasse}}
-        <div class="shops-kasse shops-breit">
-          {{#each muenzen}}
-            <label class="shops-muenze">
-              <span>{{kuerzel}}</span>
-              <input type="number" name="system.kasse.{{sorte}}" value="{{wert}}"
-                     min="0" step="1" {{#unless ../bearbeitbar}}disabled{{/unless}}>
-            </label>
-          {{/each}}
-        </div>
-      {{/if}}
-
-      <label class="shops-breit">
-        <span>{{localize "SHOPS.Feld.Begruessung"}}</span>
-        <textarea name="system.begruessung" rows="3"
-                  placeholder="{{localize 'SHOPS.Feld.BegruessungPlatzhalter'}}"
-                  {{#unless bearbeitbar}}disabled{{/unless}}>{{laden.begruessung}}</textarea>
-      </label>
-    </div>
-  </details>
 </div>

@@ -1,0 +1,146 @@
+{{!--
+  Einstellungen eines Ladens - eigenes Fenster.
+
+  Ein einziges Wurzelelement je PART, sonst wirft HandlebarsApplicationMixin
+  beim Zeichnen. Siehe AGENTS.md.
+--}}
+<div class="shops-teil-einstellungen">
+
+  <section class="shops-block">
+    <h3>{{localize "SHOPS.Einstellungen.Bilder"}}</h3>
+
+    <div class="shops-bilder">
+      {{!-- data-action="editImage" ist die Aktion von DocumentSheetV2; sie
+            liest data-edit als Feldpfad und oeffnet den Dateiwaehler. --}}
+      <label class="shops-bildwahl">
+        <span>{{localize "SHOPS.Feld.Ladenbild"}}</span>
+        <img src="{{ladenBild}}" alt="" data-edit="img" data-action="editImage">
+        <small>{{localize "SHOPS.Feld.LadenbildHinweis"}}</small>
+      </label>
+
+      <label class="shops-bildwahl">
+        <span>{{localize "SHOPS.Feld.Tokenbild"}}</span>
+        <img src="{{tokenBild}}" alt=""
+             data-edit="prototypeToken.texture.src" data-action="editImage">
+        <small>{{localize "SHOPS.Feld.TokenbildHinweis"}}</small>
+      </label>
+    </div>
+  </section>
+
+  <section class="shops-block">
+    <h3>{{localize "SHOPS.Einstellungen.Preise"}}</h3>
+
+    <div class="shops-felder">
+      <label>
+        <span>{{localize "SHOPS.Feld.Aufschlag"}}</span>
+        <input type="number" name="system.aufschlag" value="{{laden.aufschlag}}"
+               min="0" step="0.05" {{#unless bearbeitbar}}disabled{{/unless}}>
+        <small>{{localize "SHOPS.Feld.AufschlagHinweis"}}</small>
+      </label>
+
+      <label>
+        <span>{{localize "SHOPS.Feld.Ankauf"}}</span>
+        <input type="number" name="system.ankauf" value="{{laden.ankauf}}"
+               min="0" step="0.05" {{#unless bearbeitbar}}disabled{{/unless}}>
+        <small>{{localize "SHOPS.Feld.AnkaufHinweis"}}</small>
+      </label>
+    </div>
+  </section>
+
+  <section class="shops-block">
+    <h3>{{localize "SHOPS.Einstellungen.Kaufen"}}</h3>
+
+    <div class="shops-felder">
+      <label>
+        <span>{{localize "SHOPS.Feld.Kaufmodus"}}</span>
+        <select name="system.kaufmodus" {{#unless bearbeitbar}}disabled{{/unless}}>
+          {{#each kaufmodi}}
+            <option value="{{wert}}" {{#if gewaehlt}}selected{{/if}}>{{name}}</option>
+          {{/each}}
+        </select>
+      </label>
+
+      <label>
+        <span>{{localize "SHOPS.Feld.Hoechstmenge"}}</span>
+        <input type="number" name="system.hoechstmenge" value="{{laden.hoechstmenge}}"
+               min="0" step="1" {{#unless bearbeitbar}}disabled{{/unless}}>
+        <small>{{localize "SHOPS.Feld.HoechstmengeHinweis"}}</small>
+      </label>
+
+      <label class="shops-breit shops-schalterzeile">
+        <input type="checkbox" name="system.eigeneKasse" {{checked laden.eigeneKasse}}
+               {{#unless bearbeitbar}}disabled{{/unless}}>
+        <span>
+          {{localize "SHOPS.Feld.EigeneKasse"}}
+          <small>{{localize "SHOPS.Feld.EigeneKasseHinweis"}}</small>
+        </span>
+      </label>
+
+      {{#if laden.eigeneKasse}}
+        <div class="shops-kasse shops-breit">
+          {{#each muenzen}}
+            <label class="shops-muenze">
+              <span>{{kuerzel}}</span>
+              <input type="number" name="system.kasse.{{sorte}}" value="{{wert}}"
+                     min="0" step="1" {{#unless ../bearbeitbar}}disabled{{/unless}}>
+            </label>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+  </section>
+
+  <section class="shops-block">
+    <h3>{{localize "SHOPS.Einstellungen.Zugriff"}}</h3>
+    <p class="shops-blockhinweis">{{localize "SHOPS.Zugriff.Erklaerung"}}</p>
+
+    <div class="shops-felder">
+      <label class="shops-breit">
+        <span>{{localize "SHOPS.Zugriff.Modus"}}</span>
+        <select name="system.zugriff.modus" {{#unless bearbeitbar}}disabled{{/unless}}>
+          {{#each zugriffsmodi}}
+            <option value="{{wert}}" {{#if gewaehlt}}selected{{/if}}>{{name}}</option>
+          {{/each}}
+        </select>
+      </label>
+    </div>
+
+    {{#if auswahlAktiv}}
+      <ul class="shops-zugriffsliste">
+        {{#each spieler}}
+          <li>
+            <label>
+              {{!-- Kein name=: Mehrere Kaestchen unter einem Namen macht
+                    FormDataExtended zu Wahrheitswerten, nicht zu einer Liste.
+                    Die Liste schreibt _onRender von Hand. --}}
+              <input type="checkbox" data-zugriff="benutzer" value="{{id}}"
+                     {{checked erlaubt}} {{#unless ../bearbeitbar}}disabled{{/unless}}>
+              <span class="shops-spielername">{{name}}</span>
+              {{#if active}}<i class="fa-solid fa-circle shops-online"
+                               title="{{localize 'SHOPS.Zugriff.Angemeldet'}}"></i>{{/if}}
+            </label>
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+
+    {{!--
+      Der weltweite Schalter steht ueber allem hier. Wer ihn nicht kennt,
+      stellt eine Woche lang Zugriffe ein, die nichts bewirken.
+    --}}
+    {{#unless spielerDuerfenOeffnen}}
+      <p class="shops-warnung">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        {{localize "SHOPS.Zugriff.SchalterAus"}}
+      </p>
+    {{/unless}}
+  </section>
+
+  <section class="shops-block">
+    <h3>{{localize "SHOPS.Feld.Begruessung"}}</h3>
+    <textarea name="system.begruessung" rows="3"
+              placeholder="{{localize 'SHOPS.Feld.BegruessungPlatzhalter'}}"
+              {{#unless bearbeitbar}}disabled{{/unless}}>{{begruessungText}}</textarea>
+  </section>
+
+</div>

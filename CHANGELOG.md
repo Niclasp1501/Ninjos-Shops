@@ -31,8 +31,24 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   niemand für eine Plattenrüstung `150000` eintippen muss. Acht weitere Tests
   dafür, darunter 5000 Werte hin und zurück.
 
+### Hinzugefügt
+- **Einstellungsfenster je Laden** (`laden-einstellungen.js`) mit **Ladenbild
+  und Tokenbild** zum Auswählen, Preisen, Kaufmodus und Zugriff.
+- **Zugriffsverwaltung** (`system.zugriff`): drei Zustände — niemand,
+  ausgewählte Spieler, alle. Ausdrücklich **nicht** über Foundrys Rechte, weil
+  ein Besitzrecht den Laden im Akteursverzeichnis des Spielers erscheinen ließe.
+  `system.zugriff.szenen` ist für die spätere Bindung an die sichtbare Szene
+  angelegt und wird noch von nichts gelesen.
+- Neue Läden bekommen `ownership: { default: NONE }` ausdrücklich gesetzt —
+  damit ist „ein Laden ist für Spieler unsichtbar" zugesichert und nicht
+  zufällig wahr.
+
 ### Geändert
-- **Der Bogen ist ein Ladenbuch.** Pergament, Tinte, Messinglinien und eine
+- **Der Bogen ist gestaltet wie FANG** — helles Papier, serifenlos, rote
+  Kopfleiste mit Goldkante, weiße Karten, dünne graue Ränder, dieselben Werte
+  wie `fang.css`. Die Zwischenstufe „Ladenbuch aus Pergament" ist damit
+  überholt.
+- **Ladenbuch (überholt):** Pergament, Tinte, Messinglinien und eine
   Geldspalte rechts wie in einem Rechnungsbuch. Der Anlass war ein Messwert:
   `#8B0000` als Schriftfarbe auf Foundrys dunklem Fenster hat **1,97 : 1**
   Kontrast — „Vorzeigen" war praktisch unsichtbar. Auf Pergament hat dasselbe

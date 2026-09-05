@@ -52,6 +52,10 @@
             Leeres Feld = kein Festpreis, also Aufschlag auf den Grundpreis.
             Eine 0 = geschenkt. Das ist ein Unterschied, und er ist gewollt.
           --}}
+          {{!-- Festpreis und Schalter sind Werkzeuge, keine Auskunft: Sie
+                treten zurueck, bis die Karte gemeint ist. Vorher trug jede
+                Zeile sechs Bedienelemente gleichzeitig. --}}
+          <div class="shops-werkzeuge">
           <div class="shops-festpreis" title="{{localize 'SHOPS.Bogen.FestpreisHinweis'}}">
             <input type="number" data-ware-feld="festpreis" min="0" step="1"
                    value="{{#if hatFestpreis}}{{festWert}}{{/if}}"
@@ -83,6 +87,7 @@
                     {{#unless @root.bearbeitbar}}disabled{{/unless}}>
               <i class="fa-solid fa-trash"></i>
             </button>
+          </div>
           </div>
         </li>
       {{/each}}

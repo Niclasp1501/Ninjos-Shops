@@ -18,7 +18,7 @@
 import { LADEN_TYP, LADEN_BILD, KAUFMODUS } from "./const.js";
 import { KUPFERWERT } from "./preise.js";
 
-const { StringField, NumberField, BooleanField, SchemaField, HTMLField } =
+const { StringField, NumberField, BooleanField, SchemaField, HTMLField, SetField } =
   foundry.data.fields;
 
 /**
@@ -92,7 +92,33 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
        * `htmlFields: ["begruessung"]` steht, damit Foundry den Inhalt beim
        * Import bereinigt.
        */
-      begruessung: new HTMLField({ required: true, initial: "" })
+      begruessung: new HTMLField({ required: true, initial: "" }),
+
+      /**
+       * Wer diesen Laden **selbst** aufmachen darf.
+       *
+       * Das ist ausdruecklich **nicht** Foundrys Rechtesystem. Ein
+       * Besitzrecht auf dem Akteur wuerde den Laden im Akteursverzeichnis des
+       * Spielers erscheinen lassen und ihm den Spielleiterbogen oeffnen -
+       * samt verborgener Ware und Ankaufsfaktor. Genau das soll nie
+       * passieren, deshalb fuehrt das Modul seine eigene Liste.
+       *
+       * Das Vorzeigen durch die Spielleitung ist davon unberuehrt: Sie darf
+       * jederzeit jedem jeden Laden zeigen. Diese Liste beantwortet nur die
+       * andere Frage - an welchen Laden ein Spieler von sich aus herankommt.
+       *
+       * `szenen` ist fuer die spaetere Bindung an die sichtbare Szene
+       * vorgesehen und wird heute von nichts gelesen. Das Feld steht schon
+       * hier, weil ein spaeter ergaenztes Feld in bestehenden Welten fehlt.
+       */
+      zugriff: new SchemaField({
+        modus: new StringField({
+          required: true, nullable: false,
+          choices: ["niemand", "auswahl", "alle"], initial: "niemand"
+        }),
+        benutzer: new SetField(new StringField()),
+        szenen: new SetField(new StringField())
+      })
     };
   }
 
@@ -104,6 +130,20 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
    */
   get verkauftEtwas() {
     return this.kaufmodus !== "gesperrt";
+  }
+
+  /**
+   * Darf dieser Benutzer den Laden von sich aus oeffnen?
+   *
+   * Die Spielleitung immer - sie haelt ohnehin die Wahrheit. Sonst
+   * entscheidet die eigene Liste, und zusaetzlich muss der weltweite Schalter
+   * es erlauben; der ist die uebergeordnete Antwort auf dieselbe Frage.
+   */
+  darfSelbstOeffnen(benutzer) {
+    if (benutzer?.isGM) return true;
+    if (this.zugriff.modus === "alle") return true;
+    if (this.zugriff.modus === "auswahl") return this.zugriff.benutzer.has(benutzer?.id);
+    return false;
   }
 
   /** Kauft dieser Laden an? */
@@ -142,6 +182,16 @@ export function ladenBilderEinrichten() {
   Hooks.on("preCreateActor", (dokument, daten) => {
     if (daten?.type !== LADEN_TYP) return;
     const aenderung = {};
+
+    /*
+     * Rechte ausdruecklich auf NONE. Ohne diese Zeile haengt es davon ab, was
+     * die Welt als Voreinstellung fuer neue Akteure fuehrt - und ein Laden,
+     * der im Akteursverzeichnis der Spieler auftaucht, gibt den
+     * Spielleiterbogen mit verborgener Ware und Ankaufsfaktor preis. Wer
+     * Zugriff regeln will, nimmt `system.zugriff`, nicht die Besitzrechte.
+     */
+    aenderung.ownership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE };
+
     if (!daten.img) aenderung.img = LADEN_BILD;
     if (!daten.prototypeToken?.texture?.src) {
       aenderung.prototypeToken = {

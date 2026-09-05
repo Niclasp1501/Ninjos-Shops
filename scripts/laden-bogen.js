@@ -17,8 +17,9 @@
  * niemand zu (KONZEPT-shops.md, Abschnitt 4). Das entscheidet sich in der Welt.
  */
 
-import { MODULE_ID, LADEN_TYP, WARE, KAUFMODUS } from "./const.js";
+import { MODULE_ID, LADEN_TYP, WARE } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, KUPFERWERT } from "./preise.js";
+import { einstellungenOeffnen } from "./laden-einstellungen.js";
 import {
   werSieht,
   vorzeigbareBenutzer,
@@ -45,6 +46,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       wareOeffnen: LadenBogen.#wareOeffnen,
       wareLoeschen: LadenBogen.#wareLoeschen,
       wareSchalter: LadenBogen.#wareSchalter,
+      einstellungenOeffnen: LadenBogen.#einstellungen,
       zeigenAllen: LadenBogen.#zeigenAllen,
       zeigenAuswahl: LadenBogen.#zeigenAuswahl,
       schliessenAllen: LadenBogen.#schliessenAllen,
@@ -75,10 +77,8 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       begruessung: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         laden.begruessung ?? "", { relativeTo: this.document }
       ),
-      kaufmodi: Object.values(KAUFMODUS).map(wert => ({
-        wert, name: game.i18n.localize(`SHOPS.Kaufmodus.${wert}`),
-        gewaehlt: laden.kaufmodus === wert
-      })),
+      // Nur noch fuer die Muenzauswahl am Festpreis - die Einstellungen des
+      // Ladens stehen seit dem eigenen Fenster in laden-einstellungen.js.
       muenzen: Object.keys(KUPFERWERT).map(sorte => ({
         sorte, kuerzel: kuerzel(sorte), wert: laden.kasse?.[sorte] ?? 0
       })),
@@ -230,6 +230,11 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!item) return;
     const merkmal = ziel.dataset.merkmal;
     await item.setFlag(MODULE_ID, merkmal, !(item.flags?.[MODULE_ID]?.[merkmal] === true));
+  }
+
+  /** Die Einstellungen dieses Ladens - eigenes Fenster. */
+  static #einstellungen() {
+    einstellungenOeffnen(this.document);
   }
 
   /** Allen aktiven Spielern vorzeigen (ohne Spielleitung). */

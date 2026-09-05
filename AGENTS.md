@@ -84,22 +84,57 @@ nicht in einer laufenden Welt geprüft** — dnd5e 5.3.3 liegt als Bundle vor, e
 Grep nach Typ-Sperren in `_preCreate` fand nichts. Wer als Erster eine Welt
 startet, prüft genau das.
 
-## Farben: nachrechnen, nicht übernehmen
+## Läden sind für Spieler unsichtbar — und das ist zugesichert
 
-Der Bogen ist Pergament, und das ist keine Geschmacksfrage, sondern folgt aus
-zwei Messwerten:
+**Ein Laden erscheint nie im Akteursverzeichnis eines Spielers.** Am 05.09.2026
+in der Welt geprüft: Alle sechs Spieler stehen auf Stufe 0 (NONE),
+`testUserPermission(u, "LIMITED")` ist für jeden `false` — und genau danach
+filtert das Verzeichnis (`client-document.mjs:240`).
 
-| | auf Foundrys dunklem Fenster | auf Pergament |
+Dass das so bleibt, hängt an zwei Regeln:
+
+1. **`preCreateActor` setzt `ownership: { default: NONE }`.** Ohne diese Zeile
+   entscheidet die Voreinstellung der Welt, und ein Laden im Verzeichnis gibt
+   den Spielleiterbogen preis — samt verborgener Ware und Ankaufsfaktor.
+2. **Zugriff läuft nie über Foundrys Rechte, sondern über `system.zugriff`.**
+   Eine eigene Liste mit drei Zuständen (niemand / Auswahl / alle). Ein
+   OBSERVER-Recht wäre der bequeme Weg und genau der falsche: Es macht den
+   Laden sichtbar. Wer hier je `laden.update({ownership: …})` schreibt, hebt
+   die Zusage auf.
+
+Die Daten liegen trotzdem auf jedem Client — Foundry filtert das Verzeichnis
+clientseitig, schickt aber alles. Deshalb kann das Spielerfenster den Laden
+lesen, ohne dass er irgendwo auftaucht. Das ist kein Trick, das ist der
+Normalfall bei Foundry.
+
+`system.zugriff.szenen` steht schon im Modell und wird heute von nichts
+gelesen — vorgesehen für die Bindung an die sichtbare Szene. Es steht jetzt
+dort, weil ein später ergänztes Feld in bestehenden Welten fehlt.
+
+## Farben und Aufbau: wie FANG, und warum
+
+Der Bogen ist hell, serifenlos und in Karten aufgebaut — dieselben Werte wie
+`fang.css`. Zwei Messungen stehen dahinter:
+
+| | auf Foundrys dunklem Fenster | auf hellem Papier |
 |---|---|---|
-| `#8B0000` (Hausrot) | **1,97 : 1** | **7,9 : 1** |
+| `#8B0000` (Hausrot) | **1,97 : 1** | **8,6 : 1** |
 | `#D4AF37` (Hausgold) | 9,4 : 1 | 1,7 : 1 |
 
 Lesbar wird Text ab etwa 4,5 : 1. Die erste Fassung setzte das Rot als
 Schriftfarbe auf das dunkle Fenster — „Vorzeigen" war dort nicht zu erkennen.
-Auf Pergament kehrt sich das Verhältnis um: **Rot trägt den Text, Gold wird zur
-Linie** (abgedunkelt als `--shops-messing`, weil reines Gold auf Papier auch als
-Linie zu blass ist). Wer hier eine Farbe ändert, rechnet nach, statt sie aus
-FANG oder NDRS zu übernehmen — die sitzen auf anderem Grund.
+Auf hellem Grund trägt Rot den Text, Gold wird zur Kante. Wer hier eine Farbe
+ändert, rechnet nach.
+
+**Die Einstellungen haben ein eigenes Fenster** (`laden-einstellungen.js`).
+Sie standen im Bogen in einem `<details>` und füllten aufgeklappt das halbe
+Fenster; die Auslage kam darunter nicht mehr vor. Eingestellt wird ein Laden
+einmal, angesehen jede Sitzung.
+
+**Jede Ware ist eine Karte, kein Tabellenzeile**, und Festpreis samt Schaltern
+liegen in `.shops-werkzeuge`: sichtbar erst beim Überfahren. Vorher trug jede
+Zeile sechs Bedienelemente gleichzeitig und die Ware ging darin unter. Der
+Platz bleibt reserviert, damit beim Überfahren nichts springt.
 
 ## Symbole: nichts, was es 1400 nicht gab
 
