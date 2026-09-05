@@ -168,7 +168,14 @@ export async function benutzerWaehlen(laden) {
     </label>`;
   }).join("");
 
-  const html = `<form class="shops-wahl"><p>${game.i18n.localize("SHOPS.Vorzeigen.AuswahlHinweis")}</p>${zeilen}</form>`;
+  /*
+   * Ein <div>, kein <form>: DialogV2 ist selbst ein Formular, und ein Formular
+   * im Formular wirft der HTML-Parser stillschweigend weg. Die erste Fassung
+   * suchte danach im Rueckruf, fand nichts und gab eine leere Auswahl zurueck -
+   * der Dialog ging zu, und nichts geschah. Aufgefallen beim ersten Klick in
+   * der Welt.
+   */
+  const html = `<div class="shops-wahl"><p>${game.i18n.localize("SHOPS.Vorzeigen.AuswahlHinweis")}</p>${zeilen}</div>`;
 
   const antwort = await foundry.applications.api.DialogV2.wait({
     window: { title: game.i18n.localize("SHOPS.Vorzeigen.AuswahlTitel") },
@@ -179,11 +186,8 @@ export async function benutzerWaehlen(laden) {
         label: game.i18n.localize("SHOPS.Vorzeigen.Zeigen"),
         icon: "fa-solid fa-eye",
         default: true,
-        callback: (_ereignis, _knopf, dialog) => {
-          const form = dialog.element.querySelector("form.shops-wahl");
-          if (!form) return [];
-          return [...form.querySelectorAll('input[name="user"]:checked')].map(i => i.value);
-        }
+        callback: (_ereignis, _knopf, dialog) =>
+          [...dialog.element.querySelectorAll('.shops-wahl input[name="user"]:checked')].map(i => i.value)
       },
       {
         action: "abbrechen",

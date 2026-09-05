@@ -31,6 +31,15 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   niemand für eine Plattenrüstung `150000` eintippen muss. Acht weitere Tests
   dafür, darunter 5000 Werte hin und zurück.
 
+### Behoben
+- **Jedes `PART` braucht ein einziges Wurzelelement** — `laden-kopf.hbs`,
+  `laden-vorzeigen.hbs` und `spieler-fenster.hbs` hatten mehrere nebeneinander
+  und ließen den Bogen mit „must render a single HTML element" gar nicht erst
+  aufgehen.
+- **Der Auswahl-Dialog zeigte nichts vor.** Sein Inhalt war ein `<form>` im
+  Formular des `DialogV2`; der HTML-Parser verwirft so etwas, der Rückruf fand
+  seine Ankreuzfelder nicht und gab eine leere Liste zurück.
+
 ### Geändert
 - **Ein Laden ist kein Merkmal auf einem NSC mehr.** Die erste Fassung des
   Konzepts hängte ihn als `flags` an einen vorhandenen Akteur; damit hätte ein

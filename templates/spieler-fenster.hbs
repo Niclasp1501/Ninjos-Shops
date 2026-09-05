@@ -3,76 +3,83 @@
   Preise sind Anzeige - beim Kauf rechnet der Spielleiter neu (Abschnitt 7).
 --}}
 
-<header class="shops-spieler-kopf">
-  <img class="shops-bild" src="{{ladenImg}}" alt="">
-  <div class="shops-titel">
-    <h2>{{ladenName}}</h2>
-    <div class="shops-begruessung">
-      {{#if begruessung}}{{{begruessung}}}
-      {{else}}<span class="shops-leer">{{localize "SHOPS.Spieler.KeineBegruessung"}}</span>{{/if}}
+{{!--
+  Ein einziges Wurzelelement: HandlebarsApplicationMixin verlangt je PART genau
+  eines und wirft sonst beim Zeichnen ("must render a single HTML element").
+  Aufgefallen beim ersten Oeffnen in der Welt, nicht beim Schreiben.
+--}}
+<div class="shops-teil-spieler">
+  <header class="shops-spieler-kopf">
+    <img class="shops-bild" src="{{ladenImg}}" alt="">
+    <div class="shops-titel">
+      <h2>{{ladenName}}</h2>
+      <div class="shops-begruessung">
+        {{#if begruessung}}{{{begruessung}}}
+        {{else}}<span class="shops-leer">{{localize "SHOPS.Spieler.KeineBegruessung"}}</span>{{/if}}
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-{{#if boerse}}
-  <aside class="shops-boerse" title="{{localize 'SHOPS.Spieler.BoerseHinweis'}}">
-    <span class="shops-boerse-label">
-      <i class="fa-solid fa-coins"></i>
-      {{#if figurName}}{{figurName}}{{else}}{{localize "SHOPS.Spieler.Boerse"}}{{/if}}
-    </span>
-    <span class="shops-boerse-muenzen">
-      {{#each boerse}}
-        <span class="shops-boerse-muenze">{{wert}}&nbsp;{{kuerzel}}</span>
-      {{/each}}
-    </span>
-  </aside>
-{{else}}
-  <aside class="shops-boerse shops-boerse-leer">
-    <span class="shops-leer">{{localize "SHOPS.Spieler.KeineFigur"}}</span>
-  </aside>
-{{/if}}
-
-<section class="shops-auslage shops-spieler-auslage">
-  <h3>
-    {{localize "SHOPS.Bogen.Auslage"}}
-    <span class="shops-anzahl">{{ware.length}}</span>
-  </h3>
-
-  {{#if ware.length}}
-    <ol class="shops-ware shops-spieler-ware">
-      {{#each ware}}
-        <li class="shops-zeile {{#if ausverkauft}}shops-ausverkauft{{/if}} {{#if dienst}}shops-dienst{{/if}}"
-            data-item-id="{{id}}">
-          <img src="{{img}}" alt="">
-          <div class="shops-name">
-            <span class="shops-warenname">
-              {{name}}
-              {{#if dienst}}
-                <i class="fa-solid fa-hand-holding-heart" title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>
-              {{/if}}
-            </span>
-            {{#if hinweis}}
-              <span class="shops-hinweiszeile">{{hinweis}}</span>
-            {{/if}}
-          </div>
-
-          <span class="shops-menge" title="{{localize 'SHOPS.Bogen.Menge'}}">
-            {{#if dienst}}—{{else}}{{menge}}{{/if}}
-          </span>
-
-          <span class="shops-preis">{{preisText}}</span>
-
-          <button type="button" class="shops-kaufen" data-action="kaufenStub"
-                  disabled title="{{localize 'SHOPS.Spieler.KaufKommtNoch'}}">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span>{{localize "SHOPS.Spieler.Kaufen"}}</span>
-          </button>
-        </li>
-      {{/each}}
-    </ol>
+  {{#if boerse}}
+    <aside class="shops-boerse" title="{{localize 'SHOPS.Spieler.BoerseHinweis'}}">
+      <span class="shops-boerse-label">
+        <i class="fa-solid fa-coins"></i>
+        {{#if figurName}}{{figurName}}{{else}}{{localize "SHOPS.Spieler.Boerse"}}{{/if}}
+      </span>
+      <span class="shops-boerse-muenzen">
+        {{#each boerse}}
+          <span class="shops-boerse-muenze">{{wert}}&nbsp;{{kuerzel}}</span>
+        {{/each}}
+      </span>
+    </aside>
   {{else}}
-    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Spieler.AuslageLeer"}}</p>
+    <aside class="shops-boerse shops-boerse-leer">
+      <span class="shops-leer">{{localize "SHOPS.Spieler.KeineFigur"}}</span>
+    </aside>
   {{/if}}
-</section>
 
-<p class="shops-spieler-fuss">{{kaufHinweis}}</p>
+  <section class="shops-auslage shops-spieler-auslage">
+    <h3>
+      {{localize "SHOPS.Bogen.Auslage"}}
+      <span class="shops-anzahl">{{ware.length}}</span>
+    </h3>
+
+    {{#if ware.length}}
+      <ol class="shops-ware shops-spieler-ware">
+        {{#each ware}}
+          <li class="shops-zeile {{#if ausverkauft}}shops-ausverkauft{{/if}} {{#if dienst}}shops-dienst{{/if}}"
+              data-item-id="{{id}}">
+            <img src="{{img}}" alt="">
+            <div class="shops-name">
+              <span class="shops-warenname">
+                {{name}}
+                {{#if dienst}}
+                  <i class="fa-solid fa-hand-holding-heart" title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>
+                {{/if}}
+              </span>
+              {{#if hinweis}}
+                <span class="shops-hinweiszeile">{{hinweis}}</span>
+              {{/if}}
+            </div>
+
+            <span class="shops-menge" title="{{localize 'SHOPS.Bogen.Menge'}}">
+              {{#if dienst}}—{{else}}{{menge}}{{/if}}
+            </span>
+
+            <span class="shops-preis">{{preisText}}</span>
+
+            <button type="button" class="shops-kaufen" data-action="kaufenStub"
+                    disabled title="{{localize 'SHOPS.Spieler.KaufKommtNoch'}}">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span>{{localize "SHOPS.Spieler.Kaufen"}}</span>
+            </button>
+          </li>
+        {{/each}}
+      </ol>
+    {{else}}
+      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Spieler.AuslageLeer"}}</p>
+    {{/if}}
+  </section>
+
+  <p class="shops-spieler-fuss">{{kaufHinweis}}</p>
+</div>

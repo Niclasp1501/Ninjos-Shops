@@ -27,8 +27,16 @@ Gebaut sind die Schritte 1 bis **4** aus Abschnitt 11 des Konzepts.
 | `scripts/willkommen.js` | eingebaut, Texte stehen |
 | Kauf, Marktbuch, Schauansicht | existiert nicht (Schritte 5–6) |
 
-**Vorzeigen und Spielerfenster sind geschrieben, aber noch nicht in einer
-laufenden Welt geprüft.** Der Verwaltungsbogen aus Schritt 3 ebenfalls.
+**Am 05.09.2026 in der Welt „Geheimnisse der Abgründe" geprüft** (Foundry
+14.367, dnd5e 5.3.3): Untertyp erscheint im Anlegen-Dialog als „Laden", Bogen
+öffnet, Hineinziehen aus `dnd5e.items` legt genau **einen** Gegenstand an,
+Aufschlag und Festpreis rechnen richtig (Dolch 2 gp → 3 GM bei 1,5; Festpreis
+5 gp → 500 cp), Hinweiszeile und Verbergen speichern, Vorzeigen öffnet das
+Spielerfenster, Verborgenes fehlt dort, Bestandsänderungen kommen live an,
+Schließen räumt Flag und Fenster ab, und nach einem Neuladen ist das Fenster
+wieder da. Zwei Fehler dabei gefunden und behoben — siehe unten.
+
+**Was dabei noch offen blieb:** der Kauf (Schritt 5) und alles darüber.
 
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
 
@@ -75,6 +83,26 @@ Ob dnd5e ein Item auf einen fremden Untertyp fallen lässt, ist damit **immer no
 nicht in einer laufenden Welt geprüft** — dnd5e 5.3.3 liegt als Bundle vor, ein
 Grep nach Typ-Sperren in `_preCreate` fand nichts. Wer als Erster eine Welt
 startet, prüft genau das.
+
+## Zwei Fallen, die erst die Welt gezeigt hat
+
+**Jedes `PART` braucht genau ein Wurzelelement.** `HandlebarsApplicationMixin`
+wirft sonst beim Zeichnen „Template part must render a single HTML element" —
+und zwar erst beim Öffnen, nicht beim Schreiben. `laden-kopf.hbs` hatte
+`<header>` und `<details>` nebeneinander, `spieler-fenster.hbs` sogar vier.
+Alle drei liegen jetzt in einem `<div class="shops-teil-…">`.
+
+**Kein `<form>` im Inhalt eines `DialogV2`.** Der Dialog *ist* ein Formular
+(`tag: "dialog"` mit eigenem `<form>`), und ein verschachteltes wirft der
+HTML-Parser stillschweigend weg. Der Auswahl-Dialog suchte im Rückruf nach
+`form.shops-wahl`, fand nichts und gab eine leere Liste zurück: Der Dialog ging
+zu, und es geschah nichts. Jetzt ein `<div>`, und der Rückruf sucht direkt am
+Dialog.
+
+**Fremde Module sehen den Laden-Akteur.** `Rideable` wirft bei jedem
+`createItem` auf einem Laden einen Fehler in die Konsole, weil es bei jedem
+Akteur Token auf der Karte erwartet. Das ist dessen Fehler, nicht unserer, und
+er stört nichts — aber wer die Konsole liest, sollte wissen, woher er kommt.
 
 ## Die Fallen, die schon bekannt sind
 

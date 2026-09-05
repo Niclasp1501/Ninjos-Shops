@@ -3,43 +3,50 @@
   Nur fuer die Spielleitung sichtbar (bearbeitbar / istGM).
 --}}
 
-{{#if istGM}}
-<section class="shops-vorzeigen">
-  <h3>{{localize "SHOPS.Vorzeigen.Titel"}}</h3>
+{{!--
+  Ein einziges Wurzelelement: HandlebarsApplicationMixin verlangt je PART genau
+  eines und wirft sonst beim Zeichnen ("must render a single HTML element").
+  Aufgefallen beim ersten Oeffnen in der Welt, nicht beim Schreiben.
+--}}
+<div class="shops-teil-vorzeigen">
+  {{#if istGM}}
+  <section class="shops-vorzeigen">
+    <h3>{{localize "SHOPS.Vorzeigen.Titel"}}</h3>
 
-  <div class="shops-vorzeigen-aktionen">
-    <button type="button" data-action="zeigenAllen">
-      <i class="fa-solid fa-users"></i>
-      {{localize "SHOPS.Vorzeigen.AllenZeigen"}}
-    </button>
-    <button type="button" data-action="zeigenAuswahl">
-      <i class="fa-solid fa-user-check"></i>
-      {{localize "SHOPS.Vorzeigen.AuswahlZeigen"}}
-    </button>
-    <button type="button" data-action="schliessenAllen" {{#unless zuschauer.length}}disabled{{/unless}}>
-      <i class="fa-solid fa-eye-slash"></i>
-      {{localize "SHOPS.Vorzeigen.AllenSchliessen"}}
-    </button>
-  </div>
+    <div class="shops-vorzeigen-aktionen">
+      <button type="button" data-action="zeigenAllen">
+        <i class="fa-solid fa-users"></i>
+        {{localize "SHOPS.Vorzeigen.AllenZeigen"}}
+      </button>
+      <button type="button" data-action="zeigenAuswahl">
+        <i class="fa-solid fa-user-check"></i>
+        {{localize "SHOPS.Vorzeigen.AuswahlZeigen"}}
+      </button>
+      <button type="button" data-action="schliessenAllen" {{#unless zuschauer.length}}disabled{{/unless}}>
+        <i class="fa-solid fa-eye-slash"></i>
+        {{localize "SHOPS.Vorzeigen.AllenSchliessen"}}
+      </button>
+    </div>
 
-  {{#if zuschauer.length}}
-    <ul class="shops-zuschauer">
-      {{#each zuschauer}}
-        <li>
-          <span class="{{#unless active}}shops-leer{{/unless}}">
-            {{#if active}}<i class="fa-solid fa-circle shops-online"></i>
-            {{else}}<i class="fa-regular fa-circle"></i>{{/if}}
-            {{name}}
-          </span>
-          <button type="button" data-action="schliessenUser" data-user-id="{{id}}"
-                  title="{{localize 'SHOPS.Vorzeigen.EinzelnSchliessen'}}">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </li>
-      {{/each}}
-    </ul>
-  {{else}}
-    <p class="shops-leer">{{localize "SHOPS.Vorzeigen.NiemandSieht"}}</p>
+    {{#if zuschauer.length}}
+      <ul class="shops-zuschauer">
+        {{#each zuschauer}}
+          <li>
+            <span class="{{#unless active}}shops-leer{{/unless}}">
+              {{#if active}}<i class="fa-solid fa-circle shops-online"></i>
+              {{else}}<i class="fa-regular fa-circle"></i>{{/if}}
+              {{name}}
+            </span>
+            <button type="button" data-action="schliessenUser" data-user-id="{{id}}"
+                    title="{{localize 'SHOPS.Vorzeigen.EinzelnSchliessen'}}">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="shops-leer">{{localize "SHOPS.Vorzeigen.NiemandSieht"}}</p>
+    {{/if}}
+  </section>
   {{/if}}
-</section>
-{{/if}}
+</div>
