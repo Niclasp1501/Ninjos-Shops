@@ -70,6 +70,10 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   statt einer Ladenmarkise.
 
 ### Behoben
+- **Die Spieleransicht hatte keine Spaltenköpfe.** Welche Zahl der Bestand ist
+  und welche der Preis, musste man raten. Beide Ansichten tragen den Kopf jetzt
+  **innerhalb** der Liste — dort gilt für Kopf und Karten dieselbe
+  Innenabstand- und Scrollleisten-Rechnung, und er bleibt beim Scrollen stehen.
 - **Die Knöpfe der Fensterleiste zeigten leere Kästchen.** Foundry setzt ihre
   Symbolklasse direkt auf den Knopf; unsere Schriftregel für `button` hat damit
   die Symbolschrift überschrieben. Sie gilt jetzt nur noch im `.window-content`

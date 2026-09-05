@@ -12,18 +12,23 @@
   </h3>
 
   {{#if ware.length}}
-    {{!-- Der Spaltenkopf spiegelt die Breiten der Zeile darunter; wer eine
-          davon aendert, aendert beide. --}}
-    <div class="shops-spalten">
-      <span class="shops-spalte-bild"></span>
-      <span class="shops-spalte-name">{{localize "SHOPS.Bogen.SpalteWare"}}</span>
-      <span class="shops-spalte-menge">{{localize "SHOPS.Bogen.SpalteBestand"}}</span>
-      <span class="shops-spalte-preis">{{localize "SHOPS.Bogen.SpaltePreis"}}</span>
-      <span class="shops-spalte-fest">{{localize "SHOPS.Bogen.SpalteFestpreis"}}</span>
-      <span class="shops-spalte-schalter"></span>
-    </div>
 
     <ol class="shops-ware">
+      {{!-- Der Spaltenkopf spiegelt die Breiten der Zeile darunter; wer eine
+      davon aendert, aendert beide. --}}
+      <li class="shops-spalten">
+        <span class="shops-spalte-bild"></span>
+        <span class="shops-spalte-name">{{localize "SHOPS.Bogen.SpalteWare"}}</span>
+        <span class="shops-spalte-menge">{{localize "SHOPS.Bogen.SpalteBestand"}}</span>
+        <span class="shops-spalte-preis">{{localize "SHOPS.Bogen.SpaltePreis"}}</span>
+        {{!-- Derselbe Aufbau wie in der Karte: Festpreis und Schalter liegen
+              dort in einer gemeinsamen Gruppe mit eigenem Abstand. Zwei lose
+              Spalten daneben ergaben acht Pixel Versatz. --}}
+        <span class="shops-werkzeuge">
+          <span class="shops-spalte-fest">{{localize "SHOPS.Bogen.SpalteFestpreis"}}</span>
+          <span class="shops-spalte-schalter"></span>
+        </span>
+      </li>
       {{#each ware}}
         <li class="shops-zeile {{#if verborgen}}shops-verborgen{{/if}}" data-item-id="{{id}}">
           <img src="{{img}}" alt="" data-action="wareOeffnen">

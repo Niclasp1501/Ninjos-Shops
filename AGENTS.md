@@ -145,6 +145,19 @@ liegen in `.shops-werkzeuge`: sichtbar erst beim Überfahren. Vorher trug jede
 Zeile sechs Bedienelemente gleichzeitig und die Ware ging darin unter. Der
 Platz bleibt reserviert, damit beim Überfahren nichts springt.
 
+## Spaltenköpfe gehören in die Liste
+
+Ein Kopf **über** der Liste steht daneben: Die Liste hält Platz für ihre
+Scrollleiste frei (`scrollbar-gutter: stable`), der Kopf außerhalb weiß davon
+nichts — gemessen elf Pixel. Deshalb ist er ein `<li>` **in** der Liste, mit
+`position: sticky`, demselben Innenabstand und einem unsichtbaren Rand, damit
+der Kasten exakt dem einer Karte entspricht.
+
+Wer eine Spaltenbreite ändert, ändert **beide** Stellen — Kopf und Karte. Und
+Abstände nur über `gap` der Liste, nie zusätzlich als `margin` an einer Spalte:
+Der Kaufknopf hatte beides und schob damit jede Karte um acht Pixel gegen ihren
+Kopf.
+
 ## Keine Schriftregel auf `button`
 
 Foundry setzt die Symbolklasse bei den Knöpfen der Fensterleiste **direkt auf

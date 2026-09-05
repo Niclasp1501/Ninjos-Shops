@@ -853,3 +853,52 @@
   border-color: var(--shops-rot);
   background-color: var(--shops-nav);
 }
+
+/*
+ * Spaltenkopf der Spieleransicht. Die Breiten weichen von denen der
+ * Spielleitung ab - dort steht rechts noch die Werkzeugspalte, hier der
+ * Kaufknopf -, deshalb eigene Werte statt der geerbten.
+ */
+.ninjos-shops .shops-spieler-spalten .shops-spalte-menge { flex: 0 0 2.8rem; }
+.ninjos-shops .shops-spieler-spalten .shops-spalte-preis { flex: 0 0 7.2rem; }
+.ninjos-shops .shops-spalte-kauf { flex: 0 0 6.6rem; }
+
+/* Fester Platz fuer den Knopf, sonst wandert die Preisspalte mit seiner
+   Beschriftung - "Kaufen" ist kuerzer als "Nicht genug Geld". */
+.ninjos-shops .shops-spieler-ware .shops-kaufen {
+  flex: 0 0 6.6rem;
+  margin-left: 8px;
+}
+
+/*
+ * Der Spaltenkopf steht **in** der Liste, nicht darueber.
+ *
+ * Darueber stand er elf Pixel neben den Spalten: Die Liste haelt Platz fuer
+ * ihre Scrollleiste frei, der Kopf ausserhalb wusste davon nichts. Innerhalb
+ * gilt fuer beide dieselbe Rechnung - und nebenbei bleibt der Kopf beim
+ * Scrollen stehen, was bei dreissig Waren mehr wert ist als die Ausrichtung.
+ *
+ * Derselbe Kasten wie eine Karte, Rand eingeschlossen, nur unsichtbar: Sonst
+ * steht der Kopf um Rand und Innenabstand daneben.
+ */
+.ninjos-shops li.shops-spalten {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 2px 8px 5px;
+  border: 1px solid transparent;
+  background: var(--shops-bg);
+}
+
+/* Im Kopf ist die Werkzeuggruppe keine Bedienung, sondern Beschriftung */
+.ninjos-shops li.shops-spalten .shops-werkzeuge { opacity: 1; }
+
+/* Drei Schaltflaechen zu 26 px mit zwei Fugen zu 2 px */
+.ninjos-shops .shops-spalte-schalter { flex: 0 0 82px; }
+
+/*
+ * Kein eigener Rand am Kaufknopf: Die Liste setzt zwischen allen Spalten
+ * ohnehin acht Pixel, und der zusaetzliche Rand schob die Karte genau um
+ * diese acht Pixel gegen ihren Spaltenkopf.
+ */
+.ninjos-shops .shops-spieler-ware .shops-kaufen { margin-left: 0; }
