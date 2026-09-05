@@ -1,0 +1,66 @@
+{
+  "id": "ninjos-shops",
+  "title": "Ninjo's Shops",
+  "version": "14.2609.1",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "Ninjo",
+      "flags": {
+        "github": "Niclasp1501"
+      }
+    }
+  ],
+  "description": "Shops the gamemaster shows rather than the players find: put items on an NPC or a place, set a markup or fixed prices, then open the shop for everyone, for one player, or on the table's display. — Läden, die der Spielleiter vorzeigt statt sie suchen zu lassen.",
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "5.0.0"
+        }
+      }
+    ],
+    "recommends": [
+      {
+        "id": "ninjos-inperson-tools",
+        "type": "module",
+        "reason": "Liefert die Monitorerkennung fuer die Schauansicht. Ohne das Modul stellt das Modul die Monitore selbst ein."
+      }
+    ]
+  },
+  "documentTypes": {
+    "Actor": {
+      "laden": {
+        "htmlFields": ["begruessung"]
+      }
+    }
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/shops.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    }
+  ],
+  "socket": true,
+  "url": "https://github.com/Niclasp1501/Ninjos-Shops",
+  "manifest": "https://github.com/Niclasp1501/Ninjos-Shops/releases/latest/download/module.json",
+  "download": "https://github.com/Niclasp1501/Ninjos-Shops/releases/latest/download/module.zip"
+}

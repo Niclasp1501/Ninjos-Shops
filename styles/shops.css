@@ -1,0 +1,307 @@
+/*
+ * Ninjo's Shops.
+ *
+ * Farben wie FANG, NDRS und das Willkommensfenster: dunkelrot #8B0000 und
+ * Gold #D4AF37. Die Schauansicht bekommt spaeter eigene, groessere Masse -
+ * sie wird aus zwei Metern gelesen, nicht aus fuenfzig Zentimetern.
+ *
+ * Alles hier haengt unter `.ninjos-shops`, damit dieses Modul keine fremden
+ * Fenster umgestaltet. Ein Ladenmodul, das nebenbei den Charakterbogen
+ * verschiebt, ist eine Zumutung.
+ */
+
+.ninjos-shops {
+  --shops-rot: #8B0000;
+  --shops-gold: #D4AF37;
+  --shops-linie: rgba(0, 0, 0, 0.15);
+}
+
+/* ── Kopf ──────────────────────────────────────────────────────────── */
+
+.ninjos-shops .shops-kopf {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--shops-rot);
+}
+
+.ninjos-shops .shops-bild {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  object-fit: cover;
+  border: 2px solid var(--shops-gold);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-titel {
+  flex: 1;
+  min-width: 0;
+}
+
+.ninjos-shops .shops-titel input[name="name"] {
+  width: 100%;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background: none;
+}
+
+.ninjos-shops .shops-titel input[name="name"]:hover:not([disabled]),
+.ninjos-shops .shops-titel input[name="name"]:focus {
+  border-bottom-color: var(--shops-gold);
+}
+
+.ninjos-shops .shops-begruessung {
+  margin: 0.25rem 0 0;
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.ninjos-shops .shops-leer {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* ── Einstellungen ─────────────────────────────────────────────────── */
+
+.ninjos-shops .shops-einstellungen {
+  margin: 0.5rem 0;
+}
+
+.ninjos-shops .shops-einstellungen > summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--shops-rot);
+  padding: 0.25rem 0;
+}
+
+.ninjos-shops .shops-felder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.ninjos-shops .shops-felder label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ninjos-shops .shops-felder label > span {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.ninjos-shops .shops-felder small {
+  opacity: 0.7;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+.ninjos-shops .shops-breit {
+  grid-column: 1 / -1;
+}
+
+.ninjos-shops .shops-kasse {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--shops-gold);
+  border-radius: 4px;
+}
+
+.ninjos-shops .shops-muenze {
+  flex: 1;
+}
+
+.ninjos-shops .shops-muenze > span {
+  text-align: center;
+}
+
+/* ── Auslage ───────────────────────────────────────────────────────── */
+
+.ninjos-shops .shops-auslage h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.25rem;
+  color: var(--shops-rot);
+  border-bottom: 1px solid var(--shops-linie);
+}
+
+.ninjos-shops .shops-anzahl {
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.ninjos-shops .shops-ware {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.ninjos-shops .shops-zeile {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.15rem;
+  border-bottom: 1px solid var(--shops-linie);
+}
+
+.ninjos-shops .shops-zeile > img {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  object-fit: cover;
+  border: 1px solid var(--shops-linie);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/*
+ * Verborgene Ware bleibt lesbar, aber sichtbar anders: Die Spielleitung muss
+ * beim Ueberfliegen erkennen, was die Spieler nicht sehen. Nur Ausblenden
+ * waere falsch - hier ist ja gerade die Ansicht, in der es auftauchen soll.
+ */
+.ninjos-shops .shops-verborgen {
+  opacity: 0.55;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 6px,
+    rgba(139, 0, 0, 0.06) 6px, rgba(139, 0, 0, 0.06) 12px
+  );
+}
+
+.ninjos-shops .shops-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ninjos-shops .shops-warenname {
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ninjos-shops .shops-warenname:hover {
+  color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-name input {
+  border: none;
+  background: none;
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.85;
+  padding: 0;
+}
+
+.ninjos-shops .shops-name input:hover:not([disabled]),
+.ninjos-shops .shops-name input:focus {
+  border-bottom: 1px solid var(--shops-gold);
+}
+
+.ninjos-shops .shops-menge input {
+  width: 3.2rem;
+  text-align: center;
+}
+
+.ninjos-shops .shops-preise {
+  flex: 0 0 7.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.ninjos-shops .shops-preis {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Ein Festpreis ist eine Entscheidung, kein Rechenergebnis. Das darf man sehen. */
+.ninjos-shops .shops-fest {
+  color: var(--shops-rot);
+  text-decoration: underline dotted var(--shops-gold);
+}
+
+.ninjos-shops .shops-ankauf {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.ninjos-shops .shops-festpreis {
+  display: flex;
+  gap: 0.15rem;
+  flex: 0 0 6.5rem;
+}
+
+.ninjos-shops .shops-festpreis input {
+  width: 3.8rem;
+  text-align: right;
+}
+
+.ninjos-shops .shops-festpreis select {
+  width: 2.6rem;
+  padding: 0 0.15rem;
+}
+
+.ninjos-shops .shops-schalter {
+  display: flex;
+  gap: 0.1rem;
+}
+
+.ninjos-shops .shops-schalter button {
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  border: 1px solid var(--shops-linie);
+  background: none;
+  border-radius: 3px;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-schalter button:hover:not([disabled]) {
+  opacity: 1;
+  border-color: var(--shops-gold);
+}
+
+.ninjos-shops .shops-schalter button.shops-an {
+  opacity: 1;
+  color: var(--shops-rot);
+  border-color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-loeschen:hover:not([disabled]) {
+  color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-hinweisfeld {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  border: 2px dashed var(--shops-linie);
+  border-radius: 4px;
+}
+
+/*
+ * Waehrend etwas ueber dem Fenster haengt. Ohne diese Rueckmeldung ist nicht
+ * zu erkennen, ob der Bogen den Wurf ueberhaupt annimmt - und wer einmal ins
+ * Leere gezogen hat, versucht es kein zweites Mal.
+ */
+.ninjos-shops.shops-zieht {
+  outline: 2px dashed var(--shops-gold);
+  outline-offset: -4px;
+}

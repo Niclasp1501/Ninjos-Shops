@@ -1,0 +1,82 @@
+{{!--
+  Die Auslage.
+
+  Eine Zeile je Gegenstand. Was hier steht, ist eine Anzeige - beim Kauf wird
+  der Preis beim Spielleiter neu gerechnet (KONZEPT-shops.md, Abschnitt 7).
+--}}
+
+<section class="shops-auslage">
+  <h3>
+    {{localize "SHOPS.Bogen.Auslage"}}
+    <span class="shops-anzahl">{{ware.length}}</span>
+  </h3>
+
+  {{#if ware.length}}
+    <ol class="shops-ware">
+      {{#each ware}}
+        <li class="shops-zeile {{#if verborgen}}shops-verborgen{{/if}}" data-item-id="{{id}}">
+          <img src="{{img}}" alt="" data-action="wareOeffnen">
+
+          <div class="shops-name">
+            <span class="shops-warenname" data-action="wareOeffnen">{{name}}</span>
+            <input type="text" data-ware-feld="hinweis" value="{{hinweis}}"
+                   placeholder="{{localize 'SHOPS.Bogen.HinweisPlatzhalter'}}"
+                   {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+          </div>
+
+          <label class="shops-menge" title="{{localize 'SHOPS.Bogen.Menge'}}">
+            <input type="number" data-ware-feld="menge" value="{{menge}}" min="0" step="1"
+                   {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+          </label>
+
+          <div class="shops-preise">
+            <span class="shops-preis {{#if hatFestpreis}}shops-fest{{/if}}"
+                  title="{{localize 'SHOPS.Bogen.Grundpreis'}}: {{grundText}}">{{preisText}}</span>
+            {{#if ankaufText}}
+              <span class="shops-ankauf" title="{{localize 'SHOPS.Bogen.Ankauf'}}">{{ankaufText}}</span>
+            {{/if}}
+          </div>
+
+          {{!--
+            Leeres Feld = kein Festpreis, also Aufschlag auf den Grundpreis.
+            Eine 0 = geschenkt. Das ist ein Unterschied, und er ist gewollt.
+          --}}
+          <div class="shops-festpreis" title="{{localize 'SHOPS.Bogen.FestpreisHinweis'}}">
+            <input type="number" data-ware-feld="festpreis" min="0" step="1"
+                   value="{{#if hatFestpreis}}{{festWert}}{{/if}}"
+                   placeholder="—" {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+            <select data-ware-feld="festsorte" {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+              {{#each @root.muenzen}}
+                <option value="{{sorte}}" {{#if (eq sorte ../festSorte)}}selected{{/if}}>{{kuerzel}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="shops-schalter">
+            <button type="button" class="{{#if verborgen}}shops-an{{/if}}"
+                    data-action="wareSchalter" data-merkmal="verborgen"
+                    title="{{localize 'SHOPS.Bogen.Verborgen'}}"
+                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+              <i class="fa-solid {{#if verborgen}}fa-eye-slash{{else}}fa-eye{{/if}}"></i>
+            </button>
+
+            <button type="button" class="{{#if dienst}}shops-an{{/if}}"
+                    data-action="wareSchalter" data-merkmal="dienst"
+                    title="{{localize 'SHOPS.Bogen.Dienst'}}"
+                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+              <i class="fa-solid fa-hand-holding-heart"></i>
+            </button>
+
+            <button type="button" class="shops-loeschen" data-action="wareLoeschen"
+                    title="{{localize 'SHOPS.Bogen.WareLoeschen'}}"
+                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </li>
+      {{/each}}
+    </ol>
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Bogen.AuslageLeer"}}</p>
+  {{/if}}
+</section>
