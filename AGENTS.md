@@ -241,8 +241,15 @@ Einstellung zurück. Im Manifest steht `relationships.recommends`, niemals
 
 ## Versionierung
 
-`<foundry-major>.<YYMM>.<patch>` wie in den anderen Modulen — `14.2609.2` ist der
-Stand nach Schritt 4. Die erste Zahl ist die **Foundry**-Hauptversion, nicht unsere.
+**`<Foundry-Generation>.<JJMM>.<laufend>`** — die Regel steht seit dem 05.09.2026
+in der [CLAUDE.md des Workspace](../../CLAUDE.md) unter „Versionsnummern der
+Foundry-Module" und gilt für alle Module. Die erste Zahl ist die
+**Foundry**-Hauptversion, nicht unsere; die zweite Jahr und Monat, **nachgeschlagen
+und nicht aus dem Gedächtnis**; die dritte läuft im Monat hoch und beginnt jeden
+Monat wieder bei 1.
+
+`14.2609.2` ist der derzeitige Stand. Er ist **nirgends veröffentlicht** — siehe
+unten.
 
 ## Willkommensfenster
 
@@ -258,3 +265,20 @@ zeigt auf `/modules`. **Vor der ersten Veröffentlichung** gehört der Eintrag i
   anderen Ninjo-Module stehen unter MIT.
 - Forge-Eintrag anlegen und `slug` in `scripts/willkommen.js` setzen.
 - GitHub-Repository liegt unter `Niclasp1501/Ninjos-Shops`.
+- **Tag `v<version>` und ein GitHub-Release**, und zwar zwingend. Das Manifest
+  zeigt auf `releases/latest/download/module.json`; ohne Release gibt es kein
+  „latest", die Installation über den Katalog schlägt fehl, und spätere Updates
+  werden niemandem angeboten. Heute gibt es weder Tag noch Release — richtig so,
+  solange nichts ausgeliefert ist, aber mit der ersten Auslieferung fällig.
+  Bei der DnD5e-Übersetzung liefen deshalb zwei Fassungen auf dem Server, die es
+  öffentlich gar nicht gab.
+- **Der Release-Text kommt aus dem Changelog**, nicht aus der nackten Nummer. Die
+  `notes`-Adresse im Foundry-Paketkatalog zeigt genau dorthin, und ein leerer
+  Text ist eine verschenkte Seite. Fertig dafür ist
+  `.github/scripts/release_notes.py` in
+  [Ninjos-DnD5e5.5-Uebersetzung](../Ninjos-DnD5e5.5-Uebersetzung/.github/scripts/release_notes.py);
+  es lässt sich unverändert übernehmen, im Workflow braucht es nur
+  `body_path: release-notes.md` an der Release-Action (dort `release.yml:57`
+  und `:63`).
+
+  Hinweis aus der Übersetzungs-Session vom 06.09.2026, dort nachgeprüft.
