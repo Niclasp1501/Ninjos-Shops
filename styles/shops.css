@@ -53,10 +53,21 @@
 
 .ninjos-shops .window-content * { box-sizing: border-box; }
 
-.ninjos-shops input,
-.ninjos-shops select,
-.ninjos-shops textarea,
-.ninjos-shops button {
+/*
+ * **Nur im Inhalt, und nie auf einem Symbol.** Foundry setzt die
+ * Symbolklasse bei den Knoepfen der Fensterleiste *direkt auf den Knopf*
+ * (`button.header-control.fa-solid.fa-xmark`), nicht auf ein Kind-Element.
+ * Eine Schriftregel fuer `button` ueberschreibt damit die Symbolschrift, und
+ * aus Menue, Bogenwechsel und Schliessen werden drei leere Kaestchen - erst
+ * im Bild aufgefallen, nicht beim Schreiben.
+ *
+ * Zwei Absicherungen: der Geltungsbereich endet am `.window-content`, und
+ * alles mit einer `fa-`-Klasse bleibt ohnehin unberuehrt.
+ */
+.ninjos-shops .window-content input:not([class*="fa-"]),
+.ninjos-shops .window-content select:not([class*="fa-"]),
+.ninjos-shops .window-content textarea:not([class*="fa-"]),
+.ninjos-shops .window-content button:not([class*="fa-"]) {
   font-family: var(--shops-schrift);
   color: var(--shops-text);
 }

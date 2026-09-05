@@ -145,6 +145,25 @@ liegen in `.shops-werkzeuge`: sichtbar erst beim Überfahren. Vorher trug jede
 Zeile sechs Bedienelemente gleichzeitig und die Ware ging darin unter. Der
 Platz bleibt reserviert, damit beim Überfahren nichts springt.
 
+## Keine Schriftregel auf `button`
+
+Foundry setzt die Symbolklasse bei den Knöpfen der Fensterleiste **direkt auf
+den Knopf**: `button.header-control.fa-solid.fa-xmark`, nicht auf ein
+Kind-Element. Eine Regel wie
+
+```css
+.ninjos-shops button { font-family: var(--shops-schrift); }
+```
+
+überschreibt damit die Symbolschrift, und aus Menü, Bogenwechsel und Schließen
+werden **drei leere Kästchen**. Der Fehler wirft nichts, er sieht nur kaputt
+aus, und im Bild fällt er erst auf, wenn jemand hinschaut.
+
+Deshalb endet der Geltungsbereich am `.window-content`, und alles mit einer
+`fa-`-Klasse ist zusätzlich ausgenommen. Wer hier eine Schrift- oder
+Farbregel für `button`, `i` oder `::before` ergänzt, prüft danach die
+Fensterleiste.
+
 ## Symbole: nichts, was es 1400 nicht gab
 
 Der Kaufknopf trug anfangs `fa-cart-shopping`. Ein Supermarktwagen in einem

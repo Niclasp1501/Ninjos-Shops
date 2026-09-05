@@ -70,6 +70,10 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   statt einer Ladenmarkise.
 
 ### Behoben
+- **Die Knöpfe der Fensterleiste zeigten leere Kästchen.** Foundry setzt ihre
+  Symbolklasse direkt auf den Knopf; unsere Schriftregel für `button` hat damit
+  die Symbolschrift überschrieben. Sie gilt jetzt nur noch im `.window-content`
+  und nie auf einem Element mit `fa-`-Klasse.
 - **Der Bogen scrollte nicht.** `overflow: hidden` bei 767 px Inhalt in 582 px
   Fenster: Bei aufgeklappten Einstellungen war die Auslage unerreichbar.
 - **Jedes `PART` braucht ein einziges Wurzelelement** — `laden-kopf.hbs`,
