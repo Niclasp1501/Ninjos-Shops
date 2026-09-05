@@ -84,6 +84,36 @@ nicht in einer laufenden Welt geprüft** — dnd5e 5.3.3 liegt als Bundle vor, e
 Grep nach Typ-Sperren in `_preCreate` fand nichts. Wer als Erster eine Welt
 startet, prüft genau das.
 
+## Farben: nachrechnen, nicht übernehmen
+
+Der Bogen ist Pergament, und das ist keine Geschmacksfrage, sondern folgt aus
+zwei Messwerten:
+
+| | auf Foundrys dunklem Fenster | auf Pergament |
+|---|---|---|
+| `#8B0000` (Hausrot) | **1,97 : 1** | **7,9 : 1** |
+| `#D4AF37` (Hausgold) | 9,4 : 1 | 1,7 : 1 |
+
+Lesbar wird Text ab etwa 4,5 : 1. Die erste Fassung setzte das Rot als
+Schriftfarbe auf das dunkle Fenster — „Vorzeigen" war dort nicht zu erkennen.
+Auf Pergament kehrt sich das Verhältnis um: **Rot trägt den Text, Gold wird zur
+Linie** (abgedunkelt als `--shops-messing`, weil reines Gold auf Papier auch als
+Linie zu blass ist). Wer hier eine Farbe ändert, rechnet nach, statt sie aus
+FANG oder NDRS zu übernehmen — die sitzen auf anderem Grund.
+
+## Symbole: nichts, was es 1400 nicht gab
+
+Der Kaufknopf trug anfangs `fa-cart-shopping`. Ein Supermarktwagen in einem
+Laden mit Fackeln und Langschwertern reißt jeden aus der Szene, und es fällt
+sofort auf. Die Regel: Vor jedem neuen `fa-`-Symbol kurz prüfen, ob das Ding im
+Spiel existieren könnte.
+
+Was jetzt steht und warum: **Waage** (`fa-scale-balanced`) als Fenstersymbol,
+**Hand, die entgegennimmt** (`fa-hand-holding`) für Kaufen, **Handschlag**
+(`fa-handshake`) für Dienstleistungen — der Unterschied ist Absicht: Die Hand
+nimmt eine Ware, der Handschlag besiegelt bloß eine Abmachung. **Münzen**
+(`fa-coins`) für die Börse.
+
 ## Zwei Fallen, die erst die Welt gezeigt hat
 
 **Jedes `PART` braucht genau ein Wurzelelement.** `HandlebarsApplicationMixin`

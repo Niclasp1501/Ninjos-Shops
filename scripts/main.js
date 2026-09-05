@@ -15,7 +15,7 @@
  */
 
 import { MODULE_ID, SETTINGS } from "./const.js";
-import { ladenTypEinrichten } from "./laden-model.js";
+import { ladenTypEinrichten, ladenBilderEinrichten } from "./laden-model.js";
 import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
 import { socketEinrichten } from "./socket.js";
@@ -88,6 +88,7 @@ Hooks.once("init", () => {
   // bereits gebaut, und ein spaeter angemeldetes Datenmodell greift nicht
   // mehr - die Laeden der Welt haetten dann rohe Felder statt Werten.
   ladenTypEinrichten();
+  ladenBilderEinrichten();
   ladenBogenEinrichten();
   willkommenEinrichten();
 });

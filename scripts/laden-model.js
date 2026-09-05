@@ -15,7 +15,7 @@
  * jeder bestehenden Welt nicht mit um - dafuer braeuchte es eine Migration.
  */
 
-import { LADEN_TYP, KAUFMODUS } from "./const.js";
+import { LADEN_TYP, LADEN_BILD, KAUFMODUS } from "./const.js";
 import { KUPFERWERT } from "./preise.js";
 
 const { StringField, NumberField, BooleanField, SchemaField, HTMLField } =
@@ -118,4 +118,39 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
  */
 export function ladenTypEinrichten() {
   Object.assign(CONFIG.Actor.dataModels, { [LADEN_TYP]: LadenModel });
+}
+
+/**
+ * Neue Laeden bekommen ihr eigenes Bild - und ein Token, das dazu passt.
+ *
+ * Ueber `preCreateActor` und nicht ueber `getDefaultArtwork`: Letzteres ist
+ * eine statische Methode der Akteursklasse, die zu ueberschreiben hiesse, an
+ * einer Kernklasse zu drehen, die auch dem System und anderen Modulen gehoert.
+ * Der Hook kommt fruegh genug und geht niemandem in die Quere.
+ *
+ * **`actorLink: true` ist der eigentliche Grund, warum das hier steht.** Ohne
+ * die Verknuepfung bekaeme jedes Token auf der Karte eine eigene Kopie des
+ * Inventars - zwei Marktstaende desselben Ladens haetten getrennte Bestaende,
+ * und ein Kauf am einen liesse den anderen unberuehrt. Ein Laden ist ein Ort,
+ * kein Rudel.
+ *
+ * Der Laden darf auf die Karte, muss aber nicht: Wer einen Marktstand am Hafen
+ * zeigen will, stellt ihn hin; wer nicht, laesst es. Am Rechtemodell aendert
+ * das nichts - vorgezeigt wird er weiterhin nur von der Spielleitung.
+ */
+export function ladenBilderEinrichten() {
+  Hooks.on("preCreateActor", (dokument, daten) => {
+    if (daten?.type !== LADEN_TYP) return;
+    const aenderung = {};
+    if (!daten.img) aenderung.img = LADEN_BILD;
+    if (!daten.prototypeToken?.texture?.src) {
+      aenderung.prototypeToken = {
+        texture: { src: LADEN_BILD },
+        actorLink: true,
+        disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
+        sight: { enabled: false }
+      };
+    }
+    if (Object.keys(aenderung).length) dokument.updateSource(aenderung);
+  });
 }

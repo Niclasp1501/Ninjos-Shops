@@ -70,5 +70,9 @@
   "SHOPS.Vorzeigen.AllenSchliessen": "Allen schließen",
   "SHOPS.Vorzeigen.Spielleitung": "Spielleitung",
   "SHOPS.Spieler.Boerse": "Deine Börse",
-  "SHOPS.Vorzeigen.AuswahlZeigen": "Auswählen …"
+  "SHOPS.Vorzeigen.AuswahlZeigen": "Auswählen …",
+  "SHOPS.Bogen.SpalteWare": "Ware",
+  "SHOPS.Bogen.SpalteBestand": "Bestand",
+  "SHOPS.Bogen.SpaltePreis": "Preis",
+  "SHOPS.Bogen.SpalteFestpreis": "Festpreis"
 }

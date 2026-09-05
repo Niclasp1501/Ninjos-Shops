@@ -35,6 +35,16 @@ export const LADEN_TYP = `${MODULE_ID}.laden`;
  */
 export const VERKNUEPFT = "laeden";
 
+/**
+ * Standardbild eines neuen Ladens.
+ *
+ * Aus dem Kern von Foundry (`icons/environment/settlement/`), damit nichts
+ * mitgeliefert werden muss und das Bild in jeder Installation da ist. Ohne
+ * diese Vorgabe traegt jeder neue Laden das Kapuzenmaennchen, das Foundry
+ * fuer Akteure ohne Bild einsetzt - an einem Marktstand sieht das falsch aus.
+ */
+export const LADEN_BILD = "icons/environment/settlement/market-stall.webp";
+
 export const SETTINGS = {
   /**
    * Der eine Schalter, dessen Antwort man kennen muss, bevor man das Modul

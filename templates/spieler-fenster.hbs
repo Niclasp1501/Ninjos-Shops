@@ -54,7 +54,7 @@
               <span class="shops-warenname">
                 {{name}}
                 {{#if dienst}}
-                  <i class="fa-solid fa-hand-holding-heart" title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>
+                  <i class="fa-solid fa-handshake" title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>
                 {{/if}}
               </span>
               {{#if hinweis}}
@@ -70,7 +70,10 @@
 
             <button type="button" class="shops-kaufen" data-action="kaufenStub"
                     disabled title="{{localize 'SHOPS.Spieler.KaufKommtNoch'}}">
-              <i class="fa-solid fa-cart-shopping"></i>
+              {{!-- Eine Hand, die etwas entgegennimmt. Der Einkaufswagen, der hier
+                 zuerst stand, ist ein Supermarktwagen von 1937 - in einem Laden
+                 mit Fackeln und Langschwertern hat er nichts verloren. --}}
+            <i class="fa-solid fa-hand-holding"></i>
               <span>{{localize "SHOPS.Spieler.Kaufen"}}</span>
             </button>
           </li>

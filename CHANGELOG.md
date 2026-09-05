@@ -31,7 +31,31 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   niemand für eine Plattenrüstung `150000` eintippen muss. Acht weitere Tests
   dafür, darunter 5000 Werte hin und zurück.
 
+### Geändert
+- **Der Bogen ist ein Ladenbuch.** Pergament, Tinte, Messinglinien und eine
+  Geldspalte rechts wie in einem Rechnungsbuch. Der Anlass war ein Messwert:
+  `#8B0000` als Schriftfarbe auf Foundrys dunklem Fenster hat **1,97 : 1**
+  Kontrast — „Vorzeigen" war praktisch unsichtbar. Auf Pergament hat dasselbe
+  Rot **7,9 : 1**. Die Hausfarbe war nie das Problem, nur ihr Grund. Umgekehrt
+  trägt Gold hier keinen Text mehr (1,7 : 1) und wird zur Linie.
+- Spaltenkopf über der Auslage, feste Spaltenbreiten in beiden Fenstern, jede
+  zweite Zeile leicht getönt. Schriften: Amiri und Modesto Condensed, beide
+  bringt Foundry mit — keine Webschrift von außen.
+- Neue Läden bekommen `icons/environment/settlement/market-stall.webp` statt des
+  Kapuzenmännchens, dazu ein Token mit `actorLink: true`. Ohne die Verknüpfung
+  hätte jedes Token auf der Karte eine eigene Kopie des Inventars — zwei
+  Marktstände desselben Ladens mit getrennten Beständen.
+- **Keine modernen Symbole mehr.** Der Kaufknopf trug einen Einkaufswagen; das
+  ist ein Supermarktwagen von 1937 und in einem Laden mit Fackeln und
+  Langschwertern fehl am Platz. Jetzt: eine Hand, die etwas entgegennimmt.
+  Dienstleistungen tragen einen Handschlag statt eines Spendenherzens — der
+  Unterschied ist damit auch sichtbar: Hand nimmt eine Ware, Handschlag
+  besiegelt bloß eine Abmachung. Das Fenstersymbol ist die Waage des Händlers
+  statt einer Ladenmarkise.
+
 ### Behoben
+- **Der Bogen scrollte nicht.** `overflow: hidden` bei 767 px Inhalt in 582 px
+  Fenster: Bei aufgeklappten Einstellungen war die Auslage unerreichbar.
 - **Jedes `PART` braucht ein einziges Wurzelelement** — `laden-kopf.hbs`,
   `laden-vorzeigen.hbs` und `spieler-fenster.hbs` hatten mehrere nebeneinander
   und ließen den Bogen mit „must render a single HTML element" gar nicht erst

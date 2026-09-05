@@ -39,9 +39,9 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: "ninjos-shops-spieler",
     classes: ["ninjos-shops", "spieler-fenster"],
-    position: { width: 520, height: 640 },
+    position: { width: 560, height: 660 },
     window: {
-      icon: "fa-solid fa-shop",
+      icon: "fa-solid fa-scale-balanced",
       resizable: true,
       contentClasses: ["standard-form"]
     },

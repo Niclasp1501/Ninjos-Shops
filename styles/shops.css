@@ -1,168 +1,431 @@
 /*
- * Ninjo's Shops.
+ * Ninjo's Shops - das Ladenbuch.
  *
- * Farben wie FANG, NDRS und das Willkommensfenster: dunkelrot #8B0000 und
- * Gold #D4AF37. Die Schauansicht bekommt spaeter eigene, groessere Masse -
- * sie wird aus zwei Metern gelesen, nicht aus fuenfzig Zentimetern.
+ * Der Bogen ist eine Kladde auf dem Ladentisch: Pergament, Tinte, eine
+ * Messinglinie unter der Ueberschrift und eine Geldspalte rechts wie in einem
+ * echten Rechnungsbuch.
  *
- * Alles hier haengt unter `.ninjos-shops`, damit dieses Modul keine fremden
- * Fenster umgestaltet. Ein Ladenmodul, das nebenbei den Charakterbogen
- * verschiebt, ist eine Zumutung.
+ * **Warum Pergament und nicht Foundrys Dunkel.** Die erste Fassung setzte
+ * #8B0000 als Schriftfarbe auf das dunkle Fenster - gemessen 1,97:1, also
+ * praktisch unlesbar; "Vorzeigen" war im Bild kaum zu erkennen. Auf Pergament
+ * hat dasselbe Rot 7,9:1. Die Hausfarbe war nie das Problem, nur ihr Grund.
+ * Umgekehrt gilt: Gold traegt hier keinen Text mehr (1,7:1 auf Papier), es
+ * wird zur Linie und zum Rahmen. Wer hier Farben aendert, rechnet nach.
+ *
+ * Alles haengt unter `.ninjos-shops`, damit dieses Modul keine fremden Fenster
+ * umgestaltet. Ein Ladenmodul, das nebenbei den Charakterbogen verschiebt, ist
+ * eine Zumutung.
  */
 
 .ninjos-shops {
-  --shops-rot: #8B0000;
-  --shops-gold: #D4AF37;
-  --shops-linie: rgba(0, 0, 0, 0.15);
+  /* Papier */
+  --shops-papier: #efe4cb;
+  --shops-papier-tief: #e4d6b6;
+  --shops-zeile: rgba(90, 62, 24, 0.05);
+
+  /* Tinte */
+  --shops-tinte: #3a2e20;
+  --shops-tinte-blass: #6d5c44;
+
+  /* Haus */
+  --shops-rot: #8b0000;
+  --shops-gold: #d4af37;
+  --shops-messing: #9c7c2f;   /* Gold, so weit abgedunkelt, dass es auf
+                                 Pergament noch eine Linie ergibt */
+  --shops-linie: rgba(120, 92, 45, 0.35);
 }
 
-/* ── Kopf ──────────────────────────────────────────────────────────── */
+/* ── Das Blatt ─────────────────────────────────────────────────────── */
+
+/*
+ * Der Inhalt scrollt nicht von allein: ApplicationV2 setzt `overflow: hidden`,
+ * und ohne diese drei Zeilen war die Auslage bei aufgeklappten Einstellungen
+ * schlicht unerreichbar - gemessen 767 px Inhalt in 582 px Fenster. Kopf und
+ * Vorzeigen stehen fest, nur das Buch selbst laeuft.
+ */
+.ninjos-shops .window-content {
+  display: flex;
+  flex-direction: column;
+  /*
+   * `auto` und nicht `hidden`: Solange alles hineinpasst, scrollt nur das Buch
+   * unten. Sind die Einstellungen aufgeklappt, passt es nicht mehr - dann
+   * scrollt das ganze Blatt, statt die Auslage auf die Ueberschrift
+   * zusammenzudruecken. Genau das tat die erste Fassung.
+   */
+  overflow-y: auto;
+  padding: 0;
+  gap: 0;
+  color: var(--shops-tinte);
+  background-color: var(--shops-papier);
+  background-image:
+    radial-gradient(ellipse at 18% -10%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(ellipse at 95% 108%, rgba(138, 104, 54, 0.20), transparent 55%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(120, 90, 45, 0.028) 3px 4px);
+}
+
+.ninjos-shops .shops-teil-kopf,
+.ninjos-shops .shops-teil-vorzeigen { flex: 0 0 auto; }
+
+.ninjos-shops .shops-auslage,
+.ninjos-shops .shops-teil-spieler {
+  flex: 1 1 auto;
+  /* Nie unter vier Zeilen: Ein Buch, das auf seine Ueberschrift schrumpft,
+     ist kein Buch mehr. */
+  min-height: 11rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Schrift: Amiri ist Foundrys eigene Serife, Modesto die Auszeichnung von
+   dnd5e. Beide sind bereits geladen - keine Web-Schrift von aussen. */
+.ninjos-shops .window-content,
+.ninjos-shops input,
+.ninjos-shops select,
+.ninjos-shops textarea,
+.ninjos-shops button {
+  font-family: "Amiri", Georgia, "Times New Roman", serif;
+  color: var(--shops-tinte);
+}
+
+/* ── Kopf: Bild, Name, Begruessung ─────────────────────────────────── */
 
 .ninjos-shops .shops-kopf {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.85rem;
   align-items: flex-start;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--shops-rot);
+  padding: 0.85rem 1rem 0.6rem;
 }
 
 .ninjos-shops .shops-bild {
-  width: 72px;
-  height: 72px;
-  flex: 0 0 72px;
+  width: 78px;
+  height: 78px;
+  flex: 0 0 78px;
   object-fit: cover;
-  border: 2px solid var(--shops-gold);
-  border-radius: 4px;
+  border-radius: 2px;
   cursor: pointer;
+  /* Doppelrahmen: innen Messing, aussen Tinte - wie ein aufgeklebtes Bild */
+  border: 1px solid var(--shops-messing);
+  box-shadow: 0 0 0 3px var(--shops-papier), 0 0 0 4px rgba(58, 46, 32, 0.35),
+              1px 2px 5px rgba(58, 46, 32, 0.3);
 }
 
-.ninjos-shops .shops-titel {
-  flex: 1;
-  min-width: 0;
-}
+.ninjos-shops .shops-titel { flex: 1; min-width: 0; }
 
 .ninjos-shops .shops-titel input[name="name"] {
   width: 100%;
-  font-size: 1.4rem;
+  height: auto;
+  padding: 0 0 0.1rem;
+  font-family: "Modesto Condensed", "Amiri", Georgia, serif;
+  font-size: 2rem;
+  line-height: 1.1;
   font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--shops-rot);
+  background: none;
   border: none;
   border-bottom: 1px solid transparent;
-  background: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .ninjos-shops .shops-titel input[name="name"]:hover:not([disabled]),
 .ninjos-shops .shops-titel input[name="name"]:focus {
-  border-bottom-color: var(--shops-gold);
+  border-bottom-color: var(--shops-messing);
+  outline: none;
 }
 
 .ninjos-shops .shops-begruessung {
-  margin: 0.25rem 0 0;
+  margin: 0.15rem 0 0;
   font-style: italic;
-  font-size: 0.9rem;
-  line-height: 1.35;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--shops-tinte-blass);
 }
+
+.ninjos-shops .shops-begruessung p { margin: 0; }
 
 .ninjos-shops .shops-leer {
-  opacity: 0.6;
+  color: var(--shops-tinte-blass);
   font-style: italic;
+  opacity: 0.85;
 }
 
-/* ── Einstellungen ─────────────────────────────────────────────────── */
-
-.ninjos-shops .shops-einstellungen {
-  margin: 0.5rem 0;
+/* Die Doppellinie unter dem Kopf - das Kennzeichen eines Rechnungsbuchs. */
+.ninjos-shops .shops-teil-kopf {
+  border-bottom: 1px solid var(--shops-messing);
+  box-shadow: 0 2px 0 -1px var(--shops-messing);
+  margin-bottom: 2px;
 }
+
+/* ── Einstellungen: der eingeschlagene Reiter ──────────────────────── */
+
+.ninjos-shops .shops-einstellungen { margin: 0; }
 
 .ninjos-shops .shops-einstellungen > summary {
   cursor: pointer;
-  font-weight: 600;
-  color: var(--shops-rot);
-  padding: 0.25rem 0;
+  padding: 0.3rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--shops-tinte-blass);
+  background: linear-gradient(180deg, rgba(120, 90, 45, 0.07), transparent);
+  list-style: none;
 }
+
+.ninjos-shops .shops-einstellungen > summary::-webkit-details-marker { display: none; }
+
+.ninjos-shops .shops-einstellungen > summary::before {
+  content: "\f0da";                       /* caret-right */
+  font-family: "Font Awesome 6 Pro", "Font Awesome 6 Free", "fontawesome";
+  font-weight: 900;
+  margin-right: 0.45rem;
+  color: var(--shops-messing);
+}
+
+.ninjos-shops .shops-einstellungen[open] > summary::before { content: "\f0d7"; }
+
+.ninjos-shops .shops-einstellungen > summary:hover { color: var(--shops-rot); }
 
 .ninjos-shops .shops-felder {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem 1rem;
-  padding: 0.5rem 0 0.25rem;
+  gap: 0.55rem 1.2rem;
+  padding: 0.7rem 1rem 0.85rem;
+  background: rgba(120, 90, 45, 0.055);
+  border-top: 1px solid var(--shops-linie);
+  border-bottom: 1px solid var(--shops-linie);
 }
 
 .ninjos-shops .shops-felder label {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.2rem;
 }
 
 .ninjos-shops .shops-felder label > span {
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--shops-tinte-blass);
 }
 
+/*
+ * Die Erklaerungen bleiben, aber sie treten zurueck. Ein Laden wird einmal
+ * eingestellt und jede Sitzung angesehen - vorher trug jedes Feld dauerhaft
+ * zwei Zeilen Text und die Auslage kam darunter kaum vor.
+ */
 .ninjos-shops .shops-felder small {
-  opacity: 0.7;
-  font-size: 0.75rem;
-  line-height: 1.3;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  color: var(--shops-tinte-blass);
+  opacity: 0.8;
 }
 
-.ninjos-shops .shops-breit {
-  grid-column: 1 / -1;
+.ninjos-shops .shops-breit { grid-column: 1 / -1; }
+
+/* Eingabefelder: helles Papier, Tinte, eine Linie darunter statt eines Kastens */
+.ninjos-shops input[type="text"],
+.ninjos-shops input[type="number"],
+.ninjos-shops select,
+.ninjos-shops textarea {
+  background: rgba(255, 252, 244, 0.75);
+  border: 1px solid var(--shops-linie);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(90, 62, 24, 0.08);
+}
+
+.ninjos-shops input:focus,
+.ninjos-shops select:focus,
+.ninjos-shops textarea:focus {
+  outline: none;
+  border-color: var(--shops-messing);
+  box-shadow: 0 0 0 2px rgba(156, 124, 47, 0.25);
+}
+
+.ninjos-shops input::placeholder,
+.ninjos-shops textarea::placeholder {
+  color: var(--shops-tinte-blass);
+  opacity: 0.55;
+  font-style: italic;
+}
+
+.ninjos-shops textarea {
+  font-family: "Amiri", Georgia, serif;
+  resize: vertical;
 }
 
 .ninjos-shops .shops-kasse {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--shops-gold);
-  border-radius: 4px;
+  gap: 0.45rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--shops-messing);
+  border-radius: 2px;
+  background: rgba(212, 175, 55, 0.10);
 }
 
-.ninjos-shops .shops-muenze {
-  flex: 1;
-}
+.ninjos-shops .shops-muenze { flex: 1; }
+.ninjos-shops .shops-muenze > span { text-align: center; }
 
-.ninjos-shops .shops-muenze > span {
-  text-align: center;
-}
+/* ── Vorzeigen ─────────────────────────────────────────────────────── */
 
-/* ── Auslage ───────────────────────────────────────────────────────── */
-
-.ninjos-shops .shops-auslage h3 {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin: 0.5rem 0 0.25rem;
-  color: var(--shops-rot);
+/*
+ * Kein Kasten mehr. Der Rahmen war schwerer als sein Inhalt; jetzt ist es ein
+ * Streifen mit einer Linie darunter, wie ein Vermerk am Rand der Seite.
+ */
+.ninjos-shops .shops-vorzeigen {
+  padding: 0.5rem 1rem 0.55rem;
+  background: rgba(139, 0, 0, 0.045);
   border-bottom: 1px solid var(--shops-linie);
 }
 
-.ninjos-shops .shops-anzahl {
-  font-size: 0.8rem;
-  font-weight: 400;
+.ninjos-shops .shops-vorzeigen h3 {
+  margin: 0 0 0.4rem;
+  font-family: "Modesto Condensed", "Amiri", serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--shops-rot);
+  border: none;
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+
+/* Knoepfe: gestempelt, nicht gefuellt */
+.ninjos-shops .shops-vorzeigen-aktionen button {
+  flex: 1 1 auto;
+  min-width: 8.5rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--shops-rot);
+  background: rgba(255, 252, 244, 0.6);
+  border: 1px solid var(--shops-messing);
+  border-radius: 2px;
+  box-shadow: 1px 1px 0 rgba(58, 46, 32, 0.18);
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen button:hover:not([disabled]) {
+  background: rgba(212, 175, 55, 0.22);
+  box-shadow: 1px 1px 0 rgba(58, 46, 32, 0.3);
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen button[disabled] {
+  color: var(--shops-tinte-blass);
+  border-color: var(--shops-linie);
+  box-shadow: none;
   opacity: 0.6;
 }
 
-.ninjos-shops .shops-ware {
+.ninjos-shops .shops-zuschauer {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.ninjos-shops .shops-zuschauer li {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.2rem 0.1rem 0.45rem;
+  font-size: 0.85rem;
+  background: rgba(255, 252, 244, 0.7);
+  border: 1px solid var(--shops-linie);
+  border-radius: 999px;
+}
+
+.ninjos-shops .shops-zuschauer button {
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0;
+  line-height: 1;
+  border: none;
+  background: none;
+  color: var(--shops-tinte-blass);
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-zuschauer button:hover { color: var(--shops-rot); }
+
+.ninjos-shops .shops-online { font-size: 0.5rem; color: #2e7d32; }
+
+/* ── Die Auslage: das Buch ─────────────────────────────────────────── */
+
+.ninjos-shops .shops-auslage h3 {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.5rem 1rem 0.3rem;
+  font-family: "Modesto Condensed", "Amiri", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--shops-rot);
+  border: none;
+}
+
+.ninjos-shops .shops-anzahl {
+  font-family: "Amiri", serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--shops-tinte-blass);
+}
+
+/* Spaltenkopf - erst damit liest sich die Liste als Buch und nicht als Formular */
+.ninjos-shops .shops-spalten {
+  display: flex;
+  align-items: end;
+  gap: 0.45rem;
+  padding: 0 1rem 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--shops-tinte-blass);
+  border-bottom: 1px solid var(--shops-messing);
+}
+
+.ninjos-shops .shops-ware {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .ninjos-shops .shops-zeile {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0.15rem;
-  border-bottom: 1px solid var(--shops-linie);
+  gap: 0.45rem;
+  padding: 0.3rem 1rem;
+  border-bottom: 1px solid var(--shops-zeile);
 }
 
+/* Jede zweite Zeile leicht getoent - das Auge findet die Zeile wieder */
+.ninjos-shops .shops-ware > li:nth-child(even) { background: rgba(120, 90, 45, 0.038); }
+.ninjos-shops .shops-ware > li:hover { background: rgba(212, 175, 55, 0.14); }
+
 .ninjos-shops .shops-zeile > img {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
   object-fit: cover;
   border: 1px solid var(--shops-linie);
-  border-radius: 3px;
+  border-radius: 2px;
+  background: rgba(255, 252, 244, 0.6);
   cursor: pointer;
 }
 
@@ -172,10 +435,10 @@
  * waere falsch - hier ist ja gerade die Ansicht, in der es auftauchen soll.
  */
 .ninjos-shops .shops-verborgen {
-  opacity: 0.55;
-  background: repeating-linear-gradient(
-    45deg, transparent, transparent 6px,
-    rgba(139, 0, 0, 0.06) 6px, rgba(139, 0, 0, 0.06) 12px
+  color: var(--shops-tinte-blass);
+  background-image: repeating-linear-gradient(
+    45deg, transparent, transparent 5px,
+    rgba(139, 0, 0, 0.07) 5px, rgba(139, 0, 0, 0.07) 10px
   );
 }
 
@@ -187,113 +450,125 @@
 }
 
 .ninjos-shops .shops-warenname {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ninjos-shops .shops-warenname:hover {
-  color: var(--shops-rot);
-}
+.ninjos-shops .shops-warenname:hover { color: var(--shops-rot); }
 
-.ninjos-shops .shops-name input {
-  border: none;
-  background: none;
-  font-size: 0.8rem;
-  font-style: italic;
-  opacity: 0.85;
+/* Die Hinweiszeile ist das, was der Haendler sagt - also handschriftlich */
+.ninjos-shops .shops-name input,
+.ninjos-shops .shops-hinweiszeile {
   padding: 0;
+  height: auto;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--shops-tinte-blass);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .ninjos-shops .shops-name input:hover:not([disabled]),
 .ninjos-shops .shops-name input:focus {
-  border-bottom: 1px solid var(--shops-gold);
+  border-bottom-color: var(--shops-messing);
+  box-shadow: none;
 }
+
+.ninjos-shops .shops-menge { flex: 0 0 3.4rem; }
 
 .ninjos-shops .shops-menge input {
-  width: 3.2rem;
+  width: 100%;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
+/* Die Geldspalte: rechts, durch eine senkrechte Linie abgesetzt, wie im Buch */
 .ninjos-shops .shops-preise {
-  flex: 0 0 7.5rem;
+  flex: 0 0 7rem;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  line-height: 1.2;
+  line-height: 1.15;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--shops-linie);
 }
 
 .ninjos-shops .shops-preis {
   font-weight: 700;
+  font-size: 1rem;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--shops-tinte);
 }
 
 /* Ein Festpreis ist eine Entscheidung, kein Rechenergebnis. Das darf man sehen. */
 .ninjos-shops .shops-fest {
   color: var(--shops-rot);
-  text-decoration: underline dotted var(--shops-gold);
+  text-decoration: underline dotted var(--shops-messing);
+  text-underline-offset: 3px;
 }
 
 .ninjos-shops .shops-ankauf {
   font-size: 0.75rem;
-  opacity: 0.7;
+  color: var(--shops-tinte-blass);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .ninjos-shops .shops-festpreis {
   display: flex;
   gap: 0.15rem;
-  flex: 0 0 6.5rem;
+  flex: 0 0 6.2rem;
 }
 
 .ninjos-shops .shops-festpreis input {
-  width: 3.8rem;
+  width: 3.6rem;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-.ninjos-shops .shops-festpreis select {
-  width: 2.6rem;
-  padding: 0 0.15rem;
-}
+.ninjos-shops .shops-festpreis select { width: 2.5rem; padding: 0 0.1rem; }
 
-.ninjos-shops .shops-schalter {
-  display: flex;
-  gap: 0.1rem;
-}
+.ninjos-shops .shops-schalter { display: flex; gap: 0.15rem; }
 
 .ninjos-shops .shops-schalter button {
-  width: 1.9rem;
-  height: 1.9rem;
+  width: 1.8rem;
+  height: 1.8rem;
   padding: 0;
-  border: 1px solid var(--shops-linie);
+  border: 1px solid transparent;
   background: none;
-  border-radius: 3px;
-  opacity: 0.55;
+  border-radius: 2px;
+  color: var(--shops-tinte-blass);
   cursor: pointer;
 }
 
 .ninjos-shops .shops-schalter button:hover:not([disabled]) {
-  opacity: 1;
-  border-color: var(--shops-gold);
+  color: var(--shops-tinte);
+  border-color: var(--shops-messing);
+  background: rgba(212, 175, 55, 0.18);
 }
 
 .ninjos-shops .shops-schalter button.shops-an {
-  opacity: 1;
   color: var(--shops-rot);
   border-color: var(--shops-rot);
+  background: rgba(139, 0, 0, 0.09);
 }
 
-.ninjos-shops .shops-loeschen:hover:not([disabled]) {
-  color: var(--shops-rot);
-}
+.ninjos-shops .shops-loeschen:hover:not([disabled]) { color: var(--shops-rot); }
 
 .ninjos-shops .shops-hinweisfeld {
-  padding: 1.5rem 1rem;
+  margin: 0.8rem 1rem;
+  padding: 1.6rem 1rem;
   text-align: center;
   border: 2px dashed var(--shops-linie);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 /*
@@ -301,186 +576,165 @@
  * zu erkennen, ob der Bogen den Wurf ueberhaupt annimmt - und wer einmal ins
  * Leere gezogen hat, versucht es kein zweites Mal.
  */
-.ninjos-shops.shops-zieht {
-  outline: 2px dashed var(--shops-gold);
-  outline-offset: -4px;
+.ninjos-shops.shops-zieht .window-content {
+  outline: 2px dashed var(--shops-messing);
+  outline-offset: -5px;
 }
 
+/* ── Das Spielerfenster ────────────────────────────────────────────── */
 
-/* ── Vorzeigen (GM-Bogen) ─────────────────────────────────────────── */
-
-.ninjos-shops .shops-vorzeigen {
-  margin: 0.5rem 0;
-  padding: 0.5rem 0.6rem;
-  border: 1px solid var(--shops-gold);
-  border-radius: 4px;
-  background: rgba(212, 175, 55, 0.06);
-}
-
-.ninjos-shops .shops-vorzeigen h3 {
-  margin: 0 0 0.4rem;
-  color: var(--shops-rot);
-  font-size: 0.95rem;
-}
-
-.ninjos-shops .shops-vorzeigen-aktionen {
+.ninjos-shops .shops-spieler-kopf {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 0.4rem;
-}
-
-.ninjos-shops .shops-vorzeigen-aktionen button {
-  flex: 1 1 auto;
-  min-width: 8rem;
-}
-
-.ninjos-shops .shops-zuschauer {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ninjos-shops .shops-zuschauer li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.15rem 0;
-  border-top: 1px solid var(--shops-linie);
-}
-
-.ninjos-shops .shops-zuschauer button {
-  width: 1.7rem;
-  height: 1.7rem;
-  padding: 0;
-  border: 1px solid var(--shops-linie);
-  background: none;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.ninjos-shops .shops-zuschauer button:hover {
-  border-color: var(--shops-rot);
-  color: var(--shops-rot);
-}
-
-.ninjos-shops .shops-online {
-  color: #2e7d32;
-  font-size: 0.55rem;
-  vertical-align: middle;
-  margin-right: 0.25rem;
-}
-
-.shops-wahl {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.shops-wahl-zeile {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
-/* ── Spielerfenster ───────────────────────────────────────────────── */
-
-.ninjos-shops.spieler-fenster .shops-spieler-kopf {
-  display: flex;
-  gap: 0.75rem;
+  gap: 0.85rem;
   align-items: flex-start;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--shops-rot);
+  padding: 0.85rem 1rem 0.6rem;
+  border-bottom: 1px solid var(--shops-messing);
+  box-shadow: 0 2px 0 -1px var(--shops-messing);
+  margin-bottom: 2px;
 }
 
-.ninjos-shops.spieler-fenster .shops-spieler-kopf h2 {
+.ninjos-shops .shops-spieler-kopf h2 {
   margin: 0;
-  border: none;
-  padding: 0;
-  font-size: 1.25rem;
+  font-family: "Modesto Condensed", "Amiri", serif;
+  font-size: 2rem;
+  line-height: 1.1;
+  font-weight: 700;
   color: var(--shops-rot);
+  border: none;
 }
 
+/* Die eigene Boerse: ein Kassenzettel quer ueber das Blatt */
 .ninjos-shops .shops-boerse {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
-  margin: 0.5rem 0;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--shops-gold);
-  border-radius: 4px;
-  background: rgba(139, 0, 0, 0.04);
+  flex-wrap: wrap;
+  gap: 0.35rem 0.8rem;
+  padding: 0.4rem 1rem;
+  background: rgba(212, 175, 55, 0.14);
+  border-bottom: 1px solid var(--shops-linie);
+  font-size: 0.9rem;
 }
 
 .ninjos-shops .shops-boerse-label {
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--shops-tinte-blass);
+  letter-spacing: 0.03em;
 }
 
-.ninjos-shops .shops-boerse-muenzen {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-left: auto;
+.ninjos-shops .shops-boerse-muenzen { display: flex; gap: 0.55rem; }
+
+.ninjos-shops .shops-boerse-muenze {
   font-variant-numeric: tabular-nums;
-}
-
-.ninjos-shops .shops-boerse-leer {
-  justify-content: center;
-}
-
-.ninjos-shops .shops-hinweiszeile {
-  font-size: 0.8rem;
-  font-style: italic;
-  opacity: 0.85;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ninjos-shops .shops-spieler-ware .shops-menge {
-  flex: 0 0 2.5rem;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
+.ninjos-shops .shops-boerse-leer { background: rgba(120, 90, 45, 0.07); }
 
-.ninjos-shops .shops-spieler-ware .shops-preis {
-  flex: 0 0 6.5rem;
-  text-align: right;
-  font-weight: 700;
+.ninjos-shops .shops-ausverkauft { opacity: 0.55; }
+
+.ninjos-shops .shops-dienst .shops-warenname i {
+  font-size: 0.75em;
+  color: var(--shops-messing);
+  margin-left: 0.25rem;
 }
 
 .ninjos-shops .shops-kaufen {
   flex: 0 0 auto;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.2rem 0.5rem;
-  border: 1px solid var(--shops-linie);
-  border-radius: 3px;
-  background: none;
-  opacity: 0.55;
-  cursor: not-allowed;
-  font-size: 0.8rem;
-}
-
-.ninjos-shops .shops-ausverkauft {
-  opacity: 0.45;
-}
-
-.ninjos-shops .shops-dienst .shops-warenname i {
+  padding: 0.25rem 0.6rem;
+  font-weight: 700;
   color: var(--shops-rot);
-  margin-left: 0.25rem;
-  font-size: 0.8rem;
+  background: rgba(255, 252, 244, 0.7);
+  border: 1px solid var(--shops-messing);
+  border-radius: 2px;
+  box-shadow: 1px 1px 0 rgba(58, 46, 32, 0.18);
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-kaufen:hover:not([disabled]) { background: rgba(212, 175, 55, 0.25); }
+
+.ninjos-shops .shops-kaufen[disabled] {
+  color: var(--shops-tinte-blass);
+  border-color: var(--shops-linie);
+  box-shadow: none;
+  opacity: 0.65;
+  cursor: default;
 }
 
 .ninjos-shops .shops-spieler-fuss {
-  margin: 0.5rem 0 0;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.4rem 1rem 0.5rem;
   font-size: 0.8rem;
   font-style: italic;
-  opacity: 0.7;
   text-align: center;
+  color: var(--shops-tinte-blass);
+  border-top: 1px solid var(--shops-linie);
 }
+
+/* Die Spielerliste im Vorzeigen-Dialog */
+.ninjos-shops .shops-wahl-zeile,
+.shops-wahl .shops-wahl-zeile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+
+/* Spaltenbreiten des Kopfes - dieselben Werte wie in der Zeile darunter */
+.ninjos-shops .shops-spalte-bild { flex: 0 0 32px; }
+.ninjos-shops .shops-spalte-name { flex: 1; min-width: 0; }
+.ninjos-shops .shops-spalte-menge { flex: 0 0 3.4rem; text-align: center; }
+.ninjos-shops .shops-spalte-preis { flex: 0 0 7rem; text-align: right; padding-left: 0.5rem; }
+.ninjos-shops .shops-spalte-fest { flex: 0 0 6.2rem; text-align: right; }
+.ninjos-shops .shops-spalte-schalter { flex: 0 0 5.7rem; }
+
+/* ── Feinschliff, nach dem ersten Blick auf das gesetzte Buch ───────── */
+
+/*
+ * Die Scrollleiste der Liste verschob die Zeilen um acht Pixel gegen den
+ * Spaltenkopf. `stable` haelt den Platz immer frei, auch wenn nichts scrollt -
+ * dann stehen die Spalten uebereinander, egal wie voll der Laden ist.
+ */
+.ninjos-shops .shops-ware { scrollbar-gutter: stable; }
+
+/*
+ * "Ein Satz des Haendlers ..." stand vorher achtmal untereinander und war das
+ * Lauteste auf der Seite - ein Platzhalter, der mehr Aufmerksamkeit zieht als
+ * die Ware. Jetzt erscheint er erst, wenn die Zeile unter dem Zeiger liegt
+ * oder das Feld den Fokus hat. Die Zeilenhoehe bleibt gleich, damit die
+ * Liste beim Ueberfahren nicht springt.
+ */
+.ninjos-shops .shops-name input::placeholder { opacity: 0; transition: opacity 0.12s; }
+.ninjos-shops .shops-zeile:hover .shops-name input::placeholder,
+.ninjos-shops .shops-name input:focus::placeholder { opacity: 0.5; }
+
+/* "GM" mit Aufklapp-Pfeil braucht mehr als 2,5 rem, sonst steht es gedraengt */
+.ninjos-shops .shops-festpreis select { width: 3.1rem; }
+.ninjos-shops .shops-festpreis { flex: 0 0 6.8rem; }
+.ninjos-shops .shops-spalte-fest { flex: 0 0 6.8rem; }
+
+/*
+ * Das Spielerfenster bekommt dieselbe Geldspalte wie das Buch der
+ * Spielleitung. Ohne feste Breiten richtete sich dort jede Zeile nach ihrer
+ * eigenen Zahl - "600 PM" schob den Preis weiter nach links als "2 KM", und
+ * die Spalte lief treppenfoermig. In einer Preisliste ist genau das der
+ * Unterschied zwischen Ueberfliegen und Suchen.
+ */
+.ninjos-shops .shops-spieler-ware .shops-menge {
+  flex: 0 0 3rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--shops-tinte-blass);
+}
+
+.ninjos-shops .shops-spieler-ware .shops-preis {
+  flex: 0 0 7.5rem;
+  text-align: right;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--shops-linie);
+}
+
+.ninjos-shops .shops-spieler-ware .shops-kaufen { margin-left: 0.5rem; }

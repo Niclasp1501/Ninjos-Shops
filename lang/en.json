@@ -70,5 +70,9 @@
   "SHOPS.Vorzeigen.AllenSchliessen": "Close for all",
   "SHOPS.Vorzeigen.Spielleitung": "Gamemaster",
   "SHOPS.Spieler.Boerse": "Your purse",
-  "SHOPS.Vorzeigen.AuswahlZeigen": "Choose …"
+  "SHOPS.Vorzeigen.AuswahlZeigen": "Choose …",
+  "SHOPS.Bogen.SpalteWare": "Goods",
+  "SHOPS.Bogen.SpalteBestand": "Stock",
+  "SHOPS.Bogen.SpaltePreis": "Price",
+  "SHOPS.Bogen.SpalteFestpreis": "Fixed"
 }

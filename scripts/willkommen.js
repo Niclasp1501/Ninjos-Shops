@@ -30,7 +30,7 @@ const MODULE_ID = "ninjos-shops";
 
 const MODUL = {
   name: "Ninjo's Shops",
-  icon: "fa-solid fa-shop",
+  icon: "fa-solid fa-scale-balanced",
   slug: null,   // noch keine Forge-Seite
   untertitel: "SHOPS.Willkommen.Untertitel",
   einleitung: "SHOPS.Willkommen.Einleitung",

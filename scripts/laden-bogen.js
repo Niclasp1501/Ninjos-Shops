@@ -38,8 +38,8 @@ function kuerzel(sorte) {
 export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: ["ninjos-shops", "laden-bogen"],
-    position: { width: 720, height: 640 },
-    window: { icon: "fa-solid fa-shop", resizable: true },
+    position: { width: 780, height: 720 },
+    window: { icon: "fa-solid fa-scale-balanced", resizable: true },
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       wareOeffnen: LadenBogen.#wareOeffnen,
