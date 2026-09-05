@@ -11,24 +11,24 @@ Gebaut sind die Schritte 1 bis **4** aus Abschnitt 11 des Konzepts.
 
 | Datei | Zustand |
 |---|---|
-| `scripts/preise.js` | **fertig**, geprueft |
-| `scripts/kasse.js` | **fertig**, geprueft |
-| `tools/kasse.test.mjs` | 43 Faelle, laufen |
+| `scripts/preise.js` | **fertig**, geprüft |
+| `scripts/kasse.js` | **fertig**, geprüft |
+| `tools/kasse.test.mjs` | 43 Fälle, laufen |
 | `scripts/const.js` | fertig (`WARE`, `OFFENER_LADEN`, Socket-Konstanten) |
 | `scripts/laden-model.js` | Untertyp `ninjos-shops.laden` und sein `TypeDataModel` |
-| `scripts/laden-bogen.js` | Verwaltungsansicht + Vorzeigen (wer sieht / zeigen / schliessen) |
+| `scripts/laden-bogen.js` | Verwaltungsansicht + Vorzeigen (wer sieht / zeigen / schließen) |
 | `templates/laden-kopf.hbs`, `laden-ware.hbs`, `laden-vorzeigen.hbs` | dazu |
 | `scripts/spieler-fenster.js` | Spielerfenster (ApplicationV2) |
-| `templates/spieler-fenster.hbs` | Auslage, Boerse, Kauf-Stub |
-| `scripts/vorzeigen.js` | ZEIGEN / SCHLIESSEN / Flag / OBSERVER |
-| `scripts/socket.js` | Socket-Listener + STAND bei Inventaraenderung |
+| `templates/spieler-fenster.hbs` | Auslage, Börse, Kauf-Stub |
+| `scripts/vorzeigen.js` | ZEIGEN / SCHLIESSEN / Flag |
+| `scripts/socket.js` | Socket-Listener + STAND bei Inventaränderung |
 | `styles/shops.css` | Bogen + Spielerfenster; die Schauansicht fehlt darin noch |
 | `scripts/main.js` | Einstellungen, Untertyp, Bogen, Socket, Willkommen |
 | `scripts/willkommen.js` | eingebaut, Texte stehen |
 | Kauf, Marktbuch, Schauansicht | existiert nicht (Schritte 5–6) |
 
 **Vorzeigen und Spielerfenster sind geschrieben, aber noch nicht in einer
-laufenden Welt geprueft.** Der Verwaltungsbogen aus Schritt 3 ebenfalls.
+laufenden Welt geprüft.** Der Verwaltungsbogen aus Schritt 3 ebenfalls.
 
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
 

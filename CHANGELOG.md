@@ -3,7 +3,7 @@
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
-## [14.2609.2] - 2026-09-05
+## [Unveröffentlicht]
 
 ### Hinzugefügt
 - **Schritt 4: Vorzeigen und Spielerfenster.** Die Spielleitung zeigt einen
@@ -14,15 +14,8 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Laden bleibt im User-Flag über Client-Reload erhalten; immer nur einer.
 - Verwaltungsbogen: wer sieht diesen Laden gerade, Allen zeigen / Auswahl /
   Schließen.
-- Fehlende Konstanten `WARE` und `OFFENER_LADEN` in `const.js`.
-
-### Geändert
-- `AGENTS.md`: Stand Schritt 4; GitHub-Repository existiert.
-- Version `14.2609.1` → `14.2609.2`.
-
-## [Unveröffentlicht]
-
-### Hinzugefügt
+- Konstante `OFFENER_LADEN` in `const.js`; `WARE` war beim Umbau in Schritt 3
+  versehentlich mitgelöscht worden und ist wieder da.
 - Konzept (`KONZEPT-shops.md`): Marktforschung über die fünf vorhandenen
   Ladenmodule, Entscheidung für ein eigenes Modul, Aufbau eines Ladens,
   Preis- und Rechtemodell, Kaufablauf über den Spielleiter, Schauansicht,

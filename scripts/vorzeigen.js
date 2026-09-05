@@ -11,9 +11,14 @@
  * schliessen; nach einem Reload liest ready das Flag und stellt das Fenster
  * wieder her.
  *
- * Beim Vorzeigen bekommt der Empfaenger OBSERVER auf dem Laden-Akteur -
- * sonst kann der Client die Auslage nicht lesen. Beim Schliessen wird das
- * wieder entzogen.
+ * **Keine Rechtevergabe.** Foundry schickt alle Weltdokumente an jeden Client;
+ * Rechte steuern Sichtbarkeit und Schreiben, nicht die Uebertragung. Ein
+ * OBSERVER-Recht beim Vorzeigen (so stand es in der ersten Fassung) haette den
+ * Laden ins Akteursverzeichnis des Spielers gestellt und ihm den Spielleiter-
+ * Bogen samt Verborgenem geoeffnet - genau das, was das Konzept vermeiden will.
+ * Sollte sich in der Welt zeigen, dass ein rechteloser Akteur die Items nicht
+ * mitbringt, ist die Antwort nicht OBSERVER, sondern die Spielleitung schickt
+ * die aufbereitete Auslage ueber den Socket mit - wie der Tausch.
  */
 
 import { MODULE_ID, SOCKET, OFFENER_LADEN, LADEN_TYP } from "./const.js";
@@ -46,30 +51,6 @@ async function flagSetzen(user, ladenUuid) {
 }
 
 /**
- * Leserecht am Laden fuer einen Benutzer setzen oder entziehen.
- * Ohne OBSERVER sieht der Spieler-Client die Auslage nicht.
- */
-async function sichtbarkeit(laden, userId, erlaubt) {
-  if (!laden || userId === game.users.activeGM?.id) return;
-  const stufe = erlaubt
-    ? CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER
-    : CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
-  // Nicht unter das sinken, was schon hoeher war (z.B. OWNER eines Tests).
-  const bisher = laden.ownership?.[userId] ?? laden.ownership?.default ?? 0;
-  if (erlaubt && bisher >= stufe) return;
-  if (!erlaubt && bisher > CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER) return;
-  await laden.update({ [`ownership.${userId}`]: stufe });
-}
-
-/** Vorherigen Laden dieses Users schliessen (Flag + Recht + Fenster lokal). */
-async function vorherigenErsetzen(user, neuerUuid) {
-  const vorher = user.getFlag(MODULE_ID, OFFENER_LADEN);
-  if (!vorher || vorher === neuerUuid) return;
-  const alter = await fromUuid(vorher);
-  if (alter) await sichtbarkeit(alter, user.id, false);
-}
-
-/**
  * Laden an die genannten Benutzer vorzeigen.
  *
  * @param {Actor} laden
@@ -81,12 +62,8 @@ export async function ladenZeigen(laden, userIds) {
   const an = [...new Set(userIds)].filter(id => game.users.get(id));
   if (!an.length) return;
 
-  for (const id of an) {
-    const user = game.users.get(id);
-    await vorherigenErsetzen(user, laden.uuid);
-    await sichtbarkeit(laden, id, true);
-    await flagSetzen(user, laden.uuid);
-  }
+  // Ein neuer Laden ersetzt den vorherigen: Das Flag haelt genau einen.
+  for (const id of an) await flagSetzen(game.users.get(id), laden.uuid);
 
   const payload = { typ: SOCKET.ZEIGEN, ladenUuid: laden.uuid, an };
   game.socket.emit(SOCKET.NAME, payload);
@@ -103,17 +80,13 @@ export async function ladenZeigen(laden, userIds) {
 export async function ladenSchliessen(ladenUuid, userIds = "alle") {
   if (!game.user.isGM) return;
 
-  const laden = await fromUuid(ladenUuid);
   const zuschauer = werSieht(ladenUuid);
   const ziele = userIds === "alle"
     ? zuschauer
     : zuschauer.filter(u => userIds.includes(u.id));
 
   const an = ziele.map(u => u.id);
-  for (const u of ziele) {
-    if (laden) await sichtbarkeit(laden, u.id, false);
-    await flagSetzen(u, null);
-  }
+  for (const u of ziele) await flagSetzen(u, null);
 
   const empfaenger = an.length ? an : (userIds === "alle" ? "alle" : userIds);
   const payload = { typ: SOCKET.SCHLIESSEN, ladenUuid, an: empfaenger };
