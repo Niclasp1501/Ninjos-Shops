@@ -5,6 +5,17 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
 ## [Unveröffentlicht]
 
+### Behoben
+- **Ein Kauf lief doppelt, wenn dieselbe Spielleitung zwei Tabs offen hatte.**
+  `game.users.activeGM` benennt einen Benutzer, keine Verbindung — beide Tabs
+  hielten sich für zuständig. Gemessen: zwei Buchungen 16 ms auseinander, zwei
+  Fackeln in der Tasche, einmal bezahlt. Welche Verbindung ausführt, entscheidet
+  jetzt ein Anspruch je Bitte (`scripts/vorsitz.js`).
+- **Auf einem Tablet lief das Spielerfenster unten aus dem Bild** und war dort
+  nicht mehr erreichbar — Verschieben half nicht, weil die Titelleiste schon
+  oben stand. Fenster werden jetzt auf den sichtbaren Bereich gedeckelt und
+  beim Drehen oder Aufklappen der Tastatur nachgezogen.
+
 ### Hinzugefügt
 - **Verkäufer je Laden**: ein NSC, per Ablage in die Einstellungen gezogen. Er
   steht im Kopf beider Fenster und als Gegenüber in den Büchern — die

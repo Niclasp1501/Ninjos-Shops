@@ -92,7 +92,8 @@ export const SOCKET = {
   SCHLIESSEN: "schliessen",
   STAND: "stand",       // Spielleiter -> alle offenen Fenster: neuer Bestand
   ANGEBOT: "angebot",   // Spielleiter -> Spieler: Ware zum Sonderpreis
-  AUSLAGE: "auslage"    // Spielleiter -> Spieler: die Auslage als Datenpaket
+  AUSLAGE: "auslage",   // Spielleiter -> Spieler: die Auslage als Datenpaket
+  VORSITZ: "vorsitz"    // Spielleitung untereinander: wer fuehrt diese Bitte aus
 };
 
 /**

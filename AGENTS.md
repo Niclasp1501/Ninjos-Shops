@@ -304,6 +304,107 @@ entfernt werden — dort hätte ein Blick in die Konsole die Verhandlung entwert
 Client; ohne Grenze wächst ein vielbesuchter Laden unbemerkt weiter, bis jemand
 beim Laden der Welt wartet und niemand weiß, warum.
 
+## `activeGM` ist ein Benutzer, keine Verbindung
+
+Wer bei zwei Spielleitungen genau eine ausführen lassen will, greift zu
+`game.users.activeGM` — Foundrys eigene Antwort darauf. Sie reicht nicht.
+`activeGM` benennt einen **Benutzer**. Hat dieselbe Spielleitung zwei Tabs
+offen — zweiter Bildschirm, vergessenes Fenster, das Handy daneben —, sind
+beide Clients `activeGM`, und beide führen aus.
+
+**Gemessen am 06.09.2026** in der Testwelt, zwei angemeldete Clients, ein Klick
+auf „Kaufen" für eine Fackel:
+
+| | erwartet | gemessen |
+|---|---|---|
+| Antworten beim Spieler | 1 | **2** |
+| Buchungen im Ladenbuch | 1 | **2**, 16 ms auseinander |
+| Fackeln in der Tasche | 1 | **2** |
+| bezahlt | 2 KM | **2 KM** |
+| Bestand im Laden | −1 | **−1** |
+
+Der ausführende Client bekam die Bitte dabei **einmal** und antwortete
+**einmal** — nachgemessen mit einem Zähler um seinen Socket-Listener. Die
+zweite Antwort kam von einer zweiten Verbindung derselben Spielleitung.
+
+Bezahlt und abgebucht wurde nur einmal, weil beide Ausführungen denselben
+Stand lasen und denselben zurückschrieben — der klassische verlorene
+Schreibvorgang. Je nachdem, welcher Schritt gewinnt, bekommt der Spieler die
+Ware doppelt und zahlt einfach, oder er zahlt doppelt und bekommt einfach.
+
+**Die Lösung steht in `scripts/vorsitz.js`: ein Anspruch je Bitte.** Wer
+ausführen will, ruft seine Kennung in den Raum, wartet 250 ms und führt nur
+aus, wenn seine die kleinste aller Meldungen ist. Die Kennung ist je
+Verbindung zufällig und bleibt, solange der Tab lebt — dieselbe Verbindung
+gewinnt also immer, und es entsteht kein Hin und Her.
+
+Kein Herzschlag mit Client-Liste: Dann müsste man entscheiden, wann eine
+Meldung veraltet ist, und in genau diesem Fenster führt entweder niemand aus
+oder wieder zwei. Ein Anspruch je Bitte kennt das Problem nicht — es meldet
+sich, wer in diesem Moment da ist.
+
+Zwei Dinge gehören dazu:
+
+- **Jede Bitte braucht eine `bitteId`.** Ohne sie nimmt die zweite Bitte die
+  Meldungen der ersten für ihre eigenen. Sie entsteht beim Absender.
+- **Auch die Spielleitung schickt über den Socket.** Vorher rief sie
+  `beiSpielleitung()` direkt auf, wenn sie selbst die Zuständige war. Dann
+  liefe die Wahl an ihr vorbei, und die Sitzung läge auf einer anderen
+  Verbindung als die Ausführung. Der eigene Socket kommt nie zurück, also
+  läuft der Anspruch daneben lokal mit.
+
+**Was offen bleibt:** Die Verhandlung einer Verkaufsanfrage liegt im
+Arbeitsspeicher genau der Verbindung, die sie aufgenommen hat. Der zweite Tab
+derselben Spielleitung sieht im Verhandlungsfenster nichts. Das ist die
+Theke — an ihr steht einer.
+
+## Kein Fenster größer als der Bildschirm
+
+Auf einem Tablet stand das Spielerfenster oben am Rand und lief unten aus dem
+Bild — die untere Hälfte der Auslage, die Verkaufsliste und die Fußleiste waren
+nicht mehr erreichbar. Verschieben half nicht: Die Titelleiste war schon oben,
+und die untere Kante, an der man es kleiner ziehen könnte, lag außerhalb.
+
+Das ist die übliche Falle bei `height: "auto"` — Foundry misst den Inhalt und
+macht das Fenster so hoch, wie es sein will. Auf einem großen Bildschirm fällt
+es nie auf.
+
+`scripts/fensterpassen.js` hängt sich an `renderApplicationV2` und deckelt
+jedes Fenster mit der Klasse `ninjos-shops` auf den sichtbaren Bereich minus
+8 px, klemmt seine Lage vollständig hinein und zieht bei `resize` **und**
+`visualViewport.resize` nach — auf Tablets kommt beim Drehen und beim
+Aufklappen der Tastatur nur das zweite verlässlich. Was nicht hineinpasst,
+scrollt in `.window-content`.
+
+Gemessen nach dem Einbau, Spielerfenster mit elf Waren:
+
+| Bild | Fenster | vollständig im Bild | Inhalt scrollt |
+|---|---|---|---|
+| 1024 × 700 | 580 × 660 | ja | nein |
+| 900 × 480 | 580 × 464 | ja | ja |
+| 820 × 420 | 580 × 404 | ja | ja |
+
+Die Regel gilt workspaceweit und steht auch in der `CLAUDE.md` der Wurzel.
+
+## Zwei Clients testen, ohne zweiten Browser
+
+Der Weg Spieler → Spielleitung lässt sich nicht mit einem Fenster prüfen, und
+zwei Foundry-Sitzungen in einem Browserprofil gehen nicht: Die Sitzung hängt
+am Cookie, die zweite Anmeldung überschreibt die erste.
+
+Was hier funktioniert hat, ohne Playwright zu installieren: eine zweite
+Chrome-Instanz mit eigenem `--user-data-dir` und
+`--remote-debugging-port`, gesteuert über das Devtools-Protokoll. Node bringt
+`WebSocket` mit, mehr braucht es nicht — `Runtime.evaluate` führt beliebiges
+JavaScript im Spieler-Client aus, also auch echte Klicks auf die Knöpfe des
+Spielerfensters und auf „Ja" im Bestätigungsdialog. Headless mit
+`--use-gl=swiftshader`; Foundry meckert über fehlende Hardware-Beschleunigung
+und läuft.
+
+Der eingebaute Browser des Editors taugt dafür nicht: Er blockiert
+`/scripts/**` (`ERR_BLOCKED_BY_CLIENT`), und ohne `foundry.mjs` bleibt die
+Anmeldeseite leer.
+
 ## Verkaufen: zwei Wege, und warum es zwei sind
 
 **Angehakte Ware geht sofort durch.** Der Ankaufsfaktor allein reicht als

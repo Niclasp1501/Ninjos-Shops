@@ -10,10 +10,11 @@
  * Handel" gilt ohnehin und wird deshalb nicht zum Sonderfall gemacht, sondern
  * zur Bauweise. Dieselbe Anlage wie der Tausch in den In-Person Tools.
  *
- * **Sind mehrere Spielleitungen da, fuehrt genau eine aus** - `activeGM` ist
- * Foundrys eigene Antwort darauf und immer bei allen Clients dieselbe. Ohne
- * diese Pruefung liefe ein Kauf bei zwei Spielleitungen zweimal, und der
- * Spieler haette den Dolch doppelt und das Geld einfach weg.
+ * **Sind mehrere Spielleitungen da, fuehrt genau eine aus.** Foundrys eigene
+ * Antwort darauf ist `activeGM` - die reicht aber nur, solange es zwei
+ * verschiedene Spielleitungen sind. Zwei Tabs **derselben** Spielleitung sind
+ * beide `activeGM`, und dann laeuft jeder Kauf doppelt. Welche Verbindung
+ * ausfuehrt, entscheidet deshalb vorsitz.js; dort steht die Messung dazu.
  */
 
 import { MODULE_ID, SOCKET, LADEN_TYP } from "./const.js";
@@ -22,11 +23,7 @@ import { aufAngebot } from "./angebot.js";
 import { fuehreKaufAus } from "./kauf.js";
 import { fuehreVerkaufAus } from "./verkauf.js";
 import { aufAnfrage } from "./anfrage.js";
-
-/** Fuehrt dieser Client aus? */
-function istAusfuehrendeSpielleitung() {
-  return game.user.isGM && game.users.activeGM?.id === game.user.id;
-}
+import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 
 /** Eingehende Socket-Nachricht verteilen. */
 async function onSocket(daten) {
@@ -38,9 +35,10 @@ async function onSocket(daten) {
     case SOCKET.STAND:       return void aufStand(daten);
     case SOCKET.ANGEBOT:     return void aufAngebot(daten);
     case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
+    case SOCKET.VORSITZ:     return void aufVorsitz(daten);
 
     case SOCKET.KAUFEN: {
-      if (!istAusfuehrendeSpielleitung()) return;
+      if (!await darfIchAusfuehren(daten.bitteId)) return;
       const ergebnis = await fuehreKaufAus(daten);
       game.socket.emit(SOCKET.NAME, {
         typ: SOCKET.ANTWORT, an: [daten.kaeuferId], ergebnis
@@ -52,7 +50,7 @@ async function onSocket(daten) {
     }
 
     case SOCKET.VERKAUFEN: {
-      if (!istAusfuehrendeSpielleitung()) return;
+      if (!await darfIchAusfuehren(daten.bitteId)) return;
       const ergebnis = await fuehreVerkaufAus(daten);
       game.socket.emit(SOCKET.NAME, {
         typ: SOCKET.ANTWORT, an: [daten.verkaeuferId], ergebnis

@@ -25,6 +25,7 @@
  */
 
 import { MODULE_ID, SOCKET, LADEN_TYP } from "./const.js";
+import { darfIchAusfuehren, waereZustaendig, bittenKennung } from "./vorsitz.js";
 import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
 import { fuehreAnkaufAus } from "./verkauf.js";
 
@@ -54,15 +55,35 @@ export function anfrageBeobachten(fn) { beiAenderung = fn ?? (() => {}); }
 export function eigeneAnfrage() { return meine; }
 export function offeneAnfragen() { return [...sitzungen.values()]; }
 
-/** Fuehrt dieser Client aus? Bei zwei Spielleitungen genau eine. */
-function istZustaendig() {
-  return game.user.isGM && game.users.activeGM?.id === game.user.id;
+/**
+ * Fuehrt dieser Client aus?
+ *
+ * Zum Anzeigen und Verzweigen reicht die synchrone Frage; wer schreibt, wartet
+ * den Anspruch ab. Der Grund steht in vorsitz.js: Zwei Tabs derselben
+ * Spielleitung sind beide `activeGM`.
+ */
+const istZustaendig = waereZustaendig;
+
+/**
+ * Eine Bitte an die Spielleitung.
+ *
+ * Sie geht **immer** ueber den Socket - auch wenn der Absender selbst die
+ * Spielleitung ist. Der eigene Socket kommt nie zurueck, deshalb laeuft der
+ * Anspruch daneben lokal mit. So durchlaufen alle Bitten denselben Weg, und
+ * die Sitzung landet bei genau einer Verbindung.
+ */
+function anDieSpielleitung(nachricht) {
+  const paket = {
+    typ: SOCKET.ANFRAGE, ...nachricht, von: game.user.id, bitteId: bittenKennung()
+  };
+  game.socket.emit(SOCKET.NAME, paket);
+  if (game.user.isGM) beiSpielleitungWennGewaehlt(paket);
 }
 
-function anDieSpielleitung(nachricht) {
-  const paket = { typ: SOCKET.ANFRAGE, ...nachricht, von: game.user.id };
-  if (istZustaendig()) return void beiSpielleitung(paket);
-  game.socket.emit(SOCKET.NAME, paket);
+/** Ausfuehren, wenn diese Verbindung den Anspruch gewinnt. */
+async function beiSpielleitungWennGewaehlt(paket) {
+  if (!await darfIchAusfuehren(paket.bitteId)) return;
+  beiSpielleitung(paket);
 }
 
 /* ── Was ein Spieler tut ───────────────────────────────────────────── */
@@ -263,7 +284,7 @@ export function anfrageWegraeumen() {
 /** Einstiegspunkt aus socket.js. */
 export function aufAnfrage(paket) {
   if (paket.tat === "zustand") return uebernehmen(paket.sitzung);
-  if (istZustaendig()) return void beiSpielleitung(paket);
+  beiSpielleitungWennGewaehlt(paket);
 }
 
 /** Lesbare Zahlen fuer die Anzeige. */

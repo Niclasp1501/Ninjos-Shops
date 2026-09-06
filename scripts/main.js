@@ -23,6 +23,7 @@ import { zugaengeHaken, zugaengeEinrichten } from "./zugaenge.js";
 import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
 import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
+import { fensterPassenEinrichten } from "./fensterpassen.js";
 
 function einstellungenEinrichten() {
   /**
@@ -106,6 +107,9 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", async () => {
   socketEinrichten();
+  // Muss vor dem ersten Fenster stehen: Auf einem Tablet lief das
+  // Spielerfenster sonst unten aus dem Bild und war nicht mehr erreichbar.
+  fensterPassenEinrichten();
   zugaengeEinrichten();
   anfrageFensterEinrichten();
   buchFensterEinrichten();

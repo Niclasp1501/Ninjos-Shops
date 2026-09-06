@@ -225,7 +225,9 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       itemId: item.id,
       figurUuid: figur.uuid,
       menge: 1,
-      verkaeuferId: game.user.id
+      verkaeuferId: game.user.id,
+      // Woran die Spielleitungen erkennen, dass sie dieselbe Bitte meinen.
+      bitteId: foundry.utils.randomID()
     };
 
     if (game.user.isGM) {
@@ -318,7 +320,10 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       itemId: item.id,
       figurUuid: figur.uuid,
       menge,
-      kaeuferId: game.user.id
+      kaeuferId: game.user.id,
+      // Siehe vorsitz.js: Ohne diese Kennung kauft eine doppelt angemeldete
+      // Spielleitung zweimal ein und derselben Bitte.
+      bitteId: foundry.utils.randomID()
     };
 
     /*
