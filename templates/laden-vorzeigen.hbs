@@ -9,36 +9,23 @@
     <section class="shops-vorzeigen">
       <h3>{{localize "SHOPS.Vorzeigen.Titel"}}</h3>
 
-      {{!-- Zwei Gruppen: links, was den Laden zeigt, rechts, was ihn
-            nachliest. Fünf gleich große Knöpfe nebeneinander sagten nichts
-            darüber, welcher wozu gehört. --}}
+      {{!-- Nur noch die drei Aktionen, die dieser Block verspricht. Die
+            Buecher stehen im Fenstermenue: Zwei Symbolknoepfe daneben brachen
+            um und waren ohne Beschriftung nicht zu lesen. --}}
       <div class="shops-vorzeigen-aktionen">
-        <span class="shops-knopfgruppe shops-knopfgruppe-haupt">
-          <button type="button" data-action="zeigenAllen">
-            <i class="fa-solid fa-users"></i>
-            {{localize "SHOPS.Vorzeigen.AllenZeigen"}}
-          </button>
-          <button type="button" class="shops-zweit" data-action="zeigenAuswahl">
-            <i class="fa-solid fa-user-check"></i>
-            {{localize "SHOPS.Vorzeigen.AuswahlZeigen"}}
-          </button>
-          <button type="button" class="shops-zweit" data-action="schliessenAllen"
-                  {{#unless zuschauer.length}}disabled{{/unless}}>
-            <i class="fa-solid fa-eye-slash"></i>
-            {{localize "SHOPS.Vorzeigen.AllenSchliessen"}}
-          </button>
-        </span>
-
-        <span class="shops-knopfgruppe shops-knopfgruppe-buecher">
-          <button type="button" class="shops-zweit" data-action="ladenbuch"
-                  title="{{localize 'SHOPS.Buch.Knopf'}}">
-            <i class="fa-solid fa-scroll"></i>
-          </button>
-          <button type="button" class="shops-zweit" data-action="marktbuch"
-                  title="{{localize 'SHOPS.Marktbuch.Knopf'}}">
-            <i class="fa-solid fa-book"></i>
-          </button>
-        </span>
+        <button type="button" data-action="zeigenAllen">
+          <i class="fa-solid fa-users"></i>
+          {{localize "SHOPS.Vorzeigen.AllenZeigen"}}
+        </button>
+        <button type="button" class="shops-zweit" data-action="zeigenAuswahl">
+          <i class="fa-solid fa-user-check"></i>
+          {{localize "SHOPS.Vorzeigen.AuswahlZeigen"}}
+        </button>
+        <button type="button" class="shops-zweit" data-action="schliessenAllen"
+                {{#unless zuschauer.length}}disabled{{/unless}}>
+          <i class="fa-solid fa-eye-slash"></i>
+          {{localize "SHOPS.Vorzeigen.AllenSchliessen"}}
+        </button>
       </div>
 
       {{#if zuschauer.length}}

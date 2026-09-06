@@ -1954,3 +1954,146 @@
 }
 
 .ninjos-shops .shops-buch-fuss button:hover { border-color: var(--shops-rot); }
+
+/* ══ Rot-Diät ═══════════════════════════════════════════════════════════
+ *
+ * Rot stand zuletzt an zu vielen Stellen gleichzeitig: jede Überschrift, die
+ * Schrift jedes zweiten Knopfes, jeder Festpreis, jede Summe. Wenn alles
+ * betont ist, ist nichts betont — und das Fenster wirkt unruhig, ohne dass
+ * man sagen kann, warum.
+ *
+ * Rot behält jetzt drei Aufgaben, und nur die:
+ *   1. die Fensterleiste (das Modul erkennen)
+ *   2. die *eine* Hauptaktion je Block (gefüllt)
+ *   3. Warnung und Sonderfall (Sonderpreis, gescheitert, zu wenig Geld)
+ *
+ * Alles Übrige trägt Tinte oder das gedämpfte Braungrau. Diese Regeln stehen
+ * am Ende der Datei und gewinnen deshalb gegen die früheren.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+/* Überschriften sind Struktur, keine Warnung. */
+.ninjos-shops .shops-auslage h3,
+.ninjos-shops .shops-vorzeigen h3,
+.ninjos-shops .shops-block h3,
+.ninjos-shops .shops-verkauf h3,
+.ninjos-shops .shops-angebot-kopf,
+.ninjos-shops .shops-spielraum-kopf,
+.ninjos-shops .shops-boerse-label {
+  color: var(--shops-text-blass);
+  letter-spacing: 0.06em;
+}
+
+/* Eine dünne Linie unter der Überschrift ordnet mehr als Farbe. */
+.ninjos-shops .shops-auslage h3,
+.ninjos-shops .shops-verkauf h3 {
+  border-bottom: 1px solid var(--shops-rand);
+  padding-bottom: 7px;
+  margin-bottom: 2px;
+}
+
+/* Zweitrangige Knöpfe: Tinte auf Weiß. Rot war hier eine Betonung ohne
+   Anlass — es sind die Knöpfe, die *nicht* gemeint sind. */
+.ninjos-shops .shops-vorzeigen-aktionen button.shops-zweit,
+.ninjos-shops .shops-packen-fuss button.shops-zweit,
+.ninjos-shops .shops-anfrage-fuss button.shops-zweit,
+.ninjos-shops .shops-anfrage-start .shops-kaufen,
+.ninjos-shops .shops-verkauf-liste .shops-kaufen,
+.ninjos-shops .dialog-buttons button[data-action="abbrechen"],
+.ninjos-shops .dialog-buttons button[data-action="no"],
+.ninjos-shops .shops-buch-fuss button {
+  color: var(--shops-text);
+  background-color: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen button.shops-zweit:hover:not([disabled]),
+.ninjos-shops .shops-anfrage-start .shops-kaufen:hover:not([disabled]),
+.ninjos-shops .shops-verkauf-liste .shops-kaufen:hover:not([disabled]),
+.ninjos-shops .shops-buch-fuss button:hover {
+  border-color: var(--shops-gold);
+  background-color: #fffdf6;
+}
+
+/* Symbole in zweitrangigen Knöpfen dürfen Farbe tragen — ein Punkt, kein Feld. */
+.ninjos-shops button.shops-zweit i,
+.ninjos-shops .shops-anfrage-start .shops-kaufen i {
+  color: var(--shops-rot);
+  opacity: 0.75;
+}
+
+/* Preise sind Zahlen, keine Warnungen. Der Festpreis bleibt erkennbar —
+   aber über die gepunktete Linie, nicht über die Farbe. */
+.ninjos-shops .shops-preis,
+.ninjos-shops .shops-buch-summe {
+  color: var(--shops-text);
+}
+
+.ninjos-shops .shops-fest {
+  color: var(--shops-text);
+  text-decoration: underline dotted var(--shops-gold);
+  text-underline-offset: 3px;
+}
+
+/* Der Ladenname im Kopf steht auf dem Bild und ist ohnehin weiß; im
+   Einstellungsfenster braucht er kein Rot. */
+.ninjos-shops .shops-titel input[name="name"] { color: var(--shops-text); }
+
+/* Im Ladenbuch trennt die Richtung, nicht die Schriftfarbe. */
+.ninjos-shops .shops-buch-kauf .shops-buch-summe,
+.ninjos-shops .shops-buch-verkauf .shops-buch-summe { color: var(--shops-text); }
+
+/* ── Und was Rot behält ────────────────────────────────────────────── */
+
+.ninjos-shops .shops-buch-marke,
+.ninjos-shops .shops-buch-grund,
+.ninjos-shops .shops-buch-fehlzahl,
+.ninjos-shops .shops-kaufen.shops-knapp { color: var(--shops-rot); }
+
+/* ── Feinschliff: Ruhe durch Abstand statt durch Farbe ─────────────── */
+
+.ninjos-shops .shops-vorzeigen {
+  padding: 11px 18px 12px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+  border-left: none;
+}
+
+.ninjos-shops .shops-vorzeigen h3 { margin-bottom: 8px; }
+
+.ninjos-shops .shops-vorzeigen-aktionen {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+.ninjos-shops .shops-vorzeigen-aktionen button {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Die Warenkarte: etwas mehr Luft, weichere Kante, deutlicher beim Überfahren */
+.ninjos-shops .shops-zeile {
+  padding: 7px 9px;
+  border-radius: 7px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ninjos-shops .shops-ware > li.shops-zeile:hover {
+  border-color: var(--shops-gold);
+  box-shadow: 0 1px 6px rgba(139, 0, 0, 0.09);
+}
+
+/* Ausverkauftes und Verborgenes sprechen deutlicher */
+.ninjos-shops .shops-ausverkauft .shops-warenname { text-decoration: line-through; }
+.ninjos-shops .shops-verborgen .shops-warenname::after {
+  content: "\f070";
+  font-family: "Font Awesome 7 Pro", "Font Awesome 6 Free", "fontawesome";
+  font-weight: 900;
+  margin-left: 6px;
+  font-size: 0.72em;
+  color: var(--shops-text-blass);
+}

@@ -227,6 +227,29 @@ ihn nicht. Fehlt die Verknüpfung, tritt das neutrale Wort „Verkäufer" an die
 Stelle — ein Laden ohne benannten Händler ist ein gültiger Fall, kein
 halbfertiger.
 
+## Wofür Rot da ist — und wofür nicht
+
+Rot stand einmal an jeder Überschrift, in der Schrift jedes zweiten Knopfes, an
+jedem Festpreis und jeder Summe. **Wenn alles betont ist, ist nichts betont**,
+und das Fenster wirkt unruhig, ohne dass man sagen kann, warum.
+
+Rot hat jetzt drei Aufgaben, und nur die:
+
+1. **die Fensterleiste** — daran erkennt man das Modul
+2. **die eine Hauptaktion je Block**, als Fläche gefüllt
+3. **Warnung und Sonderfall** — Sonderpreis, gescheitert, zu wenig Geld
+
+Alles Übrige trägt Tinte oder das gedämpfte Braungrau. Überschriften ordnen
+über eine dünne Linie statt über Farbe; ein Festpreis bleibt an der gepunkteten
+Goldlinie erkennbar, nicht am roten Text. Wer hier eine neue rote Stelle
+einführt, prüft vorher, in welche der drei Aufgaben sie fällt.
+
+**Keine Knöpfe ohne Beschriftung.** Zwei Bücher standen kurzzeitig als reine
+Symbolknöpfe in der Vorzeigen-Leiste, brachen dort in eine zweite Zeile um und
+waren nicht mehr zu lesen. Sie stehen jetzt im **Fenstermenü**
+(`window.controls`), wo sie ihren Namen tragen und keinen Platz kosten — und
+die Leiste enthält wieder nur das, was ihre Überschrift verspricht.
+
 ## Farbe gehört ans Bauteil, nicht in eine Sammelregel
 
 Eine Regel, die `color` für **alle** `button` im Fenster setzte, gewann gegen

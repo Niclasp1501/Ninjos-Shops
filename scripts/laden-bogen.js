@@ -43,7 +43,22 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: ["ninjos-shops", "laden-bogen"],
     position: { width: 780, height: 720 },
-    window: { icon: "fa-solid fa-scale-balanced", resizable: true },
+    window: {
+      icon: "fa-solid fa-scale-balanced",
+      resizable: true,
+      /*
+       * Die beiden Buecher stehen im Fenstermenue, nicht in der Knopfleiste.
+       * Dort waren sie zuletzt zwei Symbolknoepfe ohne Beschriftung, die in
+       * eine zweite Zeile umbrachen und dann aussahen wie ein Fehler. Im
+       * Menue tragen sie ihren Namen, kosten keinen Platz - und die Leiste
+       * enthaelt wieder nur das, was sie verspricht: Vorzeigen.
+       */
+      controls: [
+        { icon: "fa-solid fa-scroll", label: "SHOPS.Buch.Knopf", action: "ladenbuch" },
+        { icon: "fa-solid fa-book", label: "SHOPS.Marktbuch.Knopf", action: "marktbuch",
+          visible: () => game.user.isGM }
+      ]
+    },
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       wareOeffnen: LadenBogen.#wareOeffnen,

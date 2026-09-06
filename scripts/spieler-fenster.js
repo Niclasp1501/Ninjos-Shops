@@ -46,7 +46,13 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     id: `${MODULE_ID}-spieler`,
     classes: ["ninjos-shops", "spieler-fenster"],
     position: { width: 580, height: 660 },
-    window: { icon: "fa-solid fa-scale-balanced", resizable: true },
+    window: {
+      icon: "fa-solid fa-scale-balanced",
+      resizable: true,
+      controls: [
+        { icon: "fa-solid fa-scroll", label: "SHOPS.Buch.Knopf", action: "ladenbuch" }
+      ]
+    },
     actions: {
       kaufen: SpielerFenster.#kaufen,
       verkaufen: SpielerFenster.#verkaufen,

@@ -12,6 +12,11 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Rot-Diät.** Überschriften, zweitrangige Knöpfe und Preise tragen kein Rot
+  mehr — es blieb für die Fensterleiste, die eine Hauptaktion je Block und für
+  Warnungen. Überschriften ordnen jetzt über eine dünne Linie.
+- **Die Bücher stehen im Fenstermenü** statt als beschriftungslose Symbolknöpfe
+  in der Vorzeigen-Leiste, wo sie umbrachen und unlesbar waren.
 - **Das Marktbuch ist kein Journal mehr.** Es las sich wie ein Protokoll: nicht
   filterbar, nicht sortierbar, jede Zeile ein Textschnipsel. Jetzt liegen die
   Einträge als Daten in einer Welteinstellung und bekommen ein eigenes Fenster
