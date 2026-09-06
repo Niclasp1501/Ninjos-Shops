@@ -283,5 +283,9 @@
   "SHOPS.Schau.Sanduhr": "Hourglass: how long this page still stands",
   "SHOPS.Ansehen.Titel": "A closer look",
   "SHOPS.Ansehen.Knopf": "Take a closer look",
-  "SHOPS.Ansehen.KeineBeschreibung": "Nothing further is written about this piece."
+  "SHOPS.Ansehen.KeineBeschreibung": "Nothing further is written about this piece.",
+  "SHOPS.Einstellung.SchauLicht.Name": "Display view: brightness",
+  "SHOPS.Einstellung.SchauLicht.Hinweis": "Dark does not dazzle in a dimmed room. Parchment reads better on a television in daylight.",
+  "SHOPS.Einstellung.SchauLicht.Dunkel": "Dark — for a dimmed room",
+  "SHOPS.Einstellung.SchauLicht.Pergament": "Parchment — for bright rooms"
 }

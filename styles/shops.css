@@ -3152,3 +3152,133 @@
 
 /* Der Kopf darf etwas flacher sein, wenn das Fenster niedrig ist. */
 .ninjos-shops .shops-spieler .shops-kopfbild { max-height: 26vh; }
+
+/* ══ Papier und Pergament ════════════════════════════════════════════
+ *
+ * Die Farben waren sauberes Weiß — richtig für eine Anwendung, falsch für
+ * einen Laden in einer Fantasiewelt. Papier ist nie weiß: Es ist warm, es hat
+ * eine Faser, und die Schrift darauf ist Tinte und nicht Schwarz.
+ *
+ * **Die Faser kommt ohne Bild.** Ein `feTurbulence`-Rauschen als Daten-URI
+ * wiegt ein paar hundert Zeichen und lässt sich einfärben; ein Pergamentfoto
+ * wären hundert Kilobyte, die auf jedem Bildschirm anders aussehen. Es liegt
+ * **im Hintergrund**, per `background-blend-mode`, und nicht als Schicht über
+ * dem Inhalt — sonst läge das Rauschen auch auf der Schrift.
+ *
+ * Diese Werte stehen am Ende der Datei und ersetzen die Tokens von oben.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+.ninjos-shops {
+  --shops-bg: #f2ead9;
+  --shops-karte: #fbf6ea;
+  --shops-nav: #e9dfc9;
+  --shops-rand: #cdbf9f;
+  --shops-text: #2b2318;
+  --shops-text-blass: #6f6350;
+  --shops-faser: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.14'/%3E%3C/svg%3E");
+}
+
+/*
+ * Der Grund bekommt die Faser. `background-blend-mode: multiply` mischt das
+ * Rauschen in die Farbe statt darüber zu liegen — die Schrift bleibt glatt.
+ */
+.ninjos-shops .window-content,
+.ninjos-shops .shops-teil-kopf,
+.ninjos-shops .shops-teil-verhandeln,
+.ninjos-shops .shops-teil-buch,
+.ninjos-shops .shops-teil-handel,
+.ninjos-shops .shops-teil-ansehen {
+  background-color: var(--shops-bg);
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+}
+
+/* Karten sind ein helleres Blatt auf dem Bogen — dieselbe Faser, feiner. */
+.ninjos-shops .shops-zeile,
+.ninjos-shops .shops-anfrage,
+.ninjos-shops .shops-menue,
+.ninjos-shops .shops-boerse-muenze {
+  background-color: var(--shops-karte);
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+}
+
+/* Ränder wie eine gezogene Linie, nicht wie ein Rahmen aus Metall. */
+.ninjos-shops .shops-zeile { border-color: #d9cbab; }
+
+/*
+ * Überschriften in Tinte statt in Grau: Auf Pergament ist gedämpftes Grau
+ * kraftlos, weil der Grund selbst schon warm ist.
+ */
+.ninjos-shops .shops-auslage h3,
+.ninjos-shops .shops-vorzeigen h3,
+.ninjos-shops .shops-block h3,
+.ninjos-shops .shops-verkauf h3 { color: #5d5138; }
+
+/* ── Die Schauansicht in Pergament ────────────────────────────────── */
+
+/*
+ * Dieselbe Anordnung, anderes Licht. Ein dunkler Schirm blendet im
+ * abgedunkelten Zimmer nicht; auf einem Fernseher bei Tageslicht ist heller
+ * besser zu lesen. Welcher Raum es ist, weiß nur der Tisch — deshalb eine
+ * Einstellung und keine Entscheidung im Modul.
+ */
+.ninjos-shops.shops-schau-pergament {
+  background-color: #e6d9bd;
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+  color: #2b2318;
+}
+
+.ninjos-shops.shops-schau-pergament .shops-schau-karte {
+  background-color: #f6efdc;
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+  border-color: #c3b28c;
+  box-shadow: 0 1px 3px rgba(60, 45, 20, .12);
+}
+
+.ninjos-shops.shops-schau-pergament .shops-schau-name { color: #2b2318; }
+.ninjos-shops.shops-schau-pergament .shops-schau-hinweis { color: #6f6350; }
+
+/* Gold leuchtet auf hellem Grund nicht — es braucht eine Stufe mehr Tiefe. */
+.ninjos-shops.shops-schau-pergament .shops-schau-preis,
+.ninjos-shops.shops-schau-pergament .shops-schau-haendler { color: #8a6d16; }
+
+.ninjos-shops.shops-schau-pergament .shops-schau-seite { color: #5d5138; }
+.ninjos-shops.shops-schau-pergament .shops-schau-pause { color: #6f6350; }
+
+.ninjos-shops.shops-schau-pergament .shops-sanduhr-glas path {
+  stroke: rgba(60, 45, 20, .45);
+}
+.ninjos-shops.shops-schau-pergament .shops-sanduhr-fassung rect { fill: #8a6d16; }
+.ninjos-shops.shops-schau-pergament .shops-sanduhr-sand rect { fill: #c19a3f; }
+.ninjos-shops.shops-schau-pergament .shops-sanduhr-haelt .shops-sanduhr-sand rect,
+.ninjos-shops.shops-schau-pergament .shops-sanduhr-haelt .shops-sanduhr-fassung rect { fill: #9c9384; }
+
+/*
+ * **Im Hellen trägt ein Verlauf keine Schrift.** Dunkle Tinte auf einem hellen
+ * Schleier über einem bunten Bild wird matschig — der Ladenname war kaum zu
+ * lesen und der Händlername gar nicht. Der Titelblock bekommt deshalb eine
+ * eigene Fläche statt eines Verlaufs: ein Zettel, der auf dem Bild liegt.
+ * Im Dunkeln braucht es das nicht, dort steht Weiß auf einem dunklen Verlauf.
+ */
+.ninjos-shops.shops-schau-pergament .shops-schau-kopf::after {
+  background: linear-gradient(to top, rgba(230, 217, 189, .55), rgba(230, 217, 189, .12));
+}
+
+.ninjos-shops.shops-schau-pergament .shops-schau-titel {
+  padding: clamp(.5rem, 1.4vh, 1rem) clamp(.7rem, 1.6vw, 1.3rem);
+  background-color: rgba(248, 242, 226, .93);
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+  border: 1px solid rgba(140, 118, 74, .35);
+  border-radius: 9px;
+  box-shadow: 0 3px 14px rgba(50, 38, 18, .28);
+}
+
+.ninjos-shops.shops-schau-pergament .shops-schau-titel h1 {
+  color: #2b2318;
+  text-shadow: none;
+}
+.ninjos-shops.shops-schau-pergament .shops-schau-gruss { color: #4a4032; }

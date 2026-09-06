@@ -76,6 +76,7 @@ function schichtHolen() {
   schicht = document.createElement("div");
   schicht.id = `${MODULE_ID}-schau`;
   schicht.className = "ninjos-shops shops-schau";
+  lichtSetzen(schicht);
   document.body.append(schicht);
 
   /*
@@ -91,6 +92,18 @@ function schichtHolen() {
     document.addEventListener("keydown", escapeHoren, { capture: true });
   }
   return schicht;
+}
+
+/** Dunkel oder Pergament - der Raum entscheidet, nicht das Modul. */
+function lichtSetzen(el) {
+  const licht = game.settings.get(MODULE_ID, SETTINGS.SCHAU_LICHT) ?? "dunkel";
+  el.classList.toggle("shops-schau-pergament", licht === "pergament");
+}
+
+/** Nach einer Aenderung der Helligkeit dasselbe Bild neu zeichnen. */
+export function schauNeuZeichnen() {
+  if (!schicht?.isConnected) return;
+  lichtSetzen(schicht);
 }
 
 function escapeHoren(ereignis) {

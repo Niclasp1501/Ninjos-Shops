@@ -46,6 +46,20 @@ function einstellungenEinrichten() {
     default: false
   });
 
+  game.settings.register(MODULE_ID, SETTINGS.SCHAU_LICHT, {
+    name: "SHOPS.Einstellung.SchauLicht.Name",
+    hint: "SHOPS.Einstellung.SchauLicht.Hinweis",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      dunkel: "SHOPS.Einstellung.SchauLicht.Dunkel",
+      pergament: "SHOPS.Einstellung.SchauLicht.Pergament"
+    },
+    default: "dunkel",
+    onChange: () => import("./schau.js").then(s => s.schauNeuZeichnen())
+  });
+
   game.settings.register(MODULE_ID, SETTINGS.BLAETTERTAKT, {
     name: "SHOPS.Einstellung.Blaettertakt.Name",
     hint: "SHOPS.Einstellung.Blaettertakt.Hinweis",

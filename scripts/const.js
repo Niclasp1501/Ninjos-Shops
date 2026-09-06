@@ -72,6 +72,15 @@ export const SETTINGS = {
   BLAETTERTAKT: "blaettertakt",
 
   /**
+   * Wie die Schauansicht leuchtet: `"dunkel"` oder `"pergament"`.
+   *
+   * Ein dunkler Schirm blendet im abgedunkelten Wohnzimmer nicht - ein heller
+   * ist auf einem Fernseher bei Tageslicht besser zu lesen. Beides ist
+   * richtig, je nach Raum, und der Raum kennt nur der Tisch.
+   */
+  SCHAU_LICHT: "schauLicht",
+
+  /**
    * Monitore, wenn die In-Person Tools nicht da sind. Sind sie da, gewinnt
    * deren Antwort - siehe KONZEPT-shops.md, Abschnitt 3.
    */

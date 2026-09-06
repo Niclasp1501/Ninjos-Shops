@@ -516,6 +516,27 @@ Arbeitsspeicher genau der Verbindung, die sie aufgenommen hat. Der zweite Tab
 derselben Spielleitung sieht im Verhandlungsfenster nichts. Das ist die
 Theke — an ihr steht einer.
 
+## Papier, nicht Weiß
+
+Die erste Palette war sauberes Weiß auf hellem Grau — richtig für eine
+Anwendung, falsch für einen Laden in einer Fantasiewelt. Papier ist nie weiß:
+Es ist warm, es hat eine Faser, und was darauf steht, ist Tinte und nicht
+Schwarz. Die Tokens am Ende von `shops.css` ersetzen deshalb die von oben.
+
+**Die Faser kommt ohne Bild.** Ein `feTurbulence`-Rauschen als Daten-URI wiegt
+dreihundert Zeichen; ein Pergamentfoto wären hundert Kilobyte, die auf jedem
+Bildschirm anders aussehen. Entscheidend ist, **wo** es liegt: als
+`background-image` mit `background-blend-mode: multiply` im Hintergrund, nicht
+als Schicht über dem Inhalt. Über dem Inhalt läge das Rauschen auch auf der
+Schrift.
+
+**Im Hellen trägt ein Verlauf keine Schrift.** Die Schauansicht lässt sich
+zwischen Dunkel und Pergament umstellen, und im hellen Modus war der Ladenname
+über dem bunten Kopfbild kaum zu lesen: dunkle Tinte auf einem hellen Schleier
+über einem Bild wird matschig. Der Titelblock bekommt dort eine eigene Fläche —
+ein Zettel, der auf dem Bild liegt. Im Dunkeln braucht es das nicht, dort steht
+Weiß auf einem dunklen Verlauf.
+
 ## Die Schauansicht: eine Uhr, viele Schirme
 
 Der Bildschirm an der Wand ist der Grund, aus dem dieses Modul eigenständig

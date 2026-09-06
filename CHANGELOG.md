@@ -121,6 +121,15 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Papier statt Weiß.** Die Fenster stehen jetzt auf Pergament: wärmerer
+  Grund, Ränder wie gezogene Linien, Schrift in Tinte statt in Schwarz — und
+  eine feine Faser im Hintergrund. Die kommt ohne Bild aus, als Rauschen im
+  Hintergrund und nicht als Schicht über dem Inhalt, damit die Schrift glatt
+  bleibt.
+- **Die Schauansicht lässt sich hell oder dunkel stellen**
+  (Moduleinstellungen → „Schauansicht: Helligkeit"). Dunkel blendet im
+  abgedunkelten Zimmer nicht, Pergament liest sich auf einem Fernseher bei
+  Tageslicht besser. Welcher Raum es ist, weiß nur der Tisch.
 - **Das Spielerfenster hat einen Auftritt bekommen.** Das Warenbild ist von 34
   auf 56 Pixel gewachsen — dasselbe Bild ist in der Schauansicht der
   Hauptdarsteller. Preise tragen jetzt das Gold der Schauansicht, der
