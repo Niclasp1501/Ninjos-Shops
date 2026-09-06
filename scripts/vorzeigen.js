@@ -88,6 +88,16 @@ export async function ladenSchliessen(ladenUuid, userIds = "alle") {
   const an = ziele.map(u => u.id);
   for (const u of ziele) await flagSetzen(u, null);
 
+  /*
+   * Wer den Laden zumacht, macht auch die Kaufwuensche darin zu. Ein Ja auf
+   * einen Kauf in einem geschlossenen Laden waere sonst noch moeglich, und
+   * der Spieler haette laengst nicht mehr davorgestanden.
+   */
+  if (userIds === "alle") {
+    const { freigabenWegraeumen } = await import("./freigabe.js");
+    freigabenWegraeumen(ladenUuid);
+  }
+
   const empfaenger = an.length ? an : (userIds === "alle" ? "alle" : userIds);
   const payload = { typ: SOCKET.SCHLIESSEN, ladenUuid, an: empfaenger };
   game.socket.emit(SOCKET.NAME, payload);
