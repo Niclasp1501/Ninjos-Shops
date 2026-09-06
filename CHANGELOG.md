@@ -5,6 +5,19 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
 ## [Unveröffentlicht]
 
+### Hinzugefügt (Veröffentlichung)
+- **`LICENSE`** — proprietär, nicht quelloffen: Nutzung am eigenen Tisch
+  ausdrücklich erlaubt, Weitergabe nicht. Die Richtung ist eine Einbahnstraße —
+  von proprietär lässt sich später jederzeit auf MIT umstellen, umgekehrt nie.
+  Darin auch die **Namensnennung für Font Awesome**: `assets/laden.svg` enthält
+  deren `scale-balanced`-Pfad unter CC BY 4.0, und anders als die übrigen Module,
+  die Font Awesome nur über CSS-Klassen nutzen, verteilt dieses ihn mit.
+- **Release-Workflow.** Ein `v*`-Tag baut das Zip, legt das GitHub-Release an
+  und meldet es Foundry. Er **bricht ab, wenn Tag und `module.json` auseinander
+  laufen** — Foundry richtet sich nach der Nummer im Manifest, ein Release mit
+  falschem Tag käme bei niemandem an und niemand würde es merken.
+- `.gitattributes` — feste Zeilenenden.
+
 ### Geändert (Name)
 - **Das Modul heißt jetzt „Ninjo's Shops & Trade".** Der Handel mit Leuten ohne
   Laden ist fertig, in beide Richtungen, und ist keine Nebenfunktion — wer ein

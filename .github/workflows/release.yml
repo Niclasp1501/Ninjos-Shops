@@ -1,0 +1,62 @@
+# Ein Tag `v14.2609.40` baut das Zip, legt das Release an und meldet es Foundry.
+#
+# **Die Version steht in der module.json, nicht im Tag.** Der Tag löst nur aus.
+# Der Schritt „Tag und Manifest vergleichen" bricht ab, wenn beide auseinander
+# laufen: Foundry bietet ein Update anhand der Nummer *im Manifest* an, und ein
+# Release `v14.2609.40`, in dem `14.2609.39` steckt, wäre für jeden Nutzer
+# unsichtbar — ohne Fehlermeldung, an der man es merkt.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code holen
+        uses: actions/checkout@v4
+
+      - name: Tag und Manifest vergleichen
+        run: |
+          MANIFEST=$(jq -r .version module.json)
+          TAG="${GITHUB_REF_NAME#v}"
+          echo "module.json: $MANIFEST · Tag: $TAG"
+          if [ "$MANIFEST" != "$TAG" ]; then
+            echo "::error::module.json sagt $MANIFEST, der Tag sagt $TAG. Foundry richtet sich nach dem Manifest — dieses Release käme bei niemandem an."
+            exit 1
+          fi
+
+      # Was im Zip landet, ist genau das, was die Auslieferung auch auf den
+      # eigenen Server schiebt (tools/deploy-shops.ps1). Konzept, Agentennotizen
+      # und Werkzeuge gehören in das Repository, nicht in die Installation.
+      - name: Modularchiv bauen
+        run: |
+          zip -r ./module.zip \
+            module.json LICENSE README.md CHANGELOG.md \
+            scripts styles templates lang assets
+
+      - name: Release anlegen
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            module.json
+            module.zip
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+
+      # Ohne diesen Schritt läuft der Server auf einer Nummer, die es
+      # öffentlich nicht gibt: Niemand bekommt das Update angeboten.
+      - name: Foundry Bescheid geben
+        uses: cs96and/FoundryVTT-release-package@v1
+        with:
+          package-token: ${{ secrets.PACKAGE_TOKEN }}
+          manifest-url: https://github.com/Niclasp1501/Ninjos-Shops/releases/download/${{ github.ref_name }}/module.json

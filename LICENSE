@@ -1,0 +1,53 @@
+Ninjo's Shops & Trade
+Copyright (c) 2026 Ninjo. All rights reserved.
+
+This software is NOT open source. It is distributed free of charge through the
+Foundry Virtual Tabletop package listing and this project's GitHub releases,
+but the author retains all rights not granted below.
+
+
+WHAT YOU MAY DO
+
+  * Install and use this module in your own Foundry Virtual Tabletop worlds,
+    for private or commercial play. Running paid games with it is fine.
+  * Keep copies for backup.
+  * Modify it for use at your own table.
+
+WHAT YOU MAY NOT DO WITHOUT WRITTEN PERMISSION FROM THE AUTHOR
+
+  * Redistribute it, in whole or in part, modified or unmodified. Point people
+    at the package listing or the releases page instead of handing out copies.
+  * Publish it under another name, or bundle it into another package.
+  * Sell it, or include it in anything that is sold.
+
+
+CONTRIBUTIONS
+
+Bug reports and pull requests are welcome. By submitting a contribution you
+agree that the author may use it under these terms and under any other terms
+he later chooses for this project, including a more permissive licence.
+
+
+NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+THIRD-PARTY MATERIAL
+
+  assets/laden.svg contains the "scale-balanced" icon from Font Awesome Free
+  (https://fontawesome.com), used under CC BY 4.0
+  (https://creativecommons.org/licenses/by/4.0/).
+
+  Changes: the path was extracted into a standalone SVG file, `fill` was set to
+  `currentColor`, and an explanatory comment was added. The icon's own licence
+  applies to that file and is not affected by the terms above.
+
+  Everything else the module draws on -- Font Awesome glyphs used through CSS
+  classes, and item images -- is provided by Foundry Virtual Tabletop or the
+  game system at runtime and is not redistributed here.
