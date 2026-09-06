@@ -266,6 +266,7 @@
   "SHOPS.Handel.NichtsDabei": "This person carries nothing that could be traded.",
   "SHOPS.Handel.NichtsGewaehlt": "Nothing ticked, and nobody allowed to offer anything.",
   "SHOPS.Handel.NiemandGewaehlt": "Who is it for?",
+  "SHOPS.Handel.NiemandDa": "Nobody with an assigned character is online — only those players can be handed something.",
   "SHOPS.Handel.NichtMehrDa": "That is not there any more.",
   "SHOPS.Handel.Verschickt": "Laid out for {anzahl} — from {person}.",
   "SHOPS.Handel.Starten": "Offer a trade",

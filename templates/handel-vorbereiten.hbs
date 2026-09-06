@@ -17,17 +17,20 @@
 
   <section class="shops-block">
     <h3>{{localize "SHOPS.Handel.AnWen"}}</h3>
+    {{!-- Hier stehen nur Leute, die gerade da sind und eine Figur führen —
+          alle anderen könnten das Hingelegte gar nicht nehmen. Deshalb auch
+          kein grüner Punkt mehr: Er stünde an jeder Zeile und sagte nichts. --}}
     <ul class="shops-zugriffsliste">
       {{#each spieler}}
         <li>
           <label>
             <input type="checkbox" data-feld="spieler" value="{{id}}">
             <span class="shops-spielername">{{name}}</span>
-            {{#if figur}}<em class="shops-handel-figur">{{figur}}</em>{{/if}}
-            {{#if aktiv}}<i class="fa-solid fa-circle shops-online"
-                            title="{{localize 'SHOPS.Zugriff.Angemeldet'}}"></i>{{/if}}
+            <em class="shops-handel-figur">{{figur}}</em>
           </label>
         </li>
+      {{else}}
+        <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NiemandDa"}}</li>
       {{/each}}
     </ul>
   </section>

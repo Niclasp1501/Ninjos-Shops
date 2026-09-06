@@ -27,6 +27,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Bestand: Was weg ist, verschwindet, und was nur teilweise weg ist, steht mit
   der Zahl da, die noch stimmt. Das gilt auch, wenn die Spielleitung dem NSC
   von Hand etwas abnimmt.
+- **„An wen" zeigt nur noch, wem sich etwas hinlegen lässt** — angemeldete
+  Spieler mit zugeordneter Figur. Ohne Figur bricht das Nehmen ohnehin mit
+  „Du führst keine Figur" ab, das Angebot läge also bei jemandem, der es nicht
+  annehmen kann; damit fallen auch die Monitor-Benutzer heraus. Vorher standen
+  acht Zeilen da, von denen eine gemeint war. Die Sonderangebote filtern seit
+  jeher so.
 - **Eine Fußleiste im Handelsfenster statt zweier.** „Danke, nein" und „Ich
   hätte da auch etwas" standen in getrennten Kästen untereinander, und der
   Hinweistext daneben wurde auf schmalen Fenstern abgeschnitten.

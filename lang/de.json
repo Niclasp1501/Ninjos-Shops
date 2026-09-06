@@ -266,6 +266,7 @@
   "SHOPS.Handel.NichtsDabei": "Diese Person hat nichts, was sich handeln ließe.",
   "SHOPS.Handel.NichtsGewaehlt": "Nichts angehakt und niemand, der etwas anbieten darf.",
   "SHOPS.Handel.NiemandGewaehlt": "An wen soll es gehen?",
+  "SHOPS.Handel.NiemandDa": "Gerade ist niemand da, der eine Figur führt — nur solchen Spielern lässt sich etwas hinlegen.",
   "SHOPS.Handel.NichtMehrDa": "Das liegt nicht mehr da.",
   "SHOPS.Handel.Verschickt": "Hingelegt bei {anzahl} — von {person}.",
   "SHOPS.Handel.Starten": "Handel anbieten",

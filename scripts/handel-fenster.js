@@ -65,10 +65,23 @@ export class HandelVorbereiten extends HandlebarsApplicationMixin(ApplicationV2)
     return Object.assign(ctx, {
       personName: this.#person.name,
       personBild: this.#person.prototypeToken?.texture?.src || this.#person.img,
-      spieler: game.users.filter(u => !u.isGM).map(u => ({
-        id: u.id, name: u.name, aktiv: u.active,
-        figur: u.character?.name ?? null
-      })),
+
+      /*
+       * Nur, wer etwas nehmen koennte.
+       *
+       * **Ohne Figur geht es nicht.** `postenNehmen` bricht mit „Du fuehrst
+       * keine Figur" ab - das Angebot laege bei jemandem, der es gar nicht
+       * annehmen kann. Damit fallen auch die Bildschirme an der Wand heraus:
+       * Ein Monitor ist ein Zuschauer, kein Empfaenger.
+       *
+       * **Und nur, wer da ist**, wie schon bei den Sonderangeboten
+       * (`angebot.js`, das seit jeher `u.active` filtert). Ein Handel ist ein
+       * Gespraech; wer nicht am Tisch sitzt, fuehrt keines. Vorher standen
+       * acht Zeilen da, von denen eine gemeint war.
+       */
+      spieler: game.users
+        .filter(u => !u.isGM && u.active && u.character)
+        .map(u => ({ id: u.id, name: u.name, figur: u.character.name })),
       waren: this.#person.items
         .filter(i => handelbar.has(i.type))
         .map(i => ({
