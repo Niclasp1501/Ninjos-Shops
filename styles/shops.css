@@ -993,16 +993,27 @@
 
 .ninjos-shops .shops-banner .shops-leer { color: rgba(255, 255, 255, 0.7); }
 
+/*
+ * Das Zahnrad muss auf **jedem** Bild zu finden sein. Vorher war es ein
+ * dunkler, halbdurchsichtiger Kasten mit blassem Rand - auf einem dunklen
+ * Ladeninneren praktisch unsichtbar, und es ist der einzige Weg zu den
+ * Einstellungen. Gold fuellt jetzt die Flaeche und traegt das Rot des Hauses;
+ * das steht auf hellen wie auf dunklen Bildern.
+ */
 .ninjos-shops .shops-banner .shops-zahnrad {
   position: relative;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.35);
-  border-color: rgba(255, 255, 255, 0.35);
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  color: var(--shops-rot);
+  background: var(--shops-gold);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
 .ninjos-shops .shops-banner .shops-zahnrad:hover {
-  color: var(--shops-rot);
-  background: var(--shops-gold);
+  color: var(--shops-kopftext);
+  background: var(--shops-rot);
   border-color: var(--shops-gold);
 }
 

@@ -138,6 +138,34 @@ function verzeichnisKnopf(app, element) {
   ziel.append(leiste);
 }
 
+/**
+ * Im Verzeichnis steht das **Tokenbild**, nicht das Kopfbild.
+ *
+ * Die Seitenleiste zeigt `actor.img`, und das ist bei einem Laden seit dem
+ * Kopfbild ein breites Bild des Ladeninneren. Auf ein Quadrat von 32 Pixeln
+ * gequetscht ergibt das einen Farbfleck, an dem sich kein Laden mehr erkennen
+ * laesst - waehrend das Tokenbild genau dafuer gemacht ist.
+ *
+ * Getauscht wird nur die Anzeige. Das Dokument bleibt unberuehrt: `img` ist
+ * und bleibt das Kopfbild, sonst haetten Bogen und Spielerfenster nichts mehr
+ * zu zeigen.
+ */
+function verzeichnisBilder(app, element) {
+  const wurzel = element instanceof HTMLElement ? element : element?.[0];
+  if (!wurzel) return;
+
+  for (const eintrag of wurzel.querySelectorAll("[data-entry-id]")) {
+    const laden = game.actors.get(eintrag.dataset.entryId);
+    if (laden?.type !== LADEN_TYP) continue;
+
+    const bild = laden.prototypeToken?.texture?.src;
+    if (!bild) continue;
+
+    const feld = eintrag.querySelector("img");
+    if (feld && feld.getAttribute("src") !== bild) feld.setAttribute("src", bild);
+  }
+}
+
 /* ── Eintrag in der Leiste der In-Person Tools ─────────────────────── */
 
 /**
@@ -205,6 +233,7 @@ function szenenWerkzeug(steuerungen) {
 export function zugaengeHaken() {
   Hooks.on("getSceneControlButtons", szenenWerkzeug);
   Hooks.on("renderActorDirectory", verzeichnisKnopf);
+  Hooks.on("renderActorDirectory", verzeichnisBilder);
   Hooks.on("renderApplicationV2", inPersonKnopf);
 }
 

@@ -90,6 +90,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   statt einer Ladenmarkise.
 
 ### Behoben
+- **Der Einstellungsknopf war auf dunklen Kopfbildern nicht zu finden** — ein
+  dunkler, halbdurchsichtiger Kasten mit blassem Rand, und dabei der einzige Weg
+  zu den Einstellungen. Jetzt gold gefüllt mit dem Rot des Hauses.
+- **Im Akteursverzeichnis stand das Kopfbild.** Ein breites Ladeninneres auf ein
+  Quadrat von 32 Pixeln gequetscht ist ein Farbfleck; dort steht jetzt das
+  Tokenbild. Getauscht wird nur die Anzeige — `img` bleibt das Kopfbild.
 - **Das Kopfbild ließ sich nicht wählen.** Die Vorschau war ein `<div>` mit
   Hintergrundbild, und Foundrys Aktion `editImage` wirft bei allem, was kein
   `<img>` ist — der Klick tat also schlicht nichts. Jetzt ein Bildelement, der
