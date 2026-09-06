@@ -2929,3 +2929,226 @@
   border-radius: 6px;
 }
 .ninjos-shops .shops-monitor-fremd i { color: var(--shops-gold); margin-right: 5px; }
+
+/* ══ Das Spielerfenster: es wird darin eingekauft, nicht gearbeitet ═══
+ *
+ * **Warum es überarbeitet wurde.** Neben der Schauansicht sah es aus wie ein
+ * Formular: das Warenbild 34 Pixel klein, während dasselbe Bild an der Wand
+ * der Hauptdarsteller ist; vier gefüllte rote Knöpfe untereinander; und eine
+ * Zeile, die in der Mitte auseinanderfiel.
+ *
+ * Der Ladenbogen bleibt eine Werkbank — dort wird eingetragen und geändert,
+ * und Dichte ist dort richtig. Hier nicht: Hier sieht jemand ein Regal an.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+/* Das Stück ist der Hauptdarsteller, nicht die Zeile, in der es steht. */
+.ninjos-shops .shops-spieler-ware > li.shops-zeile {
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.ninjos-shops .shops-spieler-ware > li.shops-zeile > img,
+.ninjos-shops .shops-verkauf-liste > li.shops-zeile > img {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 7px;
+  border: 1px solid var(--shops-rand);
+  background: var(--shops-nav);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+  cursor: zoom-in;
+  transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+
+.ninjos-shops .shops-spieler-ware > li.shops-zeile:hover > img {
+  transform: scale(1.04);
+  border-color: var(--shops-gold);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .2);
+}
+
+.ninjos-shops .shops-spieler-ware .shops-warenname {
+  font-size: 1.02rem;
+  cursor: zoom-in;
+}
+
+.ninjos-shops .shops-spieler-ware .shops-warenname:hover { color: var(--shops-rot); }
+
+/*
+ * Der Preis trägt das Gold der Schauansicht — auf hellem Grund eine Stufe
+ * dunkler, sonst ist er nicht zu lesen.
+ */
+.ninjos-shops .shops-spieler-ware .shops-preis,
+.ninjos-shops .shops-verkauf-liste .shops-preis {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #8a6d16;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * **Ein ruhiger Kaufknopf.** Vier gefüllte rote Blöcke untereinander sind
+ * viermal dasselbe Signal; wenn jede Zeile schreit, hört man keine. Der Knopf
+ * steht in Tinte auf Weiß und füllt sich erst, wenn man ihn meint.
+ */
+.ninjos-shops .shops-spieler-ware .shops-kaufen:not([disabled]) {
+  color: var(--shops-text);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-bottom: 2px solid rgba(0, 0, 0, .12);
+  transition: background .12s, color .12s, border-color .12s;
+}
+
+.ninjos-shops .shops-spieler-ware .shops-kaufen:not([disabled]) i { color: var(--shops-rot); }
+
+.ninjos-shops .shops-spieler-ware .shops-kaufen:not([disabled]):hover,
+.ninjos-shops .shops-spieler-ware .shops-kaufen:not([disabled]):focus-visible {
+  color: #fff;
+  background: var(--shops-rot);
+  border-color: var(--shops-rot);
+}
+.ninjos-shops .shops-spieler-ware .shops-kaufen:not([disabled]):hover i,
+.ninjos-shops .shops-spieler-ware .shops-kaufen:not([disabled]):focus-visible i { color: #fff; }
+
+/* Was zu teuer ist, bleibt rot — das ist eine Warnung und keine Handlung. */
+.ninjos-shops .shops-spieler-ware .shops-kaufen.shops-knapp:not([disabled]) {
+  color: var(--shops-rot);
+  border-color: var(--shops-rot);
+}
+
+/* Der Bestand ist eine Nebenangabe und muss nicht so laut sein wie der Preis. */
+.ninjos-shops .shops-spieler-ware .shops-menge { color: var(--shops-text-blass); }
+
+/* ── Die Börse als Münzreihe ──────────────────────────────────────── */
+
+/*
+ * Vorher stand dort „9 PM 968 GM 0 EM 9 SM 0 KM" — zwei Nullen mitten in der
+ * eigenen Habe. Leere Sorten fallen jetzt weg; die übrigen stehen als Chips,
+ * damit man die Zahl vom Kürzel unterscheiden kann.
+ */
+.ninjos-shops .shops-boerse-muenze {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .25em;
+  padding: 2px 9px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 999px;
+}
+
+.ninjos-shops .shops-boerse-muenzen { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* ── Die Nahansicht ───────────────────────────────────────────────── */
+
+.ninjos-shops .shops-ansehen-kopf {
+  display: flex;
+  gap: 16px;
+  padding: 16px 18px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-ansehen-kopf > img {
+  flex: 0 0 108px;
+  width: 108px;
+  height: 108px;
+  object-fit: contain;
+  padding: 6px;
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 9px;
+}
+
+.ninjos-shops .shops-ansehen-kopf > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/*
+ * **Die Farbe muss stehen.** Foundry setzt Überschriften hell — auf dem
+ * hellen Kopf der Nahansicht stand der Name damit weiß auf weiß und war
+ * schlicht nicht da. Dieselbe Falle wie bei den Knöpfen früher: Was von außen
+ * gefärbt wird, färbt man selbst.
+ */
+.ninjos-shops .shops-ansehen-kopf h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  color: var(--shops-text);
+  text-shadow: none;
+  border: none;
+}
+
+.ninjos-shops .shops-ansehen-hinweis {
+  margin: 0;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-ansehen-zahlen {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.ninjos-shops .shops-ansehen-preis {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #8a6d16;
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-ansehen-bestand {
+  font-size: .85rem;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-ansehen-text {
+  padding: 14px 18px;
+  max-height: 22rem;
+  overflow-y: auto;
+  line-height: 1.55;
+}
+
+.ninjos-shops .shops-ansehen-text :first-child { margin-top: 0; }
+.ninjos-shops .shops-ansehen-text :last-child { margin-bottom: 0; }
+
+.ninjos-shops .shops-ansehen-fuss {
+  display: flex;
+  padding: 12px 18px;
+  border-top: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-ansehen-fuss .shops-kaufen { flex: 1 1 auto; justify-content: center; }
+
+/* ── Wer nichts zu verkaufen hat, braucht dafür keinen halben Bildschirm ──
+ *
+ * Der leere Hinweiskasten unter „Was du loswerden kannst" war so hoch wie
+ * zwei Warenkarten. Mit den größeren Bildern wurde daraus ein echtes Problem:
+ * Von zehn Stücken im Regal waren zweieinhalb zu sehen. Ein Satz genügt.
+ */
+.ninjos-shops .shops-verkauf .shops-leer.shops-hinweisfeld {
+  margin: 0 18px 10px;
+  padding: 7px 12px;
+  font-size: .84rem;
+  border-style: solid;
+  border-color: var(--shops-rand);
+  border-radius: 6px;
+  background: var(--shops-nav);
+}
+
+/* Und die Auslage bekommt, was übrig bleibt — sie ist der Grund des Fensters. */
+.ninjos-shops .shops-spieler-auslage {
+  flex: 1 1 auto;
+  min-height: 12rem;
+}
+
+.ninjos-shops .shops-verkauf { flex: 0 1 auto; }
+
+/* Der Kopf darf etwas flacher sein, wenn das Fenster niedrig ist. */
+.ninjos-shops .shops-spieler .shops-kopfbild { max-height: 26vh; }

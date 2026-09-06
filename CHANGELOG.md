@@ -56,6 +56,11 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Ware aus der Nähe ansehen.** Ein Klick auf Bild oder Namen im
+  Spielerfenster öffnet das Stück groß, mit seiner ganzen Beschreibung und
+  einem Kaufknopf. Vorher gab es dorthin keinen Weg: Die Beschreibung steht am
+  Gegenstand, und der gehört dem Laden — ein Spieler kann seinen Bogen nicht
+  öffnen.
 - **Die Schauansicht** — der Laden auf dem Bildschirm an der Wand. Vollbild
   ohne Fensterrahmen, sechs Karten je Seite, Name in Versalien, Preis in Gold,
   ein Fortschrittsbalken am unteren Rand. Nichts daran lässt sich anklicken:
@@ -116,6 +121,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Das Spielerfenster hat einen Auftritt bekommen.** Das Warenbild ist von 34
+  auf 56 Pixel gewachsen — dasselbe Bild ist in der Schauansicht der
+  Hauptdarsteller. Preise tragen jetzt das Gold der Schauansicht, der
+  Kaufknopf steht ruhig da und füllt sich erst, wenn man ihn meint (vier
+  gefüllte rote Blöcke untereinander waren viermal dasselbe Signal), und die
+  Börse zeigt nur die Münzen, die man wirklich hat.
 - **Der Verkäufer steht mit seinem Tokenbild im Kopf der Schauansicht** — rund,
   mit goldenem Rand. Das Tokenbild und nicht das Bogenbild: Der Bogen trägt
   oft ein Brustbild im Hochformat, das Token ist der Kopf, wie er am Tisch

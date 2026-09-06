@@ -280,5 +280,8 @@
   "SHOPS.Monitor.Sichern": "Remember",
   "SHOPS.Monitor.Gesichert": "{anzahl} remembered as displays.",
   "SHOPS.Schau.Ausweg": "Escape closes this view",
-  "SHOPS.Schau.Sanduhr": "Hourglass: how long this page still stands"
+  "SHOPS.Schau.Sanduhr": "Hourglass: how long this page still stands",
+  "SHOPS.Ansehen.Titel": "A closer look",
+  "SHOPS.Ansehen.Knopf": "Take a closer look",
+  "SHOPS.Ansehen.KeineBeschreibung": "Nothing further is written about this piece."
 }

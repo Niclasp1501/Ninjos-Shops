@@ -55,6 +55,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     },
     actions: {
       kaufen: SpielerFenster.#kaufen,
+      wareAnsehen: SpielerFenster.#wareAnsehen,
       verkaufen: SpielerFenster.#verkaufen,
       anfrageStellen: SpielerFenster.#anfrage,
       ladenbuch: SpielerFenster.#ladenbuch,
@@ -169,14 +170,36 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   #boerseAufbereiten(figur) {
     if (!figur) return null;
     const geld = figur.system?.currency ?? {};
-    return Object.keys(KUPFERWERT).map(sorte => ({
+    /*
+     * **Leere Sorten fallen weg.** Vorher stand dort „9 PM 968 GM 0 EM 9 SM
+     * 0 KM" - zwei Nullen mitten in der eigenen Habe, die man jedes Mal
+     * ueberlesen muss. Wer nichts in Elektrum hat, hat kein Elektrum.
+     */
+    const alle = Object.keys(KUPFERWERT).map(sorte => ({
       sorte, kuerzel: kuerzel(sorte), wert: Number(geld[sorte] ?? 0) || 0
     }));
+    const gefuellt = alle.filter(m => m.wert > 0);
+    // Ganz ohne Geld bleibt eine Null stehen, sonst waere die Zeile leer.
+    return gefuellt.length ? gefuellt : [alle.find(m => m.sorte === "gp")];
   }
 
   /* ── Aktionen ────────────────────────────────────────────────────── */
 
   /** Kaufen: fragt nach, dann geht die Bitte an die Spielleitung. */
+  /**
+   * Ein Stueck aus der Naehe ansehen.
+   *
+   * Der Weg, den es bisher nicht gab: Wer wissen will, was ein Stueck kann,
+   * hat im Regal nur eine Zeile. Die Beschreibung steht am Gegenstand - und
+   * der gehoert dem Laden, also kann der Spieler seinen Bogen nicht oeffnen.
+   */
+  static async #wareAnsehen(ereignis, ziel) {
+    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    if (!itemId) return;
+    const { wareAnsehen } = await import("./ware-ansehen.js");
+    wareAnsehen(this.#laden, itemId);
+  }
+
   static async #kaufen(ereignis, ziel) {
     const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
     const item = this.#laden.items.get(itemId);
@@ -340,11 +363,26 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     game.socket.emit(SOCKET.NAME, bitte);
   }
 
+  /** Dieselbe Bitte wie der Knopf im Regal, von aussen aufrufbar. */
+  kaufenVon(item) { return this.#bitteSenden(item, 1, null); }
+
   /** @override */
   async close(options = {}) {
     if (offen === this) offen = null;
     return super.close(options);
   }
+}
+
+/**
+ * Von aussen kaufen - aus dem Ansehen-Fenster heraus.
+ *
+ * Es geht durch dieselbe Tuer wie der Knopf im Regal: derselbe Dialog,
+ * dieselbe Bitte, dieselbe Pruefung bei der Spielleitung.
+ */
+export function spielerFensterKaufen(itemId) {
+  const item = offen?.laden?.items?.get(itemId);
+  if (!item) return;
+  offen.kaufenVon(item);
 }
 
 /** Spielerfenster oeffnen. Ein zweites ersetzt das erste. */

@@ -85,9 +85,13 @@
         {{#each ware}}
           <li class="shops-zeile {{#if ausverkauft}}shops-ausverkauft{{/if}} {{#if dienst}}shops-dienst{{/if}}"
               data-item-id="{{id}}">
-            <img src="{{img}}" alt="">
+            {{!-- Bild und Name führen zur Nahansicht: Wer sich für etwas
+                  interessiert, will es größer sehen und lesen, was es kann. --}}
+            <img src="{{img}}" alt="" data-action="wareAnsehen"
+                 title="{{localize 'SHOPS.Ansehen.Knopf'}}">
             <div class="shops-name">
-              <span class="shops-warenname">
+              <span class="shops-warenname" data-action="wareAnsehen"
+                    title="{{localize 'SHOPS.Ansehen.Knopf'}}">
                 {{name}}
                 {{#if dienst}}
                   <i class="fa-solid fa-handshake" title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>

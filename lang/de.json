@@ -280,5 +280,8 @@
   "SHOPS.Monitor.Sichern": "Merken",
   "SHOPS.Monitor.Gesichert": "{anzahl} als Monitor gemerkt.",
   "SHOPS.Schau.Ausweg": "Escape schließt diese Ansicht",
-  "SHOPS.Schau.Sanduhr": "Sanduhr: wie lange diese Seite noch steht"
+  "SHOPS.Schau.Sanduhr": "Sanduhr: wie lange diese Seite noch steht",
+  "SHOPS.Ansehen.Titel": "Ware ansehen",
+  "SHOPS.Ansehen.Knopf": "Genauer ansehen",
+  "SHOPS.Ansehen.KeineBeschreibung": "Zu diesem Stück steht nichts weiter geschrieben."
 }
