@@ -20,6 +20,24 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   es noch gar nicht gab.
 
 ### Geändert
+- **Nur noch ein Knopf im Akteursverzeichnis.** Zwei volle Zeilen drängten dort
+  die Knöpfe anderer Module aus dem Bild — die Fußzeile gehört dem Verzeichnis
+  und nicht diesem Modul. Ab Werk steht dort das Marktbuch; „Neuer Laden" bleibt
+  wählbar, und beide Wege sind auch ohne den Knopf erreichbar. Der Knopf ist
+  außerdem nicht mehr rot, sondern zurückhaltend: Er steht in einem fremden
+  Fenster.
+- **Der Aufschlag gilt auch im Handelsfenster.** Ein Preis entsteht im Modul an
+  neun Stellen; acht rechneten mit dem Aufschlag, diese eine nannte den blanken
+  Grundpreis. Wer einer Händlerin mit 20 % Aufschlag Ware aus der Hand
+  verkaufen ließ, gab sie zum Einkaufspreis her. Führt die Person genau einen
+  Laden, sind die Preisfelder jetzt damit vorbelegt — und im Fenster steht,
+  woher die Zahlen kommen.
+- **Der Kauf sagt, was zurückkommt.** Wer mit einem Platinstück einen Dolch für
+  2 GM kauft, bekommt acht Gold heraus — richtig gerechnet war das immer, nur
+  sichtbar nicht. Jetzt steht es in der Meldung.
+- **Und wenn es nicht reicht, wieviel fehlt.** „Das Geld reicht nicht" ließ
+  offen, ob ein Kupferstück fehlt oder zehn Gold. Die Zahl wurde die ganze Zeit
+  mitgeschickt und nie angezeigt.
 - **Ein Angebot an mehrere Leute räumt sich selbst auf.** Wer ein einzelnes
   Stück einer ganzen Gruppe hinlegt, hatte bisher das Problem, dass es nach dem
   ersten Zugriff bei allen anderen im Fenster stehen blieb; sie klickten darauf

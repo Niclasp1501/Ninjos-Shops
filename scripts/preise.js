@@ -139,6 +139,29 @@ export function alsText(cp, kuerzel = s => s, sorten = PREIS_SORTEN) {
 }
 
 /**
+ * Was jemand herausbekommen hat, als Satz - oder `null`, wenn nichts.
+ *
+ * **Warum das ueberhaupt gesagt werden muss.** Der Beutel rechnet richtig, seit
+ * es ihn gibt: Wer mit einem Platinstueck einen Dolch fuer 2 gp kauft, zahlt
+ * und bekommt acht Gold zurueck. Nur *sah* das niemand. Am Tisch schaut ein
+ * Spieler nach dem Kauf in seinen Beutel, findet das Platinstueck weg und acht
+ * Gold mehr, und muss selbst nachrechnen, ob das stimmt. Ein Satz erspart ihm
+ * das - und macht sichtbar, dass das Modul nicht heimlich rundet.
+ *
+ * @param {object} zurueck  die `zurueck`-Haelfte aus `bezahle`
+ * @param {(sorte: string) => string} [kuerzel]
+ * @returns {?string}
+ */
+export function wechselgeldText(zurueck, kuerzel = s => s) {
+  const teile = Object.entries(zurueck ?? {}).filter(([, n]) => n > 0);
+  if (!teile.length) return null;
+  return teile
+    .sort(([a], [b]) => KUPFERWERT[b] - KUPFERWERT[a])
+    .map(([s, n]) => `${n} ${kuerzel(s)}`)
+    .join(" ");
+}
+
+/**
  * Kupfer in ein Eingabefeld zerlegen: die groesste Muenze, die glatt aufgeht.
  *
  * Der Festpreis wird intern in Kupfer gehalten - aber niemand tippt fuer eine

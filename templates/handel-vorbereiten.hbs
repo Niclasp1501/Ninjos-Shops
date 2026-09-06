@@ -38,6 +38,11 @@
   <section class="shops-block">
     <h3>
       {{localize "SHOPS.Handel.WasVorlegen"}}
+      {{!-- Woher die Zahlen im Preisfeld kommen. Ohne das liest man sie als
+            Grundpreis und wundert sich, warum sie höher stehen. --}}
+      {{#if ladenName}}
+        <em class="shops-handel-quelle">{{localize "SHOPS.Handel.AusLaden" laden=ladenName}}</em>
+      {{/if}}
       <span class="shops-handel-alle">
         <button type="button" data-action="allesWaehlen" data-wert="an">{{localize "SHOPS.Handel.Alle"}}</button>
         <button type="button" data-action="allesWaehlen" data-wert="aus">{{localize "SHOPS.Handel.Keine"}}</button>

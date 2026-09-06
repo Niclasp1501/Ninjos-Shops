@@ -127,14 +127,18 @@ function verzeichnisKnopf(app, element) {
   if (!game.user.isGM) return;
 
   /*
-   * Die Leiste steht in einem Fenster, das dem Modul nicht gehoert. Wer sein
-   * Verzeichnis aufgeraeumt haben will, schaltet sie ab - das Marktbuch
-   * bleibt ueber die Moduleinstellungen und das Menue jedes Ladenbogens
-   * erreichbar, und ein Laden laesst sich weiterhin ueber „Akteur erstellen"
-   * anlegen.
+   * **Ein Knopf, nie zwei.** Die Fusszeile gehoert dem Akteursverzeichnis und
+   * nicht diesem Modul; dort stehen auch die Knoepfe anderer Module. Zwei
+   * volle Zeilen von hier draengten sie aus dem Bild.
+   *
+   * Alte Welten haben moeglicherweise noch „beide" gespeichert. Ein
+   * unbekannter Wert faellt deshalb auf das Buch zurueck, statt beides zu
+   * zeigen - die Einstellung schreibt sich in `leisteNachziehen` einmal
+   * sauber.
    */
-  const wahl = game.settings.get(MODULE_ID, SETTINGS.VERZEICHNISLEISTE) ?? "beide";
-  if (wahl === "keine") return;
+  const gespeichert = game.settings.get(MODULE_ID, SETTINGS.VERZEICHNISLEISTE);
+  if (gespeichert === "keine") return;
+  const wahl = gespeichert === "neu" ? "neu" : "buch";
 
   const wurzel = element instanceof HTMLElement ? element : element?.[0];
   const fuss = wurzel?.querySelector(".directory-footer, .header-actions");
@@ -143,23 +147,33 @@ function verzeichnisKnopf(app, element) {
 
   const leiste = document.createElement("div");
   leiste.className = `${MODULE_ID}-verzeichnis ninjos-shops shops-verzeichnisleiste`;
-  const zeigtNeu = wahl === "beide" || wahl === "neu";
-  const zeigtBuch = wahl === "beide" || wahl === "buch";
+
+  const beschriftung = game.i18n.localize(
+    wahl === "neu" ? "SHOPS.Zugang.NeuerLaden" : "SHOPS.Marktbuch.Knopf");
 
   leiste.innerHTML = `
-    ${zeigtNeu ? `
-      <button type="button" class="shops-verzeichnis-knopf" data-tat="neu">
-        <i class="fa-solid fa-scale-balanced"></i> ${game.i18n.localize("SHOPS.Zugang.NeuerLaden")}
-      </button>` : ""}
-    ${zeigtBuch ? `
-      <button type="button" class="shops-verzeichnis-knopf shops-zweit" data-tat="buch"
-              title="${game.i18n.localize("SHOPS.Marktbuch.Knopf")}">
-        <i class="fa-solid fa-book"></i>
-        ${zeigtNeu ? "" : game.i18n.localize("SHOPS.Marktbuch.Knopf")}
-      </button>` : ""}`;
+    <button type="button" class="shops-verzeichnis-knopf" data-tat="${wahl}"
+            title="${beschriftung}">
+      <i class="fa-solid ${wahl === "neu" ? "fa-scale-balanced" : "fa-book"}"></i>
+      ${beschriftung}
+    </button>`;
   leiste.querySelector('[data-tat="neu"]')?.addEventListener("click", ladenAnlegen);
   leiste.querySelector('[data-tat="buch"]')?.addEventListener("click", marktbuchOeffnen);
   ziel.append(leiste);
+}
+
+/**
+ * Die alte Einstellung „beide" einmal auf „buch" nachziehen.
+ *
+ * Ohne das stuende in der Einstellungsliste ein Wert, den es nicht mehr gibt,
+ * und die Auswahl saehe leer aus. Laeuft nur bei der Spielleitung und nur,
+ * wenn wirklich etwas Altes dasteht.
+ */
+export async function leisteNachziehen() {
+  if (!game.user.isGM) return;
+  const wahl = game.settings.get(MODULE_ID, SETTINGS.VERZEICHNISLEISTE);
+  if (wahl === "neu" || wahl === "buch" || wahl === "keine") return;
+  await game.settings.set(MODULE_ID, SETTINGS.VERZEICHNISLEISTE, "buch");
 }
 
 /**

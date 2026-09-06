@@ -22,7 +22,7 @@
  */
 
 import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.js";
-import { grundpreisCp, preisCp, alsText } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, wechselgeldText } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { schreibeVorgang, schreibeErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
@@ -176,10 +176,17 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
     sonderpreis: giltFuerDiesenKauf
   });
 
+  // Was zurueckkam, gehoert in den Satz: Der Beutel rechnet richtig, aber
+  // sichtbar war das bisher nicht.
+  const zurueck = wechselgeldText(gezahlt.zurueck, kuerzel);
+  const satz = game.i18n.format("SHOPS.Kauf.Gelungen", {
+    menge: stueck, name: item.name, preis: alsText(summeCp, kuerzel)
+  });
+
   return {
     ok: true,
-    text: game.i18n.format("SHOPS.Kauf.Gelungen", {
-      menge: stueck, name: item.name, preis: alsText(summeCp, kuerzel)
-    })
+    text: zurueck
+      ? `${satz} ${game.i18n.format("SHOPS.Kauf.Wechselgeld", { geld: zurueck })}`
+      : satz
   };
 }

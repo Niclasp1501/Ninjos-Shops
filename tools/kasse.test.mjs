@@ -9,7 +9,7 @@
  * traegt ihn ein, bevor er ihn behebt.
  */
 
-import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, KUPFERWERT } from "../scripts/preise.js";
+import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
 import { bezahle, vermoegenCp, schreibeGut } from "../scripts/kasse.js";
 
 let gelaufen = 0, gefallen = 0;
@@ -106,6 +106,17 @@ pruefe("Eingabe bleibt unberuehrt", vorher, { gp: 5 });
 pruefe("Gutschrift ohne Elektrum",
   schreibeGut({ cp: 1 }, 250),
   { cp: 1, sp: 5, ep: 0, gp: 2, pp: 0 });
+
+/* ── Der Satz, den der Spieler nach dem Kauf liest ─────────────────── */
+
+// Genau der Fall aus dem Kopf dieser Datei: 1 pp kauft einen Dolch fuer 2 gp.
+pruefe("das Platinstueck kauft den Dolch und gibt acht Gold zurueck",
+  wechselgeldText(bezahle({ pp: 1 }, 200).zurueck), "8 gp");
+pruefe("groesste Muenze zuerst",
+  wechselgeldText({ cp: 4, gp: 8, sp: 5 }), "8 gp 5 sp 4 cp");
+pruefe("passend bezahlt sagt nichts", wechselgeldText(bezahle({ gp: 5 }, 200).zurueck), null);
+pruefe("leer bleibt leer", wechselgeldText({}), null);
+pruefe("Nullen zaehlen nicht als Wechselgeld", wechselgeldText({ gp: 0, sp: 0 }), null);
 
 /* ── Zufallsprobe: was bezahlt wurde, muss auch ankommen ───────────── */
 

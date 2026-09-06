@@ -27,6 +27,7 @@ import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 import { aufHandel } from "./handel.js";
 import { aufSchau, schauNachfuehren } from "./schau.js";
+import { alsText } from "./preise.js";
 
 /** Eingehende Socket-Nachricht verteilen. */
 async function onSocket(daten) {
@@ -96,7 +97,22 @@ export function aufAntwort({ an, ergebnis }) {
    */
   if (ergebnis.ok) ui.notifications.info(ergebnis.text);
   else if (ergebnis.grundText) ui.notifications.warn(ergebnis.grundText);
-  else ui.notifications.warn(game.i18n.localize(ergebnis.grund ?? "SHOPS.Kauf.Abgebrochen"));
+  else {
+    /*
+     * **Wieviel fehlt, stand immer schon in der Antwort** - `fehltCp` wird an
+     * drei Stellen ausgerechnet und mitgeschickt, und keine hat es je
+     * angezeigt. „Das Geld reicht nicht" beantwortet die halbe Frage: Der
+     * Spieler weiss nicht, ob ihm ein Kupferstueck fehlt oder zehn Gold, also
+     * auch nicht, ob es sich lohnt, vorher etwas zu verkaufen.
+     */
+    const grund = game.i18n.localize(ergebnis.grund ?? "SHOPS.Kauf.Abgebrochen");
+    const fehlt = Number(ergebnis.fehltCp);
+    ui.notifications.warn(
+      Number.isFinite(fehlt) && fehlt > 0
+        ? `${grund} ${game.i18n.format("SHOPS.Kauf.EsFehlt", {
+            geld: alsText(fehlt, s => game.i18n.localize(`SHOPS.Muenze.${s}`)) })}`
+        : grund);
+  }
 
   foundry.applications.instances.get(`${MODULE_ID}-spieler`)?.render(false);
 }

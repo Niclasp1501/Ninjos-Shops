@@ -9,8 +9,9 @@
  * Handel legt die Stuecke vor, die gemeint sind.
  */
 
-import { MODULE_ID } from "./const.js";
-import { grundpreisCp, alsText, KUPFERWERT } from "./preise.js";
+import { MODULE_ID, WARE } from "./const.js";
+import { grundpreisCp, preisCp, alsText, KUPFERWERT } from "./preise.js";
+import { laedenVon } from "./verknuepfung.js";
 import {
   handelSenden, eigenerHandel, postenNehmen, handelAblehnen, OFFENER_HANDEL
 } from "./handel.js";
@@ -62,7 +63,25 @@ export class HandelVorbereiten extends HandlebarsApplicationMixin(ApplicationV2)
     const handelbar = new Set(["weapon", "equipment", "consumable", "tool",
                                "loot", "container", "backpack"]);
 
+    /*
+     * **Führt diese Person einen Laden, gilt sein Aufschlag.**
+     *
+     * Ein Preis entsteht im Modul an neun Stellen, und acht davon rechnen mit
+     * `preisCp`. Diese hier war die neunte und nannte den blanken Grundpreis:
+     * Wer einer Händlerin mit 20 % Aufschlag Ware aus der Hand verkaufen liess,
+     * gab sie zum Einkaufspreis her - dasselbe Stück kostete im Regal daneben
+     * ein Fünftel mehr.
+     *
+     * Bei zwei Läden wird nicht geraten: Dann steht der Grundpreis da, und die
+     * Spielleitung entscheidet. Und es bleibt in jedem Fall eine
+     * **Vorbelegung** - jedes Feld ist überschreibbar, das ist der Sinn des
+     * Fensters.
+     */
+    const laeden = laedenVon(this.#person);
+    const laden = laeden.length === 1 ? laeden[0] : null;
+
     return Object.assign(ctx, {
+      ladenName: laden?.name ?? null,
       personName: this.#person.name,
       personBild: this.#person.prototypeToken?.texture?.src || this.#person.img,
 
@@ -84,12 +103,16 @@ export class HandelVorbereiten extends HandlebarsApplicationMixin(ApplicationV2)
         .map(u => ({ id: u.id, name: u.name, figur: u.character.name })),
       waren: this.#person.items
         .filter(i => handelbar.has(i.type))
-        .map(i => ({
-          id: i.id, name: i.name, img: i.img,
-          menge: Number(i.system?.quantity ?? 1),
-          // In Gold, weil man so spricht. Umgerechnet wird beim Absenden.
-          preisGp: (grundpreisCp(i.system?.price) / KUPFERWERT.gp) || 0
-        }))
+        .map(i => {
+          const fest = i.flags?.[MODULE_ID]?.[WARE.FESTPREIS];
+          return {
+            id: i.id, name: i.name, img: i.img,
+            menge: Number(i.system?.quantity ?? 1),
+            // In Gold, weil man so spricht. Umgerechnet wird beim Absenden.
+            preisGp: (preisCp(grundpreisCp(i.system?.price), laden?.system,
+                              Number.isFinite(fest) ? fest : null) / KUPFERWERT.gp) || 0
+          };
+        })
         .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang))
     });
   }

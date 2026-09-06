@@ -41,7 +41,7 @@
  */
 
 import { MODULE_ID, SOCKET } from "./const.js";
-import { alsText } from "./preise.js";
+import { alsText, wechselgeldText } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 
@@ -302,11 +302,16 @@ async function nehmenAusfuehren({ itemId, figurUuid, kaeuferId }) {
     was: [{ name: posten.name, menge: posten.menge }], summeCp
   });
 
+  const zurueck = wechselgeldText(gezahlt.zurueck, kuerzel);
+  const satz = game.i18n.format("SHOPS.Kauf.Gelungen", {
+    menge: posten.menge, name: posten.name, preis: alsText(summeCp, kuerzel)
+  });
+
   return {
     ok: true,
-    text: game.i18n.format("SHOPS.Kauf.Gelungen", {
-      menge: posten.menge, name: posten.name, preis: alsText(summeCp, kuerzel)
-    })
+    text: zurueck
+      ? `${satz} ${game.i18n.format("SHOPS.Kauf.Wechselgeld", { geld: zurueck })}`
+      : satz
   };
 }
 

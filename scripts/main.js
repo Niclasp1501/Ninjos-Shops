@@ -1,14 +1,14 @@
 /**
  * Einstiegsdatei.
  *
- * **Stand: Schritt 5 von 6.** Ein Laden laesst sich anlegen, fuellen,
+ * **Alle sechs Schritte stehen.** Ein Laden laesst sich anlegen, fuellen,
  * bepreisen, an Szenen binden und vorzeigen; darin wird gekauft (sofort,
  * gesperrt oder nach Freigabe), verkauft (direkt oder als Verhandlung) und
  * mitgeschrieben - in zwei Buechern. Dazu Angebote zum Sonderpreis, die
- * Verknuepfung vom Haendler zu seinem Laden und der Handel mit einer Person,
- * die gar keinen Laden hat.
+ * Verknuepfung vom Haendler zu seinem Laden, der Handel mit einer Person, die
+ * gar keinen Laden hat, in beide Richtungen, und die Schauansicht samt Bruecke
+ * zu den In-Person Tools.
  *
- * Es fehlt die Schauansicht und die Bruecke zu den In-Person Tools (6).
  * Reihenfolge und Begruendung stehen in KONZEPT-shops.md, Abschnitt 11.
  *
  * Wer hier weiterbaut, liest vorher Abschnitt 7: Die Bauweise "der
@@ -21,7 +21,7 @@ import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
 import { mcpWerkzeugeEinrichten } from "./mcp-werkzeuge.js";
 import { socketEinrichten } from "./socket.js";
-import { zugaengeHaken, zugaengeEinrichten } from "./zugaenge.js";
+import { zugaengeHaken, zugaengeEinrichten, leisteNachziehen } from "./zugaenge.js";
 import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
 import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
@@ -61,13 +61,25 @@ function einstellungenEinrichten() {
     scope: "world",
     config: true,
     type: String,
+    /*
+     * **Hoechstens ein Knopf.** „Beide" gab es einmal und ist am 06.09.2026
+     * weggefallen: Die Fusszeile des Akteursverzeichnisses gehoert nicht uns.
+     * Dort stehen die Knoepfe anderer Module - beim Tisch, an dem das auffiel,
+     * das Cheat Sheet -, und zwei volle Zeilen von hier draengten sie aus dem
+     * Bild. Ein Modul, das sich im Fenster eines anderen breitmacht, nimmt
+     * Platz, den es nicht besitzt.
+     *
+     * Beide Wege bleiben erreichbar: das Marktbuch ueber die
+     * Moduleinstellungen und das Menue jedes Ladenbogens, ein neuer Laden ueber
+     * „Akteur erstellen" und ueber den Knopf am Bogen der Person, die ihn
+     * fuehren soll.
+     */
     choices: {
-      beide: "SHOPS.Einstellung.Verzeichnisleiste.Beide",
-      neu: "SHOPS.Einstellung.Verzeichnisleiste.Neu",
       buch: "SHOPS.Einstellung.Verzeichnisleiste.Buch",
+      neu: "SHOPS.Einstellung.Verzeichnisleiste.Neu",
       keine: "SHOPS.Einstellung.Verzeichnisleiste.Keine"
     },
-    default: "beide",
+    default: "buch",
     onChange: () => ui.actors?.render()
   });
 
@@ -152,6 +164,7 @@ Hooks.once("ready", async () => {
   handelFensterEinrichten();
   handelEinrichten();
   szenenBogenEinrichten();
+  await leisteNachziehen();
   await verknuepfungNachtragen();
   await offenenLadenWiederherstellen();
   await schauWiederherstellen();

@@ -1284,12 +1284,20 @@
   cursor: pointer;
 }
 
-.shops-verzeichnisleiste .shops-verzeichnis-knopf.shops-zweit {
-  flex: 0 0 auto;
-  color: var(--shops-rot, #8b0000);
+/*
+ * Im Akteursverzeichnis leise. Der Knopf steht dort neben denen anderer
+ * Module; ein voller roter Balken zieht die ganze Aufmerksamkeit auf ein
+ * Modul, das dieses Fenster gar nicht besitzt.
+ */
+.shops-verzeichnisleiste .shops-verzeichnis-knopf {
+  color: #2b2318;
   background-color: #f4f1ea;
   border: 1px solid #dcd6cc;
+  border-bottom-color: #cdbf9f;
+  font-weight: 600;
 }
+.shops-verzeichnisleiste .shops-verzeichnis-knopf i { color: var(--shops-rot, #8b0000); }
+.shops-verzeichnisleiste .shops-verzeichnis-knopf:hover { border-color: var(--shops-rot, #8b0000); }
 
 .shops-inperson-knopf { width: 100%; margin-top: 6px; }
 
@@ -1586,6 +1594,16 @@
 .ninjos-shops .shops-anfrage-laden {
   font-size: 0.8rem;
   color: var(--shops-text-blass);
+}
+
+/* Woher die vorbelegten Preise im Handelsfenster stammen. */
+.ninjos-shops .shops-handel-quelle {
+  font-size: 0.74rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--shops-text-blass);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 /*
