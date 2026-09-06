@@ -13,14 +13,20 @@
   <header class="shops-banner" style="background-image: url('{{kopfbild}}'); background-position: 50% {{kopfFokus}}%;">
     <div class="shops-banner-text">
       <h2>{{ladenName}}</h2>
-      {{#if haendler}}
-        <span class="shops-verkaeufer" title="{{localize 'SHOPS.Haendler.Feld'}}">
-          {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
-          {{haendler.name}}
-        </span>
-      {{/if}}
       {{#if begruessung}}<div class="shops-begruessung">{{{begruessung}}}</div>{{/if}}
     </div>
+
+    {{!-- Der Verkäufer steht rechts als Gesicht, nicht klein unter dem
+          Ladennamen. Siehe laden-kopf.hbs. --}}
+    {{#if haendler}}
+      <div class="shops-banner-haendler" title="{{localize 'SHOPS.Haendler.Feld'}}">
+        {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
+        <span>
+          <em>{{localize "SHOPS.Haendler.Marke"}}</em>
+          <strong>{{haendler.name}}</strong>
+        </span>
+      </div>
+    {{/if}}
   </header>
 
   {{#if angebot}}

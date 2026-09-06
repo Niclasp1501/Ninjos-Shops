@@ -287,5 +287,6 @@
   "SHOPS.Einstellung.SchauLicht.Name": "Schauansicht: Helligkeit",
   "SHOPS.Einstellung.SchauLicht.Hinweis": "Dunkel blendet im abgedunkelten Zimmer nicht. Pergament ist auf einem Fernseher bei Tageslicht besser zu lesen.",
   "SHOPS.Einstellung.SchauLicht.Dunkel": "Dunkel — für den abgedunkelten Raum",
-  "SHOPS.Einstellung.SchauLicht.Pergament": "Pergament — für helle Räume"
+  "SHOPS.Einstellung.SchauLicht.Pergament": "Pergament — für helle Räume",
+  "SHOPS.Haendler.Marke": "Verkäufer"
 }

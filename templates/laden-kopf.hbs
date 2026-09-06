@@ -18,18 +18,27 @@
              placeholder="{{localize 'SHOPS.Bogen.NamePlatzhalter'}}"
              {{#unless bearbeitbar}}disabled{{/unless}}>
 
-      {{#if haendler}}
-        <span class="shops-verkaeufer" title="{{localize 'SHOPS.Haendler.Feld'}}">
-          {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
-          {{haendler.name}}
-        </span>
-      {{/if}}
-
       <div class="shops-begruessung">
         {{#if begruessung}}{{{begruessung}}}
         {{else}}<span class="shops-leer">{{localize "SHOPS.Bogen.KeineBegruessung"}}</span>{{/if}}
       </div>
     </div>
+
+    {{!--
+      Der Verkäufer steht **rechts**, nicht klein unter dem Ladennamen. Er ist
+      das Gegenüber im Handel und in beiden Büchern; als Zeile unter dem Namen
+      las er sich wie eine Fußnote zum Laden. Hier ist er ein Gesicht neben
+      dem Schild.
+    --}}
+    {{#if haendler}}
+      <div class="shops-banner-haendler" title="{{localize 'SHOPS.Haendler.Feld'}}">
+        {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
+        <span>
+          <em>{{localize "SHOPS.Haendler.Marke"}}</em>
+          <strong>{{haendler.name}}</strong>
+        </span>
+      </div>
+    {{/if}}
 
     {{#if istGM}}
       <button type="button" class="shops-zahnrad" data-action="einstellungenOeffnen"

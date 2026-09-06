@@ -6,6 +6,9 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Verborgene Ware trug zwei durchgestrichene Augen.** Eines kam aus der
+  Vorlage, eines aus dem Stylesheet. Geblieben ist das aus der Vorlage — es
+  trägt auch seinen Kurzhinweis.
 - **Das ⋯-Menü an der Warenzeile ging nicht auf** — genauer: Es ging auf und
   lag hinter dem Fenster. Seit es am Dokument hängt (damit es die scrollende
   Liste nicht abschneidet), gilt sein `z-index` nicht mehr gegen die Zeile,
@@ -126,6 +129,10 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Der Verkäufer steht rechts im Kopf**, als Gesicht mit Namen, und der
+  Streifen ist höher geworden. Als kleine Zeile unter dem Ladennamen las er
+  sich wie eine Fußnote zum Schild — dabei ist er das Gegenüber im Handel und
+  der Name in beiden Büchern.
 - **Die Fensterleiste ist nicht mehr rot**, sondern ein warmes Braunschwarz
   mit leichtem Verlauf — der Lederrücken eines Buches, auf dessen Seiten der
   Laden steht. Reines Schwarz wäre die Leiste irgendeiner Anwendung; die

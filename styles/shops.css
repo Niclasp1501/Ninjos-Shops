@@ -2087,17 +2087,16 @@
   box-shadow: 0 1px 6px rgba(139, 0, 0, 0.09);
 }
 
-/* Ausverkauftes und Verborgenes sprechen deutlicher */
+/* Ausverkauftes spricht deutlicher */
 .ninjos-shops .shops-ausverkauft .shops-warenname { text-decoration: line-through; }
-.ninjos-shops .shops-verborgen .shops-warenname::after {
-  content: "\f070";
-  font-family: "Font Awesome 7 Pro", "Font Awesome 6 Free", "fontawesome";
-  font-weight: 900;
-  margin-left: 6px;
-  font-size: 0.72em;
-  color: var(--shops-text-blass);
-}
 
+/*
+ * **Hier stand ein zweites Auge.** Verborgenes trug ein Symbol aus diesem
+ * Stylesheet *und* die Marke aus der Vorlage - hinter „Kerze" standen zwei
+ * durchgestrichene Augen nebeneinander. Zwei Quellen fuer dieselbe Aussage
+ * laufen frueher oder spaeter auseinander; geblieben ist die Marke in der
+ * Vorlage, denn die traegt auch ihren Kurzhinweis.
+ */
 /* ── Das Menü einer Warenzeile ─────────────────────────────────────── */
 
 /*
@@ -3321,3 +3320,73 @@
 .ninjos-shops .window-header .header-control { color: #f0e7d4; }
 
 .ninjos-shops .window-header .header-control:hover { color: var(--shops-gold); }
+
+/* ── Der Kopf: höher, und der Verkäufer steht rechts ──────────────── */
+
+/*
+ * **Warum er umgezogen ist.** Der Verkäufer stand als kleine Zeile unter dem
+ * Ladennamen und las sich wie eine Fußnote zum Schild. Er ist aber das
+ * Gegenüber im Handel und der Name in beiden Büchern — die Spielleitung
+ * taucht dort nicht auf. Rechts, als Gesicht neben dem Schild, ist er das
+ * auch optisch.
+ *
+ * Der Streifen wird dafür höher: Ein Gesicht in Briefmarkengröße ist keins.
+ */
+.ninjos-shops .shops-banner {
+  min-height: 148px;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.ninjos-shops .shops-banner-haendler {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 45%;
+  padding: 6px 12px 6px 6px;
+  /* Ein Schild auf dem Bild, damit der Name auf jedem Kopfbild lesbar ist —
+     dieselbe Falle wie in der hellen Schauansicht. */
+  background: rgba(20, 15, 8, .55);
+  border: 1px solid rgba(255, 245, 220, .18);
+  border-radius: 999px;
+  backdrop-filter: blur(3px);
+}
+
+.ninjos-shops .shops-banner-haendler img {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--shops-gold);
+}
+
+.ninjos-shops .shops-banner-haendler > span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.ninjos-shops .shops-banner-haendler em {
+  font-size: .62rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--shops-gold);
+}
+
+.ninjos-shops .shops-banner-haendler strong {
+  font-size: .98rem;
+  color: #f4ecdc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Das Reglersymbol rückt nach oben, damit es dem Gesicht nicht im Weg steht. */
+.ninjos-shops .shops-zahnrad { align-self: flex-start; }

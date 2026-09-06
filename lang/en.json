@@ -287,5 +287,6 @@
   "SHOPS.Einstellung.SchauLicht.Name": "Display view: brightness",
   "SHOPS.Einstellung.SchauLicht.Hinweis": "Dark does not dazzle in a dimmed room. Parchment reads better on a television in daylight.",
   "SHOPS.Einstellung.SchauLicht.Dunkel": "Dark — for a dimmed room",
-  "SHOPS.Einstellung.SchauLicht.Pergament": "Parchment — for bright rooms"
+  "SHOPS.Einstellung.SchauLicht.Pergament": "Parchment — for bright rooms",
+  "SHOPS.Haendler.Marke": "Keeper"
 }
