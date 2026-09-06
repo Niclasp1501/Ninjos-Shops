@@ -195,6 +195,10 @@ da.
 3. Im Ladenbogen erscheint darunter eine Leiste: **◀**, **Anhalten**, **▶**
    und die Seitenzahl. Von Hand blättern hält an.
 
+Zeigen Sie die Schauansicht sich selbst, deckt sie Ihren ganzen Bildschirm —
+auch den Ladenbogen mit dieser Leiste. **Escape schließt sie**; auf einem
+Monitor tut die Taste nichts, dort sitzt niemand.
+
 Welche Benutzer als Monitore gelten, steht in den Moduleinstellungen unter
 **Monitore**. Laufen Ninjo's In-Person Tools und geben sie ihre Erkennung
 heraus, gilt deren Antwort — die eigene Liste graut dann aus und sagt es.

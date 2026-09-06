@@ -131,14 +131,20 @@ export async function schauZeichnen(laden, { seite = 0, seiten = 1, takt = 0 } =
       kopfFokus: laden.system?.kopfFokus ?? 50,
       begruessung: laden.system?.begruessung ?? "",
       haendlerName: laden.system?.haendlerName,
+      /*
+       * **Das Tokenbild, nicht das Bogenbild.** Der Bogen traegt oft ein
+       * Brustbild im Hochformat; das Token ist der Kopf, wie er am Tisch
+       * daliegt - und genau den erkennt der Saal aus zwei Metern wieder.
+       */
+      haendlerBild: (() => {
+        const person = laden.system?.haendlerUuid ? fromUuidSync(laden.system.haendlerUuid) : null;
+        return person?.prototypeToken?.texture?.src || person?.img || null;
+      })(),
       waren: alle.slice(von, von + JE_SEITE),
       seite: seite + 1,
       seiten,
       mehrereSeiten: seiten > 1,
-      laeuft: takt > 0,
-      // Nur die Spielleitung sieht ihn: Auf einem Monitor waere er ein Hinweis
-      // an niemanden.
-      ausweg: game.user.isGM
+      laeuft: takt > 0
     }
   );
 

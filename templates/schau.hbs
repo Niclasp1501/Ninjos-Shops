@@ -12,7 +12,12 @@
     {{#if kopfBild}}<img src="{{kopfBild}}" alt="">{{/if}}
     <div class="shops-schau-titel">
       <h1>{{ladenName}}</h1>
-      {{#if haendlerName}}<span class="shops-schau-haendler">{{haendlerName}}</span>{{/if}}
+      {{#if haendlerName}}
+        <span class="shops-schau-haendler">
+          {{#if haendlerBild}}<img src="{{haendlerBild}}" alt="">{{/if}}
+          {{haendlerName}}
+        </span>
+      {{/if}}
       {{#if begruessung}}<p class="shops-schau-gruss">{{{begruessung}}}</p>{{/if}}
     </div>
   </header>
@@ -99,11 +104,13 @@
     </footer>
   {{/if}}
 
-  {{!-- Die Schicht deckt den ganzen Bildschirm, also auch den Ladenbogen mit
-        seiner Steuerung. Wer sie sich nur ansieht, braucht einen Weg heraus —
-        auf einem Monitor stünde der Hinweis für niemanden da. --}}
-  {{#if ausweg}}
-    <span class="shops-schau-ausweg">{{localize "SHOPS.Schau.Ausweg"}}</span>
-  {{/if}}
+  {{!--
+    Hier stand ein Hinweis „Escape schließt diese Ansicht". **Die Taste bleibt**
+    — sie ist der einzige Weg heraus, denn die Schicht deckt auch den
+    Ladenbogen mit ihrer Steuerung. Der Satz dazu ist weg: Die Schauansicht
+    hängt an einer Wand und soll aussehen wie ein Regal, nicht wie ein
+    Programm mit Bedienhinweisen. Wer sie öffnet, hat sie geöffnet und weiß
+    es; nachzulesen ist es in der Anleitung.
+  --}}
 
 </div>

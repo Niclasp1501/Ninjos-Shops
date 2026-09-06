@@ -116,6 +116,16 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Der Verkäufer steht mit seinem Tokenbild im Kopf der Schauansicht** — rund,
+  mit goldenem Rand. Das Tokenbild und nicht das Bogenbild: Der Bogen trägt
+  oft ein Brustbild im Hochformat, das Token ist der Kopf, wie er am Tisch
+  daliegt.
+- **Die Seitenzahl ist deutlich größer.** Aus zwei Metern ist sie die einzige
+  Angabe, die sagt, ob man schon alles gesehen hat.
+- **Der Hinweis „Escape schließt diese Ansicht" ist weg.** Die Taste bleibt —
+  sie steht jetzt in der Anleitung statt auf dem Bildschirm. Die Schauansicht
+  hängt an einer Wand und soll aussehen wie ein Regal, nicht wie ein Programm
+  mit Bedienhinweisen.
 - **Eine Sanduhr statt des Fortschrittsbalkens** in der Schauansicht. Der
   Balken war die einzige Stelle, an der die Anzeige nach Software aussah statt
   nach einer Bude auf einem Marktplatz. Der Sand rieselt über die Standzeit

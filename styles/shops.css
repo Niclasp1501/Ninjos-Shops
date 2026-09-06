@@ -2638,11 +2638,26 @@
   text-shadow: 0 2px 14px rgba(0, 0, 0, .8);
 }
 
+/*
+ * Der Verkäufer mit seinem Tokenbild. Rund, mit goldenem Rand — es ist ein
+ * Gesicht, keine Ware, und der Unterschied gehört sichtbar.
+ */
 .ninjos-shops .shops-schau-haendler {
-  display: inline-block;
-  margin-top: .2em;
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  margin-top: .25em;
   font-size: clamp(.9rem, 1.5vw, 1.5rem);
   color: var(--shops-gold);
+}
+
+.ninjos-shops .shops-schau-haendler img {
+  width: 2.7em;
+  height: 2.7em;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--shops-gold);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .6);
 }
 
 .ninjos-shops .shops-schau-gruss {
@@ -2754,7 +2769,18 @@
   color: #9d9384;
 }
 
-.ninjos-shops .shops-schau-seite { font-variant-numeric: tabular-nums; }
+/*
+ * Die Seitenzahl trägt Gewicht. Aus zwei Metern ist sie die einzige Angabe,
+ * die sagt, ob man schon alles gesehen hat — kleiner als der Warenname darf
+ * sie nicht sein.
+ */
+.ninjos-shops .shops-schau-seite {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.1rem, 1.9vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #cfc3ad;
+}
 
 /* ── Die Sanduhr ──────────────────────────────────────────────────── */
 
@@ -2903,14 +2929,3 @@
   border-radius: 6px;
 }
 .ninjos-shops .shops-monitor-fremd i { color: var(--shops-gold); margin-right: 5px; }
-
-/* Der Ausweg für die Spielleitung. Klein, unten rechts, nicht im Weg. */
-.ninjos-shops .shops-schau-ausweg {
-  position: absolute;
-  right: clamp(1rem, 2.2vw, 2.2rem);
-  bottom: clamp(.6rem, 1.4vh, 1.2rem);
-  font-size: .72rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: #6e6558;
-}
