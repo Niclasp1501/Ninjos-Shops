@@ -121,6 +121,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Die Fensterleiste ist nicht mehr rot**, sondern ein warmes Braunschwarz
+  mit leichtem Verlauf — der Lederrücken eines Buches, auf dessen Seiten der
+  Laden steht. Reines Schwarz wäre die Leiste irgendeiner Anwendung; die
+  goldene Haarlinie darunter bleibt, an ihr erkennt man das Modul. Rot behält
+  damit endgültig nur seine drei Aufgaben: die eine Hauptaktion, die Warnung
+  und den Sonderfall.
 - **Papier statt Weiß.** Die Fenster stehen jetzt auf Pergament: wärmerer
   Grund, Ränder wie gezogene Linien, Schrift in Tinte statt in Schwarz — und
   eine feine Faser im Hintergrund. Die kommt ohne Bild aus, als Rauschen im

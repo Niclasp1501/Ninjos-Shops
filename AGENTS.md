@@ -262,6 +262,20 @@ wieder tun:
    der Karte. Es trägt die Modulklasse jetzt selbst, und seine Regeln stehen
    unverschachtelt als `.shops-menue …`.
 
+## Die Fensterleiste trägt kein Rot mehr
+
+Sie war die erste der drei Aufgaben von Rot: „das Modul erkennen". Auf
+Pergament war sie zu laut — der Grund ist warm und ruhig, und darüber saß ein
+satter Balken, der um Aufmerksamkeit bat, die er nicht braucht.
+
+**Kein reines Schwarz.** Das läse sich wie die Leiste irgendeiner Anwendung.
+Ein warmes Braunschwarz mit leichtem Verlauf gehört in dieselbe Welt wie das
+Papier: der Lederrücken eines Buches, auf dessen Seiten der Laden steht. Die
+goldene Haarlinie darunter bleibt — an ihr erkennt man das Modul.
+
+Rot hat damit nur noch zwei Aufgaben: die eine Hauptaktion je Block, und
+Warnung samt Sonderfall.
+
 ## Wofür Rot da ist — und wofür nicht
 
 Rot stand einmal an jeder Überschrift, in der Schrift jedes zweiten Knopfes, an

@@ -3282,3 +3282,30 @@
   text-shadow: none;
 }
 .ninjos-shops.shops-schau-pergament .shops-schau-gruss { color: #4a4032; }
+
+/* ── Die Fensterleiste: Leder statt Rot ───────────────────────────── */
+
+/*
+ * Auf Pergament war die rote Leiste zu laut — der Grund ist warm und ruhig,
+ * und darüber saß ein satter Balken, der um Aufmerksamkeit bat, die er nicht
+ * braucht.
+ *
+ * **Kein reines Schwarz.** Das läse sich wie die Leiste irgendeiner
+ * Anwendung. Ein warmes Braunschwarz gehört in dieselbe Welt wie das Papier:
+ * der Lederrücken eines Buches, auf dessen Seiten der Laden steht. Der leichte
+ * Verlauf gibt ihm Wölbung, die goldene Haarlinie darunter bleibt — an ihr
+ * erkennt man das Modul.
+ *
+ * Rot behält damit endgültig nur noch seine drei Aufgaben: die eine
+ * Hauptaktion, die Warnung und den Sonderfall.
+ */
+.ninjos-shops .window-header {
+  background: linear-gradient(#332a1c, #221b12);
+  border-bottom: 2px solid var(--shops-gold);
+}
+
+.ninjos-shops .window-header .window-title,
+.ninjos-shops .window-header .window-icon,
+.ninjos-shops .window-header .header-control { color: #f0e7d4; }
+
+.ninjos-shops .window-header .header-control:hover { color: var(--shops-gold); }
