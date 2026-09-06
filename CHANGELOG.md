@@ -129,6 +129,10 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Fenster gehen so weit auf, wie ihr Inhalt braucht** — höchstens bis zum
+  Bildrand. Der Ladenbogen wächst auf genau die Höhe, bei der nichts mehr
+  scrollt; das Spielerfenster geht bis an die Kante, wenn der Bildschirm nicht
+  reicht. Wer die Größe selbst zieht, behält sie.
 - **Szenen zieht man jetzt hinein.** Statt einer Liste aus hundert Kästchen
   gibt es ein Feld: eine Szene aus der Seitenleiste hineinziehen, oder über
   „Szene wählen …" aus einer Liste suchen, in die man tippen kann. Gewählte

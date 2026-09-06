@@ -721,6 +721,38 @@ Damit war `height: "auto"` vorbei: Eine neue Anfrage am Tresen machte das
 Fenster nicht mehr höher, sondern nur den Inhalt länger. Die Höhe wird jetzt
 nur angefasst, wenn sie wirklich über den Rand geht.
 
+## Ein Fenster so hoch machen, wie sein Inhalt es braucht
+
+Klingt nach zwei Zeilen, waren drei Fallen — alle drei am 06.09.2026 gemessen,
+keine davon aus dem Code ersichtlich.
+
+**1. Die Breite zuerst.** Sie ändert den Umbruch: Mit 1170 statt 780 Pixeln
+steht die Auslage zweispaltig und braucht die halbe Höhe. Wer die Höhe vorher
+misst, misst die des schmalen Fensters.
+
+**2. Nicht nur beim ersten Zeichnen.** So war es gebaut, und es ging schief:
+Beim ersten Mal steht das Fenster noch im Aufbau, der Fehlbetrag fällt zu klein
+aus — gemessen 262 statt 630 —, und danach war „einmal gewachsen" verbraucht.
+Gewachsen wird jetzt bei jedem Zeichnen, solange die Maße noch die sind, die
+**wir** zuletzt gesetzt haben. Wer selbst zieht, hat das letzte Wort.
+
+**3. Foundrys `max-height` klebt.** Einem Fenster mit `height: "auto"` schreibt
+Foundry ein `max-height` in den Stil, berechnet aus der Oberkante zum Zeitpunkt
+des ersten Setzens — und rechnet es nie wieder neu. Gemessen: Oberkante 8,
+verlangt 984, `max-height` blieb bei **922** (= 1000 minus der ursprünglichen
+Oberkante 78). Jedes `setPosition` prallte daran ab, auch nach dem Verschieben
+nach oben. Der Deckel wird deshalb selbst auf den Bildrand gesetzt.
+
+Zwei Fälle beim Wachsen, und der Unterschied ist Absicht: Fehlt wenig, kommt
+genau das dazu — ein Fenster wegen zwanzig Pixeln auf Bildschirmhöhe zu ziehen
+wäre unverschämt. Fehlt viel, geht es gleich bis zum Rand, denn der Zuschlag
+allein reicht dann nicht: Teile des Fensters wachsen mit (der Verkaufsbereich
+steht auf `max-height: 42%` und nimmt von jedem gewonnenen Pixel einen Teil
+zurück).
+
+Gemessen danach: Ladenbogen 720 → **805** auf 1104 Pixel Bildhöhe, nichts
+scrollt mehr; Spielerfenster bei 1600×1000 auf **984** von 984 möglichen.
+
 ## Kein Fenster größer als der Bildschirm
 
 Auf einem Tablet stand das Spielerfenster oben am Rand und lief unten aus dem

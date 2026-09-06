@@ -67,12 +67,23 @@ function unseres(app) {
   return app?.element?.classList?.contains("ninjos-shops") === true;
 }
 
+/** Was den scrollenden Teilen an Hoehe fehlt - der groesste Fehlbetrag. */
+function fehlbetrag(el) {
+  let fehlt = 0;
+  const teile = [el.querySelector(".window-content"),
+                 ...el.querySelectorAll(".shops-ware, .shops-anfrageliste, .shops-buchliste, .shops-ansehen-text")];
+  for (const teil of teile) {
+    if (teil) fehlt = Math.max(fehlt, teil.scrollHeight - teil.clientHeight);
+  }
+  return fehlt;
+}
+
 /**
- * Ein Fenster ins Bild ruecken - und, wenn noetig, kleiner machen.
+ * Ein Fenster ins Bild ruecken - und ihm den Platz geben, den es braucht.
  *
- * Erst die Groesse, dann die Lage: Ein zu hohes Fenster laesst sich nicht
- * durch Verschieben retten, und ein verschobenes waere nach dem Verkleinern
- * wieder falsch platziert.
+ * Drei Dinge, in dieser Reihenfolge, und die Reihenfolge ist keine Willkuer:
+ * die Breite (sie aendert den Umbruch), dann die Lage nach oben (sie gibt den
+ * Platz frei), dann die Hoehe.
  */
 export function insBildRuecken(app) {
   const el = app?.element;
@@ -80,13 +91,9 @@ export function insBildRuecken(app) {
 
   const bildBreite = window.innerWidth;
   const bildHoehe = window.innerHeight;
+  const hoechsteHoehe = bildHoehe - 2 * RAND;
   const masse = el.getBoundingClientRect();
 
-  /*
-   * Beim allerersten Aufmachen darf ein Fenster wachsen. Danach nie wieder:
-   * Wer es von Hand kleiner zieht, will es kleiner haben, und ein Fenster,
-   * das sich beim naechsten Zeichnen wieder aufblaeht, ist eine Zumutung.
-   */
   /*
    * **Gemessen wird nicht, gefragt wird.** Im Render-Haken steht das Fenster
    * noch mitten im Aufbau: Ein Bogen mit 780 Pixel Sollbreite mass dort 524.
@@ -96,49 +103,100 @@ export function insBildRuecken(app) {
    */
   const sollBreite = Number.isFinite(app.position?.width) ? app.position.width : masse.width;
 
+  /*
+   * **Unberuehrt heisst: so gross, wie wir es zuletzt gemacht haben.** Nur
+   * dann fassen wir es noch einmal an. Wer selbst zieht, hat das letzte Wort.
+   */
   const unsere = zuletztGesetzt.get(app);
-  const unberuehrt = unsere === undefined || Math.abs(unsere.breite - sollBreite) <= 1;
+  const unberuehrt = unsere === undefined
+    || (Math.abs(unsere.breite - sollBreite) <= 1 && Math.abs(unsere.hoehe - masse.height) <= 2);
+
+  /* ── Breite ─────────────────────────────────────────────────────── */
 
   let wunschBreite = sollBreite;
   if (!gewachsen.has(app)) {
     gewachsen.add(app);
-    zuletztGesetzt.set(app, { wunsch: sollBreite, breite: sollBreite });
     wunschBreite = Math.min(sollBreite * WACHSTUM, bildBreite - 2 * RAND);
   } else if (unberuehrt && unsere?.wunsch) {
-    /*
-     * Zurueck auf die Wunschbreite, soweit das Bild sie jetzt hergibt. So
-     * bekommt ein gedrehtes Tablet seine Fenster wieder gross - aber nur die,
-     * die seither niemand selbst gezogen hat.
-     */
+    // Zurueck auf die Wunschbreite, soweit das Bild sie jetzt hergibt - so
+    // bekommt ein gedrehtes Tablet seine Fenster wieder gross.
     wunschBreite = Math.min(unsere.wunsch * WACHSTUM, bildBreite - 2 * RAND);
   }
-
   const breite = Math.max(MINDEST.breite, Math.min(wunschBreite, bildBreite - 2 * RAND));
 
+  // Zuerst, denn sie aendert den Umbruch: Mit 1170 statt 780 Pixeln steht die
+  // Auslage zweispaltig und braucht die halbe Hoehe.
+  if (Math.abs(breite - sollBreite) > 1) app.setPosition({ width: Math.round(breite) });
+
+  /* ── Hoehe ──────────────────────────────────────────────────────── */
+
+  const nach = el.getBoundingClientRect();
+  let hoehe = nach.height;
+
   /*
-   * **Die Hoehe wird nur angefasst, wenn sie muss.** Viele Fenster stehen auf
-   * `height: "auto"`; schreibt man ihnen eine Zahl hinein, ist das vorbei -
-   * eine neue Anfrage am Tresen macht das Fenster dann nicht mehr hoeher,
-   * sondern nur den Inhalt laenger. Gedeckelt wird also erst, wenn es
-   * wirklich zu hoch ist.
+   * **So hoch, dass man nicht scrollen muss - hoechstens bis zum Bildrand.**
+   *
+   * Wie viel fehlt, sagen die scrollenden Teile selbst: `scrollHeight` minus
+   * `clientHeight`. Fehlt wenig, kommt genau das dazu - ein Fenster wegen
+   * zwanzig Pixeln auf Bildschirmhoehe zu ziehen waere unverschaemt. Fehlt
+   * viel, geht es gleich bis zum Rand: Der Zuschlag allein reichte dann nicht,
+   * weil Teile des Fensters **mitwachsen** (der Verkaufsbereich steht auf
+   * `max-height: 42%`).
+   *
+   * **Nicht nur beim ersten Zeichnen.** Genau das ging schief: Beim ersten Mal
+   * steht das Fenster noch im Aufbau, der Fehlbetrag faellt zu klein aus -
+   * gemessen 262 statt 630 -, und danach waere „einmal gewachsen" verbraucht.
+   * Solange niemand selbst gezogen hat, darf es bei jedem Zeichnen nachwachsen;
+   * es aendert sich ohnehin nur, wenn wirklich etwas fehlt.
    */
-  const hoechsteHoehe = bildHoehe - 2 * RAND;
-  const zuHoch = masse.height > hoechsteHoehe + 1;
-  const hoehe = zuHoch ? Math.max(MINDEST.hoehe, hoechsteHoehe) : masse.height;
+  if (unberuehrt) {
+    const fehlt = fehlbetrag(el);
+    if (fehlt > 1) {
+      hoehe = fehlt > bildHoehe * 0.15
+        ? hoechsteHoehe
+        : Math.min(nach.height + fehlt, hoechsteHoehe);
+    }
+  }
+  hoehe = Math.max(MINDEST.hoehe, Math.min(hoehe, hoechsteHoehe));
 
-  const links = Math.min(Math.max(RAND, masse.left), Math.max(RAND, bildBreite - breite - RAND));
-  const oben = Math.min(Math.max(RAND, masse.top), Math.max(RAND, bildHoehe - hoehe - RAND));
+  /* ── Lage ───────────────────────────────────────────────────────── */
 
-  // Nur anfassen, was sich wirklich aendert - jedes setPosition zeichnet neu.
-  const lage = {};
-  if (Math.abs(breite - sollBreite) > 1) lage.width = Math.round(breite);
-  if (zuHoch) lage.height = Math.round(hoehe);
-  if (Math.abs(links - masse.left) > 1) lage.left = Math.round(links);
-  if (Math.abs(oben - masse.top) > 1) lage.top = Math.round(oben);
-  if (!Object.keys(lage).length) return;
+  const links = Math.min(Math.max(RAND, nach.left), Math.max(RAND, bildBreite - breite - RAND));
+  const oben = Math.min(Math.max(RAND, nach.top), Math.max(RAND, bildHoehe - hoehe - RAND));
 
-  app.setPosition(lage);
-  zuletztGesetzt.set(app, { wunsch: unsere?.wunsch ?? sollBreite, breite: Math.round(breite) });
+  /*
+   * **Erst hinaufschieben, dann wachsen.** Foundry deckelt die Hoehe eines
+   * Fensters auf `Bildhoehe - Oberkante` und rechnet dabei mit der Oberkante,
+   * die es in diesem Moment hat. Steht es noch mittig, ist der Deckel
+   * entsprechend niedrig: Gemessen wurden 984 verlangt und `max-height: 922px`
+   * gesetzt - genau 1000 minus der alten Oberkante 78. Zusammen in einem
+   * Aufruf half nicht; es braucht zwei, und der erste raeumt den Platz frei.
+   */
+  if (Math.abs(oben - nach.top) > 1) app.setPosition({ top: Math.round(oben) });
+  if (Math.abs(links - nach.left) > 1) app.setPosition({ left: Math.round(links) });
+
+  if (Math.abs(hoehe - nach.height) > 1) {
+    /*
+     * **Der Deckel muss vorher weg.** Foundry schreibt einem Fenster mit
+     * `height: "auto"` ein `max-height` in den Stil - berechnet aus der
+     * Oberkante, die es beim ersten Setzen hatte - und rechnet es danach nie
+     * wieder neu. Gemessen: Das Fenster stand auf Oberkante 8, verlangt waren
+     * 984, und `max-height` blieb bei 922 (= 1000 minus der urspruenglichen
+     * Oberkante 78). Jedes `setPosition` prallte daran ab.
+     *
+     * Wir setzen ihn deshalb selbst auf den Bildrand. Zurueckgenommen wird er
+     * nicht: Die Klemmung weiter oben haelt das Fenster ohnehin im Bild, und
+     * das ist die verlaesslichere der beiden Grenzen.
+     */
+    el.style.maxHeight = `${Math.round(hoechsteHoehe)}px`;
+    app.setPosition({ height: Math.round(hoehe) });
+  }
+
+  zuletztGesetzt.set(app, {
+    wunsch: unsere?.wunsch ?? sollBreite,
+    breite: Math.round(breite),
+    hoehe: Math.round(el.getBoundingClientRect().height)
+  });
 }
 
 /** Alle offenen Fenster dieses Moduls nachziehen. */
