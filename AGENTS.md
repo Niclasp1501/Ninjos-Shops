@@ -1,46 +1,57 @@
 # Agent Notes
 
-**Lies zuerst [KONZEPT-shops.md](KONZEPT-shops.md).** Dieses Modul ist
-ein Gerüst mit zwei fertigen Rechenkernen; alles andere ist eine Entscheidung,
-die dort begründet steht. Wer ohne das Konzept anfängt, baut das vierte
-Ladenmodul und nicht dieses.
+**Lies zuerst [KONZEPT-shops.md](KONZEPT-shops.md).** Fast alles an diesem
+Modul ist eine Entscheidung, die dort begründet steht. Wer ohne das Konzept
+anfängt, baut das vierte Ladenmodul und nicht dieses.
 
-## Stand am 05.09.2026
+Was das Modul aus Sicht der Spielleitung tut und wie man es bedient, steht in
+der [README](README.md) — dort auch die Anleitung.
 
-Gebaut sind die Schritte 1 bis **5** aus Abschnitt 11 des Konzepts.
+## Stand am 06.09.2026
 
-| Datei | Zustand |
+Gebaut sind die Schritte 1 bis **5** aus Abschnitt 11 des Konzepts, dazu
+etliches, was dort noch nicht stand. **Es fehlt Schritt 6** — die Schauansicht
+für den Monitor und die Brücke zu den In-Person Tools.
+
+| Datei | Was darin steht |
 |---|---|
-| `scripts/preise.js` | **fertig**, geprüft |
-| `scripts/kasse.js` | **fertig**, geprüft |
-| `tools/kasse.test.mjs` | 43 Fälle, laufen |
-| `scripts/const.js` | fertig (`WARE`, `OFFENER_LADEN`, Socket-Konstanten) |
+| `scripts/preise.js` | Aufschlag, Festpreis, Umrechnung in Kupfer |
+| `scripts/kasse.js` | Bezahlen mit Wechselgeld |
+| `tools/kasse.test.mjs` | 43 Fälle, laufen ohne Welt |
+| `scripts/const.js` | Merkmale, Socket-Kanäle, Kaufmodi |
 | `scripts/laden-model.js` | Untertyp `ninjos-shops.laden` und sein `TypeDataModel` |
-| `scripts/laden-bogen.js` | Verwaltungsansicht + Vorzeigen (wer sieht / zeigen / schließen) |
-| `templates/laden-kopf.hbs`, `laden-ware.hbs`, `laden-vorzeigen.hbs` | dazu |
-| `scripts/spieler-fenster.js` | Spielerfenster (ApplicationV2) |
-| `templates/spieler-fenster.hbs` | Auslage, Börse, Kauf-Stub |
-| `scripts/vorzeigen.js` | ZEIGEN / SCHLIESSEN / Flag |
-| `scripts/socket.js` | Socket-Listener + STAND bei Inventaränderung |
-| `styles/shops.css` | Bogen + Spielerfenster; die Schauansicht fehlt darin noch |
-| `scripts/main.js` | Einstellungen, Untertyp, Bogen, Socket, Willkommen |
-| `scripts/willkommen.js` | eingebaut, Texte stehen |
-| `scripts/kauf.js` | Kauf bei der Spielleitung, mit Vorabprüfung |
-| `scripts/angebot.js` | Angebote der Spielleitung zum Sonderpreis |
-| `scripts/marktbuch.js` | Journal, zweimal je Kauf beschrieben |
+| `scripts/laden-bogen.js` | Verwaltungsansicht, Vorzeigen, Zeilenmenü |
+| `scripts/laden-einstellungen.js` | Aufschlag, Kasse, Verkäufer, Zugriff, Szenen |
+| `scripts/spieler-fenster.js` | Auslage, Börse, Kaufen, Verkaufen |
+| `scripts/vorzeigen.js` | ZEIGEN / SCHLIESSEN / STAND, Merkmal am Benutzer |
+| `scripts/socket.js` | Verteiler; **nur** die gewählte Verbindung führt aus |
+| `scripts/vorsitz.js` | welche Verbindung das ist — ein Anspruch je Bitte |
+| `scripts/kauf.js` | der Kauf, bei der Spielleitung, Preis neu gerechnet |
+| `scripts/verkauf.js` | der direkte Ankauf angehakter Ware |
+| `scripts/anfrage.js`, `anfrage-fenster.js` | die Verkaufsanfrage samt Verhandlung |
+| `scripts/freigabe.js` | Kaufwünsche, die auf ein Ja warten |
+| `scripts/angebot.js` | Sonderpreise an einzelne Spieler |
+| `scripts/handel.js`, `handel-fenster.js` | Handel mit einer Person **ohne** Laden |
+| `scripts/verknuepfung.js` | vom Händler zu seinem Laden |
+| `scripts/ladenbuch.js` | das Buch am einzelnen Laden, gefiltert |
+| `scripts/marktbuch.js` | das Buch über alle Läden, mit Gründen |
+| `scripts/fensterpassen.js` | kein Fenster größer als der Bildschirm |
 | `scripts/zugaenge.js` | Verzeichnis-Knopf, Szenenwerkzeug, In-Person-Knopf |
-| Schauansicht | existiert nicht (Schritt 6) |
+| `scripts/willkommen.js` | Willkommensfenster |
+| Schauansicht, Monitorbrücke | **existiert nicht** (Schritt 6) |
+| Rückweg im Handel ohne Laden | vorbereitet, nicht angeschlossen |
 
-**Am 05.09.2026 in der Welt „Geheimnisse der Abgründe" geprüft** (Foundry
-14.367, dnd5e 5.3.3): Untertyp erscheint im Anlegen-Dialog als „Laden", Bogen
-öffnet, Hineinziehen aus `dnd5e.items` legt genau **einen** Gegenstand an,
-Aufschlag und Festpreis rechnen richtig (Dolch 2 gp → 3 GM bei 1,5; Festpreis
-5 gp → 500 cp), Hinweiszeile und Verbergen speichern, Vorzeigen öffnet das
-Spielerfenster, Verborgenes fehlt dort, Bestandsänderungen kommen live an,
-Schließen räumt Flag und Fenster ab, und nach einem Neuladen ist das Fenster
-wieder da. Zwei Fehler dabei gefunden und behoben — siehe unten.
+**Alles hier ist an der laufenden Welt „Geheimnisse der Abgründe" geprüft**
+(Foundry 14.367, dnd5e 5.3.3), am 06.09.2026 zuletzt mit **zwei Clients** —
+Spielleitung im Browser, ein Spieler in einer zweiten, ferngesteuerten
+Chrome-Instanz. Was dabei gefunden wurde, steht in den Abschnitten unten;
+die beiden schwersten Fälle waren der doppelt ausgeführte Kauf und das
+Fenster, das unten aus dem Bild lief.
 
-**Was dabei noch offen blieb:** der Kauf (Schritt 5) und alles darüber.
+**Zwei Eigenheiten dieser Welt**, die beim Bauen mehrfach den Ausschlag gaben:
+`core.noCanvas` steht auf **an** — es gibt keine Tokens, also auch keine
+Token-Knöpfe und keine betrachtete Szene. Und die Spielleitung ist oft
+**zweimal** angemeldet, weil ein Tablet danebenliegt.
 
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
 

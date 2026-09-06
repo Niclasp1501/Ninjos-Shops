@@ -1,11 +1,12 @@
 /**
  * Einstiegsdatei.
  *
- * **Stand: Schritt 5 von 6.** Es laufen die Einstellungen, das
- * Willkommensfenster, der Laden selbst, das Vorzeigen mit Spielerfenster,
- * Angebote der Spielleitung, der Kauf ueber die Spielleitung und das
- * Marktbuch. Ein Laden laesst sich anlegen, fuellen, bepreisen, vorzeigen -
- * und es laesst sich darin kaufen.
+ * **Stand: Schritt 5 von 6.** Ein Laden laesst sich anlegen, fuellen,
+ * bepreisen, an Szenen binden und vorzeigen; darin wird gekauft (sofort,
+ * gesperrt oder nach Freigabe), verkauft (direkt oder als Verhandlung) und
+ * mitgeschrieben - in zwei Buechern. Dazu Angebote zum Sonderpreis, die
+ * Verknuepfung vom Haendler zu seinem Laden und der Handel mit einer Person,
+ * die gar keinen Laden hat.
  *
  * Es fehlt die Schauansicht und die Bruecke zu den In-Person Tools (6).
  * Reihenfolge und Begruendung stehen in KONZEPT-shops.md, Abschnitt 11.
