@@ -512,6 +512,11 @@ In dieser Reihenfolge, jeder Schritt für sich benutzbar:
 4. **Das Spielerfenster** und das Vorzeigen an einzelne oder alle.
 5. **Der Kauf** über den Spielleiter, samt Marktbuch.
 6. **Die Schauansicht** und die Brücke zu den In-Person Tools.
+   *Gebaut am 06.09.2026* — `scripts/schau.js`, `scripts/monitore.js`. Die
+   Brücke fragt, die In-Person Tools antworten noch nicht: Ihre API gibt
+   `openPanel, isActive, getStats, resetStats, refresh, openTrade,
+   openTradeLog, sheetView` heraus, `isMonitorUser` fehlt weiter. Solange gilt
+   die eigene Liste, und das Fenster sagt das auch.
 
 Das Willkommensfenster gehört ab Schritt 3 dazu und ist bereits eingebaut
 (`scripts/willkommen.js`) — siehe die Regel in der

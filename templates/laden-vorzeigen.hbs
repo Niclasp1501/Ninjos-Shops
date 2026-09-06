@@ -35,6 +35,27 @@
         {{#if zuschauer.length}}<span class="shops-anzahl">{{zuschauer.length}}</span>{{/if}}
       </span>
 
+      {{!-- Die Steuerung der Schauansicht. Sie steht hier und nie auf dem
+            Monitor: Der hat keine Tastatur. --}}
+      {{#if schau}}
+        <div class="shops-schau-steuer">
+          <button type="button" data-action="schauZurueck"
+                  data-tooltip="{{localize 'SHOPS.Schau.Zurueck'}}">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button type="button" data-action="schauHalt" class="shops-schau-halt">
+            <i class="fa-solid {{#if schau.laeuft}}fa-pause{{else}}fa-play{{/if}}"></i>
+            <span>{{#if schau.laeuft}}{{localize "SHOPS.Schau.Halten"}}
+                  {{else}}{{localize "SHOPS.Schau.Weiter"}}{{/if}}</span>
+          </button>
+          <button type="button" data-action="schauVor"
+                  data-tooltip="{{localize 'SHOPS.Schau.Vor'}}">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+          <span class="shops-schau-stand">{{schau.seiteAnzeige}} / {{schau.seiten}}</span>
+        </div>
+      {{/if}}
+
       {{#if zuschauer.length}}
         <ul class="shops-zuschauer">
           {{#each zuschauer}}

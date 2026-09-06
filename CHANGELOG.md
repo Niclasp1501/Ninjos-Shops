@@ -50,6 +50,21 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Die Schauansicht** — der Laden auf dem Bildschirm an der Wand. Vollbild
+  ohne Fensterrahmen, sechs Karten je Seite, Name in Versalien, Preis in Gold,
+  ein Fortschrittsbalken am unteren Rand. Nichts daran lässt sich anklicken:
+  Der Monitor hat keine Tastatur. Geblättert wird alle zehn Sekunden
+  (einstellbar); **gesteuert wird im Ladenbogen** — anhalten, vor, zurück. Von
+  Hand blättern hält an, damit die Anzeige nicht weiterspringt, während jemand
+  fragt.
+- **Wer groß sieht, entscheidest du beim Vorzeigen.** In der Auswahlliste
+  steht neben jedem Namen ein Schalter „groß", vorbelegt für erkannte
+  Monitore. „Allen zeigen" gibt Monitoren die Schauansicht und allen anderen
+  ihr Fenster.
+- **Eine Liste, welche Benutzer Monitore sind** (Moduleinstellungen →
+  Monitore). Laufen Ninjo's In-Person Tools und geben sie ihre Erkennung
+  heraus, gilt deren Antwort; die eigene Liste graut dann aus und sagt, woher
+  die Auskunft kommt.
 - **Handel mit einer Person, die keinen Laden hat.** Ein Knopf in der
   Titelleiste jedes Personenbogens: Du hakst an, welche Stücke vorgelegt
   werden, setzt Menge und Preis, wählst die Empfänger — und nur das sieht der

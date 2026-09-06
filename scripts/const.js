@@ -98,7 +98,8 @@ export const SOCKET = {
   ANGEBOT: "angebot",   // Spielleiter -> Spieler: Ware zum Sonderpreis
   AUSLAGE: "auslage",   // Spielleiter -> Spieler: die Auslage als Datenpaket
   VORSITZ: "vorsitz",   // Spielleitung untereinander: wer fuehrt diese Bitte aus
-  HANDEL: "handel"      // Handel mit einer Person ohne Laden
+  HANDEL: "handel",     // Handel mit einer Person ohne Laden
+  SCHAU: "schau"        // Spielleitung -> Schirme: welche Seite gerade steht
 };
 
 /**

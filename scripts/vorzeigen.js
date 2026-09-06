@@ -22,6 +22,11 @@
  */
 
 import { MODULE_ID, SOCKET, OFFENER_LADEN, LADEN_TYP } from "./const.js";
+import { istMonitor } from "./monitore.js";
+import {
+  SCHAU_MERKMAL, schauBeginnen, schauBeenden, schauZuschauer,
+  schauZeichnen, schauSchliessen, seitenZahl
+} from "./schau.js";
 import {
   spielerFensterOeffnen,
   spielerFensterSchliessen,
@@ -56,19 +61,36 @@ async function flagSetzen(user, ladenUuid) {
  * @param {Actor} laden
  * @param {string[]} userIds
  */
-export async function ladenZeigen(laden, userIds) {
+export async function ladenZeigen(laden, userIds, schauIds = []) {
   if (!game.user.isGM) return;
   if (laden?.type !== LADEN_TYP) return;
   const an = [...new Set(userIds)].filter(id => game.users.get(id));
   if (!an.length) return;
 
+  const gross = new Set(schauIds.filter(id => an.includes(id)));
+
   // Ein neuer Laden ersetzt den vorherigen: Das Flag haelt genau einen.
-  for (const id of an) await flagSetzen(game.users.get(id), laden.uuid);
+  for (const id of an) {
+    const benutzer = game.users.get(id);
+    await flagSetzen(benutzer, laden.uuid);
+    /*
+     * Gross oder klein ist eine Eigenschaft des *Bildschirms*, nicht des
+     * Ladens - deshalb ein eigenes Merkmal neben dem offenen Laden. Es
+     * ueberlebt ein Neuladen, damit ein Monitor nach einem Absturz von selbst
+     * zurueckkommt und niemand aufstehen muss.
+     */
+    if (gross.has(id)) await benutzer.setFlag(MODULE_ID, SCHAU_MERKMAL, true);
+    else await benutzer.unsetFlag(MODULE_ID, SCHAU_MERKMAL);
+  }
 
   const payload = { typ: SOCKET.ZEIGEN, ladenUuid: laden.uuid, an };
   game.socket.emit(SOCKET.NAME, payload);
   // Socket kommt nie zum Absender zurueck.
   if (an.includes(game.user.id)) await aufZeigen(payload);
+
+  // Wo gross gezeigt wird, blaettert jemand - und das ist die Spielleitung.
+  if (gross.size) schauBeginnen(laden);
+  else if (!schauZuschauer(laden.uuid).length) schauBeenden();
 }
 
 /**
@@ -86,7 +108,11 @@ export async function ladenSchliessen(ladenUuid, userIds = "alle") {
     : zuschauer.filter(u => userIds.includes(u.id));
 
   const an = ziele.map(u => u.id);
-  for (const u of ziele) await flagSetzen(u, null);
+  for (const u of ziele) {
+    await flagSetzen(u, null);
+    await u.unsetFlag(MODULE_ID, SCHAU_MERKMAL);
+  }
+  if (!schauZuschauer(ladenUuid).length) schauBeenden();
 
   /*
    * Wer den Laden zumacht, macht auch die Kaufwuensche darin zu. Ein Ja auf
@@ -127,6 +153,16 @@ export async function aufZeigen({ ladenUuid, an }) {
   if (game.user.getFlag(MODULE_ID, OFFENER_LADEN) !== ladenUuid) {
     await flagSetzen(game.user, ladenUuid);
   }
+
+  /*
+   * Gross oder klein - derselbe Laden, zwei Ansichten. Ein Schirm bekommt
+   * kein Spielerfenster: Er hat keine Boerse, und ein Kaufknopf, den niemand
+   * druecken kann, waere ein Versprechen ins Leere.
+   */
+  if (game.user.getFlag(MODULE_ID, SCHAU_MERKMAL)) {
+    await schauZeichnen(laden, { seite: 0, seiten: seitenZahl(laden), takt: 0 });
+    return;
+  }
   spielerFensterOeffnen(laden);
 }
 
@@ -136,6 +172,7 @@ export async function aufSchliessen({ ladenUuid, an }) {
   if (ladenUuid && meins && meins !== ladenUuid) return;
   if (meins) await flagSetzen(game.user, null);
   spielerFensterSchliessen();
+  schauSchliessen();
 }
 
 export async function aufStand({ ladenUuid }) {
@@ -169,13 +206,29 @@ export async function benutzerWaehlen(laden) {
   }
 
   const schon = new Set(werSieht(laden.uuid).map(u => u.id));
+  const grossSchon = new Set(schauZuschauer(laden.uuid).map(u => u.id));
+
+  /*
+   * **Die Monitorerkennung schlaegt vor, sie entscheidet nicht.** Ein Beamer
+   * oder ein zweites Notebook ist kein Monitorbenutzer und sieht doch genauso
+   * aus; umgekehrt will man einem Monitor gelegentlich das kleine Fenster
+   * geben. Der Haken steht deshalb vorbelegt da und laesst sich umlegen.
+   */
   const zeilen = leute.map(u => {
     const checked = schon.has(u.id) ? "checked" : "";
     const mark = u.isGM ? ` (${game.i18n.localize("SHOPS.Vorzeigen.Spielleitung")})` : "";
-    return `<label class="shops-wahl-zeile">
-      <input type="checkbox" name="user" value="${u.id}" ${checked}>
-      <span>${foundry.utils.escapeHTML(u.name)}${mark}</span>
-    </label>`;
+    const monitor = istMonitor(u);
+    const grossAn = (grossSchon.has(u.id) || (!schon.size && monitor)) ? "checked" : "";
+    return `<div class="shops-wahl-zeile">
+      <label class="shops-wahl-wer">
+        <input type="checkbox" name="user" value="${u.id}" ${checked}>
+        <span>${foundry.utils.escapeHTML(u.name)}${mark}</span>
+      </label>
+      <label class="shops-wahl-gross" data-tooltip="${game.i18n.localize("SHOPS.Schau.GrossHinweis")}">
+        <input type="checkbox" name="gross" value="${u.id}" ${grossAn}>
+        <span>${game.i18n.localize("SHOPS.Schau.Gross")}${monitor ? " ⬤" : ""}</span>
+      </label>
+    </div>`;
   }).join("");
 
   /*
@@ -196,8 +249,10 @@ export async function benutzerWaehlen(laden) {
         label: game.i18n.localize("SHOPS.Vorzeigen.Zeigen"),
         icon: "fa-solid fa-eye",
         default: true,
-        callback: (_ereignis, _knopf, dialog) =>
-          [...dialog.element.querySelectorAll('.shops-wahl input[name="user"]:checked')].map(i => i.value)
+        callback: (_ereignis, _knopf, dialog) => ({
+          an: [...dialog.element.querySelectorAll('.shops-wahl input[name="user"]:checked')].map(i => i.value),
+          gross: [...dialog.element.querySelectorAll('.shops-wahl input[name="gross"]:checked')].map(i => i.value)
+        })
       },
       {
         action: "abbrechen",
@@ -209,5 +264,6 @@ export async function benutzerWaehlen(laden) {
   });
 
   if (antwort === "abbrechen" || antwort === null || antwort === undefined) return null;
-  return Array.isArray(antwort) ? antwort : [];
+  return (antwort && typeof antwort === "object" && Array.isArray(antwort.an))
+    ? antwort : { an: [], gross: [] };
 }

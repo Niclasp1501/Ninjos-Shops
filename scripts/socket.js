@@ -26,6 +26,7 @@ import { aufAnfrage } from "./anfrage.js";
 import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 import { aufHandel } from "./handel.js";
+import { aufSchau, schauNachfuehren } from "./schau.js";
 
 /** Eingehende Socket-Nachricht verteilen. */
 async function onSocket(daten) {
@@ -39,6 +40,7 @@ async function onSocket(daten) {
     case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
     case SOCKET.VORSITZ:     return void aufVorsitz(daten);
     case SOCKET.HANDEL:      return void aufHandel(daten);
+    case SOCKET.SCHAU:       return void aufSchau(daten);
 
     case SOCKET.KAUFEN: {
       if (!await darfIchAusfuehren(daten.bitteId)) return;
@@ -108,6 +110,8 @@ function standBeiAenderung(dokument) {
   const akteur = dokument?.documentName === "Actor" ? dokument : dokument?.parent;
   if (!akteur || akteur.type !== LADEN_TYP) return;
   standSenden(akteur.uuid);
+  // Ein Stueck mehr oder weniger kann eine Seite mehr oder weniger bedeuten.
+  schauNachfuehren(akteur.uuid);
 }
 
 /** Offene Ladenboegen neu zeichnen (Zuschauerliste, Angebote). */

@@ -83,6 +83,14 @@ Titelleiste **jedes** Personenbogens: anhaken, was vorgelegt wird, Menge und
 Preis setzen, Empfänger wählen. Der Spieler sieht genau das — und nichts
 anderes von diesem Bogen. Ausgelöst wird das immer von der Spielleitung.
 
+### Die Schauansicht
+
+Der Laden auf dem Bildschirm an der Wand: Vollbild ohne Fensterrahmen, sechs
+Karten je Seite, Name in Versalien, Preis in Gold, ein Fortschrittsbalken am
+unteren Rand. Nichts daran lässt sich anklicken — gesteuert wird im
+Ladenbogen: anhalten, vor, zurück. Wer sie bekommt, entscheiden Sie beim
+Vorzeigen; erkannte Monitore sind vorbelegt.
+
 ### Die zwei Bücher
 
 - **Das Ladenbuch** liegt am einzelnen Laden. Die Spielleitung sieht alles,
@@ -177,6 +185,19 @@ Der Spieler bekommt ein Fenster mit dem Gesicht der Person, Ihrem Satz und
 einem Knopf je Stück. Das Geld wandert in die Börse der Person, falls sie
 eine hat; leer werden kann sie nicht — dafür ist ein Laden mit eigener Kasse
 da.
+
+### Den Laden auf den Bildschirm bringen
+
+1. **Auswählen …**, und beim Bildschirm den Schalter **groß** anhaken.
+   Erkannte Monitore tragen dort schon einen Punkt.
+2. Der Schirm zeigt sofort die erste Seite und blättert alle zehn Sekunden
+   weiter.
+3. Im Ladenbogen erscheint darunter eine Leiste: **◀**, **Anhalten**, **▶**
+   und die Seitenzahl. Von Hand blättern hält an.
+
+Welche Benutzer als Monitore gelten, steht in den Moduleinstellungen unter
+**Monitore**. Laufen Ninjo's In-Person Tools und geben sie ihre Erkennung
+heraus, gilt deren Antwort — die eigene Liste graut dann aus und sagt es.
 
 ### Die Bücher lesen
 

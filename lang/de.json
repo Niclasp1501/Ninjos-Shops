@@ -262,5 +262,21 @@
   "SHOPS.Handel.NichtMehrDa": "Das liegt nicht mehr da.",
   "SHOPS.Handel.Verschickt": "Hingelegt bei {anzahl} — von {person}.",
   "SHOPS.Handel.Starten": "Handel anbieten",
-  "SHOPS.Anfrage.NullIstKeinPreis": "Null ist kein Preis. Nenne eine Zahl oder weise die Anfrage ab."
+  "SHOPS.Anfrage.NullIstKeinPreis": "Null ist kein Preis. Nenne eine Zahl oder weise die Anfrage ab.",
+  "SHOPS.Schau.Gross": "groß",
+  "SHOPS.Schau.GrossHinweis": "Die Schauansicht für den Bildschirm an der Wand — ohne Fenster, ohne Knöpfe, aus zwei Metern lesbar.",
+  "SHOPS.Schau.Halten": "Anhalten",
+  "SHOPS.Schau.Weiter": "Weiter",
+  "SHOPS.Schau.Zurueck": "Eine Seite zurück",
+  "SHOPS.Schau.Vor": "Eine Seite vor",
+  "SHOPS.Schau.Angehalten": "angehalten",
+  "SHOPS.Schau.Leer": "Nichts im Regal.",
+  "SHOPS.Monitor.Titel": "Welche Bildschirme sind Monitore?",
+  "SHOPS.Monitor.Name": "Monitore",
+  "SHOPS.Monitor.Knopf": "Liste öffnen",
+  "SHOPS.Monitor.Hinweis": "Welche Benutzer Bildschirme am Tisch sind. Sie bekommen beim Vorzeigen die Schauansicht vorgeschlagen.",
+  "SHOPS.Monitor.Erklaerung": "Angehakte Benutzer werden beim Vorzeigen als Schauansicht vorgeschlagen. Der Ausschlag gibt trotzdem die Auswahl im Ladenfenster.",
+  "SHOPS.Monitor.AusInPerson": "Die Antwort kommt gerade von Ninjo's In-Person Tools. Dort ist eingestellt, wer ein Monitor ist — diese Liste bewirkt nichts, solange das Modul läuft.",
+  "SHOPS.Monitor.Sichern": "Merken",
+  "SHOPS.Monitor.Gesichert": "{anzahl} als Monitor gemerkt."
 }

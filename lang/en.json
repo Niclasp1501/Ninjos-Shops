@@ -262,5 +262,21 @@
   "SHOPS.Handel.NichtMehrDa": "That is not there any more.",
   "SHOPS.Handel.Verschickt": "Laid out for {anzahl} — from {person}.",
   "SHOPS.Handel.Starten": "Offer a trade",
-  "SHOPS.Anfrage.NullIstKeinPreis": "Zero is not a price. Name a number, or refuse the request."
+  "SHOPS.Anfrage.NullIstKeinPreis": "Zero is not a price. Name a number, or refuse the request.",
+  "SHOPS.Schau.Gross": "large",
+  "SHOPS.Schau.GrossHinweis": "The display view for the screen on the wall — no window, no buttons, readable from two metres.",
+  "SHOPS.Schau.Halten": "Hold",
+  "SHOPS.Schau.Weiter": "Go on",
+  "SHOPS.Schau.Zurueck": "One page back",
+  "SHOPS.Schau.Vor": "One page on",
+  "SHOPS.Schau.Angehalten": "held",
+  "SHOPS.Schau.Leer": "Nothing on the shelf.",
+  "SHOPS.Monitor.Titel": "Which screens are displays?",
+  "SHOPS.Monitor.Name": "Displays",
+  "SHOPS.Monitor.Knopf": "Open the list",
+  "SHOPS.Monitor.Hinweis": "Which users are screens at the table. They are proposed for the display view when a shop is shown.",
+  "SHOPS.Monitor.Erklaerung": "Ticked users are proposed for the display view when a shop is shown. The choice in the shop window still decides.",
+  "SHOPS.Monitor.AusInPerson": "The answer currently comes from Ninjo's In-Person Tools. Who counts as a display is set there — this list does nothing while that module runs.",
+  "SHOPS.Monitor.Sichern": "Remember",
+  "SHOPS.Monitor.Gesichert": "{anzahl} remembered as displays."
 }

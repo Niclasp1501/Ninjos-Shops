@@ -516,6 +516,48 @@ Arbeitsspeicher genau der Verbindung, die sie aufgenommen hat. Der zweite Tab
 derselben Spielleitung sieht im Verhandlungsfenster nichts. Das ist die
 Theke — an ihr steht einer.
 
+## Die Schauansicht: eine Uhr, viele Schirme
+
+Der Bildschirm an der Wand ist der Grund, aus dem dieses Modul eigenständig
+ist. Drei Entscheidungen tragen ihn:
+
+1. **Nichts daran lässt sich bedienen.** Kein Titelbalken, kein Kreuz, kein
+   Knopf, `cursor: none`. Der Monitor hat keine Tastatur, und niemand steht am
+   Tisch auf, um darauf zu tippen — die Steuerung liegt im Ladenbogen.
+2. **Das Blättern treibt die Spielleitung**, nicht der Schirm. Liefe auf jedem
+   Gerät eine eigene Uhr, stünden zwei Monitore im selben Raum binnen Minuten
+   auf verschiedenen Seiten, und das sieht man sofort. Der
+   **Fortschrittsbalken** läuft dagegen örtlich: Er ist eine Animation, kein
+   Zustand, und beginnt mit jeder Seite neu.
+3. **Von Hand blättern hält an.** Wer weiterschaltet, weil jemand fragt „was
+   war das dritte nochmal", will nicht, dass die Anzeige zwei Sekunden später
+   von selbst weiterspringt.
+
+**Groß oder klein ist eine Eigenschaft des Bildschirms, nicht des Ladens** —
+deshalb ein eigenes Merkmal `schau` neben `offenerLaden`. Es übersteht ein
+Neuladen, damit ein Monitor nach einem Absturz von selbst zurückkommt; sonst
+müsste die Spielleitung aufstehen. Ein Schirm bekommt **kein** Spielerfenster:
+Er hat keine Börse, und ein Kaufknopf, den niemand drücken kann, wäre ein
+Versprechen ins Leere.
+
+**Die Schauansicht ist dunkel**, obwohl das Modul sonst hell ist. Ein leuchtend
+weißer Schirm im abgedunkelten Wohnzimmer blendet. Das ist der eine Ort im
+Modul, an dem die Farben bewusst kippen.
+
+### Die Brücke fragt, drüben antwortet noch niemand
+
+`monitore.js` fragt die In-Person Tools nach `isMonitorUser` und fällt auf die
+eigene Liste zurück, wenn die Antwort fehlt. Am 06.09.2026 nachgesehen: Deren
+API gibt `openPanel, isActive, getStats, resetStats, refresh, openTrade,
+openTradeLog, sheetView` heraus — die drei Funktionen aus ihrer `state.js`
+(`isMonitorUser`, `isSceneDisplay`, `isBattlemapDisplay`) stehen weiter nicht
+darin. Das ist eine Zeile in einem Objektliteral **drüben** und die einzige
+Änderung, die dieses Modul an einem anderen braucht.
+
+Bis dahin gilt die eigene Liste — und das Fenster **sagt** das auch. Eine
+Einstellung, die dasteht und nichts bewirkt, kostet jemanden eine halbe Stunde
+Suche nach dem Grund, warum sein Monitor nicht umschaltet.
+
 ## Ein Fenster, das Platz hat, soll ihn auch benutzen
 
 Am 06.09.2026 gefragt: „Warum wird die Breite und Höhe des Fensters, die

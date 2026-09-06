@@ -30,6 +30,8 @@ import {
   ladenSchliessen,
   benutzerWaehlen
 } from "./vorzeigen.js";
+import { istMonitor } from "./monitore.js";
+import { schauUmschalten, schauBlaettern, schauZustand, schauZuschauer } from "./schau.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -83,7 +85,10 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       zeigenAllen: LadenBogen.#zeigenAllen,
       zeigenAuswahl: LadenBogen.#zeigenAuswahl,
       schliessenAllen: LadenBogen.#schliessenAllen,
-      schliessenUser: LadenBogen.#schliessenUser
+      schliessenUser: LadenBogen.#schliessenUser,
+      schauHalt: LadenBogen.#schauHalt,
+      schauZurueck: LadenBogen.#schauZurueck,
+      schauVor: LadenBogen.#schauVor
     }
   };
 
@@ -122,12 +127,24 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         const passend = angebot?.ladenUuid === this.document.uuid ? angebot : null;
         return {
           id: u.id, name: u.name, active: u.active,
+          gross: u.getFlag(MODULE_ID, "schau") === true,
           angebot: passend
             ? { name: this.document.items.get(passend.itemId)?.name ?? "?",
                 preisText: alsText(passend.preisCp * passend.menge, kuerzel) }
             : null
         };
-      })
+      }),
+
+      /*
+       * Die Steuerung erscheint nur, wenn wirklich jemand gross zusieht - eine
+       * Leiste mit Knoepfen, die auf nichts wirken, ist schlechter als keine.
+       */
+      schau: (() => {
+        const zustand = schauZustand();
+        if (!zustand || zustand.ladenUuid !== this.document.uuid) return null;
+        if (!schauZuschauer(this.document.uuid).length) return null;
+        return { ...zustand, seiteAnzeige: zustand.seite + 1 };
+      })()
     });
   }
 
@@ -436,21 +453,31 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
 
   /** Allen aktiven Spielern vorzeigen (ohne Spielleitung). */
   static async #zeigenAllen() {
-    const ids = vorzeigbareBenutzer({ inklGm: false }).map(u => u.id);
-    if (!ids.length) {
+    const leute = vorzeigbareBenutzer({ inklGm: false });
+    if (!leute.length) {
       return ui.notifications.warn(game.i18n.localize("SHOPS.Vorzeigen.NiemandDa"));
     }
-    await ladenZeigen(this.document, ids);
+    const ids = leute.map(u => u.id);
+    await ladenZeigen(this.document, ids, leute.filter(istMonitor).map(u => u.id));
     this.render(false);
   }
 
   /** Dialog: ausgewaehlte Benutzer. */
   static async #zeigenAuswahl() {
-    const ids = await benutzerWaehlen(this.document);
-    if (!ids?.length) return;
-    await ladenZeigen(this.document, ids);
+    const wahl = await benutzerWaehlen(this.document);
+    if (!wahl?.an?.length) return;
+    await ladenZeigen(this.document, wahl.an, wahl.gross);
     this.render(false);
   }
+
+  /*
+   * Die Steuerung der Schauansicht liegt **hier** und nie auf dem Monitor:
+   * Der hat keine Tastatur, und niemand steht am Tisch auf, um darauf zu
+   * tippen (KONZEPT-shops.md, Abschnitt 8).
+   */
+  static #schauHalt() { schauUmschalten(); this.render(false); }
+  static #schauZurueck() { schauBlaettern(-1); this.render(false); }
+  static #schauVor() { schauBlaettern(1); this.render(false); }
 
   /** Allen Zuschauern dieses Ladens schliessen. */
   static async #schliessenAllen() {

@@ -2561,3 +2561,302 @@
  * einzige.
  */
 .ninjos-shops .shops-name { max-width: 34rem; }
+
+/* ══ Die Schauansicht ════════════════════════════════════════════════
+ *
+ * Der Bildschirm an der Wand. Aus zwei bis drei Metern lesbar heißt: viel
+ * größere Schrift, viel mehr Luft und nur drei Angaben je Stück — Bild, Name,
+ * Preis. Alles, was man anklicken könnte, fehlt; der Monitor hat keine
+ * Tastatur.
+ *
+ * Sie steht **dunkel**, obwohl das Modul sonst hell ist: Ein leuchtend weißer
+ * Schirm im abgedunkelten Wohnzimmer blendet, und ein Regal in einer Bude ist
+ * ohnehin kein Operationssaal. Das ist der eine Ort im Modul, an dem die
+ * Farben bewusst kippen.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+.ninjos-shops.shops-schau {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  background: #14100c;
+  color: #f3ece0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  /* Nichts hier wird bedient. */
+  cursor: none;
+  user-select: none;
+}
+
+.ninjos-shops .shops-schau-innen {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: clamp(1rem, 2.2vw, 2.2rem);
+  gap: clamp(.8rem, 1.8vh, 1.6rem);
+}
+
+/* ── Kopf ─────────────────────────────────────────────────────────── */
+
+.ninjos-shops .shops-schau-kopf {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: clamp(5rem, 14vh, 9rem);
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(.8rem, 2vh, 1.6rem);
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.ninjos-shops .shops-schau-kopf > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% var(--kopf-fokus, 50%);
+}
+
+/* Ein Verlauf, kein Schleier: Oben bleibt das Bild, unten trägt es Schrift. */
+.ninjos-shops .shops-schau-kopf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 8, 5, .92) 8%, rgba(10, 8, 5, .35) 55%, transparent);
+}
+
+.ninjos-shops .shops-schau-titel { position: relative; z-index: 1; }
+
+.ninjos-shops .shops-schau-titel h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.4vw, 4rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .8);
+}
+
+.ninjos-shops .shops-schau-haendler {
+  display: inline-block;
+  margin-top: .2em;
+  font-size: clamp(.9rem, 1.5vw, 1.5rem);
+  color: var(--shops-gold);
+}
+
+.ninjos-shops .shops-schau-gruss {
+  margin: .25em 0 0;
+  font-size: clamp(.85rem, 1.35vw, 1.35rem);
+  font-style: italic;
+  color: #d8cfc0;
+}
+
+/* ── Das Gitter der Ware ──────────────────────────────────────────── */
+
+.ninjos-shops .shops-schau-gitter {
+  flex: 1 1 auto;
+  min-height: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: clamp(.6rem, 1.4vw, 1.4rem);
+}
+
+/* Bis zu vier Stücke stehen in einer Reihe besser als in einem halbleeren
+   Raster — dafür sind sie dann größer. */
+.ninjos-shops .shops-schau-gitter:has(> :nth-child(4):last-child),
+.ninjos-shops .shops-schau-gitter:has(> :nth-child(2):last-child),
+.ninjos-shops .shops-schau-gitter:has(> :first-child:last-child) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ninjos-shops .shops-schau-karte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(.3rem, 1vh, .9rem);
+  min-height: 0;
+  padding: clamp(.6rem, 1.6vh, 1.4rem);
+  text-align: center;
+  background: #1e1912;
+  border: 1px solid #3b3227;
+  border-radius: 12px;
+}
+
+.ninjos-shops .shops-schau-karte > img {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 55%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border: none;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, .55));
+}
+
+.ninjos-shops .shops-schau-text {
+  display: flex;
+  flex-direction: column;
+  gap: .15em;
+  min-width: 0;
+}
+
+.ninjos-shops .shops-schau-name {
+  font-size: clamp(1rem, 1.75vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.ninjos-shops .shops-schau-hinweis {
+  font-size: clamp(.75rem, 1.05vw, 1.1rem);
+  font-style: italic;
+  color: #b8ab98;
+}
+
+.ninjos-shops .shops-schau-preis {
+  font-size: clamp(1.1rem, 2.1vw, 2.4rem);
+  font-weight: 700;
+  color: var(--shops-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-schau-dienst .shops-schau-preis::after {
+  content: " ✦";
+  font-size: .6em;
+  vertical-align: super;
+  opacity: .7;
+}
+
+.ninjos-shops .shops-schau-leer {
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 2rem);
+  color: #8d8578;
+}
+
+/* ── Fuß: Seitenzahl und Fortschritt ──────────────────────────────── */
+
+.ninjos-shops .shops-schau-fuss {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: clamp(.75rem, 1.1vw, 1.1rem);
+  color: #9d9384;
+}
+
+.ninjos-shops .shops-schau-seite { font-variant-numeric: tabular-nums; }
+
+/*
+ * Der Fortschritt läuft als Linie am unteren Rand. Damit niemand rät, wie
+ * lange eine Seite noch steht — das ist der Unterschied zwischen „es blättert
+ * gleich" und „ist es stehengeblieben?".
+ */
+.ninjos-shops .shops-schau-balken {
+  flex: 1 1 auto;
+  height: 4px;
+  border-radius: 2px;
+  background: #2d2620;
+  overflow: hidden;
+}
+
+.ninjos-shops .shops-schau-balken > i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--shops-gold);
+}
+
+.ninjos-shops .shops-schau-haelt > i { background: #5a5147; }
+
+.ninjos-shops .shops-schau-pause {
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-size: .8em;
+}
+
+/* ── Die Steuerung bei der Spielleitung ───────────────────────────── */
+
+.ninjos-shops .shops-schau-steuer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  padding: 6px 8px;
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-gold);
+  border-radius: 7px;
+}
+
+.ninjos-shops .shops-schau-steuer button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  color: var(--shops-text);
+  background: var(--shops-nav);
+  border: 1px solid var(--shops-rand);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-schau-steuer button:hover { border-color: var(--shops-gold); }
+.ninjos-shops .shops-schau-steuer .shops-schau-halt { flex: 1 1 auto; justify-content: center; }
+
+.ninjos-shops .shops-schau-stand {
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--shops-text-blass);
+}
+
+/* ── Die Auswahlzeile beim Vorzeigen: wer, und wie groß ───────────── */
+
+.ninjos-shops .shops-wahl-zeile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 0;
+}
+
+.ninjos-shops .shops-wahl-wer {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.ninjos-shops .shops-wahl-gross {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+  color: var(--shops-text-blass);
+  background: var(--shops-nav);
+  border: 1px solid var(--shops-rand);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-wahl-gross:hover { border-color: var(--shops-gold); }
+
+/* Der Satz „das gilt hier gerade nicht" — deutlich, aber keine Warnung. */
+.ninjos-shops .shops-monitor-fremd {
+  padding: 8px 10px;
+  color: var(--shops-text);
+  background: var(--shops-gold-fond, rgba(212, 175, 55, .12));
+  border: 1px solid var(--shops-gold);
+  border-radius: 6px;
+}
+.ninjos-shops .shops-monitor-fremd i { color: var(--shops-gold); margin-right: 5px; }

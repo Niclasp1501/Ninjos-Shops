@@ -1,0 +1,49 @@
+{{!--
+  Der Laden auf dem Bildschirm an der Wand.
+
+  Aus zwei bis drei Metern lesbar: Bild groß, Name in Versalien, Preis als
+  Zahl. Kein Regeltext — dafür ist die Hinweiszeile da, und die schreibt die
+  Spielleitung. Und nichts, worauf man klicken könnte: Der Monitor hat keine
+  Tastatur.
+--}}
+<div class="shops-schau-innen">
+
+  <header class="shops-schau-kopf" style="--kopf-fokus: {{kopfFokus}}%">
+    {{#if kopfBild}}<img src="{{kopfBild}}" alt="">{{/if}}
+    <div class="shops-schau-titel">
+      <h1>{{ladenName}}</h1>
+      {{#if haendlerName}}<span class="shops-schau-haendler">{{haendlerName}}</span>{{/if}}
+      {{#if begruessung}}<p class="shops-schau-gruss">{{{begruessung}}}</p>{{/if}}
+    </div>
+  </header>
+
+  {{#if waren.length}}
+    <ol class="shops-schau-gitter">
+      {{#each waren}}
+        <li class="shops-schau-karte {{#if dienst}}shops-schau-dienst{{/if}}">
+          <img src="{{img}}" alt="">
+          <div class="shops-schau-text">
+            <span class="shops-schau-name">{{name}}</span>
+            {{#if hinweis}}<span class="shops-schau-hinweis">{{hinweis}}</span>{{/if}}
+          </div>
+          <span class="shops-schau-preis">{{preisText}}</span>
+        </li>
+      {{/each}}
+    </ol>
+  {{else}}
+    <p class="shops-schau-leer">{{localize "SHOPS.Schau.Leer"}}</p>
+  {{/if}}
+
+  {{!-- Der Fuß trägt die Seitenzahl und den Fortschritt. Ohne ihn rät der
+        Saal, wie lange eine Seite noch steht. --}}
+  {{#if mehrereSeiten}}
+    <footer class="shops-schau-fuss">
+      <span class="shops-schau-seite">{{seite}} / {{seiten}}</span>
+      <span class="shops-schau-balken {{#unless laeuft}}shops-schau-haelt{{/unless}}"><i></i></span>
+      {{#unless laeuft}}
+        <span class="shops-schau-pause">{{localize "SHOPS.Schau.Angehalten"}}</span>
+      {{/unless}}
+    </footer>
+  {{/if}}
+
+</div>

@@ -27,6 +27,8 @@ import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.js";
 import { handelFensterEinrichten } from "./handel-fenster.js";
+import { schauWiederherstellen } from "./schau.js";
+import { monitorEinstellungEinrichten } from "./monitore.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
 
 function einstellungenEinrichten() {
@@ -82,23 +84,9 @@ function einstellungenEinrichten() {
   });
 }
 
-/**
- * Sind die In-Person Tools da und geben sie ihre Monitorerkennung heraus?
- *
- * Eine Abhaengigkeit ist das nicht und wird auch keine: Fehlt das Modul oder
- * fehlt die Auskunft, faellt das Modul auf seine eigene Liste zurueck.
- * Siehe KONZEPT-shops.md, Abschnitt 3 - dort steht auch, dass die drei
- * Funktionen drueben noch in die API eingetragen werden muessen.
- */
-export function inPersonBruecke() {
-  const api = game.modules.get("ninjos-inperson-tools")?.active
-    ? game.modules.get("ninjos-inperson-tools").api
-    : null;
-  return typeof api?.isMonitorUser === "function" ? api : null;
-}
-
 Hooks.once("init", () => {
   einstellungenEinrichten();
+  monitorEinstellungEinrichten();
   // Beides muss in "init" stehen: Danach hat Foundry die Dokumentklassen
   // bereits gebaut, und ein spaeter angemeldetes Datenmodell greift nicht
   // mehr - die Laeden der Welt haetten dann rohe Felder statt Werten.
@@ -124,5 +112,6 @@ Hooks.once("ready", async () => {
   handelFensterEinrichten();
   await verknuepfungNachtragen();
   await offenenLadenWiederherstellen();
+  await schauWiederherstellen();
   await willkommenZeigen();
 });

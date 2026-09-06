@@ -1,0 +1,42 @@
+{{!--
+  Wer ist ein Monitor?
+
+  Die Liste graut aus, sobald die In-Person Tools antworten — eine
+  Einstellung, die dasteht und nichts bewirkt, kostet jemanden eine halbe
+  Stunde Suche nach dem Grund, warum sein Monitor nicht umschaltet.
+--}}
+<div class="shops-teil-monitore">
+
+  <p class="shops-blockhinweis {{#if fremd}}shops-monitor-fremd{{/if}}">
+    {{#if fremd}}
+      <i class="fa-solid fa-link"></i>
+      {{localize "SHOPS.Monitor.AusInPerson"}}
+    {{else}}
+      {{localize "SHOPS.Monitor.Erklaerung"}}
+    {{/if}}
+  </p>
+
+  <ul class="shops-zugriffsliste">
+    {{#each leute}}
+      <li>
+        <label>
+          <input type="checkbox" data-monitor value="{{id}}"
+                 {{checked an}} {{#if ../fremd}}disabled{{/if}}>
+          <span class="shops-spielername">{{name}}</span>
+          {{#if gm}}<em class="shops-handel-figur">{{localize "SHOPS.Vorzeigen.Spielleitung"}}</em>{{/if}}
+          {{#if aktiv}}<i class="fa-solid fa-circle shops-online"
+                          title="{{localize 'SHOPS.Zugriff.Angemeldet'}}"></i>{{/if}}
+        </label>
+      </li>
+    {{/each}}
+  </ul>
+
+  {{#unless fremd}}
+    <footer class="shops-anfrage-fuss">
+      <button type="button" data-action="sichern">
+        <i class="fa-solid fa-check"></i>
+        {{localize "SHOPS.Monitor.Sichern"}}
+      </button>
+    </footer>
+  {{/unless}}
+</div>
