@@ -138,7 +138,12 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
   static DEFAULT_OPTIONS = {
     id: `${MODULE_ID}-verhandeln`,
     classes: ["ninjos-shops", "shops-verhandeln"],
-    position: { width: 560, height: "auto" },
+    /*
+     * Breiter als frueher: Bei 560 brach der Name eines Stuecks nach zwei
+     * Dritteln ab, und die beiden Eingabefelder standen zu eng nebeneinander.
+     * fensterpassen.js deckelt die Breite auf kleinen Schirmen wieder.
+     */
+    position: { width: 660, height: "auto" },
     window: { icon: "fa-solid fa-scale-balanced", resizable: true },
     actions: {
       bieten: AnfrageVerhandeln.#bieten,
@@ -164,6 +169,8 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
         untenText: alsGeld(s.untenCp),
         obenText: alsGeld(s.obenCp),
         angebotText: s.angebotCp != null ? alsGeld(s.angebotCp) : null,
+        // Kein Preis am Stueck heisst: kein Spielraum zum Anzeigen.
+        ohneWert: !(s.untenCp || s.ueblichCp || s.obenCp),
         posten: s.posten.map(p => ({ ...p, wertText: alsGeld(p.ueblichCp) }))
       }))
     });
@@ -207,10 +214,23 @@ export function packenOeffnen(laden, figur) {
   return packen;
 }
 
-/** Das Verhandlungsfenster der Spielleitung oeffnen. */
-export function verhandelnOeffnen() {
+/**
+ * Das Verhandlungsfenster der Spielleitung oeffnen.
+ *
+ * **`render(true)` allein reicht nicht.** Steht das Fenster schon offen,
+ * bleibt es liegen, wo es liegt - und lag es hinter dem Ladenbogen, hat die
+ * Spielleitung die Anfrage nicht gesehen. Genau so passiert am 06.09.2026:
+ * Der Spieler wartete auf eine Antwort, die niemand bemerkt hatte.
+ * Deshalb ausklappen, nach vorn holen, und sagen, dass etwas da ist.
+ */
+export function verhandelnOeffnen(sitzung = null) {
   verhandeln ??= new AnfrageVerhandeln();
   verhandeln.render(true);
+  if (verhandeln.minimized) verhandeln.maximize();
+  verhandeln.bringToFront();
+  if (sitzung) ui.notifications.info(game.i18n.format("SHOPS.Anfrage.Eingegangen", {
+    spieler: sitzung.spielerName ?? "", anzahl: sitzung.posten?.length ?? 0
+  }));
   return verhandeln;
 }
 
@@ -226,7 +246,7 @@ export function anfrageFensterEinrichten() {
     packen?.render(false);
 
     if (!game.user.isGM) return;
-    if (sitzung?.zustand === ZUSTAND.GEPACKT) verhandelnOeffnen();
+    if (sitzung?.zustand === ZUSTAND.GEPACKT) verhandelnOeffnen(sitzung);
     else verhandeln?.render(false);
   });
 }

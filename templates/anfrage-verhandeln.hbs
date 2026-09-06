@@ -22,7 +22,10 @@
           <ol class="shops-ware shops-anfrage-posten">
             {{#each posten}}
               <li class="shops-zeile">
-                <img src="{{img}}" alt="">
+                {{!-- Nicht jedes Stueck hat ein Bild. Ein leerer weisser Kasten
+                      sieht aus wie ein Ladefehler, ein Symbol nicht. --}}
+                {{#if img}}<img src="{{img}}" alt="">
+                {{else}}<i class="fa-solid fa-cube shops-kein-bild"></i>{{/if}}
                 <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
                 <span class="shops-menge">{{menge}}&times;</span>
                 <span class="shops-preis">{{wertText}}</span>
@@ -34,6 +37,11 @@
                 damit niemand eine Zahl abtippen muss, die daneben steht. --}}
           <div class="shops-spielraum">
             <span class="shops-spielraum-kopf">{{localize "SHOPS.Anfrage.NurFuerDich"}}</span>
+            {{#if ohneWert}}
+              {{!-- Drei Nullen nebeneinander sehen aus wie ein Fehler. Wenn am
+                    Stueck kein Preis haengt, sagen wir das lieber. --}}
+              <p class="shops-spielraum-leer">{{localize "SHOPS.Anfrage.KeinWert"}}</p>
+            {{else}}
             <div class="shops-spielraum-werte">
               <button type="button" data-action="uebernehmen" data-wert="{{untenCp}}"
                       title="{{localize 'SHOPS.Anfrage.UntenHinweis'}}">
@@ -51,6 +59,7 @@
                 <strong>{{obenText}}</strong>
               </button>
             </div>
+            {{/if}}
           </div>
 
           {{#if vorgeschlagen}}

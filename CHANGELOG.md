@@ -6,6 +6,16 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Das Verhandlungsfenster kam hinter dem Ladenbogen hoch.** Stand es schon
+  offen, blieb es liegen, wo es lag — die Anfrage wurde nicht bemerkt, und der
+  Spieler wartete auf eine Antwort, die niemand gesehen hatte. Es klappt jetzt
+  aus, kommt nach vorn und meldet sich mit Namen und Anzahl.
+- **Ein Stück ohne Preis zeigte dreimal „0 KM"** und sah aus wie ein Fehler.
+  Jetzt steht dort ein Satz: An diesem Stück hängt kein Preis.
+- **Namen wurden abgeschnitten, obwohl daneben Platz frei war.** Sie brechen
+  jetzt um; das Fenster ist breiter, und Werte, Felder und Knöpfe rücken
+  untereinander, wenn es eng wird, statt sich zu quetschen. Fehlt einem Stück
+  das Bild, steht dort ein Symbol statt eines leeren weißen Kastens.
 - **Ein Kauf lief doppelt, wenn dieselbe Spielleitung zwei Tabs offen hatte.**
   `game.users.activeGM` benennt einen Benutzer, keine Verbindung — beide Tabs
   hielten sich für zuständig. Gemessen: zwei Buchungen 16 ms auseinander, zwei

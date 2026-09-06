@@ -220,5 +220,6 @@
   "SHOPS.Menue.Ankauf": "Takes it back",
   "SHOPS.Menue.Anbieten": "Offer to someone",
   "SHOPS.Menue.Oeffnen": "Open the item",
-  "SHOPS.Menue.Entfernen": "Take off the shelves"
+  "SHOPS.Menue.Entfernen": "Take off the shelves",
+  "SHOPS.Anfrage.KeinWert": "This piece carries no price — name one yourself."
 }

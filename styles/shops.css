@@ -2230,3 +2230,97 @@
 .ninjos-shops .shops-werkzeuge { opacity: 0.55; }
 .ninjos-shops .shops-zeile:hover .shops-werkzeuge,
 .ninjos-shops .shops-zeile:focus-within .shops-werkzeuge { opacity: 1; }
+
+
+/* ══ Das Verhandlungsfenster: Platz nutzen, eng trotzdem sauber ═══════
+ *
+ * Das Fenster steht mal auf einem breiten Schirm und mal auf einem Tablet.
+ * Feste Spalten koennen nur eins von beidem: Bei 560 px brach der Name eines
+ * Stuecks nach zwei Dritteln ab, waehrend rechts daneben Platz frei blieb.
+ *
+ * Deshalb ueberall `flex-wrap` statt fester Raster: Ist Platz da, stehen die
+ * Dinge nebeneinander; wird es eng, rutschen sie untereinander, statt sich
+ * gegenseitig zu quetschen. Und der Name wird nicht abgeschnitten - er bricht
+ * um. Ein halber Name ist keine Auskunft.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+.ninjos-shops .shops-anfrage-posten .shops-zeile {
+  align-items: flex-start;
+  padding: 8px 0;
+  gap: 10px;
+}
+
+.ninjos-shops .shops-anfrage-posten .shops-name { min-width: 0; }
+
+.ninjos-shops .shops-anfrage-posten .shops-warenname {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.35;
+}
+
+/* Nicht jedes Stueck hat ein Bild. Ein leerer weisser Kasten sieht aus wie
+   ein Ladefehler; ein Symbol sagt „hier ist keins". */
+.ninjos-shops .shops-kein-bild {
+  flex: 0 0 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--shops-text-blass);
+  background: var(--shops-nav);
+  border: 1px solid var(--shops-rand);
+  border-radius: 5px;
+}
+
+.ninjos-shops .shops-anfrage-posten .shops-menge {
+  flex: 0 0 auto;
+  min-width: 2.4rem;
+  text-align: right;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-anfrage-posten .shops-preis {
+  flex: 0 0 auto;
+  min-width: 5.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Die drei Werte: lesbar, nicht blass. Sie sind das Einzige, wofuer dieses
+   Fenster ueberhaupt da ist. */
+.ninjos-shops .shops-spielraum-werte { flex-wrap: wrap; }
+.ninjos-shops .shops-spielraum-werte button { flex: 1 1 6.5rem; }
+
+.ninjos-shops .shops-spielraum-werte strong {
+  font-size: 1rem;
+  color: var(--shops-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-spielraum-werte button.shops-ueblich {
+  background: #fffdf4;
+  border-color: var(--shops-gold);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35);
+}
+
+.ninjos-shops .shops-spielraum-leer {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--shops-text);
+}
+
+/* Preis und Satz teilen sich die Zeile, solange sie hineinpassen. */
+.ninjos-shops .shops-anfrage-felder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.ninjos-shops .shops-anfrage-felder > label:first-child { flex: 1 1 9rem; }
+.ninjos-shops .shops-anfrage-felder > label:last-child { flex: 3 1 14rem; }
+
+/* Ebenso die beiden Knoepfe darunter. */
+.ninjos-shops .shops-anfrage-fuss { flex-wrap: wrap; }
+.ninjos-shops .shops-anfrage-fuss button { flex: 1 1 9rem; }

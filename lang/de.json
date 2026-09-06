@@ -220,5 +220,6 @@
   "SHOPS.Menue.Ankauf": "Kauft er zurück",
   "SHOPS.Menue.Anbieten": "Jemandem anbieten",
   "SHOPS.Menue.Oeffnen": "Gegenstand öffnen",
-  "SHOPS.Menue.Entfernen": "Aus der Auslage nehmen"
+  "SHOPS.Menue.Entfernen": "Aus der Auslage nehmen",
+  "SHOPS.Anfrage.KeinWert": "An diesem Stück hängt kein Preis — nenne selbst einen."
 }
