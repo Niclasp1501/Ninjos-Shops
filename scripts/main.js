@@ -18,6 +18,7 @@ import { MODULE_ID, SETTINGS } from "./const.js";
 import { ladenTypEinrichten, ladenBilderEinrichten } from "./laden-model.js";
 import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
+import { mcpWerkzeugeEinrichten } from "./mcp-werkzeuge.js";
 import { socketEinrichten } from "./socket.js";
 import { zugaengeHaken, zugaengeEinrichten } from "./zugaenge.js";
 import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
@@ -103,6 +104,9 @@ Hooks.once("init", () => {
   ladenBogenEinrichten();
   zugaengeHaken();
   willkommenEinrichten();
+  // Muss in "init" stehen: Ninjo's Foundry MCP ruft seinen registerTools-Hook
+  // beim Hochfahren, also bevor "ready" laeuft. Fehlt das Modul, passiert nichts.
+  mcpWerkzeugeEinrichten();
 });
 
 Hooks.once("ready", async () => {
