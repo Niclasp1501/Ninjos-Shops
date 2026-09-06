@@ -2491,3 +2491,73 @@
   font-size: 0.78rem;
   color: var(--shops-text-blass);
 }
+
+/* ══ Breite Fenster: zwei Spalten statt einer Lücke ══════════════════
+ *
+ * **Das Problem.** `.shops-name` steht auf `flex: 1` und schluckt damit jeden
+ * zusätzlichen Pixel. In einem 780 px breiten Fenster stimmt das; in einem
+ * 1200 px breiten stand ein sechs Zeichen langes Wort in einer 700 px breiten
+ * Spalte, und zwischen Name und Bestand klaffte ein Loch. Das Fenster war
+ * groß, benutzt war es nicht.
+ *
+ * **Die Lösung ist keine breitere Zeile, sondern eine zweite Spalte.** Eine
+ * Auslage ist eine Liste von Karten, und Karten legt man nebeneinander, wenn
+ * Platz da ist. Das nutzt die Breite *und* halbiert die Höhe — man sieht
+ * doppelt so viel Ware, ohne zu scrollen.
+ *
+ * Entschieden wird das an der **Liste**, nicht am Bildschirm: Eine
+ * Container-Abfrage misst, wie breit die Liste tatsächlich ist. Ein
+ * schmales Fenster auf einem großen Schirm bleibt einspaltig, und das ist
+ * richtig so.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+/*
+ * **Der Container ist der Abschnitt, nicht die Liste.** Eine Container-Abfrage
+ * gilt nur fuer die *Nachkommen* ihres Containers - sie kann ihn nicht selbst
+ * umbauen. Erst stand `container-type` an der Liste, und dann griff im breiten
+ * Fenster zwar das `display: none` am Spaltenkopf (ein Kind), aber das
+ * `display: grid` an der Liste (dem Container) nicht: Der Kopf verschwand, und
+ * die Karten standen weiter einspaltig untereinander.
+ */
+.ninjos-shops .shops-auslage {
+  container-type: inline-size;
+  container-name: auslage;
+}
+
+@container auslage (min-width: 62rem) {
+  .ninjos-shops .shops-ware {
+    display: grid;
+    /* `minmax(0, 1fr)`, nicht `1fr`: Sonst bestimmt der breiteste Warenname
+       die Spur, und die beiden Spalten stehen ungleich - gemessen 565 gegen
+       594 Pixel, was man als Versatz sieht. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 0;
+  }
+
+  /*
+   * Der Spaltenkopf beschriftet die Spalten *einer* Karte. Über zwei Karten
+   * gespannt stünde „Preis" über der Mitte der linken und über gar nichts der
+   * rechten — er verschwindet deshalb. Was er sagte, sagen die Zeilen selbst:
+   * eine Zahl im Zählfeld, ein fetter Preis, ein Feld mit Münzmarke.
+   */
+  .ninjos-shops .shops-ware > li.shops-spalten { display: none; }
+
+  /* Die Karten stehen jetzt in einem Raster; der Abstand kommt von ihnen
+     selbst, damit die alte Randlogik (12 px seitlich) erhalten bleibt. */
+  .ninjos-shops .shops-ware > li.shops-zeile { margin: 0 6px 8px; }
+  .ninjos-shops .shops-ware > li.shops-zeile:first-of-type { margin-top: 8px; }
+  .ninjos-shops .shops-ware > li:last-child { margin-bottom: 8px; }
+}
+
+@container auslage (min-width: 96rem) {
+  .ninjos-shops .shops-ware { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/*
+ * Und für den Fall, dass doch eine Spalte bleibt: Der Name darf nicht
+ * beliebig breit werden. Jenseits von etwa 60 Zeichen liest ihn niemand
+ * besser — die Luft gehört dann zwischen die Spalten und nicht in eine
+ * einzige.
+ */
+.ninjos-shops .shops-name { max-width: 34rem; }

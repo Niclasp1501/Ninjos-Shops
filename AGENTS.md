@@ -516,6 +516,59 @@ Arbeitsspeicher genau der Verbindung, die sie aufgenommen hat. Der zweite Tab
 derselben Spielleitung sieht im Verhandlungsfenster nichts. Das ist die
 Theke — an ihr steht einer.
 
+## Ein Fenster, das Platz hat, soll ihn auch benutzen
+
+Am 06.09.2026 gefragt: „Warum wird die Breite und Höhe des Fensters, die
+verfügbar ist, noch nicht so gut ausgenutzt?" Es waren **drei** Ursachen, und
+jede einzelne hätte allein gereicht.
+
+### 1. `flex: 1` am Namen schluckt jeden Pixel
+
+`.shops-name` stand auf `flex: 1`. In einem 780 px breiten Fenster ist das
+richtig. In einem 1170 px breiten steht ein sechs Zeichen langes Wort in einer
+700 px breiten Spalte, und zwischen Name und Bestand klafft ein Loch — das
+Fenster ist groß, benutzt ist es nicht.
+
+**Die Lösung ist keine breitere Zeile, sondern eine zweite Spalte.** Eine
+Auslage ist eine Liste von Karten, und Karten legt man nebeneinander, wenn
+Platz da ist. Das nutzt die Breite *und* halbiert die Höhe.
+
+### 2. Eine Container-Abfrage kann ihren Container nicht umbauen
+
+`container-type` stand zuerst an der Liste selbst. Im breiten Fenster griff
+dann das `display: none` am Spaltenkopf — ein Kind —, aber das `display: grid`
+an der Liste nicht: Der Kopf verschwand, und die Karten standen weiter
+einspaltig untereinander. **`@container` gilt nur für die Nachkommen des
+Containers.** Der Container ist deshalb der Abschnitt `.shops-auslage`.
+
+Und `repeat(2, minmax(0, 1fr))` statt `1fr 1fr`: Sonst bestimmt der breiteste
+Warenname die Spur, und die Spalten stehen ungleich — gemessen 565 gegen 594
+Pixel.
+
+### 3. `requestAnimationFrame` läuft nicht in einem verdeckten Fenster
+
+Das war die teuerste Stunde. `fensterpassen.js` wartete mit `rAF` auf das
+fertige Bild — und ein Browser, dessen Fenster verdeckt oder minimiert ist,
+zeichnet nicht und ruft den Rückruf **nie**. Gemessen: Im Render-Haken stand
+der Bogen auf 524 statt 780 Pixel, und der Rückruf kam auch nach zweieinhalb
+Sekunden nicht. Auf einem zweiten Bildschirm, den gerade niemand ansieht, wäre
+jedes Fenster ungeklemmt geblieben.
+
+`setTimeout(…, 0)` läuft auch dann. Warten muss man trotzdem: Im Haken selbst
+hängt der Inhalt noch nicht vollständig am Dokument.
+
+**Und: nicht messen, sondern fragen.** Für die Sollbreite gilt
+`app.position.width` — die Zahl, die das Fenster meint. Aus der gemessenen
+Breite von 524 mal anderthalb wurden genau die 780 der Voreinstellung; es sah
+aus, als passiere gar nichts.
+
+### Was die Klemmung dabei falsch machte
+
+Sie schrieb jedem Fenster eine feste Höhe, auch wenn nichts zu klemmen war.
+Damit war `height: "auto"` vorbei: Eine neue Anfrage am Tresen machte das
+Fenster nicht mehr höher, sondern nur den Inhalt länger. Die Höhe wird jetzt
+nur angefasst, wenn sie wirklich über den Rand geht.
+
 ## Kein Fenster größer als der Bildschirm
 
 Auf einem Tablet stand das Spielerfenster oben am Rand und lief unten aus dem

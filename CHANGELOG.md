@@ -6,6 +6,18 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Breite Fenster nutzten ihre Breite nicht.** Der Name schluckte jeden
+  zusätzlichen Pixel, und zwischen ihm und dem Bestand klaffte ein Loch. Ist
+  die Auslage breit genug, steht sie jetzt **zweispaltig** — das nutzt die
+  Breite und halbiert die Höhe. Ab sehr breit dreispaltig.
+- **Fenster öffnen sich größer.** Beim ersten Aufmachen darf ein Fenster
+  anderthalbmal so breit werden wie seine Voreinstellung, solange der
+  Bildschirm es hergibt. Später nie wieder: Wer von Hand kleiner zieht, will
+  es kleiner haben.
+- **Die Klemmung fror `height: auto` ein.** Sie schrieb jedem Fenster eine
+  feste Höhe, auch wenn gar nichts zu klemmen war — eine neue Anfrage machte
+  das Fenster danach nicht mehr höher. Jetzt wird die Höhe nur angefasst, wenn
+  sie wirklich über den Rand geht.
 - **Das Verhandlungsfenster kam hinter dem Ladenbogen hoch.** Stand es schon
   offen, blieb es liegen, wo es lag — die Anfrage wurde nicht bemerkt, und der
   Spieler wartete auf eine Antwort, die niemand gesehen hatte. Es klappt jetzt
