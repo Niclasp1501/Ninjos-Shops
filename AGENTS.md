@@ -214,6 +214,22 @@ Deshalb endet der Geltungsbereich am `.window-content`, und alles mit einer
 Farbregel für `button`, `i` oder `::before` ergänzt, prüft danach die
 Fensterleiste.
 
+## Das Ladensymbol: dieselbe Waage, aus der freien Ausgabe
+
+`assets/laden.svg` trägt **denselben** `scale-balanced`-Pfad, den auch die
+Fensterleiste und die Knöpfe zeigen. Zwei Wege dorthin sind gescheitert, und
+beide sind es wert, dass man sie nicht noch einmal geht:
+
+- **Selbst nachgezeichnet** — fällt neben dnd5es eigenen Akteurssymbolen sofort
+  auf, weil die Strichstärken nicht stimmen.
+- **Als `<text>` mit dem Schriftzeichen U+F24E** — dnd5e bettet die Datei zwar
+  ein (deshalb wirkt `currentColor`), aber die Schriften der Seite greifen darin
+  nicht. Im Anlegen-Dialog stand ein leeres Kästchen.
+
+Der Pfad stammt deshalb aus **Font Awesome Free** (CC BY 4.0, Vermerk steht in
+der Datei) und nicht aus der Pro-Fassung, die Foundry mitliefert: Deren Glyphen
+weiterzugeben, wäre ohne Lizenz. Die Form ist dieselbe.
+
 ## Symbole: nichts, was es 1400 nicht gab
 
 Der Kaufknopf trug anfangs `fa-cart-shopping`. Ein Supermarktwagen in einem

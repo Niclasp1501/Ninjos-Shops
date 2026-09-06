@@ -100,8 +100,10 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   file extension" ab — samt Aufschlag, Kaufmodus und Zugriff.
 - **Der Ladentyp trug dnd5es Kapuzenmännchen.** dnd5e zeichnet die Typen im
   Anlegen-Dialog aus `CONFIG.DND5E.defaultArtwork.Actor`, nicht aus
-  `CONFIG.Actor.typeIcons`. Dazu eine eigene Waage als SVG (`assets/laden.svg`),
-  einfarbig wie die Symbole des Systems.
+  `CONFIG.Actor.typeIcons`. Dazu dieselbe Waage als SVG
+  (`assets/laden.svg`), die auch die Fensterleiste trägt — der Pfad aus Font
+  Awesome Free unter CC BY 4.0, weil Foundrys mitgelieferte Pro-Fassung nicht
+  weitergegeben werden darf.
 - **Die Spieleransicht hatte keine Spaltenköpfe.** Welche Zahl der Bestand ist
   und welche der Preis, musste man raten. Beide Ansichten tragen den Kopf jetzt
   **innerhalb** der Liste — dort gilt für Kopf und Karten dieselbe
