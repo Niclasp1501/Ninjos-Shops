@@ -41,7 +41,8 @@ export function marktbuchZeilen() {
       day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
     }),
     wasText: (z.was ?? []).map(w => (w.menge > 1 ? `${w.menge}× ${w.name}` : w.name)).join(", "),
-    gekauft: z.art === "kauf"
+    gekauft: z.art === "kauf",
+    freigabe: z.art === "freigabe"
   }));
 }
 
@@ -79,6 +80,31 @@ export async function schreibeErgebnis({ laden, item, figur, kaeufer, ok, stueck
     summeCp: summeCp ?? 0,
     grund: ok ? null : (grund ?? "SHOPS.Kauf.Abgebrochen"),
     dienst: !!dienst, sonderpreis: !!ausAngebot
+  });
+}
+
+/**
+ * Ein Ja oder ein Nein der Spielleitung im Freigabe-Modus.
+ *
+ * **Warum eine eigene Zeile und kein Feld am Kauf.** Der Kauf schreibt seine
+ * Zeile gleich danach, und dort steht der Haendler als Gegenueber - das ist
+ * richtig so, verkauft hat er. Wer das Ja gegeben hat, ist eine andere
+ * Auskunft; bei drei Spielleitungen am Tisch beantwortet sie „wer hat das
+ * durchgewinkt". Und ein **Nein** haette sonst gar keine Zeile: Es war eine
+ * Meldung beim Spieler, die verschwand, und drei Wochen spaeter wusste
+ * niemand mehr, dass ueberhaupt gefragt worden war.
+ */
+export async function schreibeFreigabe({ laden, eintrag, ok, wer, satz }) {
+  await eintragen({
+    art: "freigabe", ok: !!ok,
+    ladenName: laden?.name ?? eintrag.ladenName ?? "?",
+    ladenUuid: laden?.uuid ?? eintrag.ladenUuid ?? null,
+    userName: eintrag.spielerName, figurName: eintrag.figurName,
+    was: [{ name: eintrag.itemName, menge: eintrag.menge }],
+    summeCp: eintrag.summeCp ?? 0,
+    freigabeVon: wer ?? null,
+    satz: satz || null,
+    grund: ok ? null : "SHOPS.Freigabe.Abgelehnt"
   });
 }
 

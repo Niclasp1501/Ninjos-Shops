@@ -395,16 +395,43 @@ sein Monitor nicht umschaltet. Die Brücke selbst steht in Abschnitt 3.
 
 ---
 
-## 9. Das Marktbuch
-
-Ein Journal, kein Datenklumpen in den Einstellungen — dieselbe Begründung wie
-beim Tauschlogbuch: Ein Journal lässt sich lesen, durchsuchen, ausdrucken und
-liegt in der Weltsicherung. Ein Spielleiter, der wissen will, wo die 400 Gold
-geblieben sind, findet es; ein JSON in der Einstellungsdatenbank findet er nie.
+## 9. Die zwei Bücher
 
 Je Kauf eine Zeile: wann, wer, welcher Laden, was, wie viel, welcher Preis,
 und — bei Freigabe — wer bestätigt hat. Geschrieben wird **zweimal**: vor dem
-ersten Zugriff, was gemeint war, und danach, was geschehen ist.
+ersten Zugriff, was gemeint war, und danach, was geschehen ist. So steht auch
+das da, was *nicht* geklappt hat, samt Grund.
+
+Es sind zwei Bücher, und sie sind nicht dasselbe:
+
+- **Das Ladenbuch** liegt als Merkmal am einzelnen Laden und zeigt, was in
+  diesem Laden geschehen ist. Die Spielleitung sieht alles, ein Spieler nur
+  seine eigenen Zeilen. Es ist das Buch, das am Tisch aufgeschlagen wird.
+- **Das Marktbuch** liegt in einer Welteinstellung und sammelt alle Läden.
+  Es ist das Buch für die Frage „wo sind die 400 Gold geblieben", mit Filter
+  je Laden und den Gründen für alles, was scheiterte.
+
+### Kein Journal — und warum diese Fassung die erste ersetzt
+
+Die erste Fassung dieses Abschnitts verlangte ein **Journal**, mit derselben
+Begründung wie beim Tauschlogbuch der In-Person Tools: lesbar, durchsuchbar,
+ausdruckbar, in der Weltsicherung.
+
+**Am 06.09.2026 hat Ninjo das verworfen**, nachdem er es gebaut gesehen hatte,
+und er hat recht behalten. Ein Journal aus lauter Textschnipseln liest sich
+wie ein Protokoll und nicht wie ein Buch: nicht filterbar, nicht sortierbar,
+jede Zeile ein Absatz. Die Frage „wo sind die 400 Gold geblieben" beantwortet
+man mit einer Spalte, die man sortieren kann, nicht mit vierzig Absätzen
+Fließtext. Als Daten mit einem eigenen Fenster ist beides möglich, und
+ausdrucken kann man das Fenster auch.
+
+Der Preis dieser Entscheidung ist ehrlich zu nennen: Die Einträge stehen in
+der Einstellungsdatenbank statt in einem Dokument, und wer das Modul
+deinstalliert, verliert sie. Dafür sind sie gedeckelt (500 Zeilen im
+Marktbuch, 200 je Laden) und wachsen einer Welt nicht über den Kopf.
+
+**Wer das hier liest und den Journal-Weg wieder einbauen will: nicht tun.**
+Es ist keine offene Frage mehr.
 
 ---
 
@@ -435,6 +462,22 @@ trägt weiterhin einen Vorschlag.
    Ein Beamer oder ein zweites Notebook ist kein Monitorbenutzer, sieht aber
    genauso aus, und wer die große Ansicht ausdrücklich verlangt, soll sie
    bekommen.
+
+### Entschieden am 06.09.2026
+
+6. **Das Marktbuch ist kein Journal**, sondern Daten mit eigenem Fenster.
+   Begründung in Abschnitt 9; diese Entscheidung ersetzt die erste Fassung
+   dieses Abschnitts.
+7. **Ein Laden kann an Szenen hängen** (`zugriff.szenen`): Wer keine dieser
+   Karten vor sich hat, kommt nicht an den Laden. Es ist ein Filter über dem
+   Zugriffsmodus und kein dritter Modus — so lässt sich „alle Spieler, aber
+   nur auf dem Marktplatz" sagen. Leer heißt überall. Entschieden hat die
+   **betrachtete Karte**, nicht das Token der Figur: Ein Token wäre präziser
+   und trügerischer, siehe AGENTS.md.
+8. **Der Freigabe-Modus fragt wirklich.** Die Bitte legt sich bei der
+   Spielleitung ab und wartet auf ein Ja; was am Geld oder am Bestand
+   scheitert, scheitert sofort, ohne jemanden zu fragen. Ein Kauf zu einem
+   zugesagten Angebotspreis braucht kein zweites Ja.
 
 ### Noch offen
 

@@ -2357,3 +2357,31 @@
   max-height: 11rem;
   overflow-y: auto;
 }
+
+/* ── Ein Ja und ein Nein im Buch ───────────────────────────────────── */
+
+/*
+ * Eine Freigabe ist keine Richtung - es ist noch nichts geflossen, das tut
+ * erst die Kaufzeile danach. Sie bekommt deshalb weder den Pfeil der Käufe
+ * noch das Rot der Fehlschläge, sondern den goldenen Streifen: „hier hat
+ * jemand entschieden".
+ */
+.ninjos-shops .shops-buch-frei,
+.ninjos-shops .shops-buch-nein { border-left: 3px solid var(--shops-gold); }
+
+.ninjos-shops .shops-buch-nein .shops-buch-pfeil,
+.ninjos-shops .shops-buch-frei .shops-buch-pfeil { color: var(--shops-text-blass); }
+
+/* Der Satz der Spielleitung, wörtlich. Er ist der eigentliche Inhalt einer
+   Ablehnung — „nicht heute" allein sagt niemandem, warum. */
+.ninjos-shops .shops-buch-satz {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+/* Ein Ja ist keine Warnung — es bekommt die gedämpfte Farbe, nicht das Rot. */
+.ninjos-shops .shops-buch-marke.shops-marke-ruhig {
+  color: var(--shops-text-blass);
+  background: var(--shops-nav);
+}

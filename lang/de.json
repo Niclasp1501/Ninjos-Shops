@@ -233,5 +233,9 @@
   "SHOPS.Zugriff.SzenenUeberall": "Keine ausgewählt — der Laden ist von jeder Karte aus erreichbar.",
   "SHOPS.Zugriff.SzenenGebunden": "Nur wer eine dieser Karten vor sich hat, kommt an den Laden.",
   "SHOPS.Zugriff.SzeneAktiv": "Gerade die aktive Szene",
-  "SHOPS.Zugang.NichtMehrHier": "{laden} liegt nicht auf dieser Karte."
+  "SHOPS.Zugang.NichtMehrHier": "{laden} liegt nicht auf dieser Karte.",
+  "SHOPS.Buch.Freigegeben": "freigegeben",
+  "SHOPS.Buch.Abgelehnt": "abgelehnt",
+  "SHOPS.Buch.Durch": "durch",
+  "SHOPS.Verknuepfung.Oeffnen": "Laden öffnen"
 }

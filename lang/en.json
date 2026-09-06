@@ -233,5 +233,9 @@
   "SHOPS.Zugriff.SzenenUeberall": "None picked — the shop can be reached from any map.",
   "SHOPS.Zugriff.SzenenGebunden": "Only those looking at one of these maps can reach the shop.",
   "SHOPS.Zugriff.SzeneAktiv": "The active scene right now",
-  "SHOPS.Zugang.NichtMehrHier": "{laden} is not on this map."
+  "SHOPS.Zugang.NichtMehrHier": "{laden} is not on this map.",
+  "SHOPS.Buch.Freigegeben": "released",
+  "SHOPS.Buch.Abgelehnt": "refused",
+  "SHOPS.Buch.Durch": "by",
+  "SHOPS.Verknuepfung.Oeffnen": "Open the shop"
 }

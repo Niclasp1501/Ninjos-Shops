@@ -28,24 +28,36 @@
   {{#if zeilen.length}}
     <ol class="shops-buchliste">
       {{#each zeilen}}
-        <li class="shops-buchzeile {{#unless ok}}shops-buch-fehl{{else}}{{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}{{/unless}}">
+        {{!-- Vier Faelle. Eine Freigabe ist keine Richtung: Es ist noch
+              nichts geflossen, das tut erst die Kaufzeile danach. --}}
+        <li class="shops-buchzeile {{#if freigabe}}shops-buch-frei{{else}}{{#unless ok}}shops-buch-fehl{{else}}{{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}{{/unless}}{{/if}}">
           <span class="shops-buch-pfeil">
-            {{#unless ok}}<i class="fa-solid fa-xmark"></i>
+            {{#if freigabe}}
+              {{#if ok}}<i class="fa-solid fa-check"></i>
+              {{else}}<i class="fa-solid fa-hand"></i>{{/if}}
+            {{else}}{{#unless ok}}<i class="fa-solid fa-xmark"></i>
             {{else if gekauft}}<i class="fa-solid fa-arrow-right"></i>
-            {{else}}<i class="fa-solid fa-arrow-left"></i>{{/unless}}
+            {{else}}<i class="fa-solid fa-arrow-left"></i>{{/unless}}{{/if}}
           </span>
 
           <div class="shops-buch-inhalt">
             <span class="shops-buch-was">
               {{wasText}}
               {{#if sonderpreis}}<em class="shops-buch-marke">{{localize "SHOPS.Buch.Sonderpreis"}}</em>{{/if}}
+              {{!-- Ein Ja ist keine Warnung. Rot bleibt dem Nein. --}}
+              {{#if freigabe}}<em class="shops-buch-marke{{#if ok}} shops-marke-ruhig{{/if}}">
+                {{#if ok}}{{localize "SHOPS.Buch.Freigegeben"}}
+                {{else}}{{localize "SHOPS.Buch.Abgelehnt"}}{{/if}}
+              </em>{{/if}}
             </span>
             <span class="shops-buch-wer">
               {{zeitText}} · {{ladenName}} · {{userName}}{{#if figurName}} ({{figurName}}){{/if}}
+              {{#if freigabeVon}} · {{localize "SHOPS.Buch.Durch"}} {{freigabeVon}}{{/if}}
             </span>
-            {{#unless ok}}
+            {{#if satz}}<span class="shops-buch-satz">„{{satz}}"</span>{{/if}}
+            {{#unless ok}}{{#unless freigabe}}
               <span class="shops-buch-grund">{{grundText}}</span>
-            {{/unless}}
+            {{/unless}}{{/unless}}
           </div>
 
           <span class="shops-buch-summe">{{#if ok}}{{summeText}}{{else}}—{{/if}}</span>

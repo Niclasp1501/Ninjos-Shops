@@ -304,6 +304,53 @@ entfernt werden — dort hätte ein Blick in die Konsole die Verhandlung entwert
 Client; ohne Grenze wächst ein vielbesuchter Laden unbemerkt weiter, bis jemand
 beim Laden der Welt wartet und niemand weiß, warum.
 
+## Die Verknüpfung pflegt sich selbst
+
+`VERKNUEPFT` (`flags["ninjos-shops"].laeden`) stand vom ersten Tag an in
+`const.js` und wurde von **nichts** gelesen — der Laden kannte seinen Händler,
+der Händler seinen Laden nicht.
+
+**Von Hand gepflegt wäre sie falsch.** Zwei Angaben, die dasselbe meinen,
+laufen immer auseinander, und dann öffnet ein Token einen Laden, den es nicht
+mehr gibt. Die Liste hängt deshalb an `haendlerUuid`: Wer im Ladenfenster
+einen Verkäufer setzt, hat die Verknüpfung gesetzt; wer ihn austauscht, hat
+sie umgehängt (`preUpdateActor` merkt sich den alten Wert, `updateActor`
+schreibt um, `deleteActor` räumt auf). `verknuepfungNachtragen()` holt bei
+`ready` nach, was vor dieser Funktion schon eingetragen war.
+
+**Der Token-Knopf allein hätte nicht gereicht.** Das Konzept nennt „ein Klick
+auf sein Token", und den gibt es — aber er setzt eine Leinwand voraus. In
+dieser Welt steht Foundrys `core.noCanvas` auf **an**, wie auf jedem Tisch,
+der ohne Karten spielt: keine Tokens, kein Bedienfeld, kein Knopf. Am
+06.09.2026 beim Testen aufgefallen, als `canvas.ready` dauerhaft `false`
+blieb. Der Knopf sitzt deshalb auch in der **Titelleiste des Händlerbogens**,
+und ein Eintrag steht im Kontextmenü des Akteursverzeichnisses.
+
+**Szenen-Noten sind bewusst draußen.** Das Konzept nennt sie, aber Foundry
+gibt einer Note kein Bedienfeld, an das sich ein Knopf hängen ließe — es
+bliebe ein Merkmal, das niemand auslösen kann. `laedenVon()` fragt nach dem
+Merkmal und nicht nach der Dokumentart, also liest es eine Note mit, sobald
+es einmal einen Weg dorthin gibt.
+
+## Ein Nein gehört ins Buch
+
+Eine Ablehnung im Freigabe-Modus war eine Meldung, die verschwand. Drei Wochen
+später weiß niemand mehr, dass überhaupt gefragt wurde — „wir haben doch
+damals gefragt" ist am Tisch eine echte Frage.
+
+Jetzt schreiben beide Bücher, und zwar verschieden:
+
+- **Marktbuch:** jedes Ja *und* jedes Nein, mit dem Namen dessen, der
+  entschieden hat. Bei drei Spielleitungen beantwortet das „wer hat das
+  durchgewinkt".
+- **Ladenbuch:** nur das Nein, samt Satz. Ein Ja steht dort nicht eigens — die
+  Kaufzeile folgt einen Wimpernschlag später und sagt dasselbe.
+
+Eine Freigabe ist **keine Richtung**: Es ist noch nichts geflossen. Sie bekommt
+weder den Pfeil der Käufe noch das Rot der Fehlschläge, sondern den goldenen
+Streifen. Und das Ja trägt die gedämpfte Marke, nicht die rote — rot bleibt
+dem Nein.
+
 ## Wer und wo sind zwei Fragen
 
 `zugriff.modus` beantwortet, **wer** einen Laden selbst aufmachen darf;

@@ -15,13 +15,17 @@
   {{#if zeilen.length}}
     <ol class="shops-buchliste">
       {{#each zeilen}}
-        <li class="shops-buchzeile {{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}">
-          <span class="shops-buch-pfeil" title="{{#if gekauft}}{{localize 'SHOPS.Buch.Gekauft'}}{{else}}{{localize 'SHOPS.Buch.Verkauft'}}{{/if}}">
-            {{#if gekauft}}
+        <li class="shops-buchzeile {{#if abgelehnt}}shops-buch-nein{{else}}{{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}{{/if}}">
+          {{!-- Drei Arten, drei Zeichen. Ein Nein ist keine Richtung -
+                es ist gar nichts geflossen. --}}
+          <span class="shops-buch-pfeil" title="{{#if abgelehnt}}{{localize 'SHOPS.Buch.Abgelehnt'}}{{else}}{{#if gekauft}}{{localize 'SHOPS.Buch.Gekauft'}}{{else}}{{localize 'SHOPS.Buch.Verkauft'}}{{/if}}{{/if}}">
+            {{#if abgelehnt}}
+              <i class="fa-solid fa-hand"></i>
+            {{else}}{{#if gekauft}}
               <i class="fa-solid fa-arrow-right"></i>
             {{else}}
               <i class="fa-solid fa-arrow-left"></i>
-            {{/if}}
+            {{/if}}{{/if}}
           </span>
 
           <div class="shops-buch-inhalt">
@@ -32,10 +36,14 @@
               {{#if ../istGM}}· {{userName}}{{/if}}
               {{#if figurName}}· {{figurName}}{{/if}}
               {{#if sonderpreis}}· <em>{{localize "SHOPS.Buch.Sonderpreis"}}</em>{{/if}}
+              {{#if abgelehnt}}· <em>{{localize "SHOPS.Buch.Abgelehnt"}}</em>{{/if}}
+              {{#if satz}}· „{{satz}}"{{/if}}
             </span>
           </div>
 
-          <span class="shops-buch-summe">{{summeText}}</span>
+          {{!-- Bei einem Nein ist nichts geflossen. „0 KM" laese sich wie ein
+                Kauf zum Nulltarif. --}}
+          <span class="shops-buch-summe">{{#if abgelehnt}}—{{else}}{{summeText}}{{/if}}</span>
         </li>
       {{/each}}
     </ol>

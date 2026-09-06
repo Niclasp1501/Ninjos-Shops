@@ -32,6 +32,10 @@ export const LADEN_TYP = `${MODULE_ID}.laden`;
  *
  * Die Verknuepfung ist eine Zusatzfunktion. Ein Laden ohne jede ist genauso
  * gueltig - die Spielleitung zeigt ihn aus dem Verzeichnis heraus vor.
+ *
+ * Gepflegt wird die Liste nicht von Hand, sondern aus `haendlerUuid` heraus -
+ * siehe verknuepfung.js. Noten stehen dort bewusst nicht: Foundry gibt einer
+ * Note kein Bedienfeld, an das sich ein Knopf haengen liesse.
  */
 export const VERKNUEPFT = "laeden";
 

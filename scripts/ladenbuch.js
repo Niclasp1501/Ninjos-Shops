@@ -77,7 +77,9 @@ export function zeilenFuer(laden, benutzer = game.user) {
       day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
     }),
     gekauft: z.art === "kauf",
-    verkauft: z.art !== "kauf",
+    // Ein Nein ist keine Richtung - es ist gar nichts geflossen.
+    abgelehnt: z.art === "abgelehnt",
+    verkauft: z.art !== "kauf" && z.art !== "abgelehnt",
     wasText: (z.was ?? []).map(w => (w.menge > 1 ? `${w.menge}× ${w.name}` : w.name)).join(", ")
   }));
 }

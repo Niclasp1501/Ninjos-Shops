@@ -26,6 +26,8 @@
 
 import { KAUFMODUS, SOCKET } from "./const.js";
 import { alsText } from "./preise.js";
+import { schreibeFreigabe } from "./marktbuch.js";
+import { buchen } from "./ladenbuch.js";
 import { pruefeKauf, fuehreKaufAus } from "./kauf.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -116,19 +118,52 @@ export async function freigabeErteilen(id) {
   wartend.delete(id);
   beiAenderung(null);
 
+  /*
+   * **Wer freigegeben hat, gehoert ins Buch.** Der Kauf selbst schreibt seine
+   * Zeile gleich danach - dort steht der Haendler als Gegenueber, und das ist
+   * richtig so. Wer das Ja gegeben hat, ist eine andere Auskunft: Bei drei
+   * Spielleitungen am Tisch beantwortet sie „wer hat das durchgewinkt".
+   * Deshalb eine eigene Zeile davor und nicht ein Feld daneben.
+   */
+  const laden = await fromUuid(eintrag.ladenUuid);
+  await schreibeFreigabe({ laden, eintrag, ok: true, wer: game.user.name });
+
   const ergebnis = await fuehreKaufAus(eintrag.bitte);
   antworten(eintrag.spielerId, ergebnis);
   return ergebnis;
 }
 
 /** Nein sagen. Ein Satz dazu ist freiwillig und steht in der Meldung. */
-export function freigabeAblehnen(id, satz = "") {
+export async function freigabeAblehnen(id, satz = "") {
   const eintrag = wartend.get(id);
   if (!eintrag) return;
   wartend.delete(id);
   beiAenderung(null);
 
   const gesagt = String(satz ?? "").trim().slice(0, 200);
+
+  /*
+   * **Ein Nein wird aufgeschrieben.** Vorher stand von einer Ablehnung
+   * nirgends etwas - fuer den Spieler war sie eine Meldung, die verschwand,
+   * und drei Wochen spaeter wusste niemand mehr, dass sie stattgefunden hat.
+   * „Wir haben doch damals gefragt" ist am Tisch eine echte Frage.
+   */
+  const laden = await fromUuid(eintrag.ladenUuid);
+  await schreibeFreigabe({ laden, eintrag, ok: false, wer: game.user.name, satz: gesagt });
+
+  /*
+   * Auch ins Ladenbuch, denn das ist das Buch, das der Spieler aufschlaegt.
+   * Ein **Ja** steht dort nicht eigens: Die Kaufzeile folgt einen Wimpernschlag
+   * spaeter und sagt dasselbe.
+   */
+  await buchen(laden, {
+    art: "abgelehnt",
+    userId: eintrag.spielerId, userName: eintrag.spielerName,
+    figurName: eintrag.figurName,
+    was: [{ name: eintrag.itemName, menge: eintrag.menge }],
+    summeCp: 0, satz: gesagt || null
+  });
+
   antworten(eintrag.spielerId, {
     ok: false,
     grundText: gesagt || game.i18n.localize("SHOPS.Freigabe.Abgelehnt")

@@ -27,6 +27,17 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Ein Klick auf den Händler öffnet seinen Laden.** Das Merkmal dafür stand
+  seit dem ersten Tag im Modul und wurde von nichts gelesen. Es pflegt sich
+  jetzt selbst aus dem Verkäufer-Feld: Wer dort jemanden einträgt, hat die
+  Verknüpfung gesetzt; wer ihn austauscht, hat sie umgehängt. Der Weg dorthin
+  führt über die Titelleiste des Händlerbogens, das Kontextmenü im
+  Akteursverzeichnis und — wo es eine Leinwand gibt — das Bedienfeld seines
+  Tokens. Ein Händler mit zwei Ständen wird gefragt, welcher gemeint ist.
+- **Freigaben stehen in den Büchern.** Das Marktbuch schreibt jedes Ja und
+  jedes Nein samt Namen dessen, der entschieden hat; im Ladenbuch — dem Buch,
+  das der Spieler aufschlägt — steht das Nein mit dem Satz dazu. Vorher war
+  eine Ablehnung eine Meldung, die verschwand.
 - **Ein Laden kann an Szenen hängen.** „Auf welchen Szenen" in den
   Ladeneinstellungen: Wer keine dieser Karten vor sich hat, kommt nicht an den
   Laden. Keine Auswahl heißt weiterhin überall. Es ist ein Filter über dem
