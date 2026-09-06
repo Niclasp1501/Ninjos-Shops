@@ -13,6 +13,12 @@
   <header class="shops-banner" style="background-image: url('{{kopfbild}}'); background-position: 50% {{kopfFokus}}%;">
     <div class="shops-banner-text">
       <h2>{{ladenName}}</h2>
+      {{#if haendler}}
+        <span class="shops-verkaeufer" title="{{localize 'SHOPS.Haendler.Feld'}}">
+          {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
+          {{haendler.name}}
+        </span>
+      {{/if}}
       {{#if begruessung}}<div class="shops-begruessung">{{{begruessung}}}</div>{{/if}}
     </div>
   </header>

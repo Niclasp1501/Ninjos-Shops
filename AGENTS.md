@@ -214,11 +214,32 @@ Deshalb endet der Geltungsbereich am `.window-content`, und alles mit einer
 Farbregel für `button`, `i` oder `::before` ergänzt, prüft danach die
 Fensterleiste.
 
+## Wer bedient: der Verkäufer, nicht die Spielleitung
+
+Ein Laden ist ein **Ort**, kein Mensch. Wer hinter der Theke steht, ist ein
+NSC — `system.haendlerUuid`, in den Einstellungen per Ablage
+hereingezogen statt aus einer Liste gesucht (in einer Welt mit dreihundert NSC
+ist eine Auswahlliste unbenutzbar). Sein Name und Bild stehen im Kopf beider
+Fenster und als Gegenüber in den Büchern.
+
+**Die Spielleitung taucht dort nicht auf.** Sie führt den Handel aus, sie führt
+ihn nicht. Fehlt die Verknüpfung, tritt das neutrale Wort „Verkäufer" an die
+Stelle — ein Laden ohne benannten Händler ist ein gültiger Fall, kein
+halbfertiger.
+
+## Farbe gehört ans Bauteil, nicht in eine Sammelregel
+
+Eine Regel, die `color` für **alle** `button` im Fenster setzte, gewann gegen
+die weiße Schrift der gefüllten Knöpfe: gemessen `rgb(26,26,26)` auf
+`#8b0000`, also **1,6 : 1**. Die Knöpfe sahen dadurch aus wie ein Rot, das es
+im Modul gar nicht gibt — und genau so ist es aufgefallen. Die Sammelregel
+setzt jetzt nur noch die Schriftart.
+
 ## Zwei Bücher, und sie sind nicht dasselbe
 
 | | **Marktbuch** (`marktbuch.js`) | **Ladenbuch** (`ladenbuch.js`) |
 |---|---|---|
-| Wo | Journal, weltweit | Merkmal am einzelnen Laden |
+| Wo | Welteinstellung, alle Läden | Merkmal am einzelnen Laden |
 | Für wen | nur Spielleitung | alle — Spielleitung alles, Spieler nur eigenes |
 | Was | alle Läden, **auch fehlgeschlagene** Versuche, zweimal je Vorgang | ein Laden, nur was durchging |
 | Wofür | die Buchhaltung: wo sind die 400 Gold geblieben | die Ladentheke: was habe ich hier gehandelt |

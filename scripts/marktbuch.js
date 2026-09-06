@@ -1,15 +1,18 @@
 /**
- * Das Marktbuch - ein Journal, kein Datenklumpen in den Einstellungen.
+ * Das Marktbuch - die Buchhaltung der Spielleitung ueber alle Laeden.
  *
- * Dieselbe Begruendung wie beim Tauschlogbuch der In-Person Tools: Ein Journal
- * laesst sich lesen, durchsuchen, ausdrucken und liegt in der Weltsicherung.
- * Eine Spielleitung, die wissen will, wo die 400 Gold geblieben sind, findet
- * es; ein JSON in der Einstellungsdatenbank findet sie nie.
+ * **Kein Journal mehr.** Die erste Fassung schrieb HTML-Absaetze in eine
+ * Journalseite je Spieltag. Das las sich wie ein Protokoll und nicht wie ein
+ * Buch: nicht sortierbar, nicht filterbar, jede Zeile ein Textschnipsel, und
+ * beim zweiten Spielabend blaetterte niemand mehr. Die Eintraege liegen jetzt
+ * als Daten in einer Welteinstellung und bekommen ein eigenes Fenster - damit
+ * laesst sich nach Laden filtern, und Zahlen bleiben Zahlen.
  *
- * **Geschrieben wird zweimal:** vor dem ersten Zugriff, was gemeint war, und
- * danach, was geschehen ist. Das ist der Sinn der Sache - ein Buch, das nur
- * gelungene Kaeufe kennt, schweigt genau dann, wenn man es braucht. Bricht der
- * Vorgang in der Mitte ab, steht die Absicht trotzdem da.
+ * **Unterschied zum Ladenbuch** (`ladenbuch.js`): Dies hier sammelt *alle*
+ * Laeden, gehoert der Spielleitung allein und schreibt auch **fehlgeschlagene**
+ * Versuche mit - wer wollte was und warum ging es nicht. Genau dafuer schlaegt
+ * man es auf. Das Ladenbuch ist die Theke eines einzelnen Ladens und zeigt nur,
+ * was durchging.
  */
 
 import { MODULE_ID, SETTINGS } from "./const.js";
@@ -17,158 +20,158 @@ import { alsText } from "./preise.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 
-/** Das Journal holen oder anlegen. Nur die Spielleitung darf das. */
-async function buch() {
-  if (!game.user.isGM) return null;
-
-  const kennung = game.settings.get(MODULE_ID, SETTINGS.MARKTBUCH);
-  if (kennung) {
-    const vorhanden = game.journal.get(kennung);
-    if (vorhanden) return vorhanden;
-  }
-
-  /*
-   * Nur fuer die Spielleitung sichtbar. Ein Marktbuch, das die Spieler lesen
-   * koennen, verraet jeden Sonderpreis und jeden Kauf der anderen - und
-   * ausserdem den Ankaufsfaktor jedes Ladens.
-   */
-  const neu = await JournalEntry.implementation.create({
-    name: game.i18n.localize("SHOPS.Marktbuch.Name"),
-    ownership: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE }
-  });
-  await game.settings.set(MODULE_ID, SETTINGS.MARKTBUCH, neu.id);
-  return neu;
-}
-
 /**
- * Die Seite des heutigen Spieltags.
+ * Wie viele Zeilen die Welt behaelt.
  *
- * Eine Seite je Tag statt einer je Kauf: Nach drei Sitzungen waeren es sonst
- * zweihundert Seiten, durch die niemand mehr blaettert.
+ * Eine Einstellung geht in jede Weltsicherung. Fuenfhundert Zeilen decken
+ * viele Abende und bleiben ein paar Dutzend Kilobyte; ohne Grenze waechst das
+ * still weiter, bis jemand beim Laden wartet und niemand weiss, warum.
  */
-async function seiteHeute(journal) {
-  const heute = new Date().toISOString().slice(0, 10);
-  const titel = game.i18n.format("SHOPS.Marktbuch.Seite", { datum: heute });
-  const vorhanden = journal.pages.find(p => p.name === titel);
-  if (vorhanden) return vorhanden;
+const HOECHSTZAHL = 500;
 
-  const [neu] = await journal.createEmbeddedDocuments("JournalEntryPage", [{
-    name: titel,
-    type: "text",
-    text: { format: CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML, content: "" }
-  }]);
-  return neu;
+/** Alle Zeilen, neueste zuerst. Nur die Spielleitung bekommt etwas. */
+export function marktbuchZeilen() {
+  if (!game.user.isGM) return [];
+  const roh = game.settings.get(MODULE_ID, SETTINGS.MARKTBUCH) ?? [];
+  return [...roh].reverse().map(z => ({
+    ...z,
+    summeText: alsText(z.summeCp ?? 0, kuerzel),
+    grundText: z.grund ? game.i18n.localize(z.grund) : null,
+    zeitText: new Date(z.zeit).toLocaleString(game.i18n.lang, {
+      day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+    }),
+    wasText: (z.was ?? []).map(w => (w.menge > 1 ? `${w.menge}× ${w.name}` : w.name)).join(", "),
+    gekauft: z.art === "kauf"
+  }));
 }
 
-/** Eine Zeile anhaengen, ohne das Vorhandene neu zu schreiben. */
-async function zeileAnhaengen(html) {
-  const journal = await buch();
-  if (!journal) return;
-  const seite = await seiteHeute(journal);
-  const bisher = seite.text?.content ?? "";
-  await seite.update({ "text.content": bisher + html });
+/** Eine Zeile anhaengen. Nur bei der Spielleitung. */
+async function eintragen(eintrag) {
+  if (!game.user.isGM) return;
+  const bisher = game.settings.get(MODULE_ID, SETTINGS.MARKTBUCH) ?? [];
+  const neu = [...bisher, { zeit: Date.now(), ...eintrag }].slice(-HOECHSTZAHL);
+  await game.settings.set(MODULE_ID, SETTINGS.MARKTBUCH, neu);
+  foundry.applications.instances.get(`${MODULE_ID}-marktbuch`)?.render(false);
 }
 
-function uhrzeit() {
-  return new Date().toLocaleTimeString(game.i18n.lang, { hour: "2-digit", minute: "2-digit" });
-}
+/* ── Was die Vorgaenge melden ──────────────────────────────────────── */
 
-function fluchtHtml(text) {
-  return foundry.utils.escapeHTML(String(text ?? ""));
-}
-
-/**
- * Was gemeint war - geschrieben, **bevor** irgendetwas angefasst wird.
- */
+/** Ein Kaufversuch, **bevor** etwas angefasst wird. Nur wenn er scheitert. */
 export async function schreibeVorgang({ laden, item, figur, kaeufer, pruefung, ausAngebot }) {
-  const teile = [
-    `<strong>${fluchtHtml(kaeufer?.name ?? "?")}</strong>`,
-    game.i18n.localize("SHOPS.Marktbuch.Will"),
-    `<em>${fluchtHtml(item?.name ?? "?")}</em>`,
-    game.i18n.format("SHOPS.Marktbuch.BeiLaden", { laden: fluchtHtml(laden?.name ?? "?") })
-  ];
-  if (figur) teile.push(game.i18n.format("SHOPS.Marktbuch.MitFigur", { figur: fluchtHtml(figur.name) }));
-  if (ausAngebot) teile.push(`<em>${game.i18n.localize("SHOPS.Marktbuch.AusAngebot")}</em>`);
-
-  const ausgang = pruefung.ok
-    ? `${game.i18n.localize("SHOPS.Marktbuch.Fuer")} <strong>${alsText(pruefung.summeCp, kuerzel)}</strong>`
-    : `<span style="color:#8b0000">${game.i18n.localize(pruefung.grund)}</span>`;
-
-  await zeileAnhaengen(`<p>${uhrzeit()} — ${teile.join(" ")} ${ausgang}</p>`);
+  if (pruefung.ok) return;   // Gelungenes meldet erst das Ergebnis - sonst
+                             // stuende jeder Kauf zweimal im Buch.
+  await eintragen({
+    art: "kauf", ok: false,
+    ladenName: laden?.name ?? "?", ladenUuid: laden?.uuid ?? null,
+    userName: kaeufer?.name ?? "?", figurName: figur?.name ?? null,
+    was: [{ name: item?.name ?? "?", menge: 1 }],
+    summeCp: 0, grund: pruefung.grund, sonderpreis: !!ausAngebot
+  });
 }
 
-/** Was geschehen ist - geschrieben **nach** dem Zugriff. */
+/** Ein gelungener oder abgebrochener Kauf. */
 export async function schreibeErgebnis({ laden, item, figur, kaeufer, ok, stueck, summeCp, dienst, grund, ausAngebot }) {
-  if (!ok) {
-    await zeileAnhaengen(
-      `<p style="color:#8b0000">${uhrzeit()} — ` +
-      `${game.i18n.localize("SHOPS.Marktbuch.Abgebrochen")} ${fluchtHtml(grund ?? "")}</p>`
-    );
-    return;
-  }
-
-  const was = dienst
-    ? game.i18n.localize("SHOPS.Marktbuch.Dienst")
-    : game.i18n.format("SHOPS.Marktbuch.Stueck", { menge: stueck });
-
-  await zeileAnhaengen(
-    `<p>${uhrzeit()} — <strong>${game.i18n.localize("SHOPS.Marktbuch.Erledigt")}</strong> ` +
-    `${was} <em>${fluchtHtml(item?.name ?? "?")}</em> ` +
-    `${game.i18n.format("SHOPS.Marktbuch.BeiLaden", { laden: fluchtHtml(laden?.name ?? "?") })} ` +
-    `${game.i18n.localize("SHOPS.Marktbuch.Fuer")} <strong>${alsText(summeCp, kuerzel)}</strong>` +
-    (figur ? ` — ${fluchtHtml(figur.name)}` : "") +
-    (ausAngebot ? ` <em>(${game.i18n.localize("SHOPS.Marktbuch.AusAngebot")})</em>` : "") +
-    `</p>`
-  );
+  await eintragen({
+    art: "kauf", ok: !!ok,
+    ladenName: laden?.name ?? "?", ladenUuid: laden?.uuid ?? null,
+    userName: kaeufer?.name ?? "?", figurName: figur?.name ?? null,
+    was: [{ name: item?.name ?? "?", menge: dienst ? 1 : (stueck ?? 1) }],
+    summeCp: summeCp ?? 0,
+    grund: ok ? null : (grund ?? "SHOPS.Kauf.Abgebrochen"),
+    dienst: !!dienst, sonderpreis: !!ausAngebot
+  });
 }
 
-/** Das Marktbuch oeffnen, falls es eines gibt. */
-export function marktbuchOeffnen() {
-  const kennung = game.settings.get(MODULE_ID, SETTINGS.MARKTBUCH);
-  const journal = kennung ? game.journal.get(kennung) : null;
-  if (!journal) {
-    ui.notifications.info(game.i18n.localize("SHOPS.Marktbuch.NochLeer"));
-    return null;
-  }
-  journal.sheet.render(true);
-  return journal;
-}
-
-/* ── Der Weg zurueck: was ein Spieler dem Laden verkauft ──────────── */
-
-/** Was gemeint war - geschrieben, **bevor** etwas angefasst wird. */
+/** Ein Verkaufsversuch, der scheitert. */
 export async function schreibeVerkaufVorgang({ laden, item, figur, verkaeufer, pruefung }) {
-  const teile = [
-    `<strong>${fluchtHtml(verkaeufer?.name ?? "?")}</strong>`,
-    game.i18n.localize("SHOPS.Marktbuch.WillVerkaufen"),
-    `<em>${fluchtHtml(item?.name ?? "?")}</em>`,
-    game.i18n.format("SHOPS.Marktbuch.AnLaden", { laden: fluchtHtml(laden?.name ?? "?") })
-  ];
-  if (figur) teile.push(game.i18n.format("SHOPS.Marktbuch.MitFigur", { figur: fluchtHtml(figur.name) }));
-
-  const ausgang = pruefung.ok
-    ? `${game.i18n.localize("SHOPS.Marktbuch.Fuer")} <strong>${alsText(pruefung.summeCp, kuerzel)}</strong>`
-    : `<span style="color:#8b0000">${game.i18n.localize(pruefung.grund)}</span>`;
-
-  await zeileAnhaengen(`<p>${uhrzeit()} — ${teile.join(" ")} ${ausgang}</p>`);
+  if (pruefung.ok) return;
+  await eintragen({
+    art: "verkauf", ok: false,
+    ladenName: laden?.name ?? "?", ladenUuid: laden?.uuid ?? null,
+    userName: verkaeufer?.name ?? "?", figurName: figur?.name ?? null,
+    was: [{ name: item?.name ?? "?", menge: 1 }],
+    summeCp: 0, grund: pruefung.grund
+  });
 }
 
-/** Was geschehen ist - geschrieben **nach** dem Zugriff. */
+/** Ein gelungener oder abgebrochener Verkauf. */
 export async function schreibeVerkaufErgebnis({ laden, name, figur, verkaeufer, ok, stueck, summeCp, grund }) {
-  if (!ok) {
-    await zeileAnhaengen(
-      `<p style="color:#8b0000">${uhrzeit()} — ` +
-      `${game.i18n.localize("SHOPS.Marktbuch.Abgebrochen")} ${fluchtHtml(grund ?? "")}</p>`
-    );
-    return;
+  await eintragen({
+    art: "verkauf", ok: !!ok,
+    ladenName: laden?.name ?? "?", ladenUuid: laden?.uuid ?? null,
+    userName: verkaeufer?.name ?? "?", figurName: figur?.name ?? null,
+    was: [{ name: name ?? "?", menge: stueck ?? 1 }],
+    summeCp: summeCp ?? 0,
+    grund: ok ? null : (grund ?? "SHOPS.Kauf.Abgebrochen")
+  });
+}
+
+/* ── Das Fenster ───────────────────────────────────────────────────── */
+
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export class Marktbuch extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id: `${MODULE_ID}-marktbuch`,
+    classes: ["ninjos-shops", "shops-marktbuch"],
+    position: { width: 640, height: 620 },
+    window: { icon: "fa-solid fa-book", resizable: true },
+    actions: { leeren: Marktbuch.#leeren }
+  };
+
+  static PARTS = {
+    body: { template: `modules/${MODULE_ID}/templates/marktbuch.hbs`, scrollable: [".shops-buchliste"] }
+  };
+
+  /** Nach welchem Laden gefiltert wird. Leer = alle. */
+  #laden = "";
+
+  get title() { return game.i18n.localize("SHOPS.Marktbuch.Name"); }
+
+  async _prepareContext(options) {
+    const ctx = await super._prepareContext(options);
+    const alle = marktbuchZeilen();
+    const zeilen = this.#laden ? alle.filter(z => z.ladenUuid === this.#laden) : alle;
+
+    // Die Laeden fuer die Auswahl: nur die, die auch vorkommen.
+    const gesehen = new Map();
+    for (const z of alle) if (z.ladenUuid) gesehen.set(z.ladenUuid, z.ladenName);
+
+    return Object.assign(ctx, {
+      zeilen,
+      laeden: [...gesehen].map(([uuid, name]) => ({ uuid, name, gewaehlt: uuid === this.#laden })),
+      gefiltert: !!this.#laden,
+      anzahl: zeilen.length,
+      gescheitert: zeilen.filter(z => !z.ok).length
+    });
   }
 
-  await zeileAnhaengen(
-    `<p>${uhrzeit()} — <strong>${game.i18n.localize("SHOPS.Marktbuch.Angekauft")}</strong> ` +
-    `${game.i18n.format("SHOPS.Marktbuch.Stueck", { menge: stueck })} <em>${fluchtHtml(name ?? "?")}</em> ` +
-    `${game.i18n.format("SHOPS.Marktbuch.AnLaden", { laden: fluchtHtml(laden?.name ?? "?") })} ` +
-    `${game.i18n.localize("SHOPS.Marktbuch.Fuer")} <strong>${alsText(summeCp, kuerzel)}</strong>` +
-    (figur ? ` — ${fluchtHtml(figur.name)}` : "") +
-    `</p>`
-  );
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const wahl = this.element.querySelector("[data-ladenwahl]");
+    wahl?.addEventListener("change", () => { this.#laden = wahl.value; this.render(false); });
+  }
+
+  /** Alles loeschen - mit Rueckfrage, denn es ist nicht wiederzubekommen. */
+  static async #leeren() {
+    const sicher = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("SHOPS.Marktbuch.LeerenTitel") },
+      classes: ["ninjos-shops"],
+      content: `<p>${game.i18n.localize("SHOPS.Marktbuch.LeerenFrage")}</p>`,
+      yes: { label: game.i18n.localize("SHOPS.Marktbuch.LeerenJa"), icon: "fa-solid fa-trash" },
+      no: { label: game.i18n.localize("SHOPS.Abbrechen") },
+      defaultYes: false
+    });
+    if (!sicher) return;
+    await game.settings.set(MODULE_ID, SETTINGS.MARKTBUCH, []);
+    this.render(false);
+  }
+}
+
+/** Das Marktbuch aufschlagen. */
+export function marktbuchOeffnen() {
+  if (!game.user.isGM) return null;
+  const offen = foundry.applications.instances.get(`${MODULE_ID}-marktbuch`);
+  if (offen) return offen.bringToFront?.() ?? offen.render(true);
+  return new Marktbuch().render(true);
 }

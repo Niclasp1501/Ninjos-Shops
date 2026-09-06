@@ -28,6 +28,7 @@
             <span class="shops-buch-was">{{wasText}}</span>
             <span class="shops-buch-wer">
               {{zeitText}}
+              {{#if haendlerName}}· {{haendlerName}}{{/if}}
               {{#if ../istGM}}· {{userName}}{{/if}}
               {{#if figurName}}· {{figurName}}{{/if}}
               {{#if sonderpreis}}· <em>{{localize "SHOPS.Buch.Sonderpreis"}}</em>{{/if}}

@@ -18,6 +18,13 @@
              placeholder="{{localize 'SHOPS.Bogen.NamePlatzhalter'}}"
              {{#unless bearbeitbar}}disabled{{/unless}}>
 
+      {{#if haendler}}
+        <span class="shops-verkaeufer" title="{{localize 'SHOPS.Haendler.Feld'}}">
+          {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
+          {{haendler.name}}
+        </span>
+      {{/if}}
+
       <div class="shops-begruessung">
         {{#if begruessung}}{{{begruessung}}}
         {{else}}<span class="shops-leer">{{localize "SHOPS.Bogen.KeineBegruessung"}}</span>{{/if}}

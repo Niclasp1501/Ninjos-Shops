@@ -1,0 +1,69 @@
+{{!--
+  Das Marktbuch: alle Läden, auch was schiefging.
+
+  Gescheitertes steht hier mit Grund — genau dafür schlägt man es auf. Das
+  Ladenbuch zeigt dagegen nur, was durchging.
+--}}
+<div class="shops-teil-buch">
+
+  <header class="shops-buchkopf">
+    <label class="shops-buchfilter">
+      <span>{{localize "SHOPS.Marktbuch.Laden"}}</span>
+      <select data-ladenwahl>
+        <option value="">{{localize "SHOPS.Marktbuch.AlleLaeden"}}</option>
+        {{#each laeden}}
+          <option value="{{uuid}}" {{#if gewaehlt}}selected{{/if}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </label>
+
+    <span class="shops-buchzahl">
+      {{anzahl}}
+      {{#if gescheitert}}
+        · <span class="shops-buch-fehlzahl">{{gescheitert}} {{localize "SHOPS.Marktbuch.Gescheitert"}}</span>
+      {{/if}}
+    </span>
+  </header>
+
+  {{#if zeilen.length}}
+    <ol class="shops-buchliste">
+      {{#each zeilen}}
+        <li class="shops-buchzeile {{#unless ok}}shops-buch-fehl{{else}}{{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}{{/unless}}">
+          <span class="shops-buch-pfeil">
+            {{#unless ok}}<i class="fa-solid fa-xmark"></i>
+            {{else if gekauft}}<i class="fa-solid fa-arrow-right"></i>
+            {{else}}<i class="fa-solid fa-arrow-left"></i>{{/unless}}
+          </span>
+
+          <div class="shops-buch-inhalt">
+            <span class="shops-buch-was">
+              {{wasText}}
+              {{#if sonderpreis}}<em class="shops-buch-marke">{{localize "SHOPS.Buch.Sonderpreis"}}</em>{{/if}}
+            </span>
+            <span class="shops-buch-wer">
+              {{zeitText}} · {{ladenName}} · {{userName}}{{#if figurName}} ({{figurName}}){{/if}}
+            </span>
+            {{#unless ok}}
+              <span class="shops-buch-grund">{{grundText}}</span>
+            {{/unless}}
+          </div>
+
+          <span class="shops-buch-summe">{{#if ok}}{{summeText}}{{else}}—{{/if}}</span>
+        </li>
+      {{/each}}
+    </ol>
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">
+      {{#if gefiltert}}{{localize "SHOPS.Marktbuch.NichtsGefiltert"}}
+      {{else}}{{localize "SHOPS.Marktbuch.NochLeer"}}{{/if}}
+    </p>
+  {{/if}}
+
+  <footer class="shops-buch-fuss">
+    <span>{{localize "SHOPS.Marktbuch.Fusshinweis"}}</span>
+    <button type="button" class="shops-zweit" data-action="leeren">
+      <i class="fa-solid fa-trash"></i>
+      {{localize "SHOPS.Marktbuch.Leeren"}}
+    </button>
+  </footer>
+</div>

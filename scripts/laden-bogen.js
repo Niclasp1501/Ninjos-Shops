@@ -81,6 +81,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       laden,
       bearbeitbar: this.isEditable,
       istGM: game.user.isGM,
+      haendler: laden.haendlerUuid ? fromUuidSync(laden.haendlerUuid) : null,
       begruessung: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         laden.begruessung ?? "", { relativeTo: this.document }
       ),

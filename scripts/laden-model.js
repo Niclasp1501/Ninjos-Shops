@@ -77,6 +77,18 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
       kasse: new SchemaField(kassenFelder()),
 
       /**
+       * Wer hinter der Theke steht - ein NSC, als UUID.
+       *
+       * Ein Laden ist ein Ort, kein Mensch; der Haendler ist eine Person, und
+       * am Tisch spricht man mit ihr, nicht mit dem Regal. Im Buch steht
+       * deshalb sein Name als Gegenueber, nicht die Spielleitung - die fuehrt
+       * den Vorgang nur aus. Fehlt die Verknuepfung, tritt ein neutrales
+       * "Verkaeufer" an die Stelle: Ein Laden ohne benannten Haendler ist
+       * ein gueltiger Fall, kein halbfertiger.
+       */
+      haendlerUuid: new StringField({ required: true, nullable: true, initial: null, blank: true }),
+
+      /**
        * Wie weit der Preis bei einer Anfrage nach oben und unten gehen darf,
        * als Anteil am ueblichen Ankaufswert.
        *
@@ -170,6 +182,17 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
     if (this.zugriff.modus === "alle") return true;
     if (this.zugriff.modus === "auswahl") return this.zugriff.benutzer.has(benutzer?.id);
     return false;
+  }
+
+  /**
+   * Der Name hinter der Theke - oder das neutrale Wort dafuer.
+   *
+   * Wird in Buechern und Fenstern als Gegenueber gezeigt. Die Spielleitung
+   * taucht dort nicht auf: Sie fuehrt den Handel aus, sie fuehrt ihn nicht.
+   */
+  get haendlerName() {
+    if (!this.haendlerUuid) return game.i18n.localize("SHOPS.Haendler.Ohne");
+    return fromUuidSync(this.haendlerUuid)?.name ?? game.i18n.localize("SHOPS.Haendler.Ohne");
   }
 
   /** Kauft dieser Laden an? */

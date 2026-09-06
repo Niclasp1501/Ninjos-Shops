@@ -96,6 +96,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       ladenName: laden.name,
       kopfbild: laden.img,
       kopfFokus: system.kopfFokus ?? 50,
+      haendler: system.haendlerUuid ? fromUuidSync(system.haendlerUuid) : null,
       begruessung: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         system.begruessung ?? "", { relativeTo: laden, secrets: false }
       ),

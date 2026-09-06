@@ -61,12 +61,19 @@ function einstellungenEinrichten() {
     default: []
   });
 
-  /** Kennung des Marktbuch-Journals. Wird beim ersten Kauf angelegt. */
+  /**
+   * Die Zeilen des Marktbuchs.
+   *
+   * Frueher stand hier die Kennung eines Journals. Das las sich wie ein
+   * Protokoll und nicht wie ein Buch - nicht filterbar, nicht sortierbar,
+   * jede Zeile ein Textschnipsel. Jetzt liegen die Eintraege als Daten hier
+   * und bekommen ein eigenes Fenster.
+   */
   game.settings.register(MODULE_ID, SETTINGS.MARKTBUCH, {
     scope: "world",
     config: false,
-    type: String,
-    default: ""
+    type: Array,
+    default: []
   });
 }
 

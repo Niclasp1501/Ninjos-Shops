@@ -69,6 +69,8 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
       ladenBild: this.document.img || LADEN_BILD,
       tokenBild: this.document.prototypeToken?.texture?.src,
       begruessungText: alsSchlichterText(laden.begruessung),
+      haendler: laden.haendlerUuid ? fromUuidSync(laden.haendlerUuid) : null,
+      haendlerName: laden.haendlerName,
 
       kaufmodi: Object.values(KAUFMODUS).map(wert => ({
         wert,
@@ -125,6 +127,35 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
   _onRender(context, options) {
     super._onRender(context, options);
     if (!this.isEditable) return;
+
+    /*
+     * Den Haendler zieht man herein, statt ihn aus einer Liste zu suchen: In
+     * einer Welt mit dreihundert NSC ist eine Auswahlliste unbenutzbar, und
+     * der Akteur liegt ohnehin schon im Verzeichnis daneben.
+     */
+    const ablage = this.element.querySelector("[data-haendler-ablage]");
+    if (ablage) {
+      ablage.addEventListener("dragover", ereignis => {
+        ereignis.preventDefault();
+        ablage.classList.add("shops-zieht");
+      });
+      ablage.addEventListener("dragleave", () => ablage.classList.remove("shops-zieht"));
+      ablage.addEventListener("drop", async ereignis => {
+        ereignis.preventDefault();
+        ablage.classList.remove("shops-zieht");
+        const daten = foundry.applications.ux.TextEditor.implementation.getDragEventData(ereignis);
+        if (daten?.type !== "Actor") return;
+        const akteur = await Actor.implementation.fromDropData(daten);
+        // Ein Laden als eigener Haendler waere ein Regal, das sich selbst
+        // bedient - und im Buch stuende der Ladenname doppelt.
+        if (!akteur || akteur.uuid === this.document.uuid) return;
+        await this.document.update({ "system.haendlerUuid": akteur.uuid });
+      });
+    }
+
+    this.element.querySelector("[data-haendler-weg]")?.addEventListener("click", () => {
+      this.document.update({ "system.haendlerUuid": null });
+    });
 
     /*
      * Die Zugriffsliste von Hand: Mehrere Kaestchen unter einem Namen macht

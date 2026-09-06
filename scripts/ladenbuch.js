@@ -51,6 +51,9 @@ export async function buchen(laden, eintrag) {
   const bisher = laden.getFlag(MODULE_ID, BUCH) ?? [];
   const neu = [...bisher, {
     zeit: Date.now(),
+    // Wer bedient hat. Nicht die Spielleitung - die fuehrt den Handel aus,
+    // sie fuehrt ihn nicht.
+    haendlerName: laden.system?.haendlerName ?? null,
     ...eintrag
   }].slice(-HOECHSTZAHL);
 

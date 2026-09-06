@@ -39,6 +39,23 @@
       </label>
     </div>
 
+    {{!-- Wer hinter der Theke steht. Hereinziehen statt aus einer Liste
+          suchen: In einer Welt mit dreihundert NSC ist eine Auswahlliste
+          unbenutzbar. --}}
+    <div class="shops-haendler" data-haendler-ablage>
+      <span class="shops-haendler-marke">{{localize "SHOPS.Haendler.Feld"}}</span>
+      {{#if haendler}}
+        <img src="{{haendler.img}}" alt="">
+        <span class="shops-haendler-name">{{haendler.name}}</span>
+        <button type="button" class="shops-haendler-weg" data-haendler-weg
+                title="{{localize 'SHOPS.Haendler.Loesen'}}">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      {{else}}
+        <span class="shops-haendler-leer">{{localize "SHOPS.Haendler.Ablegen"}}</span>
+      {{/if}}
+    </div>
+
     <div class="shops-bilder">
       <label class="shops-bildwahl">
         <span>{{localize "SHOPS.Feld.Tokenbild"}}</span>

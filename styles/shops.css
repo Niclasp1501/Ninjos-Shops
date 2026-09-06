@@ -64,11 +64,22 @@
  * Zwei Absicherungen: der Geltungsbereich endet am `.window-content`, und
  * alles mit einer `fa-`-Klasse bleibt ohnehin unberuehrt.
  */
+/*
+ * **Und sie setzt keine Farbe mehr.** Tat sie es, gewann sie gegen die weisse
+ * Schrift der gefuellten Knoepfe - gemessen rgb(26,26,26) auf #8b0000, also
+ * 1,6:1. Die Knoepfe sahen dadurch aus wie ein Rot, das es im Modul gar nicht
+ * gibt. Farbe gehoert an das einzelne Bauteil, nicht in eine Sammelregel.
+ */
 .ninjos-shops .window-content input:not([class*="fa-"]),
 .ninjos-shops .window-content select:not([class*="fa-"]),
 .ninjos-shops .window-content textarea:not([class*="fa-"]),
 .ninjos-shops .window-content button:not([class*="fa-"]) {
   font-family: var(--shops-schrift);
+}
+
+.ninjos-shops .window-content input:not([class*="fa-"]),
+.ninjos-shops .window-content select:not([class*="fa-"]),
+.ninjos-shops .window-content textarea:not([class*="fa-"]) {
   color: var(--shops-text);
 }
 
@@ -936,8 +947,10 @@
   display: flex;
   align-items: flex-end;
   gap: 12px;
-  min-height: 132px;
-  padding: 12px 16px;
+  /* 104 statt 132: Der Streifen soll den Laden zeigen, nicht das Fenster
+     fuellen - darunter steht das, wofuer man es oeffnet. */
+  min-height: 104px;
+  padding: 10px 16px;
   background-color: var(--shops-nav);
   background-size: cover;
   background-repeat: no-repeat;
@@ -1772,3 +1785,172 @@
   margin-left: auto;
   padding: 7px 10px;
 }
+
+
+/* ── Wer hinter der Theke steht ────────────────────────────────────── */
+
+.ninjos-shops .shops-verkaeufer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  padding: 2px 8px 2px 3px;
+  font-size: 0.78rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  text-shadow: none;
+}
+
+.ninjos-shops .shops-verkaeufer img {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 999px;
+}
+
+/* Die Ablage fuer den Haendler in den Einstellungen */
+.ninjos-shops .shops-haendler {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+  padding: 9px 10px;
+  min-height: 54px;
+  background: var(--shops-nav);
+  border: 1px dashed var(--shops-rand);
+  border-radius: 6px;
+}
+
+.ninjos-shops .shops-haendler.shops-zieht {
+  border-color: var(--shops-gold);
+  background: rgba(212, 175, 55, 0.16);
+}
+
+.ninjos-shops .shops-haendler-marke {
+  position: absolute;
+  top: -8px;
+  left: 9px;
+  padding: 0 5px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+  background: var(--shops-karte);
+}
+
+.ninjos-shops .shops-haendler img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border: 1px solid var(--shops-rand);
+  border-radius: 4px;
+}
+
+.ninjos-shops .shops-haendler-name { flex: 1; font-weight: 600; }
+.ninjos-shops .shops-haendler-leer { flex: 1; font-style: italic; color: var(--shops-text-blass); }
+
+.ninjos-shops .shops-haendler-weg {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--shops-text-blass);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-haendler-weg:hover { color: var(--shops-rot); }
+
+/* ── Die Knopfleiste: nach Aufgabe gruppiert ───────────────────────── */
+
+/*
+ * Vorher standen fuenf Knoepfe nebeneinander - vorzeigen, schliessen und zwei
+ * Buecher, alle gleich gross und gleich wichtig aussehend. Jetzt zwei Gruppen
+ * mit einer Fuge dazwischen: links, was den Laden zeigt, rechts, was ihn
+ * nachliest.
+ */
+.ninjos-shops .shops-knopfgruppe { display: flex; gap: 5px; }
+.ninjos-shops .shops-knopfgruppe-haupt { flex: 1; }
+
+.ninjos-shops .shops-knopfgruppe-buecher {
+  flex: 0 0 auto;
+  padding-left: 7px;
+  border-left: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-knopfgruppe-buecher button {
+  min-width: 0;
+  flex: 0 0 auto;
+  padding: 7px 11px;
+}
+
+/* ── Marktbuch: Kopfzeile mit Filter ───────────────────────────────── */
+
+.ninjos-shops .shops-buchkopf {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-buchfilter {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+}
+
+.ninjos-shops .shops-buchfilter > span {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-buchzahl { font-size: 0.8rem; color: var(--shops-text-blass); }
+.ninjos-shops .shops-buch-fehlzahl { color: var(--shops-rot); font-weight: 700; }
+
+.ninjos-shops .shops-buch-fehl { opacity: 0.9; }
+.ninjos-shops .shops-buch-fehl .shops-buch-pfeil {
+  color: var(--shops-text-blass);
+  background: rgba(0, 0, 0, 0.06);
+}
+.ninjos-shops .shops-buch-fehl .shops-buch-summe { color: var(--shops-text-blass); }
+
+.ninjos-shops .shops-buch-grund {
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-buch-marke {
+  margin-left: 6px;
+  padding: 0 5px;
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--shops-rot);
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 3px;
+}
+
+.ninjos-shops .shops-buch-fuss button {
+  padding: 4px 9px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--shops-rot);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-buch-fuss button:hover { border-color: var(--shops-rot); }

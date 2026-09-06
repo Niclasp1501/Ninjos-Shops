@@ -6,6 +6,21 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Hinzugefügt
+- **Verkäufer je Laden**: ein NSC, per Ablage in die Einstellungen gezogen. Er
+  steht im Kopf beider Fenster und als Gegenüber in den Büchern — die
+  Spielleitung erscheint dort nicht mehr, sie führt den Handel nur aus. Ohne
+  Verknüpfung steht neutral „Verkäufer" da.
+
+### Geändert
+- **Das Marktbuch ist kein Journal mehr.** Es las sich wie ein Protokoll: nicht
+  filterbar, nicht sortierbar, jede Zeile ein Textschnipsel. Jetzt liegen die
+  Einträge als Daten in einer Welteinstellung und bekommen ein eigenes Fenster
+  mit Filter nach Laden, sichtbarem Grund bei gescheiterten Versuchen und einem
+  Knopf zum Leeren.
+- Die Knopfleiste im Bogen ist **nach Aufgabe gruppiert**: links vorzeigen und
+  schließen, rechts abgesetzt die beiden Bücher als Symbolknöpfe.
+- Das Kopfbild ist von 132 auf 104 px geschrumpft — die Auslage wuchs damit von
+  275 auf 368 px. Sie ist das, wofür man das Fenster öffnet.
 - **Ladenbuch je Laden**, für alle zu öffnen: Die Spielleitung sieht jeden
   Vorgang in diesem Laden, ein Spieler nur seine eigenen. Mit Richtung, Datum,
   Summe und einer Zeile darunter, was insgesamt geflossen ist. Nicht zu
