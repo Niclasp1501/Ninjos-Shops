@@ -25,6 +25,7 @@
 
 import { MODULE_ID, SETTINGS, SOCKET, LADEN_TYP, WARE, OFFENER_LADEN } from "./const.js";
 import { grundpreisCp, preisCp, alsText } from "./preise.js";
+import { waereZustaendig } from "./vorsitz.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 
@@ -280,6 +281,20 @@ export async function schauNachfuehren(ladenUuid) {
 
 /** Einstiegspunkt aus socket.js. */
 export async function aufSchau(daten) {
+  /*
+   * **„Wo sind wir?" beantwortet die Spielleitung, nicht der Schirm.**
+   * Ein Bildschirm, der neu geladen hat, weiss nur, dass er gross zeigen
+   * soll - nicht, welche Seite gerade steht und ob geblaettert wird. Er fragt
+   * deshalb nach, statt darauf zu warten, dass zufaellig ein Takt kommt.
+   */
+  if (daten.tat === "wo") {
+    if (!waereZustaendig()) return;
+    if (vortrag) return void senden();
+    const laden = daten.ladenUuid ? await fromUuid(daten.ladenUuid) : null;
+    if (laden?.type === LADEN_TYP) schauBeginnen(laden);
+    return;
+  }
+
   if (!game.user.getFlag(MODULE_ID, SCHAU_MERKMAL)) return;
   if (daten.tat === "aus") return void schauSchliessen();
   if (daten.tat !== "seite") return;
@@ -298,10 +313,27 @@ export async function aufSchau(daten) {
  * Seitenzahl bringt die naechste Nachricht.
  */
 export async function schauWiederherstellen() {
+  /*
+   * **Die Spielleitung nimmt den Vortrag wieder auf.** Der laeuft im
+   * Arbeitsspeicher genau der Verbindung, die ihn gestartet hat - laedt sie
+   * neu, blaettert niemand mehr, und die Schirme bleiben auf ihrem letzten
+   * Bild stehen. Genau so gesehen am 06.09.2026: „ich sehe nur angehalten".
+   */
+  if (waereZustaendig() && !vortrag) {
+    const traeger = game.users.find(u => u.getFlag(MODULE_ID, SCHAU_MERKMAL) === true
+      && u.getFlag(MODULE_ID, OFFENER_LADEN));
+    const laden = traeger ? await fromUuid(traeger.getFlag(MODULE_ID, OFFENER_LADEN)) : null;
+    if (laden?.type === LADEN_TYP) schauBeginnen(laden);
+  }
+
   if (!game.user.getFlag(MODULE_ID, SCHAU_MERKMAL)) return;
   const uuid = game.user.getFlag(MODULE_ID, OFFENER_LADEN);
   const laden = uuid ? await fromUuid(uuid) : null;
-  if (laden?.type === LADEN_TYP) {
-    await schauZeichnen(laden, { seite: 0, seiten: seitenZahl(laden), takt: 0 });
-  }
+  if (laden?.type !== LADEN_TYP) return;
+
+  await schauZeichnen(laden, { seite: 0, seiten: seitenZahl(laden), takt: 0 });
+
+  // Und gleich nachfragen, wo der Vortrag gerade steht.
+  game.socket.emit(SOCKET.NAME, { typ: SOCKET.SCHAU, tat: "wo", ladenUuid: uuid });
+  if (waereZustaendig()) aufSchau({ tat: "wo", ladenUuid: uuid });
 }

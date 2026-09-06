@@ -561,6 +561,15 @@ Bild erkannt, nicht am Code.
 Verschoben wird, nicht die Höhe animiert: `transform` bewegt der Browser auf
 der Grafikkarte, eine animierte `height` rechnet er in jedem Bild neu.
 
+**Der Vortrag überlebt kein Neuladen — also nimmt er sich selbst wieder auf.**
+Er liegt im Arbeitsspeicher genau der Verbindung, die ihn gestartet hat. Lädt
+die Spielleitung neu, blättert niemand mehr, und die Schirme bleiben auf ihrem
+letzten Bild stehen; gemeldet als „ich sehe nur angehalten". Zwei Zeilen lösen
+das: Bei `ready` schaut die zuständige Spielleitung nach, ob jemand das
+`schau`-Merkmal trägt, und beginnt von vorn — und ein Bildschirm, der
+zurückkommt, **fragt** nach dem Stand (`tat: "wo"`), statt darauf zu warten,
+dass zufällig ein Takt vorbeikommt.
+
 **Und ein Ausweg für die Spielleitung.** Die Schicht ist mit Absicht
 unbedienbar — auf einem Monitor sitzt niemand davor. Wer sie sich aber ansehen
 will, hat den ganzen Bildschirm zugedeckt, also auch die Steuerung im

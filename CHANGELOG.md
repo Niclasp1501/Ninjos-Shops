@@ -6,6 +6,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Die Schauansicht blieb nach einem Neuladen stehen.** Der Vortrag läuft im
+  Arbeitsspeicher genau der Verbindung, die ihn gestartet hat — lud die
+  Spielleitung neu, blätterte niemand mehr, und auf dem Schirm stand
+  „angehalten", bis jemand von Hand eingriff. Die Spielleitung nimmt ihn jetzt
+  beim Start wieder auf, und ein Bildschirm, der zurückkommt, fragt nach, wo
+  der Vortrag gerade steht, statt auf den nächsten Takt zu warten.
 - **Preise werden in Gold genannt, nicht in Platin.** Wer „12 GM" eintippte,
   bei dem las der Spieler „1 PM 2 GM", und ein Heiltrank kostete „7 PM 5 GM"
   statt 75 Gold. Im Beutel bleibt Platin liegen, wo es liegt, und Wechselgeld
