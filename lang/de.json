@@ -228,5 +228,10 @@
   "SHOPS.Freigabe.Freigeben": "Freigeben",
   "SHOPS.Freigabe.Ablehnen": "Nicht heute",
   "SHOPS.Freigabe.Abgelehnt": "Der Händler gibt den Kauf nicht frei.",
-  "SHOPS.Freigabe.SatzPlatzhalter": "Das ist nicht für dich bestimmt …"
+  "SHOPS.Freigabe.SatzPlatzhalter": "Das ist nicht für dich bestimmt …",
+  "SHOPS.Zugriff.Szenen": "Auf welchen Szenen:",
+  "SHOPS.Zugriff.SzenenUeberall": "Keine ausgewählt — der Laden ist von jeder Karte aus erreichbar.",
+  "SHOPS.Zugriff.SzenenGebunden": "Nur wer eine dieser Karten vor sich hat, kommt an den Laden.",
+  "SHOPS.Zugriff.SzeneAktiv": "Gerade die aktive Szene",
+  "SHOPS.Zugang.NichtMehrHier": "{laden} liegt nicht auf dieser Karte."
 }

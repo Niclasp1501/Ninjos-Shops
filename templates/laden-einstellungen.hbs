@@ -172,6 +172,33 @@
     {{/if}}
 
     {{!--
+      Wo statt wer. Die Szenenliste ist ein Filter über dem Modus und kein
+      dritter Modus: „alle Spieler, aber nur auf dem Marktplatz". Keine
+      Auswahl heißt überall — so verhält sich jeder Laden, der vor dieser
+      Einstellung angelegt wurde.
+    --}}
+    <p class="shops-blockhinweis shops-szenenkopf">
+      <strong>{{localize "SHOPS.Zugriff.Szenen"}}</strong>
+      {{#if ueberall}}{{localize "SHOPS.Zugriff.SzenenUeberall"}}
+      {{else}}{{localize "SHOPS.Zugriff.SzenenGebunden"}}{{/if}}
+    </p>
+    <div class="shops-szenenbindung">
+      <ul class="shops-zugriffsliste">
+        {{#each szenen}}
+          <li>
+            <label>
+              <input type="checkbox" data-zugriff="szenen" value="{{id}}"
+                     {{checked gewaehlt}} {{#unless ../bearbeitbar}}disabled{{/unless}}>
+              <span class="shops-spielername">{{name}}</span>
+              {{#if aktiv}}<i class="fa-solid fa-circle shops-online"
+                              title="{{localize 'SHOPS.Zugriff.SzeneAktiv'}}"></i>{{/if}}
+            </label>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+
+    {{!--
       Der weltweite Schalter steht ueber allem hier. Wer ihn nicht kennt,
       stellt eine Woche lang Zugriffe ein, die nichts bewirken.
     --}}

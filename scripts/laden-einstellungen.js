@@ -95,6 +95,18 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
       })),
 
       /*
+       * Wo statt wer. Die Liste ist ein Filter ueber dem Modus, kein dritter
+       * Modus - deshalb steht sie immer da und nicht nur bei „Auswahl".
+       */
+      szenen: game.scenes.map(sz => ({
+        id: sz.id,
+        name: sz.name,
+        aktiv: sz.active,
+        gewaehlt: laden.zugriff?.szenen?.has(sz.id) ?? false
+      })).sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang)),
+      ueberall: !(laden.zugriff?.szenen?.size),
+
+      /*
        * Der weltweite Schalter steht ueber der Liste. Steht er aus, bewirkt
        * hier gar nichts etwas - und das gehoert ins Fenster, nicht in die
        * Anleitung.
@@ -176,12 +188,19 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
       });
     }
 
-    for (const kasten of this.element.querySelectorAll('[data-zugriff="benutzer"]')) {
-      kasten.addEventListener("change", () => {
-        const gewaehlt = [...this.element.querySelectorAll('[data-zugriff="benutzer"]:checked')]
-          .map(k => k.value);
-        this.document.update({ "system.zugriff.benutzer": gewaehlt });
-      });
+    /*
+     * Zwei Listen, dieselbe Bauart. Kein `name=` an den Kaestchen: Mehrere
+     * Kaestchen unter einem Namen macht FormDataExtended zu Wahrheitswerten
+     * statt zu einer Liste - deshalb schreibt der Bogen sie hier von Hand.
+     */
+    for (const feld of ["benutzer", "szenen"]) {
+      for (const kasten of this.element.querySelectorAll(`[data-zugriff="${feld}"]`)) {
+        kasten.addEventListener("change", () => {
+          const gewaehlt = [...this.element.querySelectorAll(`[data-zugriff="${feld}"]:checked`)]
+            .map(k => k.value);
+          this.document.update({ [`system.zugriff.${feld}`]: gewaehlt });
+        });
+      }
     }
   }
 }

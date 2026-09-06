@@ -145,9 +145,10 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
        * jederzeit jedem jeden Laden zeigen. Diese Liste beantwortet nur die
        * andere Frage - an welchen Laden ein Spieler von sich aus herankommt.
        *
-       * `szenen` ist fuer die spaetere Bindung an die sichtbare Szene
-       * vorgesehen und wird heute von nichts gelesen. Das Feld steht schon
-       * hier, weil ein spaeter ergaenztes Feld in bestehenden Welten fehlt.
+       * `szenen` beantwortet die zweite Frage: **wo**. Sie ist kein dritter
+       * Modus, sondern ein Filter darueber - „alle Spieler, aber nur auf dem
+       * Marktplatz". Leer heisst ueberall; so verhalten sich bestehende
+       * Laeden weiter wie bisher.
        */
       zugriff: new SchemaField({
         modus: new StringField({
@@ -182,6 +183,54 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
     if (this.zugriff.modus === "alle") return true;
     if (this.zugriff.modus === "auswahl") return this.zugriff.benutzer.has(benutzer?.id);
     return false;
+  }
+
+  /**
+   * Steht dieser Laden auf der Szene, die gerade zu sehen ist?
+   *
+   * **Wer und wo sind zwei Fragen.** `darfSelbstOeffnen` beantwortet die
+   * erste, diese hier die zweite; erst beide zusammen ergeben „erreichbar"
+   * (siehe `offenbareLaeden` in zugaenge.js). Getrennt, weil man sie sonst
+   * nicht mehr auseinanderhalten kann: „Warum sieht Roxy den Laden nicht?"
+   * hat dann zwei Antworten, und die Einstellung zeigt nur eine davon.
+   *
+   * **Warum die betrachtete Szene und nicht das Token der Figur.** Am Tisch
+   * heisst „auf der Szene sein", dass die Karte offen ist - die Gruppe steht
+   * im Marktviertel, alle sehen es. Ein Token als Bedingung waere praeziser
+   * und truegerischer: Der Laden ginge nicht auf, weil die Figur keinen
+   * Spieler hat, weil ihr Token noch nicht gesetzt ist oder weil der Kampf
+   * auf einer Kopie der Szene laeuft. Das ist am Tisch nicht zu erklaeren.
+   *
+   * **Leer heisst ueberall.** Ein Laden ohne Szenenliste ist von jeder Karte
+   * aus erreichbar - so verhalten sich alle Laeden, die es vor dieser
+   * Funktion schon gab.
+   *
+   * **`game.scenes.current` allein reicht nicht.** Es ist die *betrachtete*
+   * Szene, und die gibt es nur, wenn die Leinwand laeuft. Auf einem Client
+   * ohne Leinwand - Foundrys eigene Einstellung „Kein Canvas", die auf
+   * schwachen Tablets gesetzt wird - ist sie `null`, waehrend
+   * `game.scenes.active` sehr wohl dasteht. Ohne diesen Rueckfall waere ein
+   * szenengebundener Laden fuer genau diese Leute nie erreichbar, und niemand
+   * kaeme darauf, warum. Am 06.09.2026 an einem Client ohne Leinwand
+   * gemessen: `current: null`, `active: "GdA Landingpage"`.
+   *
+   * @param {string} [szeneId]  Ab Werk die Szene, an der dieser Client steht.
+   */
+  giltHier(szeneId = LadenModel.hiesigeSzene()) {
+    if (!this.zugriff.szenen?.size) return true;
+    return szeneId ? this.zugriff.szenen.has(szeneId) : false;
+  }
+
+  /** Die Szene, an der dieser Client steht - betrachtet, sonst die aktive. */
+  static hiesigeSzene() {
+    return game.scenes?.current?.id ?? game.scenes?.active?.id ?? null;
+  }
+
+  /** Die Namen der Szenen, an die dieser Laden gebunden ist. */
+  get szenenNamen() {
+    return [...(this.zugriff.szenen ?? [])]
+      .map(id => game.scenes?.get(id)?.name)
+      .filter(Boolean);
   }
 
   /**

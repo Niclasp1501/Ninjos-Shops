@@ -228,5 +228,10 @@
   "SHOPS.Freigabe.Freigeben": "Let it go",
   "SHOPS.Freigabe.Ablehnen": "Not today",
   "SHOPS.Freigabe.Abgelehnt": "The keeper will not sell this.",
-  "SHOPS.Freigabe.SatzPlatzhalter": "That one is not for you …"
+  "SHOPS.Freigabe.SatzPlatzhalter": "That one is not for you …",
+  "SHOPS.Zugriff.Szenen": "On which scenes:",
+  "SHOPS.Zugriff.SzenenUeberall": "None picked — the shop can be reached from any map.",
+  "SHOPS.Zugriff.SzenenGebunden": "Only those looking at one of these maps can reach the shop.",
+  "SHOPS.Zugriff.SzeneAktiv": "The active scene right now",
+  "SHOPS.Zugang.NichtMehrHier": "{laden} is not on this map."
 }

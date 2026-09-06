@@ -10,7 +10,9 @@
  */
 
 import { MODULE_ID, SETTINGS, LADEN_TYP, OFFENER_LADEN } from "./const.js";
-import { spielerFensterOeffnen, spielerFensterIstOffen } from "./spieler-fenster.js";
+import {
+  spielerFensterOeffnen, spielerFensterIstOffen, spielerFensterSchliessen
+} from "./spieler-fenster.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
 
 /** Alle Laeden der Welt, alphabetisch. */
@@ -23,14 +25,19 @@ export function alleLaeden() {
 /**
  * Welche Laeden darf dieser Spieler von sich aus oeffnen?
  *
- * Zwei Bedingungen, und beide muessen gelten: der weltweite Schalter und die
- * Liste am einzelnen Laden. Der Schalter ist die uebergeordnete Antwort auf
- * dieselbe Frage - wer ihn aus laesst, will es an keinem Laden.
+ * Drei Bedingungen, und alle drei muessen gelten: der weltweite Schalter, die
+ * Liste am einzelnen Laden (**wer**) und seine Szenenbindung (**wo**). Der
+ * Schalter ist die uebergeordnete Antwort auf dieselbe Frage - wer ihn aus
+ * laesst, will es an keinem Laden.
+ *
+ * Die Spielleitung sieht immer alle: Sie zeigt Laeden vor, und sie tut das
+ * auch von einer anderen Szene aus.
  */
 export function offenbareLaeden() {
   if (game.user.isGM) return alleLaeden();
   if (!game.settings.get(MODULE_ID, SETTINGS.SPIELER_DUERFEN_OEFFNEN)) return [];
-  return alleLaeden().filter(l => l.system.darfSelbstOeffnen?.(game.user));
+  return alleLaeden().filter(l =>
+    l.system.darfSelbstOeffnen?.(game.user) && l.system.giltHier?.() !== false);
 }
 
 /** Der Laden, den dieser Benutzer gerade vorgezeigt bekommt. */
@@ -241,6 +248,39 @@ export function zugaengeHaken() {
 export function zugaengeEinrichten() {
   Hooks.on("updateUser", benutzer => {
     if (benutzer.id === game.user.id) ui.controls?.render();
+  });
+
+  /*
+   * Die Szene wechselt - und mit ihr, an welche Laeden man herankommt.
+   *
+   * Wer den Marktplatz verlaesst, steht nicht mehr im Laden. Ein Fenster, das
+   * dann offen bleibt, laesst weiterkaufen, waehrend die Gruppe drei Karten
+   * weiter im Wald steht.
+   *
+   * **Nur selbst geoeffnete Laeden.** Was die Spielleitung vorzeigt, bleibt
+   * stehen: Sie hat es aufgemacht, sie macht es zu. Das Merkmal am Benutzer
+   * unterscheidet die beiden Faelle - selbst geoeffnete tragen keins.
+   */
+  const szeneGewechselt = () => {
+    if (game.user.isGM) return;
+    if (!spielerFensterIstOffen()) return;
+    const vorgezeigt = game.user.getFlag(MODULE_ID, OFFENER_LADEN);
+    const laden = foundry.applications.instances.get(`${MODULE_ID}-spieler`)?.laden;
+    if (!laden || laden.uuid === vorgezeigt) return;
+    if (laden.system.giltHier?.() !== false) return;
+    spielerFensterSchliessen();
+    ui.notifications.info(game.i18n.format("SHOPS.Zugang.NichtMehrHier", { laden: laden.name }));
+  };
+
+  /*
+   * Zwei Haken, weil es zwei Arten gibt, die Szene zu wechseln. `canvasReady`
+   * meldet, dass dieser Client eine andere Karte betrachtet - aber nur, wenn
+   * er ueberhaupt eine Leinwand hat. Wer ohne arbeitet, erfaehrt den Wechsel
+   * nur daran, dass eine andere Szene aktiv wird.
+   */
+  Hooks.on("canvasReady", szeneGewechselt);
+  Hooks.on("updateScene", (szene, aenderungen) => {
+    if (aenderungen.active === true) szeneGewechselt();
   });
 
   /*

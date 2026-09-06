@@ -27,6 +27,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Ein Laden kann an Szenen hängen.** „Auf welchen Szenen" in den
+  Ladeneinstellungen: Wer keine dieser Karten vor sich hat, kommt nicht an den
+  Laden. Keine Auswahl heißt weiterhin überall. Es ist ein Filter über dem
+  Zugriffsmodus, kein dritter Modus — „alle Spieler, aber nur auf dem
+  Marktplatz". Wechselt die Szene, schließt sich ein selbst geöffneter Laden;
+  was die Spielleitung vorzeigt, bleibt stehen.
 - **Der Kaufmodus „Freigabe" tut jetzt etwas.** Er stand im Datenmodell, in den
   Einstellungen und als Satz im Bestätigungsdialog — der Kauf lief trotzdem
   durch wie bei „Direkt". Jetzt legt sich die Bitte bei der Spielleitung ab,

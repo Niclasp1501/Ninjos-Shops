@@ -304,6 +304,44 @@ entfernt werden — dort hätte ein Blick in die Konsole die Verhandlung entwert
 Client; ohne Grenze wächst ein vielbesuchter Laden unbemerkt weiter, bis jemand
 beim Laden der Welt wartet und niemand weiß, warum.
 
+## Wer und wo sind zwei Fragen
+
+`zugriff.modus` beantwortet, **wer** einen Laden selbst aufmachen darf;
+`zugriff.szenen` beantwortet, **wo**. Erst beide zusammen ergeben
+„erreichbar" — nachzulesen in `offenbareLaeden()`.
+
+Die Szenenliste ist bewusst **kein dritter Modus**. Als Filter darüber lässt
+sich sagen „alle Spieler, aber nur auf dem Marktplatz"; als Modus ginge das
+nicht. Und getrennt bleiben die Fragen unterscheidbar: „Warum sieht Roxy den
+Laden nicht?" hätte sonst zwei Antworten, und die Einstellung zeigte nur eine.
+**Leer heißt überall** — so verhält sich jeder Laden, den es vor dieser
+Funktion schon gab.
+
+**Die betrachtete Szene entscheidet, nicht das Token der Figur.** Am Tisch
+heißt „auf der Szene sein", dass die Karte offen ist. Ein Token als Bedingung
+wäre präziser und trügerischer: Der Laden ginge nicht auf, weil die Figur
+keinen Spieler hat, weil ihr Token noch nicht gesetzt ist oder weil der Kampf
+auf einer Kopie der Szene läuft. Das ist am Tisch nicht zu erklären.
+
+**`game.scenes.current` allein reicht nicht.** Es ist die *betrachtete* Szene,
+und die gibt es nur mit laufender Leinwand. Auf einem Client ohne — Foundrys
+eigene Einstellung „Kein Canvas", die auf schwachen Tablets gesetzt wird — ist
+sie `null`, während `game.scenes.active` dasteht. Am 06.09.2026 an einem
+Client ohne Leinwand gemessen: `current: null`, `active: "GdA Landingpage"`.
+Ohne den Rückfall auf `active` wäre ein szenengebundener Laden für genau diese
+Leute nie erreichbar, und niemand käme darauf, warum. `LadenModel.hiesigeSzene()`
+hält beides an einer Stelle.
+
+Aus demselben Grund hängen **zwei Haken** am Szenenwechsel: `canvasReady`
+meldet, dass dieser Client eine andere Karte betrachtet — aber nur mit
+Leinwand. Wer ohne arbeitet, erfährt den Wechsel nur daran, dass eine andere
+Szene aktiv wird (`updateScene` mit `active: true`).
+
+**Zu macht nur, was der Spieler selbst aufgemacht hat.** Was die Spielleitung
+vorzeigt, bleibt stehen — sie hat es aufgemacht, sie macht es zu. Die beiden
+Fälle unterscheidet das Merkmal `offenerLaden` am Benutzer: Selbst geöffnete
+tragen keins.
+
 ## Der Freigabe-Modus, und was er nicht kann
 
 Der Modus stand ein halbes Jahr lang als Text da: im Datenmodell, im

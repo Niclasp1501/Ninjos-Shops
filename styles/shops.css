@@ -2341,3 +2341,19 @@
   color: var(--shops-rot);
   font-size: 0.82rem;
 }
+
+/* ── Wo ein Laden steht ────────────────────────────────────────────── */
+
+/*
+ * Die Szenenliste ist ein Filter über dem Zugriffsmodus, kein dritter Modus.
+ * Sie steht deshalb immer da — auch bei „Niemand", wo sie nichts bewirkt.
+ * Das ist Absicht: Eine Einstellung, die manchmal verschwindet, sucht man
+ * beim nächsten Mal an der falschen Stelle.
+ */
+.ninjos-shops .shops-szenenkopf { margin-top: 10px; }
+.ninjos-shops .shops-szenenkopf strong { color: var(--shops-text); margin-right: 4px; }
+
+.ninjos-shops .shops-szenenbindung .shops-zugriffsliste {
+  max-height: 11rem;
+  overflow-y: auto;
+}
