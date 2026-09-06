@@ -554,9 +554,20 @@ openTradeLog, sheetView` heraus — die drei Funktionen aus ihrer `state.js`
 darin. Das ist eine Zeile in einem Objektliteral **drüben** und die einzige
 Änderung, die dieses Modul an einem anderen braucht.
 
-Bis dahin gilt die eigene Liste — und das Fenster **sagt** das auch. Eine
-Einstellung, die dasteht und nichts bewirkt, kostet jemanden eine halbe Stunde
-Suche nach dem Grund, warum sein Monitor nicht umschaltet.
+Statt darauf zu warten, liest die Brücke **die beiden Einstellungen direkt**,
+in denen die In-Person Tools ihre Schirme halten: `monitorBM` und `monitorSC`,
+je eine Benutzerkennung. Wer dort einen Monitor eingetragen hat, trägt ihn hier
+nicht noch einmal ein. Die Verbindung bleibt einseitig und optional — fehlen
+die Einstellungen, fällt alles auf die eigene Liste zurück.
+
+**Leer heißt „nicht eingerichtet", nicht „keiner".** Stünden die Einstellungen
+drüben nur da, ohne dass jemand einen Schirm eingetragen hat, würde die eigene
+Liste ausgegraut und niemand wäre Monitor — eine Sackgasse ohne Ausweg. Erst
+ein echter Eintrag drüben bekommt hier das Sagen.
+
+Und das Fenster **sagt**, woher die Auskunft kommt. Eine Einstellung, die
+dasteht und nichts bewirkt, kostet jemanden eine halbe Stunde Suche nach dem
+Grund, warum sein Monitor nicht umschaltet.
 
 ## Ein Fenster, das Platz hat, soll ihn auch benutzen
 

@@ -61,6 +61,11 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   steht neben jedem Namen ein Schalter „groß", vorbelegt für erkannte
   Monitore. „Allen zeigen" gibt Monitoren die Schauansicht und allen anderen
   ihr Fenster.
+- **Die Brücke liest die In-Person Tools jetzt wirklich.** Deren API gibt die
+  Monitorerkennung bis heute nicht heraus; die beiden Einstellungen, in denen
+  sie ihre Schirme hält, sind aber lesbar. Wer dort einen Monitor eingetragen
+  hat, muss ihn hier nicht noch einmal eintragen. Sind sie leer, gilt die
+  eigene Liste — leer heißt „nicht eingerichtet", nicht „keiner".
 - **Eine Liste, welche Benutzer Monitore sind** (Moduleinstellungen →
   Monitore). Laufen Ninjo's In-Person Tools und geben sie ihre Erkennung
   heraus, gilt deren Antwort; die eigene Liste graut dann aus und sagt, woher

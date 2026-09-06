@@ -33,9 +33,50 @@ export function inPersonBruecke() {
   return typeof api?.isMonitorUser === "function" ? api : null;
 }
 
+/**
+ * Die Einstellungen, in denen die In-Person Tools ihre Monitore halten.
+ *
+ * **Der zweite Weg zur selben Auskunft.** Ihre API gibt `isMonitorUser` bis
+ * heute nicht heraus (nachgesehen am 06.09.2026: `openPanel, isActive,
+ * getStats, resetStats, refresh, openTrade, openTradeLog, sheetView`). Auf
+ * eine Aenderung in einem anderen Repo zu warten, hiesse aber, die Funktion
+ * so lange tot dastehen zu lassen - und wer drueben einen Monitor eingetragen
+ * hat, will ihn hier nicht noch einmal eintragen.
+ *
+ * Die beiden Einstellungen halten je **eine Benutzerkennung**: den Schirm fuer
+ * die Karte und den fuer die Szene. Sie zu lesen ist eine Zeile und bleibt
+ * einseitig - fehlen sie, faellt alles auf die eigene Liste zurueck.
+ */
+const INPERSON_MONITORE = [
+  "ninjos-inperson-tools.monitorBM",
+  "ninjos-inperson-tools.monitorSC"
+];
+
+/** Die Monitorkennungen der In-Person Tools, oder `null`. */
+function ausInPerson() {
+  const vorhanden = INPERSON_MONITORE.filter(k => game.settings.settings.has(k));
+  if (!vorhanden.length) return null;
+
+  const ids = vorhanden.map(k => {
+    const [raum, name] = [k.slice(0, k.indexOf(".")), k.slice(k.indexOf(".") + 1)];
+    try { return game.settings.get(raum, name); }
+    catch { return ""; }
+  }).filter(Boolean);
+
+  /*
+   * **Leer heisst „nicht eingerichtet", nicht „keiner".** Stuenden die
+   * Einstellungen drueben nur da, ohne dass jemand einen Schirm eingetragen
+   * hat, wuerde unsere eigene Liste ausgegraut und niemand waere Monitor -
+   * eine Sackgasse ohne Ausweg. Erst wer drueben wirklich etwas eintraegt,
+   * bekommt hier das Sagen.
+   */
+  return ids.length ? ids : null;
+}
+
 /** Woher die Auskunft gerade kommt: `"inperson"` oder `"eigen"`. */
 export function monitorQuelle() {
-  return inPersonBruecke() ? "inperson" : "eigen";
+  if (inPersonBruecke()) return "inperson";
+  return ausInPerson() ? "inperson" : "eigen";
 }
 
 /** Ist dieser Benutzer ein Monitor? */
@@ -50,6 +91,9 @@ export function istMonitor(benutzer) {
       console.warn(`${MODULE_ID} | Monitorerkennung der In-Person Tools schlug fehl`, fehler);
     }
   }
+
+  const drueben = ausInPerson();
+  if (drueben) return drueben.includes(benutzer.id);
 
   const eigene = game.settings.get(MODULE_ID, SETTINGS.MONITORE) ?? [];
   return eigene.includes(benutzer.id);
