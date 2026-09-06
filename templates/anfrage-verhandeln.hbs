@@ -8,6 +8,57 @@
 --}}
 <div class="shops-teil-verhandeln">
 
+  {{!--
+    Oben die Kaufwünsche, darunter die Verkaufsanfragen. Beides ist dasselbe
+    Anliegen — ein Spieler fragt, die Spielleitung antwortet —, und beides an
+    einer Stelle zu haben, erspart ein drittes Fenster, das man aufmachen muss,
+    um zu sehen, ob etwas darin steht.
+  --}}
+  {{#if freigaben.length}}
+    <ol class="shops-anfrageliste shops-freigabeliste">
+      {{#each freigaben}}
+        <li class="shops-anfrage shops-freigabe" data-freigabe-id="{{id}}">
+
+          <header class="shops-anfrage-kopf">
+            <i class="fa-solid fa-hand-holding"></i>
+            <strong>{{spielerName}}</strong>
+            <span class="shops-anfrage-figur">{{figurName}}</span>
+            <span class="shops-anfrage-laden">{{localize "SHOPS.Marktbuch.AnLaden" laden=ladenName}}</span>
+          </header>
+
+          <ol class="shops-ware shops-anfrage-posten">
+            <li class="shops-zeile">
+              {{#if img}}<img src="{{img}}" alt="">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild"></i>{{/if}}
+              <div class="shops-name"><span class="shops-warenname">{{itemName}}</span></div>
+              <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{summeText}}</span>
+            </li>
+          </ol>
+
+          <div class="shops-anfrage-felder">
+            <label>
+              <span>{{localize "SHOPS.Anfrage.Satz"}}</span>
+              <input type="text" data-satz placeholder="{{localize 'SHOPS.Freigabe.SatzPlatzhalter'}}">
+            </label>
+          </div>
+
+          <footer class="shops-anfrage-fuss">
+            <button type="button" data-action="freigeben">
+              <i class="fa-solid fa-check"></i>
+              {{localize "SHOPS.Freigabe.Freigeben"}}
+            </button>
+            <button type="button" class="shops-zweit" data-action="kaufAblehnen">
+              <i class="fa-solid fa-hand"></i>
+              {{localize "SHOPS.Freigabe.Ablehnen"}}
+            </button>
+          </footer>
+
+        </li>
+      {{/each}}
+    </ol>
+  {{/if}}
+
   {{#if anfragen.length}}
     <ol class="shops-anfrageliste">
       {{#each anfragen}}
@@ -100,6 +151,8 @@
       {{/each}}
     </ol>
   {{else}}
-    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Anfrage.KeineOffen"}}</p>
+    {{#unless freigaben.length}}
+      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Anfrage.KeineOffen"}}</p>
+    {{/unless}}
   {{/if}}
 </div>

@@ -18,6 +18,9 @@ import {
   preisVorschlagen, anfrageAbweisen, anfrageBeobachten, eigeneAnfrage,
   offeneAnfragen, anfrageWegraeumen, alsGeld
 } from "./anfrage.js";
+import {
+  offeneFreigaben, freigabeErteilen, freigabeAblehnen, freigabeBeobachten
+} from "./freigabe.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -148,7 +151,9 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
     actions: {
       bieten: AnfrageVerhandeln.#bieten,
       abweisen: AnfrageVerhandeln.#abweisen,
-      uebernehmen: AnfrageVerhandeln.#uebernehmen
+      uebernehmen: AnfrageVerhandeln.#uebernehmen,
+      freigeben: AnfrageVerhandeln.#freigeben,
+      kaufAblehnen: AnfrageVerhandeln.#kaufAblehnen
     }
   };
 
@@ -156,11 +161,12 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
     body: { template: `modules/${MODULE_ID}/templates/anfrage-verhandeln.hbs`, scrollable: [".shops-anfrageliste"] }
   };
 
-  get title() { return game.i18n.localize("SHOPS.Anfrage.VerhandelnTitel"); }
+  get title() { return game.i18n.localize("SHOPS.Anfrage.TresenTitel"); }
 
   async _prepareContext(options) {
     const ctx = await super._prepareContext(options);
     return Object.assign(ctx, {
+      freigaben: offeneFreigaben(),
       anfragen: offeneAnfragen().map(s => ({
         ...s,
         wartet: s.zustand === ZUSTAND.GEPACKT,
@@ -190,6 +196,24 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
     if (!id) return;
     // Das Feld steht in Gold - die Rechnung im Modul in Kupfer.
     preisVorschlagen(id, Math.round(gp * 100), satz);
+    this.render(false);
+  }
+
+  /** Ja zu einem Kaufwunsch. */
+  static async #freigeben(ereignis, ziel) {
+    const kasten = ziel.closest("[data-freigabe-id]");
+    const id = kasten?.dataset.freigabeId;
+    if (!id) return;
+    await freigabeErteilen(id);
+    this.render(false);
+  }
+
+  /** Nein zu einem Kaufwunsch - der Satz daneben geht als Begruendung mit. */
+  static #kaufAblehnen(ereignis, ziel) {
+    const kasten = ziel.closest("[data-freigabe-id]");
+    const id = kasten?.dataset.freigabeId;
+    if (!id) return;
+    freigabeAblehnen(id, kasten.querySelector("[data-satz]")?.value ?? "");
     this.render(false);
   }
 
@@ -223,13 +247,23 @@ export function packenOeffnen(laden, figur) {
  * Der Spieler wartete auf eine Antwort, die niemand bemerkt hatte.
  * Deshalb ausklappen, nach vorn holen, und sagen, dass etwas da ist.
  */
-export function verhandelnOeffnen(sitzung = null) {
+export async function verhandelnOeffnen(sitzung = null, kaufwunsch = null) {
   verhandeln ??= new AnfrageVerhandeln();
-  verhandeln.render(true);
+  /*
+   * **Auf das Zeichnen warten.** `render` ist asynchron; wer direkt danach
+   * `bringToFront()` ruft, greift auf ein Fenster zu, das es noch nicht gibt -
+   * `Cannot read properties of undefined (reading 'style')`. Beim ersten
+   * Aufmachen war das jedes Mal so.
+   */
+  await verhandeln.render(true);
   if (verhandeln.minimized) verhandeln.maximize();
   verhandeln.bringToFront();
   if (sitzung) ui.notifications.info(game.i18n.format("SHOPS.Anfrage.Eingegangen", {
     spieler: sitzung.spielerName ?? "", anzahl: sitzung.posten?.length ?? 0
+  }));
+  if (kaufwunsch) ui.notifications.info(game.i18n.format("SHOPS.Freigabe.Eingegangen", {
+    spieler: kaufwunsch.spielerName, menge: kaufwunsch.menge,
+    name: kaufwunsch.itemName, preis: kaufwunsch.summeText
   }));
   return verhandeln;
 }
@@ -242,6 +276,16 @@ export function verhandelnOeffnen(sitzung = null) {
  * Spieler wartet dann auf eine Antwort, die niemand gesehen hat.
  */
 export function anfrageFensterEinrichten() {
+  /*
+   * Ein Kaufwunsch im Modus „freigabe" ist genauso dringend wie eine
+   * Verkaufsanfrage: Der Spieler wartet, bis jemand hinsieht.
+   */
+  freigabeBeobachten(eintrag => {
+    if (!game.user.isGM) return;
+    if (eintrag) verhandelnOeffnen(null, eintrag);
+    else verhandeln?.render(false);
+  });
+
   anfrageBeobachten((meine, sitzung) => {
     packen?.render(false);
 

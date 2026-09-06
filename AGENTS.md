@@ -304,6 +304,42 @@ entfernt werden — dort hätte ein Blick in die Konsole die Verhandlung entwert
 Client; ohne Grenze wächst ein vielbesuchter Laden unbemerkt weiter, bis jemand
 beim Laden der Welt wartet und niemand weiß, warum.
 
+## Der Freigabe-Modus, und was er nicht kann
+
+Der Modus stand ein halbes Jahr lang als Text da: im Datenmodell, im
+Einstellungsfenster und als Satz im Bestätigungsdialog des Spielers — „Dieser
+Laden gibt jeden Kauf erst nach Bestätigung der Spielleitung frei". Passiert
+ist nichts; der Kauf lief durch wie im Modus `direkt`. Wer eine Einstellung
+anbietet, schuldet ihr auch ein Verhalten.
+
+`scripts/freigabe.js` hält die wartenden Kaufwünsche. Drei Entscheidungen
+darin sind bewusst so und nicht anders:
+
+1. **Erst prüfen, dann fragen.** `pruefeKauf` läuft, bevor irgendjemand
+   gefragt wird. Ein Kauf, der am Geld oder am Bestand scheitert, scheitert
+   sofort — die Spielleitung über einen Kauf entscheiden zu lassen, der
+   ohnehin nicht geht, wäre unhöflich gegen beide.
+2. **Ein Angebot braucht keine Freigabe.** Wer einen Preis zugesagt hat, hat
+   zugestimmt. `angebotCp === 0` zählt dabei als Preis, nicht als „keiner" —
+   deshalb wird gegen `null` geprüft und nicht auf Wahrheitswert.
+3. **Beim Ja wird nicht die alte Rechnung ausgeführt, sondern neu gerechnet.**
+   `freigabeErteilen` reicht die ursprüngliche Bitte an `fuehreKaufAus`
+   weiter, und das prüft alles noch einmal mit dem Stand von jetzt. Zwischen
+   der Frage und dem Ja kann der Bestand gesunken oder das Geld ausgegeben
+   worden sein.
+
+**Der Speicher ist flüchtig**, wie bei den Verhandlungen in `anfrage.js`: Die
+Liste liegt im Arbeitsspeicher genau der Verbindung, die den Kauf aufgenommen
+hat. Lädt die Spielleitung neu, sind offene Kaufwünsche weg und der Spieler
+muss noch einmal klicken. Das ist der Preis dafür, dass nichts davon in der
+Welt gespeichert wird — ein Kaufwunsch ist eine Frage im Raum, kein Dokument.
+
+**`render(true)` ist asynchron.** `verhandelnOeffnen` rief direkt danach
+`bringToFront()` und griff damit auf ein Fenster zu, das es noch nicht gab:
+`Cannot read properties of undefined (reading 'style')`, jedes Mal beim ersten
+Aufmachen. Wer ein frisch gezeichnetes Fenster anfasst, wartet vorher auf
+`render`.
+
 ## `activeGM` ist ein Benutzer, keine Verbindung
 
 Wer bei zwei Spielleitungen genau eine ausführen lassen will, greift zu

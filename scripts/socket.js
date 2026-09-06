@@ -17,13 +17,14 @@
  * ausfuehrt, entscheidet deshalb vorsitz.js; dort steht die Messung dazu.
  */
 
-import { MODULE_ID, SOCKET, LADEN_TYP } from "./const.js";
+import { MODULE_ID, SOCKET, LADEN_TYP, OFFENES_ANGEBOT } from "./const.js";
 import { aufZeigen, aufSchliessen, aufStand, standSenden } from "./vorzeigen.js";
 import { aufAngebot } from "./angebot.js";
 import { fuehreKaufAus } from "./kauf.js";
 import { fuehreVerkaufAus } from "./verkauf.js";
 import { aufAnfrage } from "./anfrage.js";
 import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
+import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 
 /** Eingehende Socket-Nachricht verteilen. */
 async function onSocket(daten) {
@@ -39,7 +40,17 @@ async function onSocket(daten) {
 
     case SOCKET.KAUFEN: {
       if (!await darfIchAusfuehren(daten.bitteId)) return;
-      const ergebnis = await fuehreKaufAus(daten);
+      /*
+       * Im Modus „freigabe" wird hier nicht gekauft, sondern gefragt. Ob ein
+       * Angebot vorliegt, entscheidet das Merkmal am Benutzer - wer einen
+       * Preis zugesagt bekommen hat, braucht kein zweites Ja.
+       */
+      const laden = await fromUuid(daten.ladenUuid);
+      const angebot = game.users.get(daten.kaeuferId)?.getFlag(MODULE_ID, OFFENES_ANGEBOT) ?? null;
+      const giltAngebot = angebot?.ladenUuid === daten.ladenUuid && angebot?.itemId === daten.itemId;
+      const ergebnis = brauchtFreigabe(laden, giltAngebot ? angebot.preisCp : null)
+        ? await freigabeAufnehmen(daten)
+        : await fuehreKaufAus(daten);
       game.socket.emit(SOCKET.NAME, {
         typ: SOCKET.ANTWORT, an: [daten.kaeuferId], ergebnis
       });
@@ -74,7 +85,13 @@ export function aufAntwort({ an, ergebnis }) {
   if (Array.isArray(an) && !an.includes(game.user.id)) return;
   if (!ergebnis) return;
 
+  /*
+   * Drei Faelle, nicht zwei. „Liegt beim Haendler" ist kein Fehlschlag - es
+   * als Warnung zu zeigen, liesse den Spieler denken, sein Kauf sei
+   * gescheitert, und er klickte gleich noch einmal.
+   */
   if (ergebnis.ok) ui.notifications.info(ergebnis.text);
+  else if (ergebnis.grundText) ui.notifications.warn(ergebnis.grundText);
   else ui.notifications.warn(game.i18n.localize(ergebnis.grund ?? "SHOPS.Kauf.Abgebrochen"));
 
   foundry.applications.instances.get(`${MODULE_ID}-spieler`)?.render(false);

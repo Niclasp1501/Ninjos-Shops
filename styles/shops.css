@@ -2324,3 +2324,20 @@
 /* Ebenso die beiden Knoepfe darunter. */
 .ninjos-shops .shops-anfrage-fuss { flex-wrap: wrap; }
 .ninjos-shops .shops-anfrage-fuss button { flex: 1 1 9rem; }
+
+/* ── Kaufwünsche, die auf ein Ja warten ────────────────────────────── */
+
+/*
+ * Sie stehen im selben Fenster wie die Verkaufsanfragen und sehen deshalb
+ * fast gleich aus - nur die Kopfzeile trägt ein Symbol und einen Streifen in
+ * der Hausfarbe, damit man beim Aufklappen sofort weiß, in welche Richtung
+ * hier gehandelt wird.
+ */
+.ninjos-shops .shops-freigabeliste { padding-bottom: 0; }
+
+.ninjos-shops .shops-freigabe { border-left: 3px solid var(--shops-gold); }
+
+.ninjos-shops .shops-freigabe .shops-anfrage-kopf > i:first-child {
+  color: var(--shops-rot);
+  font-size: 0.82rem;
+}

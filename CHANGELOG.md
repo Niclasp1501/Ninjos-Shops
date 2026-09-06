@@ -27,6 +27,15 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Der Kaufmodus „Freigabe" tut jetzt etwas.** Er stand im Datenmodell, in den
+  Einstellungen und als Satz im Bestätigungsdialog — der Kauf lief trotzdem
+  durch wie bei „Direkt". Jetzt legt sich die Bitte bei der Spielleitung ab,
+  und der Spieler bekommt sie erst nach einem Ja. Was am Geld, am Bestand oder
+  an der Höchstmenge scheitert, scheitert sofort, ohne jemanden zu fragen; ein
+  Kauf zu einem zugesagten Angebotspreis braucht kein zweites Ja.
+- **Kaufwünsche und Verkaufsanfragen stehen im selben Fenster** — „Anfragen am
+  Tresen". Zwei Fenster für dieselbe Frage („ein Spieler fragt etwas") wären
+  eins zu viel.
 - **Verkäufer je Laden**: ein NSC, per Ablage in die Einstellungen gezogen. Er
   steht im Kopf beider Fenster und als Gegenüber in den Büchern — die
   Spielleitung erscheint dort nicht mehr, sie führt den Handel nur aus. Ohne

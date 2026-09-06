@@ -221,5 +221,12 @@
   "SHOPS.Menue.Anbieten": "Jemandem anbieten",
   "SHOPS.Menue.Oeffnen": "Gegenstand öffnen",
   "SHOPS.Menue.Entfernen": "Aus der Auslage nehmen",
-  "SHOPS.Anfrage.KeinWert": "An diesem Stück hängt kein Preis — nenne selbst einen."
+  "SHOPS.Anfrage.KeinWert": "An diesem Stück hängt kein Preis — nenne selbst einen.",
+  "SHOPS.Anfrage.TresenTitel": "Anfragen am Tresen",
+  "SHOPS.Freigabe.Wartet": "{menge}× {name}: Die Bitte liegt beim Händler von {laden}.",
+  "SHOPS.Freigabe.Eingegangen": "{spieler} möchte {menge}× {name} für {preis} kaufen.",
+  "SHOPS.Freigabe.Freigeben": "Freigeben",
+  "SHOPS.Freigabe.Ablehnen": "Nicht heute",
+  "SHOPS.Freigabe.Abgelehnt": "Der Händler gibt den Kauf nicht frei.",
+  "SHOPS.Freigabe.SatzPlatzhalter": "Das ist nicht für dich bestimmt …"
 }
