@@ -6,6 +6,11 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Das ⋯-Menü an der Warenzeile ging nicht auf** — genauer: Es ging auf und
+  lag hinter dem Fenster. Seit es am Dokument hängt (damit es die scrollende
+  Liste nicht abschneidet), gilt sein `z-index` nicht mehr gegen die Zeile,
+  sondern gegen Foundrys Fenster — und die liegen bei 105, das Menü lag bei 20.
+  Der Klick tat scheinbar nichts.
 - **Die Schauansicht blieb nach einem Neuladen stehen.** Der Vortrag läuft im
   Arbeitsspeicher genau der Verbindung, die ihn gestartet hat — lud die
   Spielleitung neu, blätterte niemand mehr, und auf dem Schirm stand

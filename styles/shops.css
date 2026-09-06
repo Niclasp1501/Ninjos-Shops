@@ -2143,7 +2143,19 @@
   position: absolute;
   top: calc(100% - 4px);
   right: 6px;
-  z-index: 20;
+  /*
+   * **Über den Fenstern, nicht über der Zeile.** Das Menü hängt am
+   * `document.body` (siehe laden-bogen.js: In der scrollenden Liste wurde es
+   * an deren Unterkante abgeschnitten). Damit gilt es nicht mehr gegen seine
+   * Zeile, sondern gegen die Fenster von Foundry - und die liegen bei 100 und
+   * darüber, ein Ladenbogen bei 105. Mit `z-index: 20` klappte es brav auf und
+   * lag **hinter** dem Fenster: Der Klick tat scheinbar nichts.
+   *
+   * Foundry vergibt Fenstern fortlaufend höhere Werte, je öfter man sie
+   * anklickt. Deshalb kein Wert knapp darüber, sondern einer aus der Liga der
+   * Kurzhinweise.
+   */
+  z-index: 10000;
   min-width: 13rem;
   padding: 4px;
   display: flex;

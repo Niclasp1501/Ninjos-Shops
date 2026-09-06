@@ -257,7 +257,14 @@ wieder tun:
    Liste abgeschnitten: bei der vorletzten Zeile sah man zwei von sieben
    Einträgen. Es hängt jetzt am `document.body`, fest positioniert am Knopf,
    und klappt nach oben, wenn unten kein Platz ist.
-3. **Am Körper greift `.ninjos-shops …` nicht mehr.** Alle Regeln des Moduls
+3. **Der `z-index` gilt plötzlich gegen die Fenster.** Am Körper liegt das
+   Menü nicht mehr in seiner Zeile, sondern neben den Anwendungen von Foundry
+   — und die stehen bei 100 und darüber, ein Ladenbogen bei 105. Mit den
+   geerbten 20 klappte es brav auf und lag **hinter** dem Fenster: Der Klick
+   tat scheinbar nichts, und genau so wurde es zweimal gemeldet. Kein Wert
+   knapp darüber, denn Foundry zählt beim Anklicken hoch — 10000, aus der Liga
+   der Kurzhinweise.
+4. **Am Körper greift `.ninjos-shops …` nicht mehr.** Alle Regeln des Moduls
    sind darunter verschachtelt — das Menü stand als Reihe nackter Knöpfe auf
    der Karte. Es trägt die Modulklasse jetzt selbst, und seine Regeln stehen
    unverschachtelt als `.shops-menue …`.
