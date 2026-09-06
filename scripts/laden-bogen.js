@@ -54,6 +54,16 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
        * enthaelt wieder nur das, was sie verspricht: Vorzeigen.
        */
       controls: [
+        /*
+         * Die Einstellungen stehen **zweimal** da: als Regler im Kopfbild und
+         * hier im Menue. Das ist keine Doppelung aus Versehen - der Regler
+         * sitzt am rechten Rand des Banners, und genau dort ist er auf einem
+         * schmalen Schirm, unter einem Finger oder neben einem zweiten
+         * Fenster am schwersten zu treffen. Die Titelleiste ist immer da und
+         * immer an derselben Stelle.
+         */
+        { icon: "fa-solid fa-sliders", label: "SHOPS.Bogen.EinstellungenOeffnen",
+          action: "einstellungenOeffnen", visible: () => game.user.isGM },
         { icon: "fa-solid fa-scroll", label: "SHOPS.Buch.Knopf", action: "ladenbuch" },
         { icon: "fa-solid fa-book", label: "SHOPS.Marktbuch.Knopf", action: "marktbuch",
           visible: () => game.user.isGM }

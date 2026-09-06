@@ -79,6 +79,10 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Die Einstellungen stehen jetzt auch im Titelleisten-Menü**, neben den
+  beiden Büchern. Der Regler im Kopfbild bleibt — aber er sitzt am rechten
+  Rand des Banners, und dort ist er auf einem schmalen Schirm, unter einem
+  Finger oder neben einem zweiten Fenster am schwersten zu treffen.
 - **Ein Menü je Warenzeile** statt fünf blasser Symbole. Verborgen,
   Dienstleistung und Ankauf bleiben als kleine Marken hinter dem Namen sichtbar
   — nur die Handlungen sind ins Menü gewandert.
