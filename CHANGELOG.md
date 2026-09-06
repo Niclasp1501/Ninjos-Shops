@@ -6,6 +6,17 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Preise werden in Gold genannt, nicht in Platin.** Wer „12 GM" eintippte,
+  bei dem las der Spieler „1 PM 2 GM", und ein Heiltrank kostete „7 PM 5 GM"
+  statt 75 Gold. Im Beutel bleibt Platin liegen, wo es liegt, und Wechselgeld
+  wird weiter damit herausgegeben — nur *genannt* wird ein Preis in Gold,
+  Silber und Kupfer.
+- **Null ist kein Preis.** Ein Vorschlag über nichts nahm dem Spieler sein
+  Stück und gab ihm nichts dafür. Der direkte Ankauf wies das längst ab; die
+  Verhandlung tut es jetzt auch.
+- **Fenster wachsen wieder mit**, wenn der Bildschirm größer wird — aber nur
+  die, die seither niemand selbst gezogen hat. Wer von Hand kleiner zieht,
+  wird beim nächsten Drehen nicht überfahren.
 - **Breite Fenster nutzten ihre Breite nicht.** Der Name schluckte jeden
   zusätzlichen Pixel, und zwischen ihm und dem Bestand klaffte ein Loch. Ist
   die Auslage breit genug, steht sie jetzt **zweispaltig** — das nutzt die

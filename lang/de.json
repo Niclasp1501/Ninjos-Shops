@@ -261,5 +261,6 @@
   "SHOPS.Handel.NiemandGewaehlt": "An wen soll es gehen?",
   "SHOPS.Handel.NichtMehrDa": "Das liegt nicht mehr da.",
   "SHOPS.Handel.Verschickt": "Hingelegt bei {anzahl} — von {person}.",
-  "SHOPS.Handel.Starten": "Handel anbieten"
+  "SHOPS.Handel.Starten": "Handel anbieten",
+  "SHOPS.Anfrage.NullIstKeinPreis": "Null ist kein Preis. Nenne eine Zahl oder weise die Anfrage ab."
 }

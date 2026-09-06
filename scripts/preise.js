@@ -109,6 +109,20 @@ export function zerlege(cp, sorten = WECHSELGELD_SORTEN) {
 }
 
 /**
+ * Muenzsorten, in denen **Preise** genannt werden.
+ *
+ * **Kein Platin.** Am Tisch sagt niemand „ein Platin zwei Gold" - man sagt
+ * zwoelf Gold. Die Zerlegung tat es trotzdem: Wer im Handelsfenster „12 GM"
+ * eintippte, bei dem las der Spieler „1 PM 2 GM", und beim Heiltrank stand
+ * „7 PM 5 GM" statt fuenfundsiebzig Gold. Gerechnet wird weiter in Kupfer,
+ * und **im Beutel** bleibt Platin natuerlich liegen, wo es liegt - nur
+ * genannt wird ein Preis in Gold, Silber und Kupfer.
+ *
+ * Elektrum fehlt aus dem alten Grund: Viele Tische benutzen es nicht.
+ */
+export const PREIS_SORTEN = ["gp", "sp", "cp"];
+
+/**
  * Preis als lesbare Zeile: "2 gp 5 sp".
  *
  * Bewusst mehrteilig statt "2,5 gp". Am Tisch wird in Muenzen bezahlt, und wer
@@ -116,10 +130,11 @@ export function zerlege(cp, sorten = WECHSELGELD_SORTEN) {
  *
  * @param {number} cp
  * @param {(sorte: string) => string} [kuerzel]  Uebersetzung der Muenzsorte
+ * @param {string[]} [sorten]  welche Muenzen vorkommen duerfen
  */
-export function alsText(cp, kuerzel = s => s) {
+export function alsText(cp, kuerzel = s => s, sorten = PREIS_SORTEN) {
   if (!cp) return `0 ${kuerzel("cp")}`;
-  const teile = zerlege(cp);
+  const teile = zerlege(cp, sorten);
   return Object.entries(teile).map(([s, n]) => `${n} ${kuerzel(s)}`).join(" ");
 }
 

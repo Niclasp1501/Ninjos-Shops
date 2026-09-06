@@ -45,6 +45,20 @@ const MINDEST = { breite: 280, hoehe: 200 };
  */
 const WACHSTUM = 1.5;
 
+/**
+ * Was wir zuletzt selbst gesetzt haben - je Fenster.
+ *
+ * **Damit laesst sich „vom Benutzer gezogen" von „von uns geklemmt"
+ * unterscheiden.** Ein Tablet, das gedreht wird, soll seine Fenster wieder
+ * gross bekommen; wer dagegen von Hand kleiner zieht, will es kleiner haben
+ * und darf nicht beim naechsten Drehen ueberfahren werden. Stimmt die
+ * aktuelle Breite mit unserer letzten ueberein, hat niemand sie angefasst -
+ * dann duerfen wir sie erneut anfassen. Weicht sie ab, gehoert sie jemand
+ * anderem, und wir ruehren sie nur noch an, wenn sie nicht mehr ins Bild
+ * passt.
+ */
+const zuletztGesetzt = new WeakMap();
+
 /** Welche Fenster schon einmal gewachsen sind. Gewachsen wird genau einmal. */
 const gewachsen = new WeakSet();
 
@@ -82,10 +96,21 @@ export function insBildRuecken(app) {
    */
   const sollBreite = Number.isFinite(app.position?.width) ? app.position.width : masse.width;
 
+  const unsere = zuletztGesetzt.get(app);
+  const unberuehrt = unsere === undefined || Math.abs(unsere.breite - sollBreite) <= 1;
+
   let wunschBreite = sollBreite;
   if (!gewachsen.has(app)) {
     gewachsen.add(app);
+    zuletztGesetzt.set(app, { wunsch: sollBreite, breite: sollBreite });
     wunschBreite = Math.min(sollBreite * WACHSTUM, bildBreite - 2 * RAND);
+  } else if (unberuehrt && unsere?.wunsch) {
+    /*
+     * Zurueck auf die Wunschbreite, soweit das Bild sie jetzt hergibt. So
+     * bekommt ein gedrehtes Tablet seine Fenster wieder gross - aber nur die,
+     * die seither niemand selbst gezogen hat.
+     */
+    wunschBreite = Math.min(unsere.wunsch * WACHSTUM, bildBreite - 2 * RAND);
   }
 
   const breite = Math.max(MINDEST.breite, Math.min(wunschBreite, bildBreite - 2 * RAND));
@@ -113,6 +138,7 @@ export function insBildRuecken(app) {
   if (!Object.keys(lage).length) return;
 
   app.setPosition(lage);
+  zuletztGesetzt.set(app, { wunsch: unsere?.wunsch ?? sollBreite, breite: Math.round(breite) });
 }
 
 /** Alle offenen Fenster dieses Moduls nachziehen. */

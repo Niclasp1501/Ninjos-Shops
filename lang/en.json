@@ -261,5 +261,6 @@
   "SHOPS.Handel.NiemandGewaehlt": "Who is it for?",
   "SHOPS.Handel.NichtMehrDa": "That is not there any more.",
   "SHOPS.Handel.Verschickt": "Laid out for {anzahl} — from {person}.",
-  "SHOPS.Handel.Starten": "Offer a trade"
+  "SHOPS.Handel.Starten": "Offer a trade",
+  "SHOPS.Anfrage.NullIstKeinPreis": "Zero is not a price. Name a number, or refuse the request."
 }

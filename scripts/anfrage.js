@@ -116,9 +116,21 @@ export function anfrageZurueckziehen(id) {
 
 /* ── Was die Spielleitung tut ──────────────────────────────────────── */
 
-/** Einen Preis vorschlagen. */
+/**
+ * Einen Preis vorschlagen.
+ *
+ * **Null ist kein Preis.** Ein Vorschlag ueber nichts nimmt dem Spieler sein
+ * Stueck und gibt ihm nichts dafuer - und weil der Knopf „Preis nennen" heisst
+ * und nicht „einziehen", waere das eine Falle. Der direkte Ankauf weist einen
+ * Wert von 0 aus demselben Grund ab (`SHOPS.Verkauf.Wertlos`), und was dort
+ * gilt, gilt hier auch. Wer etwas geschenkt bekommen soll, bekommt es
+ * geschenkt - dafuer braucht es keinen Handel.
+ */
 export function preisVorschlagen(id, preisCp, satz = "") {
   if (!istZustaendig()) return;
+  if (!(Math.round(preisCp) > 0)) {
+    return void ui.notifications.warn(game.i18n.localize("SHOPS.Anfrage.NullIstKeinPreis"));
+  }
   beiSpielleitung({ tat: "vorschlagen", id, preisCp, satz, von: game.user.id });
 }
 
