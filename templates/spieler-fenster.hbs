@@ -1,24 +1,43 @@
 {{!--
-  Spielerfenster: Auslage ohne Verborgenes, eigene Boerse, Kaufknopf als Stub.
-  Preise sind Anzeige - beim Kauf rechnet der Spielleiter neu (Abschnitt 7).
---}}
+  Spielerfenster: Kopfbild, Angebot, Auslage ohne Verborgenes, eigene Boerse.
+  Preise sind Anzeige - beim Kauf rechnet die Spielleitung neu (Abschnitt 7).
 
-{{!--
-  Ein einziges Wurzelelement: HandlebarsApplicationMixin verlangt je PART genau
-  eines und wirft sonst beim Zeichnen ("must render a single HTML element").
-  Aufgefallen beim ersten Oeffnen in der Welt, nicht beim Schreiben.
+  Ein einziges Wurzelelement je PART, sonst wirft HandlebarsApplicationMixin
+  beim Zeichnen. Siehe AGENTS.md.
 --}}
 <div class="shops-teil-spieler">
-  <header class="shops-spieler-kopf">
-    <img class="shops-bild" src="{{ladenImg}}" alt="">
-    <div class="shops-titel">
+
+  {{!-- Das Ladeninnere als breiter Streifen. `kopfFokus` sagt, welcher
+        Ausschnitt zu sehen ist - ein Innenraum ist selten in der Mitte am
+        interessantesten. --}}
+  <header class="shops-banner" style="background-image: url('{{kopfbild}}'); background-position: 50% {{kopfFokus}}%;">
+    <div class="shops-banner-text">
       <h2>{{ladenName}}</h2>
-      <div class="shops-begruessung">
-        {{#if begruessung}}{{{begruessung}}}
-        {{else}}<span class="shops-leer">{{localize "SHOPS.Spieler.KeineBegruessung"}}</span>{{/if}}
-      </div>
+      {{#if begruessung}}<div class="shops-begruessung">{{{begruessung}}}</div>{{/if}}
     </div>
   </header>
+
+  {{#if angebot}}
+    {{!-- Ein Angebot der Spielleitung. Es steht oben und nicht in der Liste:
+          Es ist keine Ware unter anderen, sondern etwas, das jemandem
+          hingelegt wurde. --}}
+    <section class="shops-angebot">
+      <img src="{{angebot.img}}" alt="">
+      <div class="shops-angebot-inhalt">
+        <span class="shops-angebot-kopf">{{localize "SHOPS.Angebot.FuerDich"}}</span>
+        <span class="shops-angebot-ware">
+          {{#if angebot.mehrere}}{{angebot.menge}}&times; {{/if}}{{angebot.name}}
+          <strong>{{angebot.summeText}}</strong>
+        </span>
+        {{#if angebot.text}}<span class="shops-angebot-satz">„{{angebot.text}}"</span>{{/if}}
+      </div>
+      <button type="button" class="shops-kaufen" data-action="angebotAnnehmen"
+              {{#if keinSpielleiter}}disabled{{/if}}>
+        <i class="fa-solid fa-hand-holding"></i>
+        <span>{{localize "SHOPS.Angebot.Annehmen"}}</span>
+      </button>
+    </section>
+  {{/if}}
 
   {{#if boerse}}
     <aside class="shops-boerse" title="{{localize 'SHOPS.Spieler.BoerseHinweis'}}">
@@ -45,13 +64,10 @@
     </h3>
 
     {{#if ware.length}}
-
       <ol class="shops-ware shops-spieler-ware">
-        {{!-- Derselbe Spaltenkopf wie im Bogen der Spielleitung. Er fehlte hier,
-        und damit stand die Spieleransicht als Liste ohne Beschriftung da:
-        Welche Zahl der Bestand ist und welche der Preis, musste man raten.
-        Die Breiten spiegeln die Karte darunter - wer eine aendert, aendert
-        beide. --}}
+        {{!-- Der Spaltenkopf steht **in** der Liste: Dort gilt fuer ihn und
+              die Karten dieselbe Innenabstand- und Scrollleisten-Rechnung,
+              und er bleibt beim Scrollen stehen. --}}
         <li class="shops-spalten shops-spieler-spalten">
           <span class="shops-spalte-bild"></span>
           <span class="shops-spalte-name">{{localize "SHOPS.Bogen.SpalteWare"}}</span>
@@ -59,6 +75,7 @@
           <span class="shops-spalte-preis">{{localize "SHOPS.Bogen.SpaltePreis"}}</span>
           <span class="shops-spalte-kauf"></span>
         </li>
+
         {{#each ware}}
           <li class="shops-zeile {{#if ausverkauft}}shops-ausverkauft{{/if}} {{#if dienst}}shops-dienst{{/if}}"
               data-item-id="{{id}}">
@@ -81,14 +98,31 @@
 
             <span class="shops-preis">{{preisText}}</span>
 
-            <button type="button" class="shops-kaufen" data-action="kaufenStub"
-                    disabled title="{{localize 'SHOPS.Spieler.KaufKommtNoch'}}">
-              {{!-- Eine Hand, die etwas entgegennimmt. Der Einkaufswagen, der hier
-                 zuerst stand, ist ein Supermarktwagen von 1937 - in einem Laden
-                 mit Fackeln und Langschwertern hat er nichts verloren. --}}
-            <i class="fa-solid fa-hand-holding"></i>
-              <span>{{localize "SHOPS.Spieler.Kaufen"}}</span>
-            </button>
+            {{!-- Der Knopf sagt, warum er nicht geht. Ein Knopf, der ohne
+                  Begruendung aus ist, laesst jeden zweimal klicken. --}}
+            {{#if @root.gesperrt}}
+              <button type="button" class="shops-kaufen" disabled
+                      title="{{localize 'SHOPS.Kauf.Gesperrt'}}">
+                <i class="fa-solid fa-lock"></i>
+                <span>{{localize "SHOPS.Spieler.NurAnsehen"}}</span>
+              </button>
+            {{else if ausverkauft}}
+              <button type="button" class="shops-kaufen" disabled>
+                <span>{{localize "SHOPS.Spieler.Ausverkauft"}}</span>
+              </button>
+            {{else if @root.keinSpielleiter}}
+              <button type="button" class="shops-kaufen" disabled
+                      title="{{localize 'SHOPS.Kauf.KeinSpielleiter'}}">
+                <span>{{localize "SHOPS.Spieler.NiemandDa"}}</span>
+              </button>
+            {{else}}
+              <button type="button" class="shops-kaufen {{#if zuTeuer}}shops-knapp{{/if}}"
+                      data-action="kaufen"
+                      title="{{#if zuTeuer}}{{localize 'SHOPS.Kauf.ZuWenigGeld'}}{{/if}}">
+                <i class="fa-solid fa-hand-holding"></i>
+                <span>{{localize "SHOPS.Spieler.Kaufen"}}</span>
+              </button>
+            {{/if}}
           </li>
         {{/each}}
       </ol>
@@ -97,5 +131,7 @@
     {{/if}}
   </section>
 
-  <p class="shops-spieler-fuss">{{kaufHinweis}}</p>
+  {{#if freigabe}}
+    <p class="shops-spieler-fuss">{{localize "SHOPS.Kauf.BrauchtFreigabe"}}</p>
+  {{/if}}
 </div>

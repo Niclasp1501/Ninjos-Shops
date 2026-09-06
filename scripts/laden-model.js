@@ -95,6 +95,19 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
       begruessung: new HTMLField({ required: true, initial: "" }),
 
       /**
+       * Welcher Teil des Kopfbildes zu sehen ist, senkrecht, in Prozent.
+       *
+       * Das Bild des Akteurs ist das Ladeninnere und laeuft oben als breiter
+       * Streifen. Ein Innenraum ist selten in der Mitte am interessantesten -
+       * mal steht der Tresen unten, mal haengt die Ware oben. 50 bedeutet
+       * Mitte, 0 oben, 100 unten; die Zahl geht direkt als
+       * `object-position` in die Anzeige.
+       */
+      kopfFokus: new NumberField({
+        required: true, nullable: false, min: 0, max: 100, initial: 50, step: 1
+      }),
+
+      /**
        * Wer diesen Laden **selbst** aufmachen darf.
        *
        * Das ist ausdruecklich **nicht** Foundrys Rechtesystem. Ein

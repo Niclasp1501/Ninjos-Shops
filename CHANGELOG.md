@@ -6,6 +6,26 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Hinzugefügt
+- **Schritt 5: der Kauf.** Der Spieler tippt, die Spielleitung prüft alles noch
+  einmal von vorn und führt aus — Preis wird dort neu gerechnet, nie vom
+  Spieler übernommen. Bezahlt wird mit Wechselgeld aus `kasse.js`, deren 43
+  Tests damit erstmals im Spiel ankommen. Erst anlegen, dann abziehen: Bricht es
+  dazwischen ab, gibt es den Gegenstand doppelt statt gar nicht.
+- **Angebote der Spielleitung**: eine Ware jemandem zum Sonderpreis hinlegen,
+  mit Menge, Preis und einem Satz dazu. Der Preis steht auf dem Benutzer, nicht
+  in der Socket-Nachricht — sonst könnte ein Spieler sich seinen eigenen Preis
+  schicken.
+- **Marktbuch** als Journal, nur für die Spielleitung, eine Seite je Spieltag.
+  Geschrieben wird zweimal je Kauf: was gemeint war und was geschehen ist. Ein
+  Buch, das nur gelungene Käufe kennt, schweigt genau dann, wenn man es braucht.
+- **Rückfrage vor dem Kauf** mit Menge, Preis und dem, was danach in der Börse
+  bleibt. Kein `confirm()`.
+- **Kopfbild**: Das Bild des Ladens ist jetzt das Ladeninnere und läuft als
+  breiter Streifen über beide Fenster, mit Regler für den Ausschnitt und
+  Vorschau im selben Seitenverhältnis. Das Tokenbild bleibt daneben bestehen.
+- **Wege zu den Läden**: Knopf im Akteursverzeichnis (neuer Laden, Marktbuch),
+  Werkzeug in der Szenenleiste und ein Knopf in der Leiste der In-Person Tools —
+  letzterer ohne jede Änderung an jenem Modul, allein über dessen Zeichnen-Haken.
 - **Schritt 4: Vorzeigen und Spielerfenster.** Die Spielleitung zeigt einen
   Laden allen oder ausgewählten Benutzern; Empfänger öffnen das Spielerfenster
   mit Auslage (ohne Verborgenes), Preisen, Hinweiszeile, Diensten und eigener

@@ -73,11 +73,24 @@ export const SETTINGS = {
  */
 export const SOCKET = {
   NAME: `module.${MODULE_ID}`,
-  KAUFEN: "kaufen",     // Spieler -> Spielleiter
+  KAUFEN: "kaufen",     // Spieler -> Spielleiter: bitte kaufen
+  ANTWORT: "antwort",   // Spielleiter -> Spieler: ging durch, oder warum nicht
   ZEIGEN: "zeigen",     // Spielleiter -> Spieler: Laden oeffnen
   SCHLIESSEN: "schliessen",
-  STAND: "stand"        // Spielleiter -> alle offenen Fenster: neuer Bestand
+  STAND: "stand",       // Spielleiter -> alle offenen Fenster: neuer Bestand
+  ANGEBOT: "angebot",   // Spielleiter -> Spieler: Ware zum Sonderpreis
+  AUSLAGE: "auslage"    // Spielleiter -> Spieler: die Auslage als Datenpaket
 };
+
+/**
+ * User-Flag: das offene Angebot an diesen Benutzer.
+ *
+ * `{ ladenUuid, itemId, menge, preisCp, text }`. Es liegt auf dem Benutzer und
+ * nicht im Fenster, damit es einen Neuladen ueberlebt - ein Angebot, das beim
+ * Verbindungsabbruch verschwindet, muesste die Spielleitung neu schicken und
+ * merkt es nicht einmal.
+ */
+export const OFFENES_ANGEBOT = "angebot";
 
 /**
  * Merkmale an einer Ware im Ladeninventar (flags.ninjos-shops.*).
@@ -112,3 +125,13 @@ export const KAUFMODUS = {
   FREIGABE: "freigabe",   // Spieler fragt, Spielleiter bestaetigt
   DIREKT: "direkt"        // geht durch, sobald das Geld reicht
 };
+
+/**
+ * Kopfbild eines Ladens.
+ *
+ * Der Akteur bringt mit `img` genau ein Bild mit, und das ist hier das
+ * **Ladeninnere**: breit, quer, oben im Fenster. Was fehlt, ist die Angabe,
+ * *welcher* Ausschnitt zu sehen sein soll - ein Innenraum ist selten in der
+ * Mitte am interessantesten. Dafuer steht `system.kopfFokus` (0-100 %).
+ */
+export const BANNER_HOEHE = 132;

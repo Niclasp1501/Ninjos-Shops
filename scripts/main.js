@@ -1,14 +1,14 @@
 /**
  * Einstiegsdatei.
  *
- * **Stand: Schritt 4 von 6.** Es laufen die Einstellungen, das
- * Willkommensfenster, der Laden selbst und das Vorzeigen mit Spielerfenster.
- * Ein Laden laesst sich anlegen, mit Ware fuellen, bepreisen und an Spieler
- * vorzeigen.
+ * **Stand: Schritt 5 von 6.** Es laufen die Einstellungen, das
+ * Willkommensfenster, der Laden selbst, das Vorzeigen mit Spielerfenster,
+ * Angebote der Spielleitung, der Kauf ueber die Spielleitung und das
+ * Marktbuch. Ein Laden laesst sich anlegen, fuellen, bepreisen, vorzeigen -
+ * und es laesst sich darin kaufen.
  *
- * Es fehlen: der Kauf und das Marktbuch (5), die Schauansicht und die Bruecke
- * zu den In-Person Tools (6). Reihenfolge und Begruendung stehen in
- * KONZEPT-shops.md, Abschnitt 11.
+ * Es fehlt die Schauansicht und die Bruecke zu den In-Person Tools (6).
+ * Reihenfolge und Begruendung stehen in KONZEPT-shops.md, Abschnitt 11.
  *
  * Wer hier weiterbaut, liest vorher Abschnitt 7: Die Bauweise "der
  * Spielleiter haelt die Wahrheit" laesst sich nicht nachtraeglich einziehen.
@@ -19,6 +19,7 @@ import { ladenTypEinrichten, ladenBilderEinrichten } from "./laden-model.js";
 import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
 import { socketEinrichten } from "./socket.js";
+import { zugaengeHaken, zugaengeEinrichten } from "./zugaenge.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 
 function einstellungenEinrichten() {
@@ -90,11 +91,13 @@ Hooks.once("init", () => {
   ladenTypEinrichten();
   ladenBilderEinrichten();
   ladenBogenEinrichten();
+  zugaengeHaken();
   willkommenEinrichten();
 });
 
 Hooks.once("ready", async () => {
   socketEinrichten();
+  zugaengeEinrichten();
   await offenenLadenWiederherstellen();
   await willkommenZeigen();
 });

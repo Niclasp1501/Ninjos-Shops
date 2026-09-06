@@ -1,30 +1,27 @@
 {{!--
-  Kopf des Ladenbogens: Bild, Name, Begruessung, Zahnrad.
+  Kopf des Ladenbogens: das Ladeninnere als breiter Streifen, darauf Name und
+  Begruessung, dazu das Zahnrad.
 
   Die Einstellungen standen hier einmal in einem <details> und fuellten
-  aufgeklappt das halbe Fenster - sieben Felder mit je zwei Zeilen Erklaerung,
-  und die Auslage kam darunter nicht mehr vor. Sie haben jetzt ein eigenes
-  Fenster (laden-einstellungen.js); hier steht nur noch der Knopf dorthin.
+  aufgeklappt das halbe Fenster; die Auslage kam darunter nicht mehr vor. Sie
+  haben jetzt ein eigenes Fenster (laden-einstellungen.js).
 
   Ein einziges Wurzelelement je PART, sonst wirft HandlebarsApplicationMixin
   beim Zeichnen. Siehe AGENTS.md.
 --}}
 <div class="shops-teil-kopf">
-  <header class="shops-kopf">
-    {{!-- data-action="editImage" ist die Aktion von DocumentSheetV2; sie liest
-         data-edit als Pfad des Feldes und oeffnet den Dateiwaehler. --}}
-    <img class="shops-bild" src="{{document.img}}" alt="{{document.name}}"
-         data-edit="img" data-action="editImage">
-
-    <div class="shops-titel">
+  {{!-- `kopfFokus` sagt, welcher Ausschnitt zu sehen ist - ein Innenraum ist
+        selten in der Mitte am interessantesten. --}}
+  <header class="shops-banner" style="background-image: url('{{document.img}}'); background-position: 50% {{laden.kopfFokus}}%;">
+    <div class="shops-banner-text">
       <input type="text" name="name" value="{{document.name}}"
              placeholder="{{localize 'SHOPS.Bogen.NamePlatzhalter'}}"
              {{#unless bearbeitbar}}disabled{{/unless}}>
 
-      <p class="shops-begruessung">
+      <div class="shops-begruessung">
         {{#if begruessung}}{{{begruessung}}}
         {{else}}<span class="shops-leer">{{localize "SHOPS.Bogen.KeineBegruessung"}}</span>{{/if}}
-      </p>
+      </div>
     </div>
 
     {{#if istGM}}

@@ -87,6 +87,15 @@
               <i class="fa-solid fa-handshake"></i>
             </button>
 
+            {{!-- Anbieten steht bei den Werkzeugen und nicht bei den
+                  Schaltern: Es aendert nichts an der Ware, es legt sie
+                  jemandem hin. --}}
+            <button type="button" data-action="wareAnbieten"
+                    title="{{localize 'SHOPS.Angebot.Knopf'}}"
+                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+              <i class="fa-solid fa-hand-holding"></i>
+            </button>
+
             <button type="button" class="shops-loeschen" data-action="wareLoeschen"
                     title="{{localize 'SHOPS.Bogen.WareLoeschen'}}"
                     {{#unless @root.bearbeitbar}}disabled{{/unless}}>

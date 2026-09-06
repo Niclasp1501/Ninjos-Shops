@@ -17,9 +17,11 @@
  * niemand zu (KONZEPT-shops.md, Abschnitt 4). Das entscheidet sich in der Welt.
  */
 
-import { MODULE_ID, LADEN_TYP, WARE } from "./const.js";
+import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, KUPFERWERT } from "./preise.js";
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
+import { angebotDialog, angebotSenden, angebotZuruecknehmen } from "./angebot.js";
+import { marktbuchOeffnen } from "./marktbuch.js";
 import {
   werSieht,
   vorzeigbareBenutzer,
@@ -47,6 +49,9 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       wareLoeschen: LadenBogen.#wareLoeschen,
       wareSchalter: LadenBogen.#wareSchalter,
       einstellungenOeffnen: LadenBogen.#einstellungen,
+      wareAnbieten: LadenBogen.#wareAnbieten,
+      angebotZurueck: LadenBogen.#angebotZurueck,
+      marktbuch: LadenBogen.#marktbuch,
       zeigenAllen: LadenBogen.#zeigenAllen,
       zeigenAuswahl: LadenBogen.#zeigenAuswahl,
       schliessenAllen: LadenBogen.#schliessenAllen,
@@ -83,9 +88,17 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         sorte, kuerzel: kuerzel(sorte), wert: laden.kasse?.[sorte] ?? 0
       })),
       ware: this.#wareAufbereiten(laden),
-      zuschauer: werSieht(this.document.uuid).map(u => ({
-        id: u.id, name: u.name, active: u.active
-      }))
+      zuschauer: werSieht(this.document.uuid).map(u => {
+        const angebot = u.getFlag(MODULE_ID, OFFENES_ANGEBOT);
+        const passend = angebot?.ladenUuid === this.document.uuid ? angebot : null;
+        return {
+          id: u.id, name: u.name, active: u.active,
+          angebot: passend
+            ? { name: this.document.items.get(passend.itemId)?.name ?? "?",
+                preisText: alsText(passend.preisCp * passend.menge, kuerzel) }
+            : null
+        };
+      })
     });
   }
 
@@ -235,6 +248,36 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
   /** Die Einstellungen dieses Ladens - eigenes Fenster. */
   static #einstellungen() {
     einstellungenOeffnen(this.document);
+  }
+
+  /**
+   * Eine Ware jemandem zum Sonderpreis hinlegen.
+   *
+   * Der Weg ist umgekehrt zum gewoehnlichen Kauf: Nicht der Spieler sucht
+   * aus und die Spielleitung bestaetigt, sondern die Spielleitung sagt
+   * "das hier, fuer so viel". Warum der Preis dabei auf dem Benutzer landet
+   * und nicht in der Nachricht, steht in angebot.js.
+   */
+  static async #wareAnbieten(ereignis, ziel) {
+    const item = this.document.items.get(ziel.closest("[data-item-id]")?.dataset.itemId);
+    if (!item) return;
+    const wahl = await angebotDialog(this.document, item);
+    if (!wahl) return;
+    await angebotSenden(this.document, item, wahl);
+    this.render(false);
+  }
+
+  /** Ein Angebot wieder einsammeln. */
+  static async #angebotZurueck(ereignis, ziel) {
+    const userId = ziel.dataset.userId;
+    if (!userId) return;
+    await angebotZuruecknehmen(userId);
+    this.render(false);
+  }
+
+  /** Das Marktbuch aufschlagen. */
+  static #marktbuch() {
+    marktbuchOeffnen();
   }
 
   /** Allen aktiven Spielern vorzeigen (ohne Spielleitung). */

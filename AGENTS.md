@@ -7,7 +7,7 @@ Ladenmodul und nicht dieses.
 
 ## Stand am 05.09.2026
 
-Gebaut sind die Schritte 1 bis **4** aus Abschnitt 11 des Konzepts.
+Gebaut sind die Schritte 1 bis **5** aus Abschnitt 11 des Konzepts.
 
 | Datei | Zustand |
 |---|---|
@@ -25,7 +25,11 @@ Gebaut sind die Schritte 1 bis **4** aus Abschnitt 11 des Konzepts.
 | `styles/shops.css` | Bogen + Spielerfenster; die Schauansicht fehlt darin noch |
 | `scripts/main.js` | Einstellungen, Untertyp, Bogen, Socket, Willkommen |
 | `scripts/willkommen.js` | eingebaut, Texte stehen |
-| Kauf, Marktbuch, Schauansicht | existiert nicht (Schritte 5–6) |
+| `scripts/kauf.js` | Kauf bei der Spielleitung, mit Vorabprüfung |
+| `scripts/angebot.js` | Angebote der Spielleitung zum Sonderpreis |
+| `scripts/marktbuch.js` | Journal, zweimal je Kauf beschrieben |
+| `scripts/zugaenge.js` | Verzeichnis-Knopf, Szenenwerkzeug, In-Person-Knopf |
+| Schauansicht | existiert nicht (Schritt 6) |
 
 **Am 05.09.2026 in der Welt „Geheimnisse der Abgründe" geprüft** (Foundry
 14.367, dnd5e 5.3.3): Untertyp erscheint im Anlegen-Dialog als „Laden", Bogen
@@ -84,6 +88,27 @@ nicht in einer laufenden Welt geprüft** — dnd5e 5.3.3 liegt als Bundle vor, e
 Grep nach Typ-Sperren in `_preCreate` fand nichts. Wer als Erster eine Welt
 startet, prüft genau das.
 
+## Spieler bekommen alle Akteure — sie sehen sie nur nicht
+
+**Am 06.09.2026 als Spieler nachgemessen**, weil ich es zweimal falsch behauptet
+hatte. Angemeldet als *Nadylos* (Rolle 1, keine Spielleitung):
+
+| | |
+|---|---|
+| Laden in `game.actors` | **ja** |
+| Ware im Speicher | **10 Gegenstände** |
+| `fromUuid("Actor.…")` | **liefert ihn** |
+| `laden.visible` | **false** |
+
+Foundry schickt also **alle** Weltakteure an jeden Client und filtert nur die
+Anzeige. Das Spielerfenster kann den Laden deshalb lesen, ohne dass er
+irgendwo auftaucht — eine Zustellung über den Socket ist **nicht** nötig.
+
+Wer das anzweifelt, misst nach, statt aus der Seitenleiste zu schließen: Der
+Verzeichnisbaum (`_getVisibleTreeContents`) gibt alles unverändert zurück, und
+die Filterung steckt woanders. Ich habe daraus zwischenzeitlich den falschen
+Schluss gezogen, es werde serverseitig gefiltert.
+
 ## Läden sind für Spieler unsichtbar — und das ist zugesichert
 
 **Ein Laden erscheint nie im Akteursverzeichnis eines Spielers.** Am 05.09.2026
@@ -110,6 +135,18 @@ Normalfall bei Foundry.
 `system.zugriff.szenen` steht schon im Modell und wird heute von nichts
 gelesen — vorgesehen für die Bindung an die sichtbare Szene. Es steht jetzt
 dort, weil ein später ergänztes Feld in bestehenden Welten fehlt.
+
+## Zwei Haken, die zu spät kommen
+
+`getSceneControlButtons` wird **genau einmal** gerufen, wenn Foundry die
+Szenenleiste baut — und `ui.controls.render()` ruft ihn **nicht** erneut. Ein
+Haken, der erst bei `ready` hängt, kommt für die Leiste nie zum Zug. Deshalb
+werden alle Haken in `zugaengeHaken()` bei **`init`** registriert.
+
+Dasselbe in klein beim Akteursverzeichnis: Es ist bei `ready` längst
+gezeichnet, also braucht es dort einmal `ui.actors.render()`, sonst erscheint
+der Knopf beim ersten Start gar nicht. Beides ist in der ersten Probe genau so
+aufgefallen.
 
 ## Farben und Aufbau: wie FANG, und warum
 

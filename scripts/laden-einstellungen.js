@@ -112,6 +112,19 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
      * bekaeme dann `true` statt der Benutzerkennungen. Also wird bei jeder
      * Aenderung die ganze Liste neu geschrieben.
      */
+    /*
+     * Der Regler schiebt die Vorschau schon beim Ziehen, nicht erst beim
+     * Loslassen. Ein Ausschnitt, den man erst nach dem Speichern sieht,
+     * laesst sich nicht einstellen, sondern nur raten.
+     */
+    const regler = this.element.querySelector("[data-fokus]");
+    const vorschau = this.element.querySelector(".shops-kopfbild-vorschau");
+    if (regler && vorschau) {
+      regler.addEventListener("input", () => {
+        vorschau.style.backgroundPosition = `50% ${regler.value}%`;
+      });
+    }
+
     for (const kasten of this.element.querySelectorAll('[data-zugriff="benutzer"]')) {
       kasten.addEventListener("change", () => {
         const gewaehlt = [...this.element.querySelectorAll('[data-zugriff="benutzer"]:checked')]

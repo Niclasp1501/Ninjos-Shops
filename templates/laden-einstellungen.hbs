@@ -9,15 +9,30 @@
   <section class="shops-block">
     <h3>{{localize "SHOPS.Einstellungen.Bilder"}}</h3>
 
-    <div class="shops-bilder">
-      {{!-- data-action="editImage" ist die Aktion von DocumentSheetV2; sie
-            liest data-edit als Feldpfad und oeffnet den Dateiwaehler. --}}
-      <label class="shops-bildwahl">
-        <span>{{localize "SHOPS.Feld.Ladenbild"}}</span>
-        <img src="{{ladenBild}}" alt="" data-edit="img" data-action="editImage">
-        <small>{{localize "SHOPS.Feld.LadenbildHinweis"}}</small>
-      </label>
+    {{!-- Das Kopfbild ist das Ladeninnere und laeuft oben als breiter
+          Streifen. Es wird beschnitten, also braucht es die Angabe, welcher
+          Teil zu sehen sein soll - der Regler daneben schiebt den Ausschnitt,
+          und die Vorschau zeigt sofort, was oben stehen wird. --}}
+    <div class="shops-kopfbild-wahl">
+      <div class="shops-kopfbild-vorschau" data-edit="img" data-action="editImage"
+           style="background-image: url('{{ladenBild}}'); background-position: 50% {{laden.kopfFokus}}%;"
+           title="{{localize 'SHOPS.Feld.KopfbildWaehlen'}}">
+        <span class="shops-kopfbild-hinweis">
+          <i class="fa-solid fa-image"></i>
+          {{localize "SHOPS.Feld.KopfbildWaehlen"}}
+        </span>
+      </div>
 
+      <label class="shops-fokus">
+        <span>{{localize "SHOPS.Feld.Ausschnitt"}}</span>
+        <input type="range" name="system.kopfFokus" min="0" max="100" step="1"
+               value="{{laden.kopfFokus}}" data-fokus
+               {{#unless bearbeitbar}}disabled{{/unless}}>
+        <small>{{localize "SHOPS.Feld.AusschnittHinweis"}}</small>
+      </label>
+    </div>
+
+    <div class="shops-bilder">
       <label class="shops-bildwahl">
         <span>{{localize "SHOPS.Feld.Tokenbild"}}</span>
         <img src="{{tokenBild}}" alt=""
@@ -25,6 +40,7 @@
         <small>{{localize "SHOPS.Feld.TokenbildHinweis"}}</small>
       </label>
     </div>
+
   </section>
 
   <section class="shops-block">

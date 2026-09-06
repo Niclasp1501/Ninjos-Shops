@@ -22,7 +22,11 @@
         <i class="fa-solid fa-user-check"></i>
         {{localize "SHOPS.Vorzeigen.AuswahlZeigen"}}
       </button>
-      <button type="button" class="shops-zweit" data-action="schliessenAllen" {{#unless zuschauer.length}}disabled{{/unless}}>
+      <button type="button" class="shops-zweit" data-action="marktbuch">
+      <i class="fa-solid fa-book"></i>
+      {{localize "SHOPS.Marktbuch.Knopf"}}
+    </button>
+    <button type="button" class="shops-zweit" data-action="schliessenAllen" {{#unless zuschauer.length}}disabled{{/unless}}>
         <i class="fa-solid fa-eye-slash"></i>
         {{localize "SHOPS.Vorzeigen.AllenSchliessen"}}
       </button>
@@ -37,7 +41,18 @@
               {{else}}<i class="fa-regular fa-circle"></i>{{/if}}
               {{name}}
             </span>
-            <button type="button" data-action="schliessenUser" data-user-id="{{id}}"
+            {{#if angebot}}
+            <span class="shops-zuschauer-angebot"
+                  title="{{localize 'SHOPS.Angebot.Offen'}}">
+              <i class="fa-solid fa-hand-holding"></i>
+              {{angebot.name}} · {{angebot.preisText}}
+              <button type="button" data-action="angebotZurueck" data-user-id="{{id}}"
+                      title="{{localize 'SHOPS.Angebot.Zuruecknehmen'}}">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+            </span>
+          {{/if}}
+          <button type="button" data-action="schliessenUser" data-user-id="{{id}}"
                     title="{{localize 'SHOPS.Vorzeigen.EinzelnSchliessen'}}">
               <i class="fa-solid fa-xmark"></i>
             </button>
