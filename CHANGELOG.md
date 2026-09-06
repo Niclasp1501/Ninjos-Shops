@@ -64,6 +64,13 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Die Knöpfe im Akteursverzeichnis lassen sich abschalten** — beide, nur
+  einer, oder keiner. Sie stehen in einem Fenster, das dem Modul nicht gehört;
+  wer sein Verzeichnis aufgeräumt haben will, soll das können.
+- **Ein dritter Weg zum Marktbuch:** in den Moduleinstellungen. Vorher führten
+  nur zwei hin — der Buchknopf im Verzeichnis und das ⋮-Menü eines *geöffneten*
+  Ladenbogens. Beide können fehlen, und ein Buch, das man nur findet, wenn man
+  ohnehin darin blättert, ist keins.
 - **Ware aus der Nähe ansehen.** Ein Klick auf Bild oder Namen im
   Spielerfenster öffnet das Stück groß, mit seiner ganzen Beschreibung und
   einem Kaufknopf. Vorher gab es dorthin keinen Weg: Die Beschreibung steht am

@@ -216,3 +216,26 @@ export function marktbuchOeffnen() {
   if (offen) return offen.bringToFront?.() ?? offen.render(true);
   return new Marktbuch().render(true);
 }
+
+/**
+ * Ein Weg zum Marktbuch, der immer da ist.
+ *
+ * **Warum es einen dritten braucht.** Bisher fuehrten zwei Wege hin: der
+ * Buchknopf im Akteursverzeichnis und das Menue eines geoeffneten
+ * Ladenbogens. Beide koennen fehlen - die Leiste laesst sich abschalten, und
+ * das Menue setzt voraus, dass man schon einen Laden offen hat. Ein Buch, das
+ * man nur findet, wenn man ohnehin drin blaettert, ist keins.
+ *
+ * Die Einstellungsseite ist der Ort, den man auch nach einem halben Jahr noch
+ * findet - und sie braucht weder Leinwand noch geoeffnetes Fenster.
+ */
+export function marktbuchEinstellungEinrichten() {
+  game.settings.registerMenu(MODULE_ID, "marktbuch", {
+    name: "SHOPS.Marktbuch.Name",
+    label: "SHOPS.Marktbuch.Aufschlagen",
+    hint: "SHOPS.Marktbuch.MenuHinweis",
+    icon: "fa-solid fa-book",
+    type: Marktbuch,
+    restricted: true
+  });
+}

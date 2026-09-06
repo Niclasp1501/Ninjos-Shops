@@ -298,5 +298,13 @@
   "SHOPS.Szenenfeld.Legende": "Shops on this map",
   "SHOPS.Szenenfeld.SzeneHinweis": "Drag a shop from the actor directory in here. It is then reachable only to whoever has this map in front of them. This is stored on the shop.",
   "SHOPS.Szenenfeld.KeinLaden": "No shop stands on this map.",
-  "SHOPS.Szenenfeld.KeinLadenGezogen": "That was not a shop."
+  "SHOPS.Szenenfeld.KeinLadenGezogen": "That was not a shop.",
+  "SHOPS.Einstellung.Verzeichnisleiste.Name": "Buttons in the actor directory",
+  "SHOPS.Einstellung.Verzeichnisleiste.Hinweis": "The bar at the foot of the directory. The market ledger stays reachable without it — from this settings page and from the ⋮ menu of any shop sheet.",
+  "SHOPS.Einstellung.Verzeichnisleiste.Beide": "Both — new shop and market ledger",
+  "SHOPS.Einstellung.Verzeichnisleiste.Neu": "Only “New shop”",
+  "SHOPS.Einstellung.Verzeichnisleiste.Buch": "Only the market ledger",
+  "SHOPS.Einstellung.Verzeichnisleiste.Keine": "None — leave the directory alone",
+  "SHOPS.Marktbuch.MenuHinweis": "Every purchase and sale across all shops, with a filter and the reasons for everything that failed.",
+  "SHOPS.Marktbuch.Aufschlagen": "Open it"
 }

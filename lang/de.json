@@ -298,5 +298,13 @@
   "SHOPS.Szenenfeld.Legende": "Läden auf dieser Karte",
   "SHOPS.Szenenfeld.SzeneHinweis": "Zieh einen Laden aus dem Akteursverzeichnis hierher. Er ist dann nur erreichbar, wer diese Karte vor sich hat. Gespeichert wird das am Laden.",
   "SHOPS.Szenenfeld.KeinLaden": "Auf dieser Karte steht kein Laden.",
-  "SHOPS.Szenenfeld.KeinLadenGezogen": "Das war kein Laden."
+  "SHOPS.Szenenfeld.KeinLadenGezogen": "Das war kein Laden.",
+  "SHOPS.Einstellung.Verzeichnisleiste.Name": "Knöpfe im Akteursverzeichnis",
+  "SHOPS.Einstellung.Verzeichnisleiste.Hinweis": "Die Leiste unten im Verzeichnis. Das Marktbuch bleibt auch ohne sie erreichbar — über diese Einstellungsseite und über das ⋮-Menü jedes Ladenbogens.",
+  "SHOPS.Einstellung.Verzeichnisleiste.Beide": "Beide — Neuer Laden und Marktbuch",
+  "SHOPS.Einstellung.Verzeichnisleiste.Neu": "Nur „Neuer Laden“",
+  "SHOPS.Einstellung.Verzeichnisleiste.Buch": "Nur das Marktbuch",
+  "SHOPS.Einstellung.Verzeichnisleiste.Keine": "Keine — das Verzeichnis bleibt unberührt",
+  "SHOPS.Marktbuch.MenuHinweis": "Alle Käufe und Verkäufe über alle Läden, mit Filter und den Gründen für alles, was scheiterte.",
+  "SHOPS.Marktbuch.Aufschlagen": "Aufschlagen"
 }

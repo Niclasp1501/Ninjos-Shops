@@ -68,6 +68,12 @@ export const SETTINGS = {
    */
   SPIELER_DUERFEN_OEFFNEN: "spielerDuerfenOeffnen",
 
+  /**
+   * Welche Knoepfe im Akteursverzeichnis stehen: `beide`, `neu`, `buch`,
+   * `keine`. Nicht jeder Tisch will eine fremde Leiste in seinem Verzeichnis.
+   */
+  VERZEICHNISLEISTE: "verzeichnisleiste",
+
   /** Takt der Schauansicht in Sekunden. */
   BLAETTERTAKT: "blaettertakt",
 

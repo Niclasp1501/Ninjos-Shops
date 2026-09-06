@@ -205,8 +205,13 @@ heraus, gilt deren Antwort — die eigene Liste graut dann aus und sagt es.
 
 ### Die Bücher lesen
 
-Im Ladenbogen über das **⋮**-Menü der Titelleiste: **Ladenbuch** und
-**Marktbuch**. Im Spielerfenster steht dort ebenfalls **Ladenbuch** — der
+Das **Marktbuch** erreichen Sie auf drei Wegen: über den Buchknopf unten im
+Akteursverzeichnis, über das **⋮**-Menü eines geöffneten Ladenbogens, und über
+die Moduleinstellungen (*Marktbuch → Aufschlagen*). Der letzte Weg ist der, der
+immer da ist — die Verzeichnisleiste lässt sich abschalten, und das Menü setzt
+einen offenen Laden voraus.
+
+Das **Ladenbuch** steht im **⋮**-Menü des jeweiligen Ladens. Im Spielerfenster steht dort ebenfalls **Ladenbuch** — der
 Spieler sieht darin nur seine eigenen Zeilen.
 
 ---

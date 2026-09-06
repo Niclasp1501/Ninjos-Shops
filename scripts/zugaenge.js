@@ -125,6 +125,17 @@ async function ladenAnlegen() {
  */
 function verzeichnisKnopf(app, element) {
   if (!game.user.isGM) return;
+
+  /*
+   * Die Leiste steht in einem Fenster, das dem Modul nicht gehoert. Wer sein
+   * Verzeichnis aufgeraeumt haben will, schaltet sie ab - das Marktbuch
+   * bleibt ueber die Moduleinstellungen und das Menue jedes Ladenbogens
+   * erreichbar, und ein Laden laesst sich weiterhin ueber „Akteur erstellen"
+   * anlegen.
+   */
+  const wahl = game.settings.get(MODULE_ID, SETTINGS.VERZEICHNISLEISTE) ?? "beide";
+  if (wahl === "keine") return;
+
   const wurzel = element instanceof HTMLElement ? element : element?.[0];
   const fuss = wurzel?.querySelector(".directory-footer, .header-actions");
   const ziel = fuss ?? wurzel?.querySelector(".directory-header");
@@ -132,16 +143,22 @@ function verzeichnisKnopf(app, element) {
 
   const leiste = document.createElement("div");
   leiste.className = `${MODULE_ID}-verzeichnis ninjos-shops shops-verzeichnisleiste`;
+  const zeigtNeu = wahl === "beide" || wahl === "neu";
+  const zeigtBuch = wahl === "beide" || wahl === "buch";
+
   leiste.innerHTML = `
-    <button type="button" class="shops-verzeichnis-knopf" data-tat="neu">
-      <i class="fa-solid fa-scale-balanced"></i> ${game.i18n.localize("SHOPS.Zugang.NeuerLaden")}
-    </button>
-    <button type="button" class="shops-verzeichnis-knopf shops-zweit" data-tat="buch"
-            title="${game.i18n.localize("SHOPS.Marktbuch.Knopf")}">
-      <i class="fa-solid fa-book"></i>
-    </button>`;
-  leiste.querySelector('[data-tat="neu"]').addEventListener("click", ladenAnlegen);
-  leiste.querySelector('[data-tat="buch"]').addEventListener("click", marktbuchOeffnen);
+    ${zeigtNeu ? `
+      <button type="button" class="shops-verzeichnis-knopf" data-tat="neu">
+        <i class="fa-solid fa-scale-balanced"></i> ${game.i18n.localize("SHOPS.Zugang.NeuerLaden")}
+      </button>` : ""}
+    ${zeigtBuch ? `
+      <button type="button" class="shops-verzeichnis-knopf shops-zweit" data-tat="buch"
+              title="${game.i18n.localize("SHOPS.Marktbuch.Knopf")}">
+        <i class="fa-solid fa-book"></i>
+        ${zeigtNeu ? "" : game.i18n.localize("SHOPS.Marktbuch.Knopf")}
+      </button>` : ""}`;
+  leiste.querySelector('[data-tat="neu"]')?.addEventListener("click", ladenAnlegen);
+  leiste.querySelector('[data-tat="buch"]')?.addEventListener("click", marktbuchOeffnen);
   ziel.append(leiste);
 }
 

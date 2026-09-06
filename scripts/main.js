@@ -29,6 +29,7 @@ import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.j
 import { handelFensterEinrichten } from "./handel-fenster.js";
 import { schauWiederherstellen } from "./schau.js";
 import { monitorEinstellungEinrichten } from "./monitore.js";
+import { marktbuchEinstellungEinrichten } from "./marktbuch.js";
 import { szenenBogenEinrichten } from "./szenenfeld.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
 
@@ -45,6 +46,28 @@ function einstellungenEinrichten() {
     config: true,
     type: Boolean,
     default: false
+  });
+
+  /*
+   * Die Leiste im Akteursverzeichnis. Sie ist bequem, aber sie steht in einem
+   * Fenster, das dem Modul nicht gehoert - wer sein Verzeichnis aufgeraeumt
+   * haben will, soll sie abschalten koennen. Das Marktbuch bleibt trotzdem
+   * erreichbar: ueber die Moduleinstellungen und das Menue jedes Ladenbogens.
+   */
+  game.settings.register(MODULE_ID, SETTINGS.VERZEICHNISLEISTE, {
+    name: "SHOPS.Einstellung.Verzeichnisleiste.Name",
+    hint: "SHOPS.Einstellung.Verzeichnisleiste.Hinweis",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      beide: "SHOPS.Einstellung.Verzeichnisleiste.Beide",
+      neu: "SHOPS.Einstellung.Verzeichnisleiste.Neu",
+      buch: "SHOPS.Einstellung.Verzeichnisleiste.Buch",
+      keine: "SHOPS.Einstellung.Verzeichnisleiste.Keine"
+    },
+    default: "beide",
+    onChange: () => ui.actors?.render()
   });
 
   game.settings.register(MODULE_ID, SETTINGS.SCHAU_LICHT, {
@@ -102,6 +125,7 @@ function einstellungenEinrichten() {
 Hooks.once("init", () => {
   einstellungenEinrichten();
   monitorEinstellungEinrichten();
+  marktbuchEinstellungEinrichten();
   // Beides muss in "init" stehen: Danach hat Foundry die Dokumentklassen
   // bereits gebaut, und ein spaeter angemeldetes Datenmodell greift nicht
   // mehr - die Laeden der Welt haetten dann rohe Felder statt Werten.
