@@ -20,6 +20,8 @@ import { MODULE_ID, SOCKET, LADEN_TYP } from "./const.js";
 import { aufZeigen, aufSchliessen, aufStand, standSenden } from "./vorzeigen.js";
 import { aufAngebot } from "./angebot.js";
 import { fuehreKaufAus } from "./kauf.js";
+import { fuehreVerkaufAus } from "./verkauf.js";
+import { aufAnfrage } from "./anfrage.js";
 
 /** Fuehrt dieser Client aus? */
 function istAusfuehrendeSpielleitung() {
@@ -35,6 +37,7 @@ async function onSocket(daten) {
     case SOCKET.SCHLIESSEN:  return void aufSchliessen(daten);
     case SOCKET.STAND:       return void aufStand(daten);
     case SOCKET.ANGEBOT:     return void aufAngebot(daten);
+    case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
 
     case SOCKET.KAUFEN: {
       if (!istAusfuehrendeSpielleitung()) return;
@@ -44,6 +47,17 @@ async function onSocket(daten) {
       });
       // Der eigene Socket kommt nie zurueck.
       if (daten.kaeuferId === game.user.id) aufAntwort({ an: [daten.kaeuferId], ergebnis });
+      standSenden(daten.ladenUuid);
+      return;
+    }
+
+    case SOCKET.VERKAUFEN: {
+      if (!istAusfuehrendeSpielleitung()) return;
+      const ergebnis = await fuehreVerkaufAus(daten);
+      game.socket.emit(SOCKET.NAME, {
+        typ: SOCKET.ANTWORT, an: [daten.verkaeuferId], ergebnis
+      });
+      if (daten.verkaeuferId === game.user.id) aufAntwort({ an: [daten.verkaeuferId], ergebnis });
       standSenden(daten.ladenUuid);
       return;
     }

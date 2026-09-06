@@ -67,6 +67,13 @@
                min="0" step="0.05" {{#unless bearbeitbar}}disabled{{/unless}}>
         <small>{{localize "SHOPS.Feld.AnkaufHinweis"}}</small>
       </label>
+
+      <label class="shops-breit">
+        <span>{{localize "SHOPS.Feld.Spielraum"}}</span>
+        <input type="number" name="system.spielraum" value="{{laden.spielraum}}"
+               min="0" max="1" step="0.05" {{#unless bearbeitbar}}disabled{{/unless}}>
+        <small>{{localize "SHOPS.Feld.SpielraumHinweis"}}</small>
+      </label>
     </div>
   </section>
 

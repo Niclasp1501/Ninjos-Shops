@@ -910,8 +910,8 @@
 /* Im Kopf ist die Werkzeuggruppe keine Bedienung, sondern Beschriftung */
 .ninjos-shops li.shops-spalten .shops-werkzeuge { opacity: 1; }
 
-/* Drei Schaltflaechen zu 26 px mit zwei Fugen zu 2 px */
-.ninjos-shops .shops-spalte-schalter { flex: 0 0 82px; }
+/* Vier Schaltflaechen zu 26 px mit drei Fugen zu 2 px */
+.ninjos-shops .shops-spalte-schalter { flex: 0 0 110px; }
 
 /*
  * Kein eigener Rand am Kaufknopf: Die Liste setzt zwischen allen Spalten
@@ -1344,3 +1344,326 @@
 }
 
 .ninjos-shops .dialog-content p { margin: 0 0 8px; }
+
+/* ── Der Weg zurück: verkaufen ─────────────────────────────────────── */
+
+/*
+ * Der Verkaufsbereich steht unter der Auslage und ist ruhiger gehalten: Zuerst
+ * sieht man, was es zu kaufen gibt, dann erst, was man loswerden kann. Ein
+ * heller Streifen trennt ihn, damit niemand die eigene Habe fuer Ware des
+ * Ladens haelt - das waere der eine Fehler, der hier richtig weh taete.
+ */
+.ninjos-shops .shops-verkauf {
+  flex: 0 0 auto;
+  max-height: 42%;
+  display: flex;
+  flex-direction: column;
+  background: var(--shops-nav);
+  border-top: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-verkauf h3 {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 18px 5px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+  border: none;
+}
+
+.ninjos-shops .shops-verkauf-liste {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Die eigene Habe traegt keine Karte, sondern eine Zeile - sie ist nicht das
+   Angebot des Ladens und soll auch nicht so aussehen. */
+.ninjos-shops .shops-verkauf-liste .shops-zeile {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--shops-rand);
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0 18px;
+}
+
+.ninjos-shops .shops-verkauf-liste .shops-zeile:hover { background: rgba(0, 0, 0, 0.03); }
+
+.ninjos-shops .shops-verkauf-liste .shops-menge {
+  flex: 0 0 2.8rem;
+  text-align: center;
+  color: var(--shops-text-blass);
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-verkauf-liste .shops-preis {
+  flex: 0 0 7.2rem;
+  text-align: right;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-verkauf-liste .shops-kaufen {
+  flex: 0 0 6.6rem;
+  background-color: var(--shops-karte);
+  color: var(--shops-rot);
+  border: 1px solid var(--shops-rand);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+}
+
+.ninjos-shops .shops-verkauf-liste .shops-kaufen:hover:not([disabled]) {
+  border-color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-verkauf .shops-hinweisfeld {
+  margin: 8px 18px 14px;
+  padding: 16px;
+  background: transparent;
+}
+
+/* ── Die Verkaufsanfrage ───────────────────────────────────────────── */
+
+.ninjos-shops .shops-teil-packen,
+.ninjos-shops .shops-teil-verhandeln {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.ninjos-shops .shops-packen-kopf { margin: 12px 16px 8px; }
+
+.ninjos-shops .shops-packliste {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Was schon im Korb liegt, hebt sich ab - sonst zaehlt man Felder durch */
+.ninjos-shops .shops-imkorb {
+  border-color: var(--shops-gold);
+  background: rgba(212, 175, 55, 0.14);
+}
+
+.ninjos-shops .shops-packen-fuss,
+.ninjos-shops .shops-anfrage-fuss {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--shops-nav);
+  border-top: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-packen-fuss button,
+.ninjos-shops .shops-anfrage-fuss button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 13px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: var(--shops-rot);
+  border: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-packen-fuss button.shops-zweit,
+.ninjos-shops .shops-anfrage-fuss button.shops-zweit {
+  color: var(--shops-rot);
+  background-color: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.ninjos-shops .shops-packen-fuss button[disabled] {
+  color: var(--shops-text-blass);
+  background-color: var(--shops-nav);
+  border: 1px solid var(--shops-rand);
+  cursor: default;
+}
+
+/* Warten, abgelehnt, erledigt - drei Zustaende, drei Streifen */
+.ninjos-shops .shops-wartet,
+.ninjos-shops .shops-abgelehnt,
+.ninjos-shops .shops-erledigt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-wartet { background: var(--shops-nav); }
+.ninjos-shops .shops-wartet i { color: var(--shops-text-blass); }
+.ninjos-shops .shops-abgelehnt { background: #fdf0f0; border-left: 3px solid var(--shops-rot); }
+.ninjos-shops .shops-abgelehnt i { color: var(--shops-rot); }
+.ninjos-shops .shops-erledigt { background: #f1f7f0; border-left: 3px solid #2e7d32; }
+.ninjos-shops .shops-erledigt i { color: #2e7d32; }
+
+.ninjos-shops .shops-wartet p,
+.ninjos-shops .shops-abgelehnt p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--shops-text-blass);
+}
+
+/* Der Knopf zur Anfrage im Spielerfenster */
+.ninjos-shops .shops-anfrage-start {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: var(--shops-nav);
+  border-top: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-anfrage-start .shops-kaufen {
+  flex: 0 0 auto;
+  color: var(--shops-rot);
+  background-color: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+}
+
+.ninjos-shops .shops-anfrage-start .shops-kaufen:hover { border-color: var(--shops-rot); }
+.ninjos-shops .shops-anfrage-start .shops-leer { font-size: 0.78rem; }
+
+/* ── Die Anfragen bei der Spielleitung ─────────────────────────────── */
+
+.ninjos-shops .shops-anfrageliste {
+  list-style: none;
+  margin: 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.ninjos-shops .shops-anfrage {
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 8px;
+  box-shadow: var(--shops-schatten-sm);
+  overflow: hidden;
+}
+
+.ninjos-shops .shops-anfrage-kopf {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 9px 14px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-anfrage-figur,
+.ninjos-shops .shops-anfrage-laden {
+  font-size: 0.8rem;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-anfrage-posten { padding: 6px 0; }
+.ninjos-shops .shops-anfrage-posten .shops-zeile {
+  margin: 0 14px;
+  border: none;
+  border-bottom: 1px solid var(--shops-rand);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.ninjos-shops .shops-anfrage-posten .shops-menge { flex: 0 0 3rem; text-align: center; }
+.ninjos-shops .shops-anfrage-posten .shops-preis { flex: 0 0 7rem; text-align: right; color: var(--shops-text-blass); }
+
+/*
+ * Der Spielraum. Gold umrandet, weil es die eine Stelle ist, die der Spieler
+ * nie zu sehen bekommt - und die Spielleitung soll das beim Blick darauf
+ * wissen, ohne den Hinweis zu lesen.
+ */
+.ninjos-shops .shops-spielraum {
+  margin: 10px 14px;
+  padding: 8px 10px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid var(--shops-gold);
+  border-radius: 6px;
+}
+
+.ninjos-shops .shops-spielraum-kopf {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--shops-rot);
+}
+
+.ninjos-shops .shops-spielraum-werte { display: flex; gap: 6px; }
+
+.ninjos-shops .shops-spielraum-werte button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 4px;
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-spielraum-werte button:hover { border-color: var(--shops-rot); }
+.ninjos-shops .shops-spielraum-werte button.shops-ueblich { border-color: var(--shops-gold); }
+.ninjos-shops .shops-spielraum-werte small {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+}
+.ninjos-shops .shops-spielraum-werte strong { font-size: 0.92rem; }
+
+.ninjos-shops .shops-anfrage-felder {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 8px 12px;
+  padding: 0 14px 10px;
+}
+
+.ninjos-shops .shops-anfrage-felder label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ninjos-shops .shops-anfrage-felder > label > span {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-muenzmarke {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--shops-text-blass);
+  background: var(--shops-nav);
+  border: 1px solid var(--shops-rand);
+  border-radius: 3px;
+}
+
+.ninjos-shops .shops-anfrage-fuss { border-top: 1px solid var(--shops-rand); }

@@ -76,6 +76,19 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
       eigeneKasse: new BooleanField({ initial: false }),
       kasse: new SchemaField(kassenFelder()),
 
+      /**
+       * Wie weit der Preis bei einer Anfrage nach oben und unten gehen darf,
+       * als Anteil am ueblichen Ankaufswert.
+       *
+       * Das Modul kennt weder Laune noch Beziehung - es rechnet nur aus, was
+       * oben und unten vertretbar waere, und legt der Spielleitung beide
+       * Zahlen hin. Wer gut mit dem Haendler steht, bekommt die obere; wer ihn
+       * verstimmt hat, die untere. Entschieden wird am Tisch, nicht hier.
+       */
+      spielraum: new NumberField({
+        required: true, nullable: false, min: 0, max: 1, initial: 0.25, step: 0.05
+      }),
+
       /** Stueck je Kauf. 0 = ohne Begrenzung. Gegen das leergekaufte Dorf. */
       hoechstmenge: new NumberField({
         required: true, nullable: false, integer: true, min: 0, initial: 0

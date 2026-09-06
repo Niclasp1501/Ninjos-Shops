@@ -129,7 +129,8 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
           festSorte: feld.denomination,
           hinweis: merkmal[WARE.HINWEIS] ?? "",
           verborgen: merkmal[WARE.VERBORGEN] === true,
-          dienst: merkmal[WARE.DIENST] === true
+          dienst: merkmal[WARE.DIENST] === true,
+          ankauf: merkmal[WARE.ANKAUF] === true
         };
       })
       .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));

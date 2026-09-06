@@ -1,0 +1,96 @@
+{{!--
+  Verkaufsanfragen bei der Spielleitung.
+
+  Die drei Zahlen rechts sieht **nur sie** - sie stehen gar nicht erst in der
+  Fassung, die der Spieler bekommt. Untergrenze, üblicher Wert, Obergrenze:
+  Wer den Händler verstimmt hat, bekommt die linke Zahl, wer gut mit ihm steht,
+  die rechte. Entschieden wird am Tisch; das Modul rechnet nur.
+--}}
+<div class="shops-teil-verhandeln">
+
+  {{#if anfragen.length}}
+    <ol class="shops-anfrageliste">
+      {{#each anfragen}}
+        <li class="shops-anfrage" data-anfrage-id="{{id}}">
+
+          <header class="shops-anfrage-kopf">
+            <strong>{{spielerName}}</strong>
+            <span class="shops-anfrage-figur">{{figurName}}</span>
+            <span class="shops-anfrage-laden">{{localize "SHOPS.Marktbuch.AnLaden" laden=ladenName}}</span>
+          </header>
+
+          <ol class="shops-ware shops-anfrage-posten">
+            {{#each posten}}
+              <li class="shops-zeile">
+                <img src="{{img}}" alt="">
+                <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+                <span class="shops-menge">{{menge}}&times;</span>
+                <span class="shops-preis">{{wertText}}</span>
+              </li>
+            {{/each}}
+          </ol>
+
+          {{!-- Nur für die Spielleitung. Die Knöpfe schreiben den Wert ins Feld,
+                damit niemand eine Zahl abtippen muss, die daneben steht. --}}
+          <div class="shops-spielraum">
+            <span class="shops-spielraum-kopf">{{localize "SHOPS.Anfrage.NurFuerDich"}}</span>
+            <div class="shops-spielraum-werte">
+              <button type="button" data-action="uebernehmen" data-wert="{{untenCp}}"
+                      title="{{localize 'SHOPS.Anfrage.UntenHinweis'}}">
+                <small>{{localize "SHOPS.Anfrage.Unten"}}</small>
+                <strong>{{untenText}}</strong>
+              </button>
+              <button type="button" class="shops-ueblich" data-action="uebernehmen" data-wert="{{ueblichCp}}"
+                      title="{{localize 'SHOPS.Anfrage.UeblichHinweis'}}">
+                <small>{{localize "SHOPS.Anfrage.Ueblich"}}</small>
+                <strong>{{ueblichText}}</strong>
+              </button>
+              <button type="button" data-action="uebernehmen" data-wert="{{obenCp}}"
+                      title="{{localize 'SHOPS.Anfrage.ObenHinweis'}}">
+                <small>{{localize "SHOPS.Anfrage.Oben"}}</small>
+                <strong>{{obenText}}</strong>
+              </button>
+            </div>
+          </div>
+
+          {{#if vorgeschlagen}}
+            <p class="shops-blockhinweis">
+              {{localize "SHOPS.Anfrage.Geboten"}} <strong>{{angebotText}}</strong> —
+              {{localize "SHOPS.Anfrage.WartetAufAntwort"}}
+            </p>
+          {{/if}}
+
+          <div class="shops-anfrage-felder">
+            <label>
+              <span>{{localize "SHOPS.Anfrage.DeinPreis"}}</span>
+              <span class="shops-preisfeld">
+                {{!-- In Gold, weil man so spricht. Das Modul rechnet intern in
+                      Kupfer und wandelt beim Absenden um. --}}
+                <input type="number" data-preis min="0" step="0.1" placeholder="0">
+                <span class="shops-muenzmarke">{{localize "SHOPS.Muenze.gp"}}</span>
+              </span>
+            </label>
+            <label>
+              <span>{{localize "SHOPS.Anfrage.Satz"}}</span>
+              <input type="text" data-satz placeholder="{{localize 'SHOPS.Anfrage.SatzPlatzhalter'}}">
+            </label>
+          </div>
+
+          <footer class="shops-anfrage-fuss">
+            <button type="button" data-action="bieten">
+              <i class="fa-solid fa-hand-holding"></i>
+              {{localize "SHOPS.Anfrage.Bieten"}}
+            </button>
+            <button type="button" class="shops-zweit" data-action="abweisen">
+              <i class="fa-solid fa-hand"></i>
+              {{localize "SHOPS.Anfrage.Abweisen"}}
+            </button>
+          </footer>
+
+        </li>
+      {{/each}}
+    </ol>
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Anfrage.KeineOffen"}}</p>
+  {{/if}}
+</div>

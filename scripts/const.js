@@ -85,6 +85,8 @@ export const SETTINGS = {
 export const SOCKET = {
   NAME: `module.${MODULE_ID}`,
   KAUFEN: "kaufen",     // Spieler -> Spielleiter: bitte kaufen
+  VERKAUFEN: "verkaufen", // Spieler -> Spielleiter: bitte ankaufen (angehakte Ware)
+  ANFRAGE: "anfrage",   // beide Richtungen: die Verkaufsanfrage und ihr Zustand
   ANTWORT: "antwort",   // Spielleiter -> Spieler: ging durch, oder warum nicht
   ZEIGEN: "zeigen",     // Spielleiter -> Spieler: Laden oeffnen
   SCHLIESSEN: "schliessen",
@@ -117,7 +119,15 @@ export const WARE = {
   /** Unter der Theke - Spieler sehen es nicht. */
   VERBORGEN: "verborgen",
   /** Dienstleistung: kostet Geld, wechselt nicht den Besitzer. */
-  DIENST: "dienst"
+  DIENST: "dienst",
+  /**
+   * Kauft der Laden **dieses** wieder an, ohne zu fragen?
+   *
+   * Der Ankaufsfaktor allein reicht dafuer nicht: Ein Kraeuterhaendler mag
+   * Traenke zurueckkaufen und trotzdem kein Langschwert wollen. Angehaktes
+   * geht sofort durch, alles andere ueber eine Anfrage mit Preisvorschlag.
+   */
+  ANKAUF: "ankauf"
 };
 
 /**

@@ -20,6 +20,7 @@ import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
 import { socketEinrichten } from "./socket.js";
 import { zugaengeHaken, zugaengeEinrichten } from "./zugaenge.js";
+import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 
 function einstellungenEinrichten() {
@@ -98,6 +99,7 @@ Hooks.once("init", () => {
 Hooks.once("ready", async () => {
   socketEinrichten();
   zugaengeEinrichten();
+  anfrageFensterEinrichten();
   await offenenLadenWiederherstellen();
   await willkommenZeigen();
 });

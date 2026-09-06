@@ -18,6 +18,7 @@ import { MODULE_ID, WARE, KAUFMODUS, SOCKET } from "./const.js";
 import { grundpreisCp, preisCp, alsText, KUPFERWERT } from "./preise.js";
 import { vermoegenCp } from "./kasse.js";
 import { eigenesAngebot } from "./angebot.js";
+import { verkaufslisteAufbereiten } from "./verkauf.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -48,6 +49,8 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     window: { icon: "fa-solid fa-scale-balanced", resizable: true },
     actions: {
       kaufen: SpielerFenster.#kaufen,
+      verkaufen: SpielerFenster.#verkaufen,
+      anfrageStellen: SpielerFenster.#anfrage,
       angebotAnnehmen: SpielerFenster.#angebotAnnehmen
     }
   };
@@ -101,6 +104,13 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       gesperrt: system.kaufmodus === KAUFMODUS.GESPERRT,
       freigabe: system.kaufmodus === KAUFMODUS.FREIGABE,
       keinSpielleiter: !game.users.activeGM,
+      /*
+       * Die eigene Habe steht nur da, wenn der Laden ueberhaupt ankauft -
+       * `system.ankauf` ist ab Werk 0. Eine leere Liste "Verkaufen" unter
+       * jedem Laden waere ein Versprechen, das die meisten nicht halten.
+       */
+      verkauf: verkaufslisteAufbereiten(laden, figur),
+      kauftAn: laden.system.ankauf > 0,
       angebot: angebot && angebotsWare ? {
         ...angebot, name: angebotsWare.name, img: angebotsWare.img,
         // Als fertiger Wahrheitswert, nicht als Vergleich in der Vorlage:
@@ -164,6 +174,74 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     const item = this.#laden.items.get(itemId);
     if (!item) return;
     await this.#bitteSenden(item, 1, null);
+  }
+
+  /**
+   * Etwas aus dem eigenen Rucksack an den Laden geben.
+   *
+   * Derselbe Weg wie beim Kauf, nur andersherum: Die Bitte geht an die
+   * Spielleitung, die alles noch einmal prueft. Der Preis wird auch hier dort
+   * neu gerechnet - was hier steht, ist eine Anzeige.
+   */
+  static async #verkaufen(ereignis, ziel) {
+    const figur = eigeneFigur();
+    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    const item = figur?.items.get(itemId);
+    if (!item) return;
+    if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
+
+    const zeile = verkaufslisteAufbereiten(this.#laden, figur).find(z => z.id === itemId);
+    const inhalt = `
+      <div class="shops-kaufdialog">
+        <p>${game.i18n.format("SHOPS.Verkauf.Frage", {
+          name: foundry.utils.escapeHTML(item.name),
+          preis: zeile?.preisText ?? "?",
+          laden: foundry.utils.escapeHTML(this.#laden.name)
+        })}</p>
+        <p class="shops-blockhinweis">${game.i18n.localize("SHOPS.Verkauf.Hinweis")}</p>
+      </div>`;
+
+    const sicher = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("SHOPS.Verkauf.Titel") },
+      classes: ["ninjos-shops"],
+      content: inhalt,
+      yes: { label: game.i18n.localize("SHOPS.Verkauf.Ja"), icon: "fa-solid fa-hand-holding" },
+      no: { label: game.i18n.localize("SHOPS.Abbrechen") },
+      defaultYes: false
+    });
+    if (!sicher) return;
+
+    const bitte = {
+      typ: SOCKET.VERKAUFEN,
+      ladenUuid: this.#laden.uuid,
+      itemId: item.id,
+      figurUuid: figur.uuid,
+      menge: 1,
+      verkaeuferId: game.user.id
+    };
+
+    if (game.user.isGM) {
+      const { fuehreVerkaufAus } = await import("./verkauf.js");
+      const { aufAntwort } = await import("./socket.js");
+      aufAntwort({ an: [game.user.id], ergebnis: await fuehreVerkaufAus(bitte) });
+      return;
+    }
+    game.socket.emit(SOCKET.NAME, bitte);
+  }
+
+  /**
+   * Eine Verkaufsanfrage stellen.
+   *
+   * Der Weg fuer alles, was der Laden nicht ohne Frage nimmt: Der Spieler
+   * packt zusammen, die Spielleitung nennt einen Preis, er nimmt an oder
+   * nicht. Gebaut wie der Tausch in den In-Person Tools - siehe anfrage.js.
+   */
+  static async #anfrage() {
+    const figur = eigeneFigur();
+    if (!figur) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeineFigur"));
+    if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
+    const { packenOeffnen } = await import("./anfrage-fenster.js");
+    packenOeffnen(this.#laden, figur);
   }
 
   /** Ein Angebot annehmen - Menge und Preis stehen fest. */

@@ -133,3 +133,42 @@ export function marktbuchOeffnen() {
   journal.sheet.render(true);
   return journal;
 }
+
+/* ── Der Weg zurueck: was ein Spieler dem Laden verkauft ──────────── */
+
+/** Was gemeint war - geschrieben, **bevor** etwas angefasst wird. */
+export async function schreibeVerkaufVorgang({ laden, item, figur, verkaeufer, pruefung }) {
+  const teile = [
+    `<strong>${fluchtHtml(verkaeufer?.name ?? "?")}</strong>`,
+    game.i18n.localize("SHOPS.Marktbuch.WillVerkaufen"),
+    `<em>${fluchtHtml(item?.name ?? "?")}</em>`,
+    game.i18n.format("SHOPS.Marktbuch.AnLaden", { laden: fluchtHtml(laden?.name ?? "?") })
+  ];
+  if (figur) teile.push(game.i18n.format("SHOPS.Marktbuch.MitFigur", { figur: fluchtHtml(figur.name) }));
+
+  const ausgang = pruefung.ok
+    ? `${game.i18n.localize("SHOPS.Marktbuch.Fuer")} <strong>${alsText(pruefung.summeCp, kuerzel)}</strong>`
+    : `<span style="color:#8b0000">${game.i18n.localize(pruefung.grund)}</span>`;
+
+  await zeileAnhaengen(`<p>${uhrzeit()} — ${teile.join(" ")} ${ausgang}</p>`);
+}
+
+/** Was geschehen ist - geschrieben **nach** dem Zugriff. */
+export async function schreibeVerkaufErgebnis({ laden, name, figur, verkaeufer, ok, stueck, summeCp, grund }) {
+  if (!ok) {
+    await zeileAnhaengen(
+      `<p style="color:#8b0000">${uhrzeit()} — ` +
+      `${game.i18n.localize("SHOPS.Marktbuch.Abgebrochen")} ${fluchtHtml(grund ?? "")}</p>`
+    );
+    return;
+  }
+
+  await zeileAnhaengen(
+    `<p>${uhrzeit()} — <strong>${game.i18n.localize("SHOPS.Marktbuch.Angekauft")}</strong> ` +
+    `${game.i18n.format("SHOPS.Marktbuch.Stueck", { menge: stueck })} <em>${fluchtHtml(name ?? "?")}</em> ` +
+    `${game.i18n.format("SHOPS.Marktbuch.AnLaden", { laden: fluchtHtml(laden?.name ?? "?") })} ` +
+    `${game.i18n.localize("SHOPS.Marktbuch.Fuer")} <strong>${alsText(summeCp, kuerzel)}</strong>` +
+    (figur ? ` — ${fluchtHtml(figur.name)}` : "") +
+    `</p>`
+  );
+}

@@ -1,0 +1,118 @@
+{{!--
+  Verkaufsanfrage: packen und auf die Antwort warten.
+
+  Drei Zustaende in einem Fenster - packen, warten, antworten. Getrennte
+  Fenster dafuer waeren drei Fenster fuer einen Vorgang, und der Spieler
+  muesste raten, welches gerade gilt.
+--}}
+<div class="shops-teil-packen">
+
+  {{#if anfrage}}
+
+    {{#if wartet}}
+      <section class="shops-wartet">
+        <i class="fa-solid fa-hourglass-half"></i>
+        <div>
+          <strong>{{localize "SHOPS.Anfrage.Unterwegs"}}</strong>
+          <p>{{localize "SHOPS.Anfrage.UnterwegsHinweis"}}</p>
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if vorschlag}}
+      <section class="shops-angebot">
+        <div class="shops-angebot-inhalt">
+          <span class="shops-angebot-kopf">{{localize "SHOPS.Anfrage.Vorschlag"}}</span>
+          <span class="shops-angebot-ware">
+            {{localize "SHOPS.Anfrage.BietetDir"}} <strong>{{preisText}}</strong>
+          </span>
+          {{#if anfrage.satz}}<span class="shops-angebot-satz">„{{anfrage.satz}}"</span>{{/if}}
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if abgelehnt}}
+      <section class="shops-abgelehnt">
+        <i class="fa-solid fa-hand"></i>
+        <div>
+          <strong>{{localize "SHOPS.Anfrage.Abgelehnt"}}</strong>
+          {{#if anfrage.satz}}<p>„{{anfrage.satz}}"</p>{{/if}}
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if angenommen}}
+      <section class="shops-erledigt">
+        <i class="fa-solid fa-check"></i>
+        <strong>{{localize "SHOPS.Anfrage.Erledigt2"}}</strong>
+      </section>
+    {{/if}}
+
+    <ol class="shops-ware shops-packliste">
+      {{#each anfrage.posten}}
+        <li class="shops-zeile">
+          <img src="{{img}}" alt="">
+          <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+          <span class="shops-menge">{{menge}}&times;</span>
+        </li>
+      {{/each}}
+    </ol>
+
+    <footer class="shops-packen-fuss">
+      {{#if wartet}}
+        <button type="button" class="shops-zweit" data-action="zuruecknehmen">
+          <i class="fa-solid fa-rotate-left"></i>
+          {{localize "SHOPS.Anfrage.Zurueckziehen"}}
+        </button>
+      {{/if}}
+      {{#if vorschlag}}
+        <button type="button" data-action="annehmen">
+          <i class="fa-solid fa-hand-holding"></i>
+          {{localize "SHOPS.Anfrage.Annehmen"}}
+        </button>
+        <button type="button" class="shops-zweit" data-action="ablehnen">
+          <i class="fa-solid fa-xmark"></i>
+          {{localize "SHOPS.Anfrage.Ablehnen"}}
+        </button>
+      {{/if}}
+      {{#if vorbei}}
+        <button type="button" class="shops-zweit" data-action="schliessen">
+          {{localize "SHOPS.Anfrage.Schliessen"}}
+        </button>
+      {{/if}}
+    </footer>
+
+  {{else}}
+
+    <p class="shops-blockhinweis shops-packen-kopf">
+      {{localize "SHOPS.Anfrage.PackenHinweis"}}
+    </p>
+
+    {{#if sachen.length}}
+      <ol class="shops-ware shops-packliste">
+        {{#each sachen}}
+          <li class="shops-zeile {{#if drin}}shops-imkorb{{/if}}" data-item-id="{{id}}">
+            <img src="{{img}}" alt="">
+            <div class="shops-name">
+              <span class="shops-warenname">{{name}}</span>
+              <span class="shops-hinweiszeile">{{localize "SHOPS.Anfrage.Habe"}} {{habe}}</span>
+            </div>
+            <label class="shops-menge" title="{{localize 'SHOPS.Anfrage.WieViele'}}">
+              <input type="number" data-korb min="0" max="{{habe}}" step="1" value="{{drin}}">
+            </label>
+          </li>
+        {{/each}}
+      </ol>
+    {{else}}
+      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Verkauf.NichtsDabei"}}</p>
+    {{/if}}
+
+    <footer class="shops-packen-fuss">
+      <button type="button" data-action="abschicken" {{#if korbLeer}}disabled{{/if}}>
+        <i class="fa-solid fa-paper-plane"></i>
+        {{localize "SHOPS.Anfrage.Abschicken"}}
+      </button>
+    </footer>
+
+  {{/if}}
+</div>

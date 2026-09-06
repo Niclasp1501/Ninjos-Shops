@@ -131,6 +131,57 @@
     {{/if}}
   </section>
 
+  {{!-- Der Weg zur Anfrage steht immer da, auch wenn der Laden nichts ohne
+        Frage nimmt: Sonst haette ein Spieler bei so einem Laden gar keinen
+        Weg, etwas loszuwerden. --}}
+  <section class="shops-anfrage-start">
+    <button type="button" class="shops-kaufen shops-zweit" data-action="anfrageStellen">
+      <i class="fa-solid fa-hand-holding"></i>
+      <span>{{localize "SHOPS.Anfrage.Knopf"}}</span>
+    </button>
+    <span class="shops-leer">{{localize "SHOPS.Anfrage.KnopfHinweis"}}</span>
+  </section>
+
+  {{#if kauftAn}}
+    {{!-- Der Weg zurueck. Er steht unter der Auslage, nicht daneben: Zuerst
+          sieht man, was es gibt, und erst dann, was man loswerden kann. --}}
+    <section class="shops-verkauf">
+      <h3>
+        {{localize "SHOPS.Verkauf.Ueberschrift"}}
+        <span class="shops-anzahl">{{verkauf.length}}</span>
+      </h3>
+
+      {{#if verkauf.length}}
+        <ol class="shops-ware shops-verkauf-liste">
+          {{#each verkauf}}
+            <li class="shops-zeile {{#if wertlos}}shops-ausverkauft{{/if}}" data-item-id="{{id}}">
+              <img src="{{img}}" alt="">
+              <div class="shops-name">
+                <span class="shops-warenname">{{name}}</span>
+              </div>
+              <span class="shops-menge">{{menge}}</span>
+              <span class="shops-preis">{{preisText}}</span>
+              {{#if wertlos}}
+                <button type="button" class="shops-kaufen" disabled
+                        title="{{localize 'SHOPS.Verkauf.Wertlos'}}">
+                  <span>{{localize "SHOPS.Verkauf.Wertlos"}}</span>
+                </button>
+              {{else}}
+                <button type="button" class="shops-kaufen" data-action="verkaufen"
+                        {{#if @root.keinSpielleiter}}disabled{{/if}}>
+                  <i class="fa-solid fa-hand-holding"></i>
+                  <span>{{localize "SHOPS.Verkauf.Knopf"}}</span>
+                </button>
+              {{/if}}
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Verkauf.NichtsDabei"}}</p>
+      {{/if}}
+    </section>
+  {{/if}}
+
   {{#if freigabe}}
     <p class="shops-spieler-fuss">{{localize "SHOPS.Kauf.BrauchtFreigabe"}}</p>
   {{/if}}

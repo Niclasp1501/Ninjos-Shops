@@ -90,6 +90,17 @@
             {{!-- Anbieten steht bei den Werkzeugen und nicht bei den
                   Schaltern: Es aendert nichts an der Ware, es legt sie
                   jemandem hin. --}}
+            {{!-- Kauft der Laden genau dieses wieder an? Ohne den Haken geht
+                  ein Verkauf nur ueber eine Anfrage - der Ankaufsfaktor allein
+                  sagt nichts darueber, ob ein Kraeuterhaendler Langschwerter
+                  will. --}}
+            <button type="button" class="{{#if ankauf}}shops-an{{/if}}"
+                    data-action="wareSchalter" data-merkmal="ankauf"
+                    title="{{localize 'SHOPS.Bogen.KauftAn'}}"
+                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+              <i class="fa-solid fa-arrow-rotate-left"></i>
+            </button>
+
             <button type="button" data-action="wareAnbieten"
                     title="{{localize 'SHOPS.Angebot.Knopf'}}"
                     {{#unless @root.bearbeitbar}}disabled{{/unless}}>

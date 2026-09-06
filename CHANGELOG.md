@@ -6,6 +6,17 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Hinzugefügt
+- **Verkaufen an den Laden**, in zwei Wegen. Angehakte Ware (`flags…ankauf` je
+  Stück in der Auslage) geht sofort durch, zum Ankaufsfaktor des Ladens. Alles
+  andere läuft über eine **Verkaufsanfrage**: Der Spieler packt zusammen, die
+  Spielleitung sieht üblichen Wert samt Unter- und Obergrenze — die drei Zahlen
+  werden vor dem Verschicken aus der Sitzung entfernt, nicht nur ausgeblendet —
+  nennt einen Preis, und der Spieler nimmt an oder lehnt ab.
+- `system.spielraum` je Laden (ab Werk 0,25): wie weit der Preis bei einer
+  Anfrage nach oben und unten reicht. Das Modul rechnet nur; entschieden wird
+  am Tisch.
+- **`eigeneKasse` begrenzt jetzt tatsächlich etwas.** Beim Kauf füllte sie sich
+  nur; beim Ankauf muss sie reichen, sonst lehnt der Laden ab.
 - **Schritt 5: der Kauf.** Der Spieler tippt, die Spielleitung prüft alles noch
   einmal von vorn und führt aus — Preis wird dort neu gerechnet, nie vom
   Spieler übernommen. Bezahlt wird mit Wechselgeld aus `kasse.js`, deren 43

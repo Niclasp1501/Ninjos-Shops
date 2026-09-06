@@ -214,6 +214,40 @@ Deshalb endet der Geltungsbereich am `.window-content`, und alles mit einer
 Farbregel für `button`, `i` oder `::before` ergänzt, prüft danach die
 Fensterleiste.
 
+## Verkaufen: zwei Wege, und warum es zwei sind
+
+**Angehakte Ware geht sofort durch.** Der Ankaufsfaktor allein reicht als
+Bedingung nicht: Ein Kräuterhändler mag Tränke zurückkaufen und trotzdem kein
+Langschwert wollen. Deshalb gibt es je Ware in der Auslage den Haken
+`flags.ninjos-shops.ankauf` — und nur was der Laden **schon führt** und
+angehakt ist, verkauft sich ohne Rückfrage. Die Prüfung sitzt in
+`nimmtLadenAn()` und wird server- wie clientseitig gestellt; hinge sie nur an
+der Anzeige, verkaufte eine Socket-Nachricht von Hand dem Kräuterhändler das
+Langschwert.
+
+**Alles andere läuft über eine Verkaufsanfrage** (`anfrage.js`), gebaut wie der
+Tausch in den In-Person Tools: eine Sitzung, die bei der Spielleitung liegt,
+beide Seiten zeichnen aus dem Zustand, den sie zurückschickt.
+
+Der Ablauf hat einen Schritt mehr als der Tausch:
+
+```
+Spieler packt  →  Spielleitung sieht Werte und nennt Preis
+               →  Spieler nimmt an oder lehnt ab  →  Ausführung
+```
+
+**Die drei Zahlen sieht nur die Spielleitung, und zwar wirklich.** Üblicher
+Ankaufswert, Untergrenze und Obergrenze werden vor dem Verschicken aus der
+Sitzung **entfernt**, nicht bloß ausgeblendet — ausgeblendete Zahlen lägen im
+Speicher des Spieler-Clients und wären mit einer Zeile in der Konsole zu lesen.
+
+**Das Modul kennt keine Laune und keine Beziehung.** Es rechnet aus
+`system.spielraum` (ab Werk 0,25) nur aus, was oben und unten vertretbar wäre,
+und legt der Spielleitung beide Zahlen hin. Wer gut mit dem Händler steht,
+bekommt die obere; wer ihn verstimmt hat, die untere. Entschieden wird am
+Tisch. Alles andere wäre der erste Schritt zu einer Wirtschaftssimulation, und
+die ist in Abschnitt 12 des Konzepts ausdrücklich ausgeschlossen.
+
 ## Das Ladensymbol: dieselbe Waage, aus der freien Ausgabe
 
 `assets/laden.svg` trägt **denselben** `scale-balanced`-Pfad, den auch die
