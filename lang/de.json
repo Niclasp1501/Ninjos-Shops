@@ -278,5 +278,7 @@
   "SHOPS.Monitor.Erklaerung": "Angehakte Benutzer werden beim Vorzeigen als Schauansicht vorgeschlagen. Der Ausschlag gibt trotzdem die Auswahl im Ladenfenster.",
   "SHOPS.Monitor.AusInPerson": "Die Antwort kommt gerade von Ninjo's In-Person Tools. Dort ist eingestellt, wer ein Monitor ist — diese Liste bewirkt nichts, solange das Modul läuft.",
   "SHOPS.Monitor.Sichern": "Merken",
-  "SHOPS.Monitor.Gesichert": "{anzahl} als Monitor gemerkt."
+  "SHOPS.Monitor.Gesichert": "{anzahl} als Monitor gemerkt.",
+  "SHOPS.Schau.Ausweg": "Escape schließt diese Ansicht",
+  "SHOPS.Schau.Sanduhr": "Sanduhr: wie lange diese Seite noch steht"
 }

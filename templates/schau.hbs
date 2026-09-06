@@ -34,16 +34,76 @@
     <p class="shops-schau-leer">{{localize "SHOPS.Schau.Leer"}}</p>
   {{/if}}
 
-  {{!-- Der Fuß trägt die Seitenzahl und den Fortschritt. Ohne ihn rät der
-        Saal, wie lange eine Seite noch steht. --}}
+  {{!--
+    Der Fuß sagt, wie lange eine Seite noch steht. Ohne ihn rät der Saal.
+
+    Eine **Sanduhr** und kein Fortschrittsbalken: Der Balken war die einzige
+    Stelle, an der die Anzeige nach Software aussah statt nach einer Bude auf
+    einem Marktplatz. Eine Sanduhr sagt dasselbe und gehört in die Welt — und
+    sie sagt es sogar besser, weil jeder sie ohne Erklärung liest.
+  --}}
   {{#if mehrereSeiten}}
     <footer class="shops-schau-fuss">
       <span class="shops-schau-seite">{{seite}} / {{seiten}}</span>
-      <span class="shops-schau-balken {{#unless laeuft}}shops-schau-haelt{{/unless}}"><i></i></span>
+
       {{#unless laeuft}}
         <span class="shops-schau-pause">{{localize "SHOPS.Schau.Angehalten"}}</span>
       {{/unless}}
+
+      <span class="shops-sanduhr {{#unless laeuft}}shops-sanduhr-haelt{{/unless}}"
+            role="img" aria-label="{{localize 'SHOPS.Schau.Sanduhr'}}">
+        <svg viewBox="0 0 30 40" aria-hidden="true">
+          <defs>
+            {{!-- Zwei Trichter, an der Enge zusammengestoßen. Der Sand wird
+                  daran beschnitten, damit er die Form füllt statt in einem
+                  Rechteck zu stehen. --}}
+            <clipPath id="shops-sand-oben">
+              <path d="M5 4.6 H25 L16.1 18.6 H13.9 Z"></path>
+            </clipPath>
+            <clipPath id="shops-sand-unten">
+              <path d="M13.9 21.4 H16.1 L25 35.4 H5 Z"></path>
+            </clipPath>
+          </defs>
+
+          {{!--
+            Der Beschnitt sitzt an einer **ruhenden Gruppe**, das bewegte
+            Rechteck steckt darin. Am bewegten Element selbst wandert er mit:
+            Ein `clip-path` wird im Koordinatensystem seines Elements
+            aufgelöst, und das verschiebt die Verschiebung gleich mit — der
+            Sand wurde dann nie beschnitten, sondern lief unten aus dem Glas
+            heraus. So gesehen am 06.09.2026.
+          --}}
+          <g class="shops-sanduhr-sand">
+            <g clip-path="url(#shops-sand-oben)">
+              <rect class="shops-sand-oben" x="0" y="4" width="30" height="15"></rect>
+            </g>
+            <g clip-path="url(#shops-sand-unten)">
+              <rect class="shops-sand-unten" x="0" y="21" width="30" height="15"></rect>
+            </g>
+            <rect class="shops-sand-faden" x="14.2" y="18" width="1.6" height="4"></rect>
+          </g>
+
+          <g class="shops-sanduhr-glas">
+            <path d="M5 4.6 H25 L16.1 18.6 H13.9 Z"></path>
+            <path d="M13.9 21.4 H16.1 L25 35.4 H5 Z"></path>
+          </g>
+
+          {{!-- Die Fassungen tragen das Gold, das Glas nur eine helle Kante —
+                sonst verschwimmt der Sand mit seinem Behälter. --}}
+          <g class="shops-sanduhr-fassung">
+            <rect x="2.6" y="1.4" width="24.8" height="3.2" rx="1.6"></rect>
+            <rect x="2.6" y="35.4" width="24.8" height="3.2" rx="1.6"></rect>
+          </g>
+        </svg>
+      </span>
     </footer>
+  {{/if}}
+
+  {{!-- Die Schicht deckt den ganzen Bildschirm, also auch den Ladenbogen mit
+        seiner Steuerung. Wer sie sich nur ansieht, braucht einen Weg heraus —
+        auf einem Monitor stünde der Hinweis für niemanden da. --}}
+  {{#if ausweg}}
+    <span class="shops-schau-ausweg">{{localize "SHOPS.Schau.Ausweg"}}</span>
   {{/if}}
 
 </div>

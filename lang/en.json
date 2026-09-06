@@ -278,5 +278,7 @@
   "SHOPS.Monitor.Erklaerung": "Ticked users are proposed for the display view when a shop is shown. The choice in the shop window still decides.",
   "SHOPS.Monitor.AusInPerson": "The answer currently comes from Ninjo's In-Person Tools. Who counts as a display is set there — this list does nothing while that module runs.",
   "SHOPS.Monitor.Sichern": "Remember",
-  "SHOPS.Monitor.Gesichert": "{anzahl} remembered as displays."
+  "SHOPS.Monitor.Gesichert": "{anzahl} remembered as displays.",
+  "SHOPS.Schau.Ausweg": "Escape closes this view",
+  "SHOPS.Schau.Sanduhr": "Hourglass: how long this page still stands"
 }

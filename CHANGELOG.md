@@ -110,6 +110,14 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Eine Sanduhr statt des Fortschrittsbalkens** in der Schauansicht. Der
+  Balken war die einzige Stelle, an der die Anzeige nach Software aussah statt
+  nach einer Bude auf einem Marktplatz. Der Sand rieselt über die Standzeit
+  der Seite; steht die Anzeige, wird er blass und der Faden verschwindet.
+- **Escape schließt die Schauansicht** — aber nur für die Spielleitung. Auf
+  einem Monitor gibt es den Hinweis nicht, dort sitzt niemand. Wer sie sich
+  ansieht, saß sonst in der Falle: Die Schicht deckt den ganzen Bildschirm,
+  also auch den Ladenbogen mit seiner Steuerung.
 - **Die Einstellungen stehen jetzt auch im Titelleisten-Menü**, neben den
   beiden Büchern. Der Regler im Kopfbild bleibt — aber er sitzt am rechten
   Rand des Banners, und dort ist er auf einem schmalen Schirm, unter einem

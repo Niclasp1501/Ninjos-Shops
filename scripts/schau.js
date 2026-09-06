@@ -76,12 +76,34 @@ function schichtHolen() {
   schicht.id = `${MODULE_ID}-schau`;
   schicht.className = "ninjos-shops shops-schau";
   document.body.append(schicht);
+
+  /*
+   * **Ein Ausweg, aber nur fuer die Spielleitung.** Auf einem Monitor ist die
+   * Schicht mit Absicht unbedienbar - dort sitzt niemand. Wer sie sich aber
+   * einmal ansehen will, sitzt davor und haette sonst nichts als die
+   * Aktualisierungstaste: Die Schicht deckt den ganzen Bildschirm, also auch
+   * den Ladenbogen mit seiner Steuerung. Escape schliesst sie deshalb - und
+   * fuer alle anderen tut die Taste nichts.
+   */
+  if (game.user.isGM) {
+    schicht.dataset.ausweg = "1";
+    document.addEventListener("keydown", escapeHoren, { capture: true });
+  }
   return schicht;
+}
+
+function escapeHoren(ereignis) {
+  if (ereignis.key !== "Escape") return;
+  if (!schicht?.isConnected) return;
+  ereignis.preventDefault();
+  ereignis.stopPropagation();
+  schauSchliessen();
 }
 
 /** Die Schicht wegraeumen. */
 export function schauSchliessen() {
   clearTimeout(balkenTakt);
+  document.removeEventListener("keydown", escapeHoren, { capture: true });
   schicht?.remove();
   schicht = null;
 }
@@ -112,7 +134,10 @@ export async function schauZeichnen(laden, { seite = 0, seiten = 1, takt = 0 } =
       seite: seite + 1,
       seiten,
       mehrereSeiten: seiten > 1,
-      laeuft: takt > 0
+      laeuft: takt > 0,
+      // Nur die Spielleitung sieht ihn: Auf einem Monitor waere er ein Hinweis
+      // an niemanden.
+      ausweg: game.user.isGM
     }
   );
 
@@ -125,13 +150,24 @@ export async function schauZeichnen(laden, { seite = 0, seiten = 1, takt = 0 } =
    * und springt - der Browser hat den Anfangswert dann nie gesehen.
    */
   clearTimeout(balkenTakt);
-  const balken = el.querySelector(".shops-schau-balken > i");
-  if (balken && takt > 0) {
-    balken.style.transition = "none";
-    balken.style.width = "0%";
+  const oben = el.querySelector(".shops-sand-oben");
+  const unten = el.querySelector(".shops-sand-unten");
+  if (oben && unten && takt > 0) {
+    /*
+     * Der Sand faellt ueber eine Verschiebung, nicht ueber eine Hoehe: Die
+     * Rechtecke stecken in einem Beschnitt in Trichterform, und geschoben
+     * wird der Ausschnitt. Eine animierte Hoehe waere dasselbe Bild mit mehr
+     * Rechenarbeit und in Safari unzuverlaessig.
+     */
+    for (const [feld, von] of [[oben, 0], [unten, 15]]) {
+      feld.style.transition = "none";
+      feld.style.transform = `translateY(${von}px)`;
+    }
     balkenTakt = setTimeout(() => {
-      balken.style.transition = `width ${takt}s linear`;
-      balken.style.width = "100%";
+      oben.style.transition = `transform ${takt}s linear`;
+      unten.style.transition = `transform ${takt}s linear`;
+      oben.style.transform = "translateY(15px)";
+      unten.style.transform = "translateY(0)";
     }, 30);
   }
 }

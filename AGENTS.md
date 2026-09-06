@@ -544,6 +544,29 @@ Versprechen ins Leere.
 weißer Schirm im abgedunkelten Wohnzimmer blendet. Das ist der eine Ort im
 Modul, an dem die Farben bewusst kippen.
 
+### Die Sanduhr, und die Falle im `clip-path`
+
+Der Fortschrittsbalken war die einzige Stelle, an der die Schauansicht nach
+Software aussah statt nach einer Bude auf einem Marktplatz. Eine Sanduhr sagt
+dasselbe und liest sich ohne Erklärung.
+
+**Der Beschnitt gehört an eine ruhende Gruppe, nicht an das bewegte Element.**
+Zwei Rechtecke stecken in Trichter-Beschnitten und werden über die Standzeit
+verschoben. Sitzt der `clip-path` am Rechteck selbst, wandert er mit: Er wird
+im Koordinatensystem *seines* Elements aufgelöst, und die Verschiebung steckt
+schon darin. Der Sand wurde dann nie beschnitten — er lief unten aus dem Glas
+heraus und stand als Trapez unter der Fassung. Am 06.09.2026 gesehen und am
+Bild erkannt, nicht am Code.
+
+Verschoben wird, nicht die Höhe animiert: `transform` bewegt der Browser auf
+der Grafikkarte, eine animierte `height` rechnet er in jedem Bild neu.
+
+**Und ein Ausweg für die Spielleitung.** Die Schicht ist mit Absicht
+unbedienbar — auf einem Monitor sitzt niemand davor. Wer sie sich aber ansehen
+will, hat den ganzen Bildschirm zugedeckt, also auch die Steuerung im
+Ladenbogen. Escape schließt sie deshalb, und der Hinweis darauf erscheint nur
+bei der Spielleitung.
+
 ### Die Brücke fragt, drüben antwortet noch niemand
 
 `monitore.js` fragt die In-Person Tools nach `isMonitorUser` und fällt auf die

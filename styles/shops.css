@@ -2749,33 +2749,76 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding-top: .2rem;
   font-size: clamp(.75rem, 1.1vw, 1.1rem);
   color: #9d9384;
 }
 
 .ninjos-shops .shops-schau-seite { font-variant-numeric: tabular-nums; }
 
+/* ── Die Sanduhr ──────────────────────────────────────────────────── */
+
 /*
- * Der Fortschritt läuft als Linie am unteren Rand. Damit niemand rät, wie
- * lange eine Seite noch steht — das ist der Unterschied zwischen „es blättert
- * gleich" und „ist es stehengeblieben?".
+ * **Warum keine Fortschrittslinie mehr.** Der Balken war die einzige Stelle
+ * der Schauansicht, an der sie nach Software aussah statt nach einer Bude auf
+ * einem Marktplatz. Eine Sanduhr sagt dasselbe — und sie sagt es besser, weil
+ * jeder sie ohne Erklärung liest.
+ *
+ * Der Sand wird nicht in der Höhe animiert, sondern verschoben: Zwei
+ * Rechtecke stecken in einem Beschnitt in Trichterform, und bewegt wird der
+ * Ausschnitt darin. Das ist eine Eigenschaft, die der Browser auf der
+ * Grafikkarte bewegt, und es hält die Form sauber.
  */
-.ninjos-shops .shops-schau-balken {
-  flex: 1 1 auto;
-  height: 4px;
-  border-radius: 2px;
-  background: #2d2620;
-  overflow: hidden;
-}
-
-.ninjos-shops .shops-schau-balken > i {
+.ninjos-shops .shops-sanduhr {
+  flex: 0 0 auto;
+  margin-left: auto;
   display: block;
-  width: 0;
-  height: 100%;
-  background: var(--shops-gold);
+  /*
+   * Gross genug, um aus zwei Metern eine Sanduhr zu sein. Der erste Versuch
+   * stand bei drei Zentimetern auf dem Schirm und las sich als Fliege - was
+   * die Uhr sagt, muss man aus derselben Entfernung erkennen wie den Preis.
+   */
+  height: clamp(3rem, 7vh, 5.5rem);
 }
 
-.ninjos-shops .shops-schau-haelt > i { background: #5a5147; }
+.ninjos-shops .shops-sanduhr svg {
+  height: 100%;
+  width: auto;
+  overflow: visible;
+}
+
+/* Das Glas: eine dünne Linie, kein Kasten. */
+/*
+ * Das Glas ist eine helle Kante, kein Kasten — und es liegt **über** dem Sand.
+ * Trügen beide dasselbe Gold, sähe man einen Klumpen statt einer Uhr.
+ */
+.ninjos-shops .shops-sanduhr-glas path {
+  fill: none;
+  stroke: rgba(255, 248, 232, .38);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+/* Die Fassungen oben und unten tragen das Gold — wie der Preis. */
+.ninjos-shops .shops-sanduhr-fassung rect { fill: var(--shops-gold); }
+
+/* Der Sand ist wärmer und matter als das Gold der Fassung. */
+.ninjos-shops .shops-sanduhr-sand rect { fill: #d7ac52; }
+
+/* Der rieselnde Faden. Er ist dünn und verschwindet, wenn nichts läuft. */
+.ninjos-shops .shops-sand-faden { opacity: .85; }
+.ninjos-shops .shops-sanduhr-haelt .shops-sand-faden { opacity: 0; }
+
+/*
+ * Angehalten wird der Sand blass: Die Uhr steht, und das soll man aus zwei
+ * Metern sehen, ohne das Wort daneben zu lesen.
+ */
+.ninjos-shops .shops-sanduhr-haelt .shops-sanduhr-sand rect { fill: #6b6152; }
+.ninjos-shops .shops-sanduhr-haelt .shops-sanduhr-fassung rect { fill: #6b6152; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ninjos-shops .shops-sanduhr-sand rect { transition: none !important; }
+}
 
 .ninjos-shops .shops-schau-pause {
   text-transform: uppercase;
@@ -2860,3 +2903,14 @@
   border-radius: 6px;
 }
 .ninjos-shops .shops-monitor-fremd i { color: var(--shops-gold); margin-right: 5px; }
+
+/* Der Ausweg für die Spielleitung. Klein, unten rechts, nicht im Weg. */
+.ninjos-shops .shops-schau-ausweg {
+  position: absolute;
+  right: clamp(1rem, 2.2vw, 2.2rem);
+  bottom: clamp(.6rem, 1.4vh, 1.2rem);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #6e6558;
+}
