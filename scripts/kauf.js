@@ -25,6 +25,7 @@ import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.
 import { grundpreisCp, preisCp, alsText } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { schreibeVorgang, schreibeErgebnis } from "./marktbuch.js";
+import { buchen } from "./ladenbuch.js";
 
 /** Muenzkuerzel in der Sprache des Clients. */
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -162,6 +163,17 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
   await schreibeErgebnis({
     laden, item, figur, kaeufer, ok: true,
     stueck, summeCp, dienst, ausAngebot: giltFuerDiesenKauf
+  });
+
+  // Und in die Theke des Ladens, wo auch der Spieler es wiederfindet.
+  await buchen(laden, {
+    art: "kauf",
+    userId: kaeuferId,
+    userName: kaeufer?.name ?? "?",
+    figurName: figur.name,
+    was: [{ name: item.name, menge: stueck }],
+    summeCp,
+    sonderpreis: giltFuerDiesenKauf
   });
 
   return {

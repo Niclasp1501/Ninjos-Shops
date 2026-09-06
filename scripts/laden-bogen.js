@@ -22,6 +22,7 @@ import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, KUPFERWERT } fr
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
 import { angebotDialog, angebotSenden, angebotZuruecknehmen } from "./angebot.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
+import { ladenbuchOeffnen } from "./ladenbuch.js";
 import {
   werSieht,
   vorzeigbareBenutzer,
@@ -52,6 +53,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       wareAnbieten: LadenBogen.#wareAnbieten,
       angebotZurueck: LadenBogen.#angebotZurueck,
       marktbuch: LadenBogen.#marktbuch,
+      ladenbuch: LadenBogen.#ladenbuch,
       zeigenAllen: LadenBogen.#zeigenAllen,
       zeigenAuswahl: LadenBogen.#zeigenAuswahl,
       schliessenAllen: LadenBogen.#schliessenAllen,
@@ -274,6 +276,11 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     if (!userId) return;
     await angebotZuruecknehmen(userId);
     this.render(false);
+  }
+
+  /** Das Buch dieses Ladens - was hier gehandelt wurde. */
+  static #ladenbuch() {
+    ladenbuchOeffnen(this.document);
   }
 
   /** Das Marktbuch aufschlagen. */

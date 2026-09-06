@@ -23,6 +23,7 @@ import { MODULE_ID, WARE, LADEN_TYP } from "./const.js";
 import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { schreibeVerkaufVorgang, schreibeVerkaufErgebnis } from "./marktbuch.js";
+import { buchen } from "./ladenbuch.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 
@@ -155,6 +156,14 @@ export async function fuehreVerkaufAus({ ladenUuid, itemId, figurUuid, menge = 1
   }
 
   await schreibeVerkaufErgebnis({ laden, name, figur, verkaeufer, ok: true, stueck, summeCp });
+  await buchen(laden, {
+    art: "verkauf",
+    userId: verkaeuferId,
+    userName: verkaeufer?.name ?? "?",
+    figurName: figur.name,
+    was: [{ name, menge: stueck }],
+    summeCp
+  });
 
   return {
     ok: true,
@@ -269,6 +278,17 @@ export async function fuehreAnkaufAus(sitzung) {
     laden, name: namen.join(", "), figur,
     verkaeufer: game.users.get(sitzung.spielerId),
     ok: true, stueck: sitzung.posten.length, summeCp
+  });
+
+  await buchen(laden, {
+    art: "verkauf",
+    userId: sitzung.spielerId,
+    userName: sitzung.spielerName,
+    figurName: figur.name,
+    was: sitzung.posten.map(p => ({ name: p.name, menge: p.menge })),
+    summeCp,
+    // Ein ausgehandelter Preis ist keiner nach Faktor - das gehoert dazu.
+    sonderpreis: true
   });
 
   return { ok: true, text: game.i18n.format("SHOPS.Anfrage.Erledigt", { preis: alsText(summeCp, kuerzel) }) };

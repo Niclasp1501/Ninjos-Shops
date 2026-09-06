@@ -21,6 +21,7 @@ import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
 import { socketEinrichten } from "./socket.js";
 import { zugaengeHaken, zugaengeEinrichten } from "./zugaenge.js";
 import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
+import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 
 function einstellungenEinrichten() {
@@ -100,6 +101,7 @@ Hooks.once("ready", async () => {
   socketEinrichten();
   zugaengeEinrichten();
   anfrageFensterEinrichten();
+  buchFensterEinrichten();
   await offenenLadenWiederherstellen();
   await willkommenZeigen();
 });

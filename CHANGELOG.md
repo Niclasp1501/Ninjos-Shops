@@ -6,6 +6,11 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Hinzugefügt
+- **Ladenbuch je Laden**, für alle zu öffnen: Die Spielleitung sieht jeden
+  Vorgang in diesem Laden, ein Spieler nur seine eigenen. Mit Richtung, Datum,
+  Summe und einer Zeile darunter, was insgesamt geflossen ist. Nicht zu
+  verwechseln mit dem Marktbuch — das bleibt das Journal der Spielleitung über
+  alle Läden und schreibt auch fehlgeschlagene Versuche mit.
 - **Verkaufen an den Laden**, in zwei Wegen. Angehakte Ware (`flags…ankauf` je
   Stück in der Auslage) geht sofort durch, zum Ankaufsfaktor des Ladens. Alles
   andere läuft über eine **Verkaufsanfrage**: Der Spieler packt zusammen, die

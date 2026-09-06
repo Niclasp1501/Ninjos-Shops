@@ -198,5 +198,17 @@
   "SHOPS.Anfrage.Bieten": "Name a price",
   "SHOPS.Anfrage.Abweisen": "Turn down",
   "SHOPS.Anfrage.Geboten": "Offered:",
-  "SHOPS.Anfrage.WartetAufAntwort": "waiting for an answer."
+  "SHOPS.Anfrage.WartetAufAntwort": "waiting for an answer.",
+  "SHOPS.Buch.Knopf": "Shop ledger",
+  "SHOPS.Buch.KnopfHinweis": "What you bought and sold here",
+  "SHOPS.Buch.Titel": "{laden} — Shop ledger",
+  "SHOPS.Buch.HinweisGM": "Everything traded in this shop. Players only see their own lines here.",
+  "SHOPS.Buch.HinweisSpieler": "Your dealings with this shop.",
+  "SHOPS.Buch.LeerGM": "Nothing has been traded in this shop yet.",
+  "SHOPS.Buch.LeerSpieler": "You have not bought or sold anything here yet.",
+  "SHOPS.Buch.Gekauft": "bought",
+  "SHOPS.Buch.Verkauft": "sold",
+  "SHOPS.Buch.Sonderpreis": "special price",
+  "SHOPS.Buch.Ausgegeben": "Spent:",
+  "SHOPS.Buch.Eingenommen": "Received:"
 }

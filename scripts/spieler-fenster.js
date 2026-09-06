@@ -51,6 +51,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       kaufen: SpielerFenster.#kaufen,
       verkaufen: SpielerFenster.#verkaufen,
       anfrageStellen: SpielerFenster.#anfrage,
+      ladenbuch: SpielerFenster.#ladenbuch,
       angebotAnnehmen: SpielerFenster.#angebotAnnehmen
     }
   };
@@ -242,6 +243,12 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
     const { packenOeffnen } = await import("./anfrage-fenster.js");
     packenOeffnen(this.#laden, figur);
+  }
+
+  /** Das eigene Buch bei diesem Laden. */
+  static async #ladenbuch() {
+    const { ladenbuchOeffnen } = await import("./ladenbuch.js");
+    ladenbuchOeffnen(this.#laden);
   }
 
   /** Ein Angebot annehmen - Menge und Preis stehen fest. */

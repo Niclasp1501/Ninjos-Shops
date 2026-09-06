@@ -1,0 +1,58 @@
+{{!--
+  Das Buch eines Ladens.
+
+  Die Spielleitung sieht alle Zeilen, jeder andere nur seine eigenen — die
+  Auswahl trifft `zeilenFuer()`, nicht diese Vorlage. Sie bekommt gar nichts
+  anderes zu sehen.
+--}}
+<div class="shops-teil-buch">
+
+  <p class="shops-blockhinweis shops-buch-kopf">
+    {{#if istGM}}{{localize "SHOPS.Buch.HinweisGM"}}
+    {{else}}{{localize "SHOPS.Buch.HinweisSpieler"}}{{/if}}
+  </p>
+
+  {{#if zeilen.length}}
+    <ol class="shops-buchliste">
+      {{#each zeilen}}
+        <li class="shops-buchzeile {{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}">
+          <span class="shops-buch-pfeil" title="{{#if gekauft}}{{localize 'SHOPS.Buch.Gekauft'}}{{else}}{{localize 'SHOPS.Buch.Verkauft'}}{{/if}}">
+            {{#if gekauft}}
+              <i class="fa-solid fa-arrow-right"></i>
+            {{else}}
+              <i class="fa-solid fa-arrow-left"></i>
+            {{/if}}
+          </span>
+
+          <div class="shops-buch-inhalt">
+            <span class="shops-buch-was">{{wasText}}</span>
+            <span class="shops-buch-wer">
+              {{zeitText}}
+              {{#if ../istGM}}· {{userName}}{{/if}}
+              {{#if figurName}}· {{figurName}}{{/if}}
+              {{#if sonderpreis}}· <em>{{localize "SHOPS.Buch.Sonderpreis"}}</em>{{/if}}
+            </span>
+          </div>
+
+          <span class="shops-buch-summe">{{summeText}}</span>
+        </li>
+      {{/each}}
+    </ol>
+
+    <footer class="shops-buch-fuss">
+      <span>
+        <i class="fa-solid fa-arrow-right"></i>
+        {{localize "SHOPS.Buch.Ausgegeben"}} <strong>{{ausgegebenText}}</strong>
+      </span>
+      <span>
+        <i class="fa-solid fa-arrow-left"></i>
+        {{localize "SHOPS.Buch.Eingenommen"}} <strong>{{eingenommenText}}</strong>
+      </span>
+    </footer>
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">
+      {{#if istGM}}{{localize "SHOPS.Buch.LeerGM"}}
+      {{else}}{{localize "SHOPS.Buch.LeerSpieler"}}{{/if}}
+    </p>
+  {{/if}}
+</div>

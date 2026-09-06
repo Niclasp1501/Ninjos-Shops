@@ -214,6 +214,28 @@ Deshalb endet der Geltungsbereich am `.window-content`, und alles mit einer
 Farbregel für `button`, `i` oder `::before` ergänzt, prüft danach die
 Fensterleiste.
 
+## Zwei Bücher, und sie sind nicht dasselbe
+
+| | **Marktbuch** (`marktbuch.js`) | **Ladenbuch** (`ladenbuch.js`) |
+|---|---|---|
+| Wo | Journal, weltweit | Merkmal am einzelnen Laden |
+| Für wen | nur Spielleitung | alle — Spielleitung alles, Spieler nur eigenes |
+| Was | alle Läden, **auch fehlgeschlagene** Versuche, zweimal je Vorgang | ein Laden, nur was durchging |
+| Wofür | die Buchhaltung: wo sind die 400 Gold geblieben | die Ladentheke: was habe ich hier gehandelt |
+
+**Die Trennung im Ladenbuch ist eine Anzeige, kein Geheimnis.** Die Zeilen
+liegen als Merkmal auf dem Laden, und Foundry schickt jeden Weltakteur an jeden
+Client — wer die Konsole öffnet, liest auch die Zeilen der anderen. Für den
+Tisch reicht das: Es geht darum, dass niemand die Käufe der anderen
+*durchblättert*. Soll es dicht sein, müsste die Spielleitung jede Zeile einzeln
+über den Socket ausliefern, und das Buch wäre ohne sie leer. Das ist bewusst
+anders gelöst als beim Spielraum der Verkaufsanfrage, wo die Zahlen tatsächlich
+entfernt werden — dort hätte ein Blick in die Konsole die Verhandlung entwertet.
+
+**Höchstens 200 Zeilen je Laden.** Sie gehen in jede Weltsicherung und an jeden
+Client; ohne Grenze wächst ein vielbesuchter Laden unbemerkt weiter, bis jemand
+beim Laden der Welt wartet und niemand weiß, warum.
+
 ## Verkaufen: zwei Wege, und warum es zwei sind
 
 **Angehakte Ware geht sofort durch.** Der Ankaufsfaktor allein reicht als

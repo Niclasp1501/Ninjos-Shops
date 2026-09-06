@@ -198,5 +198,17 @@
   "SHOPS.Anfrage.Bieten": "Preis nennen",
   "SHOPS.Anfrage.Abweisen": "Abweisen",
   "SHOPS.Anfrage.Geboten": "Geboten:",
-  "SHOPS.Anfrage.WartetAufAntwort": "wartet auf Antwort."
+  "SHOPS.Anfrage.WartetAufAntwort": "wartet auf Antwort.",
+  "SHOPS.Buch.Knopf": "Ladenbuch",
+  "SHOPS.Buch.KnopfHinweis": "Was du hier gekauft und verkauft hast",
+  "SHOPS.Buch.Titel": "{laden} — Ladenbuch",
+  "SHOPS.Buch.HinweisGM": "Alles, was in diesem Laden gehandelt wurde. Die Spieler sehen hier nur ihre eigenen Zeilen.",
+  "SHOPS.Buch.HinweisSpieler": "Deine Geschäfte mit diesem Laden.",
+  "SHOPS.Buch.LeerGM": "In diesem Laden wurde noch nichts gehandelt.",
+  "SHOPS.Buch.LeerSpieler": "Du hast hier noch nichts gekauft oder verkauft.",
+  "SHOPS.Buch.Gekauft": "gekauft",
+  "SHOPS.Buch.Verkauft": "verkauft",
+  "SHOPS.Buch.Sonderpreis": "Sonderpreis",
+  "SHOPS.Buch.Ausgegeben": "Ausgegeben:",
+  "SHOPS.Buch.Eingenommen": "Erhalten:"
 }
