@@ -29,7 +29,7 @@ const MODULE_ID = "ninjos-shops";
 /* ── The only part that differs per module ────────────────────────── */
 
 const MODUL = {
-  name: "Ninjo's Shops",
+  name: "Ninjo's Shops & Trade",
   icon: "fa-solid fa-scale-balanced",
   slug: null,   // noch keine Forge-Seite
   untertitel: "SHOPS.Willkommen.Untertitel",

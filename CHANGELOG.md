@@ -5,6 +5,21 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
 ## [Unveröffentlicht]
 
+### Geändert (Name)
+- **Das Modul heißt jetzt „Ninjo's Shops & Trade".** Der Handel mit Leuten ohne
+  Laden ist fertig, in beide Richtungen, und ist keine Nebenfunktion — wer ein
+  Tauschfenster sucht, überliest „Shops". Die **Kennung bleibt `ninjos-shops`**
+  und ändert sich nie: Foundry führt jede Installation darüber, eine andere
+  Kennung wäre ein anderes Modul.
+
+### Behoben (Willkommensfenster)
+- **Der Starthinweis zeigte auf einen Knopf, den es nicht gibt.** „Im Kopf des
+  Bogens *Laden einrichten* wählen" — diese Beschriftung kommt im ganzen Modul
+  nicht vor. Der Weg ist die Waage in der Titelleiste des NSC-Bogens. Das war
+  der allererste Satz, den ein neuer Nutzer liest.
+- Das Fenster nannte den Handel gar nicht. Untertitel und dritter Punkt sagen
+  ihn jetzt.
+
 ### Hinzugefügt
 - **„Ich hätte da auch etwas" tut jetzt etwas.** Der Knopf im Handelsfenster
   zeigte bisher nur die Meldung, der Weg zurück werde gerade gebaut. Er öffnet

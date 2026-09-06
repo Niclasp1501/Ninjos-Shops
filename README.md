@@ -1,9 +1,14 @@
-# Ninjo's Shops
+# Ninjo's Shops & Trade
 
 Läden, die die Spielleitung **vorzeigt**, statt sie suchen zu lassen. Ein Laden
 ist ein eigenes Dokument mit echten Gegenständen im Inventar; wer ihn zu sehen
 bekommt, entscheidet die Spielleitung — an alle, an einzelne Spieler, oder an
 niemanden, weil er an eine Szene gebunden ist.
+
+Und **Handel mit Leuten, die keinen Laden führen**: Aus jedem NSC-Bogen legt die
+Spielleitung ausgewählte Stücke zu ausgewählten Preisen hin, in beide
+Richtungen. Deshalb steht „Trade" im Namen — es ist kein Anhängsel des
+Ladengeschäfts, sondern ein eigener Weg.
 
 Für Foundry VTT v14 und dnd5e. Die vollständige Begründung, warum es so gebaut
 ist und nicht anders, steht in **[KONZEPT-shops.md](KONZEPT-shops.md)**. Wer

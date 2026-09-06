@@ -1,4 +1,4 @@
-# Konzept: Ninjo's Shops — Läden am Tisch
+# Konzept: Ninjo's Shops & Trade — Läden am Tisch
 
 Stand 05.09.2026, zweite Fassung. Grundlage: die fünf tatsächlich vorhandenen
 Ladenmodule im Foundry-Katalog, der Quelltext von `dnd5e/module/config.mjs` und
@@ -445,6 +445,14 @@ trägt weiterhin einen Vorschlag.
 1. **Der Name ist `Ninjo's Shops`**, Kennung `ninjos-shops`, Ordner
    `Ninjos-Shops`. Die Mehrzahl ist gemeint: Es sind viele kleine Läden, kein
    ein großer Marktplatz.
+
+   **Nachgezogen am 07.09.2026 auf `Ninjo's Shops & Trade`.** Der Handel mit
+   Leuten ohne Laden war da fertig, in beide Richtungen, und ist keine
+   Nebenfunktion — wer im Katalog ein Tauschfenster sucht, überliest „Shops".
+   Der Titel ist jederzeit änderbar, solange `module.json` und die Katalogseite
+   gleich lauten; die **Kennung bleibt `ninjos-shops`** und wird es immer, denn
+   Foundry führt jede Installation darüber. Eine geänderte Kennung wäre für
+   jede bestehende Installation ein anderes Modul.
 2. **Spieler dürfen verkaufen — je Laden eingestellt, ab Werk aus.** Und der
    Laden bekommt *wahlweise* eine eigene Kasse (`eigeneKasse`, Abschnitt 4):
    unbegrenztes Geld als Normalfall, ein Geldbeutel, der leer werden kann, wo

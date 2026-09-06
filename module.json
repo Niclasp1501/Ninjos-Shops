@@ -1,7 +1,7 @@
 {
   "id": "ninjos-shops",
-  "title": "Ninjo's Shops",
-  "version": "14.2609.39",
+  "title": "Ninjo's Shops & Trade",
+  "version": "14.2609.40",
   "compatibility": {
     "minimum": "13",
     "verified": "14",
@@ -15,7 +15,7 @@
       }
     }
   ],
-  "description": "Shops the gamemaster shows rather than the players find: put items on an NPC or a place, set a markup or fixed prices, then open the shop for everyone, for one player, or on the table's display. — Läden, die der Spielleiter vorzeigt statt sie suchen zu lassen.",
+  "description": "Shops the gamemaster shows rather than the players find, and trade with people who keep no shop: put goods on a place or an NPC, set a markup or fixed prices, then open it for everyone, for one player, or on the table's display. — Läden, die der Spielleiter vorzeigt statt sie suchen zu lassen, und Handel mit Leuten ohne Laden.",
   "relationships": {
     "systems": [
       {
