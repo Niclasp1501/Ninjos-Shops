@@ -136,7 +136,7 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
   }
 
   /** @override */
-  _onRender(context, options) {
+  async _onRender(context, options) {
     super._onRender(context, options);
     if (!this.isEditable) return;
 
@@ -189,11 +189,22 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
     }
 
     /*
-     * Zwei Listen, dieselbe Bauart. Kein `name=` an den Kaestchen: Mehrere
-     * Kaestchen unter einem Namen macht FormDataExtended zu Wahrheitswerten
-     * statt zu einer Liste - deshalb schreibt der Bogen sie hier von Hand.
+     * Das Szenenfeld wird gebaut, nicht geschrieben: Es traegt Ziehen und
+     * Fallenlassen und einen Auswahldialog, und eine Zeichenkette in der
+     * Vorlage haelt keine Ereignisse.
      */
-    for (const feld of ["benutzer", "szenen"]) {
+    const szenenPlatz = this.element.querySelector("[data-szenenfeld]");
+    if (szenenPlatz && !szenenPlatz.firstElementChild) {
+      const { szenenFeldBauen } = await import("./szenenfeld.js");
+      szenenPlatz.append(szenenFeldBauen(this.document, { bearbeitbar: this.isEditable }));
+    }
+
+    /*
+     * Kein `name=` an den Kaestchen: Mehrere Kaestchen unter einem Namen
+     * macht FormDataExtended zu Wahrheitswerten statt zu einer Liste -
+     * deshalb schreibt der Bogen sie hier von Hand.
+     */
+    for (const feld of ["benutzer"]) {
       for (const kasten of this.element.querySelectorAll(`[data-zugriff="${feld}"]`)) {
         kasten.addEventListener("change", () => {
           const gewaehlt = [...this.element.querySelectorAll(`[data-zugriff="${feld}"]:checked`)]

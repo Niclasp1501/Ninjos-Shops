@@ -182,21 +182,10 @@
       {{#if ueberall}}{{localize "SHOPS.Zugriff.SzenenUeberall"}}
       {{else}}{{localize "SHOPS.Zugriff.SzenenGebunden"}}{{/if}}
     </p>
-    <div class="shops-szenenbindung">
-      <ul class="shops-zugriffsliste">
-        {{#each szenen}}
-          <li>
-            <label>
-              <input type="checkbox" data-zugriff="szenen" value="{{id}}"
-                     {{checked gewaehlt}} {{#unless ../bearbeitbar}}disabled{{/unless}}>
-              <span class="shops-spielername">{{name}}</span>
-              {{#if aktiv}}<i class="fa-solid fa-circle shops-online"
-                              title="{{localize 'SHOPS.Zugriff.SzeneAktiv'}}"></i>{{/if}}
-            </label>
-          </li>
-        {{/each}}
-      </ul>
-    </div>
+    {{!-- Das Feld baut laden-einstellungen.js beim Zeichnen: Es trägt
+          Ziehen und Fallenlassen, und eine Zeichenkette hält keine
+          Ereignisse. --}}
+    <div class="shops-szenenbindung" data-szenenfeld></div>
 
     {{!--
       Der weltweite Schalter steht ueber allem hier. Wer ihn nicht kennt,

@@ -129,6 +129,15 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Szenen zieht man jetzt hinein.** Statt einer Liste aus hundert Kästchen
+  gibt es ein Feld: eine Szene aus der Seitenleiste hineinziehen, oder über
+  „Szene wählen …" aus einer Liste suchen, in die man tippen kann. Gewählte
+  Szenen stehen als Chips mit ihrem Kartenbild da — was man angehakt hat, sah
+  man vorher nur als Namen.
+- **Und es geht auch von der Szene aus:** Im Szenenfenster unter
+  „Verschiedenes" steht „Läden auf dieser Karte". Dort zieht man einen Laden
+  aus dem Akteursverzeichnis hinein. **Gespeichert wird trotzdem am Laden** —
+  zwei Listen, die dasselbe meinen, laufen auseinander.
 - **Der Verkäufer steht rechts im Kopf**, als Gesicht mit Namen, und der
   Streifen ist höher geworden. Als kleine Zeile unter dem Ladennamen las er
   sich wie eine Fußnote zum Schild — dabei ist er das Gegenüber im Handel und

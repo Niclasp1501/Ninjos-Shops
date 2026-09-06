@@ -409,6 +409,31 @@ weder den Pfeil der Käufe noch das Rot der Fehlschläge, sondern den goldenen
 Streifen. Und das Ja trägt die gedämpfte Marke, nicht die rote — rot bleibt
 dem Nein.
 
+## Zwei Fenster, ein Speicher
+
+Die Szenenbindung lässt sich an zwei Stellen bearbeiten: in den
+Ladeneinstellungen („Auf welchen Szenen") und im Szenenfenster unter
+*Verschiedenes* („Läden auf dieser Karte"). **Gespeichert wird nur an einer**:
+`system.zugriff.szenen` am Laden. Das Szenenfenster ist ein zweites Fenster auf
+dieselben Daten und legt nichts eigenes an — ein Merkmal an der Szene wäre eine
+zweite Liste, die dasselbe meint, und die läuft auseinander (dieselbe
+Begründung wie bei `verknuepfung.js`).
+
+Daraus folgt eine Eigenheit: **Der Szenenbogen schickt beim Speichern nur seine
+eigenen Felder ab.** Ein `flags.…`-Feld darin würde am Laden nichts ändern.
+Jeder Zug und jeder Klick im Szenenfenster schreibt deshalb sofort ans
+Ladendokument — nicht beim Absenden.
+
+**Der Reiter ist `.tab[data-tab="misc"]`, und das `.tab` ist wesentlich.** Zwei
+Elemente tragen `data-tab="misc"`: der Knopf in der Reiterleiste und die Seite
+darunter. Der Knopf kommt im Dokument zuerst — ohne `.tab` landen die Felder in
+der Leiste und liegen über allem. (Das steht so auch in den In-Person Tools,
+deren Szenenfeld hier Vorbild war.)
+
+**Und in einem fremden Fenster färbt man selbst.** Der Chip erbte die
+Schriftfarbe von Foundrys dunklem Szenenbogen und stand hell auf hell.
+Dieselbe Falle wie bei den Knöpfen und der Nahansicht.
+
 ## Wer und wo sind zwei Fragen
 
 `zugriff.modus` beantwortet, **wer** einen Laden selbst aufmachen darf;

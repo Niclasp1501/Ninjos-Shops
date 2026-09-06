@@ -29,6 +29,7 @@ import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.j
 import { handelFensterEinrichten } from "./handel-fenster.js";
 import { schauWiederherstellen } from "./schau.js";
 import { monitorEinstellungEinrichten } from "./monitore.js";
+import { szenenBogenEinrichten } from "./szenenfeld.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
 
 function einstellungenEinrichten() {
@@ -124,6 +125,7 @@ Hooks.once("ready", async () => {
   buchFensterEinrichten();
   verknuepfungEinrichten();
   handelFensterEinrichten();
+  szenenBogenEinrichten();
   await verknuepfungNachtragen();
   await offenenLadenWiederherstellen();
   await schauWiederherstellen();

@@ -3390,3 +3390,154 @@
 
 /* Das Reglersymbol rückt nach oben, damit es dem Gesicht nicht im Weg steht. */
 .ninjos-shops .shops-zahnrad { align-self: flex-start; }
+
+/* ── Szenen hineinziehen ──────────────────────────────────────────── */
+
+/*
+ * **Warum keine Häkchenliste mehr.** Bei über hundert Szenen ist eine Liste
+ * aus hundert Kästchen keine Auswahl, sondern eine Suchaufgabe — und was man
+ * angehakt hat, sieht man hinterher nur als Namen, ohne ein Bild der Karte.
+ * Hineinziehen, auswählen, herausnehmen.
+ */
+.ninjos-shops .shops-szenenfeld {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ninjos-shops .shops-szenenfeld-ablage,
+.ninjos-shops .shops-szenenlaeden-ablage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 3.2rem;
+  padding: 7px;
+  align-items: center;
+  background: var(--shops-nav);
+  border: 1px dashed var(--shops-rand);
+  border-radius: 7px;
+  transition: border-color .12s, background .12s;
+}
+
+.ninjos-shops .shops-darueber {
+  border-color: var(--shops-gold);
+  border-style: solid;
+  background: var(--shops-gold-fond, rgba(212, 175, 55, .14));
+}
+
+.ninjos-shops .shops-szenenfeld-hinweis {
+  font-size: .82rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+/* Eine gewählte Szene als Chip mit ihrem Bild — das kann eine Liste nicht. */
+/*
+ * **Die Farbe muss stehen.** Im Szenenfenster erbt der Chip die Schriftfarbe
+ * von Foundrys dunklem Bogen - hell auf hell, und der Ladenname war nicht zu
+ * lesen. Dieselbe Falle wie bei den Knöpfen und der Nahansicht: Was in einem
+ * fremden Fenster steht, färbt man selbst.
+ */
+.ninjos-shops .shops-szenenchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--shops-text);
+  padding: 3px 4px 3px 3px;
+  font-size: .84rem;
+  background-color: var(--shops-karte);
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+  border: 1px solid var(--shops-rand);
+  border-radius: 999px;
+}
+
+.ninjos-shops .shops-szenenchip > img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-szenenchip-weg {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: .7rem;
+  color: var(--shops-text-blass);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-szenenchip-weg:hover {
+  color: #fff;
+  background: var(--shops-rot);
+}
+
+.ninjos-shops .shops-szenenfeld-knoepfe button {
+  padding: 3px 10px;
+  font-size: .8rem;
+  color: var(--shops-text);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.ninjos-shops .shops-szenenfeld-knoepfe button:hover { border-color: var(--shops-gold); }
+
+/* ── Die Auswahlliste ─────────────────────────────────────────────── */
+
+.ninjos-shops .shops-szenenwahl-inhalt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+
+.ninjos-shops .shops-szenenwahl-liste {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ninjos-shops .shops-szenenwahl-zeile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 4px 8px;
+  text-align: left;
+  font-size: .88rem;
+  color: var(--shops-text);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-szenenwahl-zeile:hover { border-color: var(--shops-gold); }
+.ninjos-shops .shops-szenenwahl-zeile > img {
+  width: 42px; height: 30px; object-fit: cover;
+  border-radius: 4px; border: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-szenenwahl-zeile > span { flex: 1 1 auto; min-width: 0; }
+.ninjos-shops .shops-szenenwahl-zeile em {
+  font-size: .72rem; font-style: normal; color: var(--shops-gold);
+}
+.ninjos-shops .shops-schon-drin { border-color: var(--shops-gold); }
+.ninjos-shops .shops-schon-drin i { color: var(--shops-gold); }
+
+/* ── Im Szenenfenster ─────────────────────────────────────────────── */
+
+/* Der Kasten steht in einem fremden, dunklen Fenster - Beschriftung hell. */
+.ninjos-shops.shops-szenenlaeden legend { font-weight: 700; color: inherit; }
+.ninjos-shops.shops-szenenlaeden .shops-szenenfeld-hinweis { color: inherit; opacity: .75; }

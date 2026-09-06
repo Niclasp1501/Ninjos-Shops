@@ -288,5 +288,15 @@
   "SHOPS.Einstellung.SchauLicht.Hinweis": "Dunkel blendet im abgedunkelten Zimmer nicht. Pergament ist auf einem Fernseher bei Tageslicht besser zu lesen.",
   "SHOPS.Einstellung.SchauLicht.Dunkel": "Dunkel — für den abgedunkelten Raum",
   "SHOPS.Einstellung.SchauLicht.Pergament": "Pergament — für helle Räume",
-  "SHOPS.Haendler.Marke": "Verkäufer"
+  "SHOPS.Haendler.Marke": "Verkäufer",
+  "SHOPS.Szenenfeld.Waehlen": "Szene wählen …",
+  "SHOPS.Szenenfeld.Filter": "Nach Namen suchen …",
+  "SHOPS.Szenenfeld.Ueberall": "Zieh eine Szene hierher. Keine heißt: überall erreichbar.",
+  "SHOPS.Szenenfeld.Entfernen": "Aus der Liste nehmen",
+  "SHOPS.Szenenfeld.KeineSzene": "Das war keine Szene.",
+  "SHOPS.Szenenfeld.Fort": "Szene gelöscht",
+  "SHOPS.Szenenfeld.Legende": "Läden auf dieser Karte",
+  "SHOPS.Szenenfeld.SzeneHinweis": "Zieh einen Laden aus dem Akteursverzeichnis hierher. Er ist dann nur erreichbar, wer diese Karte vor sich hat. Gespeichert wird das am Laden.",
+  "SHOPS.Szenenfeld.KeinLaden": "Auf dieser Karte steht kein Laden.",
+  "SHOPS.Szenenfeld.KeinLadenGezogen": "Das war kein Laden."
 }

@@ -288,5 +288,15 @@
   "SHOPS.Einstellung.SchauLicht.Hinweis": "Dark does not dazzle in a dimmed room. Parchment reads better on a television in daylight.",
   "SHOPS.Einstellung.SchauLicht.Dunkel": "Dark — for a dimmed room",
   "SHOPS.Einstellung.SchauLicht.Pergament": "Parchment — for bright rooms",
-  "SHOPS.Haendler.Marke": "Keeper"
+  "SHOPS.Haendler.Marke": "Keeper",
+  "SHOPS.Szenenfeld.Waehlen": "Pick a scene …",
+  "SHOPS.Szenenfeld.Filter": "Search by name …",
+  "SHOPS.Szenenfeld.Ueberall": "Drag a scene in here. None means: reachable everywhere.",
+  "SHOPS.Szenenfeld.Entfernen": "Take off the list",
+  "SHOPS.Szenenfeld.KeineSzene": "That was not a scene.",
+  "SHOPS.Szenenfeld.Fort": "Scene deleted",
+  "SHOPS.Szenenfeld.Legende": "Shops on this map",
+  "SHOPS.Szenenfeld.SzeneHinweis": "Drag a shop from the actor directory in here. It is then reachable only to whoever has this map in front of them. This is stored on the shop.",
+  "SHOPS.Szenenfeld.KeinLaden": "No shop stands on this map.",
+  "SHOPS.Szenenfeld.KeinLadenGezogen": "That was not a shop."
 }
