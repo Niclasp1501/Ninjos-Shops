@@ -64,6 +64,13 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Ein Handel lässt sich ablehnen.** „Danke, nein" gibt zurück, was hingehalten
+  wurde, räumt das Fenster weg und sagt der Spielleitung Bescheid. Vorher blieb
+  es stehen, bis sie es selbst zurücknahm — und sie erfuhr nie, dass der
+  Spieler längst weiter war.
+- **Auch im Handel lässt sich ein Stück ansehen.** Klick auf Bild oder Namen
+  öffnet es groß mit seiner Beschreibung. Der Preis kommt dabei vom Handel und
+  nicht aus einer Ladenrechnung — eine Person hat keinen Aufschlag.
 - **Die Knöpfe im Akteursverzeichnis lassen sich abschalten** — beide, nur
   einer, oder keiner. Sie stehen in einem Fenster, das dem Modul nicht gehört;
   wer sein Verzeichnis aufgeräumt haben will, soll das können.
@@ -136,6 +143,9 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Das Handelsfenster sieht aus wie das Ladenfenster**: Bild in 56 Pixeln,
+  Preis in Gold, dieselbe Zeile. Es ist dieselbe Handlung — jemand hält etwas
+  hin, man sieht es sich an und nimmt es oder nicht.
 - **Fenster gehen so weit auf, wie ihr Inhalt braucht** — höchstens bis zum
   Bildrand. Der Ladenbogen wächst auf genau die Höhe, bei der nichts mehr
   scrollt; das Spielerfenster geht bis an die Kante, wenn der Bildschirm nicht

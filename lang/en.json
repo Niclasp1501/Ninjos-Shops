@@ -306,5 +306,10 @@
   "SHOPS.Einstellung.Verzeichnisleiste.Buch": "Only the market ledger",
   "SHOPS.Einstellung.Verzeichnisleiste.Keine": "None — leave the directory alone",
   "SHOPS.Marktbuch.MenuHinweis": "Every purchase and sale across all shops, with a filter and the reasons for everything that failed.",
-  "SHOPS.Marktbuch.Aufschlagen": "Open it"
+  "SHOPS.Marktbuch.Aufschlagen": "Open it",
+  "SHOPS.Handel.Ablehnen": "No, thank you",
+  "SHOPS.Handel.AblehnenTitel": "Decline?",
+  "SHOPS.Handel.AblehnenFrage": "You hand back what {person} held out to you. The window goes away, and they are told.",
+  "SHOPS.Handel.AblehnenJa": "Decline",
+  "SHOPS.Handel.Abgelehnt": "{spieler} declined what {person} held out."
 }

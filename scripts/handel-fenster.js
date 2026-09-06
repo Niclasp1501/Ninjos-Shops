@@ -12,7 +12,7 @@
 import { MODULE_ID } from "./const.js";
 import { grundpreisCp, alsText, KUPFERWERT } from "./preise.js";
 import {
-  handelSenden, eigenerHandel, postenNehmen, OFFENER_HANDEL
+  handelSenden, eigenerHandel, postenNehmen, handelAblehnen, OFFENER_HANDEL
 } from "./handel.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -119,6 +119,8 @@ export class HandelFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     window: { icon: "fa-solid fa-handshake", resizable: true },
     actions: {
       nehmen: HandelFenster.#nehmen,
+      ansehen: HandelFenster.#ansehen,
+      ablehnen: HandelFenster.#ablehnen,
       anbieten: HandelFenster.#anbieten
     }
   };
@@ -154,6 +156,44 @@ export class HandelFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   static #nehmen(ereignis, ziel) {
     const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
     if (itemId) postenNehmen(itemId);
+  }
+
+  /**
+   * Das Stueck aus der Naehe ansehen.
+   *
+   * Derselbe Weg wie im Laden - nur haelt es hier eine Person, und der Preis
+   * steht fest statt sich aus einem Aufschlag zu ergeben.
+   */
+  static async #ansehen(ereignis, ziel) {
+    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    const handel = eigenerHandel();
+    const posten = handel?.posten?.find(p => p.itemId === itemId);
+    if (!posten) return;
+
+    const person = await fromUuid(handel.personUuid);
+    if (!person) return;
+
+    const { wareAnsehen } = await import("./ware-ansehen.js");
+    wareAnsehen(person, itemId, {
+      preisCp: posten.preisCp * posten.menge,
+      kaufen: id => postenNehmen(id)
+    });
+  }
+
+  /** Danke, nein. */
+  static async #ablehnen() {
+    const handel = eigenerHandel();
+    const sicher = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("SHOPS.Handel.AblehnenTitel") },
+      classes: ["ninjos-shops"],
+      content: `<p class="shops-kaufdialog">${game.i18n.format("SHOPS.Handel.AblehnenFrage", {
+        person: foundry.utils.escapeHTML(handel?.personName ?? "")
+      })}</p>`,
+      yes: { label: game.i18n.localize("SHOPS.Handel.AblehnenJa"), icon: "fa-solid fa-hand" },
+      no: { label: game.i18n.localize("SHOPS.Abbrechen") },
+      defaultYes: false
+    });
+    if (sicher) handelAblehnen();
   }
 
   /** „Ich haette da auch etwas" - der Weg zurueck, wenn er offen steht. */

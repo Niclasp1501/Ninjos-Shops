@@ -147,6 +147,27 @@ export function postenNehmen(itemId) {
   if (game.user.isGM) aufHandel(bitte);
 }
 
+/**
+ * Danke, nein.
+ *
+ * **Warum es das geben muss.** Ohne Ablehnen bleibt das Fenster stehen, bis
+ * die Spielleitung es zuruecknimmt - und die merkt nicht, dass der Spieler
+ * laengst weitergegangen ist. Ein Angebot, das man nur annehmen oder ignorieren
+ * kann, ist keine Frage, sondern eine Auslage.
+ *
+ * Weggeraeumt wird bei der Spielleitung: Das Merkmal liegt am Benutzer, und
+ * ein Spieler schreibt es nicht selbst - dieselbe Bauweise wie ueberall sonst.
+ */
+export function handelAblehnen() {
+  const handel = game.user.getFlag(MODULE_ID, OFFENER_HANDEL);
+  if (!handel) return;
+
+  const bitte = { typ: SOCKET.HANDEL, tat: "ablehnen", spielerId: game.user.id,
+                  bitteId: bittenKennung() };
+  game.socket.emit(SOCKET.NAME, bitte);
+  if (game.user.isGM) aufHandel(bitte);
+}
+
 /* ── Ausfuehren, bei der Spielleitung ──────────────────────────────── */
 
 /**
@@ -228,6 +249,18 @@ export async function aufHandel(daten) {
     if (Array.isArray(daten.an) && !daten.an.includes(game.user.id)) return;
     const { handelFensterZeigen } = await import("./handel-fenster.js");
     return void handelFensterZeigen();
+  }
+
+  if (daten.tat === "ablehnen") {
+    if (!await darfIchAusfuehren(daten.bitteId)) return;
+    const spieler = game.users.get(daten.spielerId);
+    const handel = spieler?.getFlag(MODULE_ID, OFFENER_HANDEL);
+    await spieler?.unsetFlag(MODULE_ID, OFFENER_HANDEL);
+    game.socket.emit(SOCKET.NAME, { typ: SOCKET.HANDEL, tat: "offen", an: [daten.spielerId], handel: null });
+    ui.notifications.info(game.i18n.format("SHOPS.Handel.Abgelehnt", {
+      spieler: spieler?.name ?? "?", person: handel?.personName ?? "?"
+    }));
+    return;
   }
 
   if (daten.tat === "nehmen") {

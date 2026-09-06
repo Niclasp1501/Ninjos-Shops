@@ -36,22 +36,31 @@ export class WareAnsehen extends HandlebarsApplicationMixin(ApplicationV2) {
     body: { template: `modules/${MODULE_ID}/templates/ware-ansehen.hbs`, scrollable: [".shops-ansehen-text"] }
   };
 
-  #laden;
+  #traeger;
   #itemId;
+  #vorgabe;
 
-  constructor(laden, itemId, options = {}) {
+  /**
+   * @param {Actor} traeger   Wer das Stueck haelt - ein Laden oder eine Person
+   * @param {string} itemId
+   * @param {object} [vorgabe]
+   * @param {number} [vorgabe.preisCp]   Fester Preis (Handel, Angebot)
+   * @param {Function} [vorgabe.kaufen]  Was der Kaufknopf tut
+   */
+  constructor(traeger, itemId, vorgabe = null, options = {}) {
     super(options);
-    this.#laden = laden;
+    this.#traeger = traeger;
     this.#itemId = itemId;
+    this.#vorgabe = vorgabe;
   }
 
   get title() {
-    return this.#laden?.items?.get(this.#itemId)?.name ?? game.i18n.localize("SHOPS.Ansehen.Titel");
+    return this.#traeger?.items?.get(this.#itemId)?.name ?? game.i18n.localize("SHOPS.Ansehen.Titel");
   }
 
   async _prepareContext(options) {
     const ctx = await super._prepareContext(options);
-    const item = this.#laden?.items?.get(this.#itemId);
+    const item = this.#traeger?.items?.get(this.#itemId);
     if (!item) return Object.assign(ctx, { name: "?", beschreibung: null });
 
     const merkmal = item.flags?.[MODULE_ID] ?? {};
@@ -79,23 +88,37 @@ export class WareAnsehen extends HandlebarsApplicationMixin(ApplicationV2) {
       dienst,
       menge,
       beschreibung,
-      preisText: alsText(preisCp(grundpreisCp(item.system?.price), this.#laden.system, fest), kuerzel),
+      /*
+       * **Ein Preis kann von aussen kommen.** Im Laden rechnet ihn der Laden;
+       * bei einem Handel oder einem Angebot steht er fest, und dann waere die
+       * Ladenrechnung schlicht falsch - eine Person hat keinen Aufschlag.
+       */
+      preisText: alsText(
+        Number.isFinite(this.#vorgabe?.preisCp)
+          ? this.#vorgabe.preisCp
+          : preisCp(grundpreisCp(item.system?.price), this.#traeger.system, fest),
+        kuerzel),
       // Gesperrt heisst ansehen ja, kaufen nein - genau hier ist der Fall.
-      kaufbar: this.#laden.system?.kaufmodus !== KAUFMODUS.GESPERRT
-        && (dienst || menge > 0) && !!game.users.activeGM
+      kaufbar: this.#vorgabe
+        ? typeof this.#vorgabe.kaufen === "function"
+        : (this.#traeger.system?.kaufmodus !== KAUFMODUS.GESPERRT
+           && (dienst || menge > 0) && !!game.users.activeGM)
     });
   }
 
   /** Von hier aus kaufen - dasselbe wie im Regal, nur ohne Zurueckblaettern. */
   static async #hierKaufen() {
-    const { spielerFensterKaufen } = await import("./spieler-fenster.js");
+    const id = this.#itemId;
+    const eigen = this.#vorgabe?.kaufen;
     this.close();
-    spielerFensterKaufen(this.#itemId);
+    if (eigen) return void eigen(id);
+    const { spielerFensterKaufen } = await import("./spieler-fenster.js");
+    spielerFensterKaufen(id);
   }
 }
 
 /** Ein Stueck ansehen. Ein zweites ersetzt das erste. */
-export function wareAnsehen(laden, itemId) {
+export function wareAnsehen(traeger, itemId, vorgabe = null) {
   foundry.applications.instances.get(`${MODULE_ID}-ansehen`)?.close();
-  return new WareAnsehen(laden, itemId).render(true);
+  return new WareAnsehen(traeger, itemId, vorgabe).render(true);
 }

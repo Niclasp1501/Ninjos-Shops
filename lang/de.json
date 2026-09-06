@@ -306,5 +306,10 @@
   "SHOPS.Einstellung.Verzeichnisleiste.Buch": "Nur das Marktbuch",
   "SHOPS.Einstellung.Verzeichnisleiste.Keine": "Keine — das Verzeichnis bleibt unberührt",
   "SHOPS.Marktbuch.MenuHinweis": "Alle Käufe und Verkäufe über alle Läden, mit Filter und den Gründen für alles, was scheiterte.",
-  "SHOPS.Marktbuch.Aufschlagen": "Aufschlagen"
+  "SHOPS.Marktbuch.Aufschlagen": "Aufschlagen",
+  "SHOPS.Handel.Ablehnen": "Danke, nein",
+  "SHOPS.Handel.AblehnenTitel": "Ablehnen?",
+  "SHOPS.Handel.AblehnenFrage": "Du gibst {person} zurück, was sie dir hingehalten hat. Das Fenster verschwindet, und sie erfährt davon.",
+  "SHOPS.Handel.AblehnenJa": "Ablehnen",
+  "SHOPS.Handel.Abgelehnt": "{spieler} hat abgelehnt, was {person} hingehalten hat."
 }

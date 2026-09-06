@@ -3541,3 +3541,57 @@
 /* Der Kasten steht in einem fremden, dunklen Fenster - Beschriftung hell. */
 .ninjos-shops.shops-szenenlaeden legend { font-weight: 700; color: inherit; }
 .ninjos-shops.shops-szenenlaeden .shops-szenenfeld-hinweis { color: inherit; opacity: .75; }
+
+/* ── Der Handel bekommt denselben Auftritt wie das Ladenfenster ───── */
+
+/*
+ * Es ist dieselbe Handlung — jemand hält etwas hin, man sieht es sich an und
+ * nimmt es oder nicht. Dass es dafür zwei verschiedene Zeilenbilder gäbe,
+ * wäre nur der Zufall, dass es zwei Dateien sind.
+ */
+.ninjos-shops .shops-handel-liste > li.shops-zeile {
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.ninjos-shops .shops-handel-liste > li.shops-zeile > img {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 7px;
+  border: 1px solid var(--shops-rand);
+  background: var(--shops-nav);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+  cursor: zoom-in;
+  transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+
+.ninjos-shops .shops-handel-liste > li.shops-zeile:hover > img {
+  transform: scale(1.04);
+  border-color: var(--shops-gold);
+}
+
+.ninjos-shops .shops-handel-liste .shops-warenname {
+  font-size: 1.02rem;
+  cursor: zoom-in;
+}
+.ninjos-shops .shops-handel-liste .shops-warenname:hover { color: var(--shops-rot); }
+
+.ninjos-shops .shops-handel-liste .shops-preis {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #8a6d16;
+  font-variant-numeric: tabular-nums;
+}
+
+.ninjos-shops .shops-handel-liste .shops-menge { color: var(--shops-text-blass); }
+
+/* Nehmen ist die eine Handlung — sie darf gefüllt sein, hier ist es keine
+   Liste aus zehn gleichen Zeilen. */
+.ninjos-shops .shops-handel-fuss {
+  display: flex;
+  padding: 10px 18px;
+  border-top: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-handel-fuss .shops-kaufen { flex: 1 1 auto; justify-content: center; }
