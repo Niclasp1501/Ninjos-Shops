@@ -14,14 +14,21 @@
           Teil zu sehen sein soll - der Regler daneben schiebt den Ausschnitt,
           und die Vorschau zeigt sofort, was oben stehen wird. --}}
     <div class="shops-kopfbild-wahl">
-      <div class="shops-kopfbild-vorschau" data-edit="img" data-action="editImage"
-           style="background-image: url('{{ladenBild}}'); background-position: 50% {{laden.kopfFokus}}%;"
-           title="{{localize 'SHOPS.Feld.KopfbildWaehlen'}}">
-        <span class="shops-kopfbild-hinweis">
-          <i class="fa-solid fa-image"></i>
-          {{localize "SHOPS.Feld.KopfbildWaehlen"}}
-        </span>
-      </div>
+      {{!--
+        **Ein `<img>`, kein `<div>` mit Hintergrundbild.** Foundrys Aktion
+        `editImage` wirft bei allem, was kein IMG ist
+        (document-sheet.mjs: "available only for IMG elements") - der Klick
+        auf die Vorschau tat deshalb schlicht nichts. Der Ausschnitt kommt
+        jetzt ueber `object-position` statt `background-position`.
+      --}}
+      <label class="shops-kopfbild-feld">
+        <span>{{localize "SHOPS.Feld.Kopfbild"}}</span>
+        <img class="shops-kopfbild-vorschau" src="{{ladenBild}}" alt=""
+             data-edit="img" data-action="editImage"
+             style="object-position: 50% {{laden.kopfFokus}}%;"
+             title="{{localize 'SHOPS.Feld.KopfbildWaehlen'}}">
+        <small>{{localize "SHOPS.Feld.KopfbildHinweis"}}</small>
+      </label>
 
       <label class="shops-fokus">
         <span>{{localize "SHOPS.Feld.Ausschnitt"}}</span>

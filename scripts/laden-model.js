@@ -15,7 +15,7 @@
  * jeder bestehenden Welt nicht mit um - dafuer braeuchte es eine Migration.
  */
 
-import { LADEN_TYP, LADEN_BILD, KAUFMODUS } from "./const.js";
+import { LADEN_TYP, LADEN_BILD, LADEN_SYMBOL, KAUFMODUS } from "./const.js";
 import { KUPFERWERT } from "./preise.js";
 
 const { StringField, NumberField, BooleanField, SchemaField, HTMLField, SetField } =
@@ -171,6 +171,28 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
  */
 export function ladenTypEinrichten() {
   Object.assign(CONFIG.Actor.dataModels, { [LADEN_TYP]: LadenModel });
+
+  /*
+   * Das Symbol im "Akteur erstellen"-Dialog und im Verzeichnis. Ohne diesen
+   * Eintrag bekommt ein fremder Untertyp Foundrys Kapuzenmaennchen - dasselbe
+   * Bild wie ein namenloser NSC, und in einer Liste aus sechs Typen ist der
+   * Laden dann der einzige ohne eigenes Zeichen.
+   *
+   * Dieselbe Waage wie in der Fensterleiste und auf den Knoepfen: Das Symbol
+   * des Haendlers, und es gab sie schon, als es noch keine Ladenmarkisen gab.
+   */
+  CONFIG.Actor.typeIcons ??= {};
+  CONFIG.Actor.typeIcons[LADEN_TYP] = "fa-solid fa-scale-balanced";
+
+  /*
+   * dnd5e zeichnet die Typen im Anlegen-Dialog nicht aus `typeIcons`, sondern
+   * aus `CONFIG.DND5E.defaultArtwork.Actor` - als `<dnd5e-icon src="...">`.
+   * Ohne Eintrag greift dort sein Rueckfall `documents/actor.svg`, also das
+   * Kapuzenmaennchen. Der Zugriff ist abgesichert: Laeuft ein anderes System,
+   * gibt es diesen Zweig nicht, und `typeIcons` oben traegt dann allein.
+   */
+  const dnd5e = CONFIG.DND5E?.defaultArtwork?.Actor;
+  if (dnd5e) dnd5e[LADEN_TYP] = LADEN_SYMBOL;
 }
 
 /**

@@ -1099,15 +1099,36 @@
  * beschnitten wird.
  */
 .ninjos-shops .shops-kopfbild-vorschau {
-  position: relative;
+  display: block;
+  width: 100%;
   height: 108px;
+  /* `object-fit` statt `background-size`: Die Vorschau ist ein Bildelement,
+     weil Foundrys Dateiwaehler nur an einem solchen haengt. */
+  object-fit: cover;
   border: 1px solid var(--shops-rand);
   border-radius: 6px;
-  background-color: var(--shops-nav);
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: var(--shops-nav);
   cursor: pointer;
-  overflow: hidden;
+}
+
+.ninjos-shops .shops-kopfbild-feld {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ninjos-shops .shops-kopfbild-feld > span {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-kopfbild-feld small,
+.ninjos-shops .shops-fokus small {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--shops-text-blass);
 }
 
 .ninjos-shops .shops-kopfbild-vorschau:hover { border-color: var(--shops-gold); }

@@ -13,7 +13,7 @@
  * Aktion `editImage`, die den Dateiwaehler oeffnet und den Pfad zurueckschreibt.
  */
 
-import { MODULE_ID, SETTINGS, KAUFMODUS } from "./const.js";
+import { MODULE_ID, SETTINGS, KAUFMODUS, LADEN_BILD } from "./const.js";
 import { KUPFERWERT } from "./preise.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
@@ -66,7 +66,7 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
     return Object.assign(ctx, {
       laden,
       bearbeitbar: this.isEditable,
-      ladenBild: this.document.img,
+      ladenBild: this.document.img || LADEN_BILD,
       tokenBild: this.document.prototypeToken?.texture?.src,
       begruessungText: alsSchlichterText(laden.begruessung),
 
@@ -101,6 +101,26 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
     });
   }
 
+  /**
+   * Ein Bildpfad ohne Endung darf nicht ins Formular.
+   *
+   * `FormDataExtended` sammelt jedes `img[data-edit]` mit ein und nimmt
+   * dessen `src`. Steht dort nichts - weil der Dateiwaehler abgebrochen wurde
+   * oder ein Laden gar kein Bild hat -, loest der Browser die leere Quelle zur
+   * Seitenadresse auf, und Foundry weist die Aenderung mit "does not have a
+   * valid file extension" ab. Der Fehler betrifft dann das **ganze** Formular:
+   * Aufschlag, Kaufmodus und Zugriff werden mit verworfen.
+   *
+   * @override
+   */
+  _prepareSubmitData(ereignis, formular, formularDaten, aktualisierung) {
+    const daten = super._prepareSubmitData(ereignis, formular, formularDaten, aktualisierung);
+    const pfad = daten?.img;
+    const sinnvoll = /\.[a-z0-9]{2,5}(\?.*)?$/i;
+    if (typeof pfad === "string" && !sinnvoll.test(pfad)) delete daten.img;
+    return daten;
+  }
+
   /** @override */
   _onRender(context, options) {
     super._onRender(context, options);
@@ -121,7 +141,7 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
     const vorschau = this.element.querySelector(".shops-kopfbild-vorschau");
     if (regler && vorschau) {
       regler.addEventListener("input", () => {
-        vorschau.style.backgroundPosition = `50% ${regler.value}%`;
+        vorschau.style.objectPosition = `50% ${regler.value}%`;
       });
     }
 

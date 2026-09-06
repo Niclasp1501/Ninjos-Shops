@@ -141,5 +141,6 @@
   "SHOPS.Zugang.Titel": "Welchen Laden?",
   "SHOPS.Zugang.Vorgezeigt": "wird dir gezeigt",
   "SHOPS.Zugang.KeineLaeden": "Für dich ist gerade kein Laden offen.",
-  "SHOPS.Zugang.NeuerLaden": "Neuer Laden"
+  "SHOPS.Zugang.NeuerLaden": "Neuer Laden",
+  "SHOPS.Feld.KopfbildHinweis": "Läuft als breiter Streifen über dem Laden — in deinem Bogen und im Fenster der Spieler. Ein Bild des Ladeninneren wirkt hier am besten."
 }

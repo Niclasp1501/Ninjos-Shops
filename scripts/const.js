@@ -45,6 +45,17 @@ export const VERKNUEPFT = "laeden";
  */
 export const LADEN_BILD = "icons/environment/settlement/market-stall.webp";
 
+/**
+ * Das Zeichen des Ladentyps - im Anlegen-Dialog und im Verzeichnis.
+ *
+ * Eigene Datei und kein Kernsymbol: dnd5e zeichnet die Akteurstypen als
+ * einfarbige Silhouetten (`systems/dnd5e/icons/svg/actors/`), und ein
+ * gewoehnliches Bild in dieser Reihe sieht aus wie ein Fehler. Ohne Eintrag
+ * bekommt ein fremder Untertyp dort dnd5es Kapuzenmaennchen - dasselbe Bild
+ * wie ein namenloser NSC.
+ */
+export const LADEN_SYMBOL = `modules/${MODULE_ID}/assets/laden.svg`;
+
 export const SETTINGS = {
   /**
    * Der eine Schalter, dessen Antwort man kennen muss, bevor man das Modul

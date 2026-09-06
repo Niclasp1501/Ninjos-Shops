@@ -90,6 +90,18 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   statt einer Ladenmarkise.
 
 ### Behoben
+- **Das Kopfbild ließ sich nicht wählen.** Die Vorschau war ein `<div>` mit
+  Hintergrundbild, und Foundrys Aktion `editImage` wirft bei allem, was kein
+  `<img>` ist — der Klick tat also schlicht nichts. Jetzt ein Bildelement, der
+  Ausschnitt kommt über `object-position`.
+- **Ein leeres Bildfeld verwarf das ganze Formular.** `FormDataExtended` sammelt
+  jedes `img[data-edit]` mit ein; ohne Quelle löst der Browser sie zur
+  Seitenadresse auf, und Foundry wies die Änderung mit „does not have a valid
+  file extension" ab — samt Aufschlag, Kaufmodus und Zugriff.
+- **Der Ladentyp trug dnd5es Kapuzenmännchen.** dnd5e zeichnet die Typen im
+  Anlegen-Dialog aus `CONFIG.DND5E.defaultArtwork.Actor`, nicht aus
+  `CONFIG.Actor.typeIcons`. Dazu eine eigene Waage als SVG (`assets/laden.svg`),
+  einfarbig wie die Symbole des Systems.
 - **Die Spieleransicht hatte keine Spaltenköpfe.** Welche Zahl der Bestand ist
   und welche der Preis, musste man raten. Beide Ansichten tragen den Kopf jetzt
   **innerhalb** der Liste — dort gilt für Kopf und Karten dieselbe

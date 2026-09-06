@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+  <!--
+    Die Waage des Haendlers - dasselbe Zeichen wie in der Fensterleiste und auf
+    den Knoepfen. Einfarbig und als Silhouette, damit sie neben dnd5es eigenen
+    Akteurssymbolen (icons/svg/actors/) nicht auffaellt: Die sind ebenso
+    gebaut, und ein buntes Bild in dieser Reihe sieht aus wie ein Fehler.
+
+    `fill="currentColor"` statt einer festen Farbe: Foundry faerbt diese
+    Symbole je nach Ort hell oder dunkel ein.
+  -->
+
+  <!-- Saeule und Fuss -->
+  <path d="M244 60h24v40h-24z"/>
+  <path d="M244 116h24v300h-24z"/>
+  <path d="M188 416h136c7 0 12 5 12 12v20H176v-20c0-7 5-12 12-12z"/>
+
+  <!-- Der Balken -->
+  <path d="M96 128h320v22H96z"/>
+
+  <!-- Die beiden Aufhaengungen -->
+  <path d="M104 150h8v58h-8zM400 150h8v58h-8z"/>
+
+  <!-- Linke Schale -->
+  <path d="M40 208h136c0 40-30 70-68 70s-68-30-68-70zm0-8h136v8H40z"/>
+
+  <!-- Rechte Schale -->
+  <path d="M336 208h136c0 40-30 70-68 70s-68-30-68-70zm0-8h136v8h-136z"/>
+
+  <!-- Der Knauf oben, damit die Saeule nicht abgeschnitten wirkt -->
+  <circle cx="256" cy="52" r="18"/>
+</svg>

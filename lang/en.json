@@ -141,5 +141,6 @@
   "SHOPS.Zugang.Titel": "Which shop?",
   "SHOPS.Zugang.Vorgezeigt": "being shown to you",
   "SHOPS.Zugang.KeineLaeden": "No shop is open for you right now.",
-  "SHOPS.Zugang.NeuerLaden": "New shop"
+  "SHOPS.Zugang.NeuerLaden": "New shop",
+  "SHOPS.Feld.KopfbildHinweis": "Runs as a wide band above the shop — on your sheet and in the players window. A picture of the interior works best."
 }
