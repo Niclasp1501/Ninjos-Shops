@@ -1588,6 +1588,28 @@
   color: var(--shops-text-blass);
 }
 
+/*
+ * Steht kein Laden dahinter, stammen die drei Zahlen unten aus keiner
+ * Einstellung. Das gehoert an den Kopf der Anfrage, nicht in eine Fussnote.
+ */
+.ninjos-shops .shops-marke-person {
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid var(--shops-rand);
+  border-radius: 999px;
+  background: var(--shops-karte);
+  font-size: 0.72rem;
+  color: var(--shops-text-blass);
+  white-space: nowrap;
+}
+
+/*
+ * Der Ladenknopf am Bogen einer Person, die noch keinen fuehrt: da, aber
+ * zurueckhaltend - er zeigt nichts an, er bietet etwas an.
+ */
+.ninjos-shops-ohne-laden { opacity: 0.5; }
+.ninjos-shops-ohne-laden:hover { opacity: 1; }
+
 .ninjos-shops .shops-anfrage-posten { padding: 6px 0; }
 .ninjos-shops .shops-anfrage-posten .shops-zeile {
   margin: 0 14px;
@@ -3591,7 +3613,16 @@
    Liste aus zehn gleichen Zeilen. */
 .ninjos-shops .shops-handel-fuss {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
   padding: 10px 18px;
   border-top: 1px solid var(--shops-rand);
 }
-.ninjos-shops .shops-handel-fuss .shops-kaufen { flex: 1 1 auto; justify-content: center; }
+.ninjos-shops .shops-handel-knoepfe {
+  display: flex;
+  /* Auf einem schmalen Fenster untereinander statt gequetscht. */
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ninjos-shops .shops-handel-fuss .shops-kaufen { flex: 1 1 12rem; justify-content: center; }
+.ninjos-shops .shops-handel-fuss .shops-blockhinweis { margin: 0; }

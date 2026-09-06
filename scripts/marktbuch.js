@@ -123,6 +123,23 @@ export async function schreibeHandel({ person, kaeufer, figur, ok, was, summeCp,
   });
 }
 
+/**
+ * Der Rueckweg desselben Handels: Der Spieler gibt etwas ab.
+ *
+ * Getrennt von `schreibeHandel`, weil die Richtung im Buch die eine Frage
+ * beantwortet, um die es dort geht - ist Geld gekommen oder gegangen. Beide
+ * Zeilen tragen `ausHandel`, damit sich spaeter erkennen laesst, dass kein
+ * Laden dahinterstand.
+ */
+export async function schreibeHandelVerkauf({ person, verkaeufer, figur, ok, was, summeCp, grund }) {
+  await eintragen({
+    art: "verkauf", ok: !!ok, ausHandel: true,
+    ladenName: person?.name ?? "?", ladenUuid: person?.uuid ?? null,
+    userName: verkaeufer?.name ?? "?", figurName: figur?.name ?? null,
+    was: was ?? [], summeCp: summeCp ?? 0, grund: ok ? null : (grund ?? null)
+  });
+}
+
 /** Ein Verkaufsversuch, der scheitert. */
 export async function schreibeVerkaufVorgang({ laden, item, figur, verkaeufer, pruefung }) {
   if (pruefung.ok) return;

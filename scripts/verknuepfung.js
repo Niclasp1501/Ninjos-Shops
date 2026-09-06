@@ -72,17 +72,8 @@ async function listeSetzen(uuid, ladenUuid, dazu) {
   await person.setFlag(MODULE_ID, VERKNUEPFT, neu);
 }
 
-/**
- * Einen Laden oeffnen, der an einem Dokument haengt.
- *
- * Bei zweien fragt es nach - ein Haendler mit zwei Staenden ist ausdruecklich
- * vorgesehen, und dann ist die Frage berechtigt statt laestig.
- */
-export async function ladenAmDokumentOeffnen(dokument) {
-  const laeden = laedenVon(dokument);
-  if (!laeden.length) return;
-  if (laeden.length === 1) return ladenAufmachen(laeden[0]);
-
+/** Einen aus einer Liste von Laeden aussuchen. Gibt den Akteur zurueck. */
+async function ausLaedenWaehlen(laeden, titel) {
   const zeilen = laeden.map(l => `
     <button type="button" class="shops-ladenwahl" data-uuid="${l.uuid}">
       <img src="${l.prototypeToken?.texture?.src || l.img}" alt="">
@@ -91,7 +82,7 @@ export async function ladenAmDokumentOeffnen(dokument) {
 
   const gewaehlt = await new Promise(fertig => {
     const dialog = new foundry.applications.api.DialogV2({
-      window: { title: game.i18n.localize("SHOPS.Zugang.Titel") },
+      window: { title: titel },
       classes: ["ninjos-shops"],
       content: `<div class="shops-wahl">${zeilen}</div>`,
       buttons: [{ action: "abbrechen", label: game.i18n.localize("SHOPS.Abbrechen") }],
@@ -105,7 +96,110 @@ export async function ladenAmDokumentOeffnen(dokument) {
     dialog.render(true);
   });
 
-  if (gewaehlt) ladenAufmachen(laeden.find(l => l.uuid === gewaehlt));
+  return gewaehlt ? laeden.find(l => l.uuid === gewaehlt) : null;
+}
+
+/**
+ * Einen Laden oeffnen, der an einem Dokument haengt.
+ *
+ * Bei zweien fragt es nach - ein Haendler mit zwei Staenden ist ausdruecklich
+ * vorgesehen, und dann ist die Frage berechtigt statt laestig.
+ *
+ * Haengt gar keiner dran, ist das fuer die Spielleitung keine Sackgasse,
+ * sondern der Anfang: Sie hat den Bogen gerade offen und will genau jetzt
+ * einen Laden daran haben.
+ */
+export async function ladenAmDokumentOeffnen(dokument) {
+  const laeden = laedenVon(dokument);
+  if (!laeden.length) return void ohneLaden(dokument);
+  if (laeden.length === 1) return ladenAufmachen(laeden[0]);
+
+  const gewaehlt = await ausLaedenWaehlen(laeden, game.i18n.localize("SHOPS.Zugang.Titel"));
+  if (gewaehlt) ladenAufmachen(gewaehlt);
+}
+
+/**
+ * Diese Person fuehrt noch keinen Laden - was nun.
+ *
+ * **Warum der Knopf trotzdem dasteht.** Frueher erschien er nur, wenn schon
+ * ein Laden dranhing. Damit war er als Anzeige brauchbar und als Weg
+ * unbrauchbar: Wer einem NSC einen Laden geben wollte, musste wissen, dass das
+ * ueber ein Feld im Ladenbogen geht - also im Fenster, das er noch gar nicht
+ * hat. Man legt einen Laden aber an, waehrend man die Person vor sich hat.
+ *
+ * Zwei Wege, weil es zwei Faelle gibt: Der Laden ist schon da und nur nicht
+ * verbunden, oder es gibt ihn noch nicht.
+ */
+async function ohneLaden(person) {
+  if (!game.user.isGM || person?.documentName !== "Actor") return;
+
+  const wahl = await foundry.applications.api.DialogV2.wait({
+    window: { title: game.i18n.localize("SHOPS.Verknuepfung.KeinLadenTitel"),
+              icon: "fa-solid fa-scale-balanced" },
+    classes: ["ninjos-shops"],
+    content: `<p class="shops-hinweisfeld">${game.i18n.format("SHOPS.Verknuepfung.KeinLadenText",
+      { person: foundry.utils.escapeHTML(person.name) })}</p>`,
+    buttons: [
+      { action: "verknuepfen", icon: "fa-solid fa-link",
+        label: game.i18n.localize("SHOPS.Verknuepfung.MitLadenVerbinden"),
+        callback: () => "verknuepfen" },
+      { action: "neu", icon: "fa-solid fa-plus",
+        label: game.i18n.localize("SHOPS.Verknuepfung.NeuerLaden"),
+        callback: () => "neu" },
+      { action: "abbrechen", label: game.i18n.localize("SHOPS.Abbrechen"),
+        callback: () => null }
+    ],
+    rejectClose: false
+  });
+
+  if (wahl === "verknuepfen") return void await ladenVerbinden(person);
+  if (wahl === "neu") return void await ladenFuerPersonAnlegen(person);
+}
+
+/** Einen vorhandenen Laden an diese Person haengen. */
+async function ladenVerbinden(person) {
+  const frei = game.actors.filter(a => a.type === LADEN_TYP);
+  if (!frei.length) {
+    return ui.notifications.info(game.i18n.localize("SHOPS.Verknuepfung.KeineLaedenDa"));
+  }
+
+  const laden = await ausLaedenWaehlen(frei, game.i18n.localize("SHOPS.Verknuepfung.MitLadenVerbinden"));
+  if (!laden) return;
+
+  /*
+   * Geschrieben wird nur `haendlerUuid`. Die Liste am NSC zieht der Haken in
+   * `verknuepfungEinrichten` nach - eine zweite Stelle, die dasselbe schreibt,
+   * waere genau die Doppelfuehrung, die oben ausgeschlossen ist.
+   */
+  await laden.update({ "system.haendlerUuid": person.uuid });
+  ui.notifications.info(game.i18n.format("SHOPS.Verknuepfung.Verbunden",
+    { laden: laden.name, person: person.name }));
+  ladenAufmachen(laden);
+}
+
+/**
+ * Einen neuen Laden fuer diese Person anlegen und aufmachen.
+ *
+ * Ohne `img`: Ein Laden ist ein Ort, kein Mensch, und `ladenBilderEinrichten`
+ * setzt dafuer ein passendes Standardbild. Das Portraet des Haendlers darauf
+ * zu legen sieht im Verzeichnis aus, als stuende die Person zweimal darin.
+ */
+async function ladenFuerPersonAnlegen(person) {
+  const laden = await Actor.implementation.create({
+    name: game.i18n.format("SHOPS.Verknuepfung.NeuerLadenName", { person: person.name }),
+    type: LADEN_TYP,
+    system: { haendlerUuid: person.uuid }
+  });
+  if (!laden) return;
+
+  /*
+   * `Actor.create` loest `preUpdateActor` nicht aus - der Haken sieht nur
+   * Aenderungen. Die Liste am NSC muss hier also von Hand gesetzt werden,
+   * sonst haette der neue Laden einen Verkaeufer, aber der Verkaeufer keinen
+   * Knopf zu seinem Laden.
+   */
+  await listeSetzen(person.uuid, laden.uuid, true);
+  ladenAufmachen(laden);
 }
 
 /**
@@ -145,22 +239,32 @@ function tokenKnopf(hud, element) {
  * keinen Knopf. Der Bogen der Person dagegen laesst sich immer oeffnen, und
  * genau das meint das Konzept mit „ein Haendlerbogen sagt: ich fuehre diesen
  * Laden".
+ *
+ * **Fuer die Spielleitung steht er immer da**, auch ohne Laden - dann fuehrt er
+ * zum Anlegen oder Verbinden (`ohneLaden`). Fuer Spieler nicht: Ein Knopf, der
+ * nur zu Werkzeugen fuehrt, die sie nicht bedienen duerfen, ist im Weg.
  */
 function bogenKnopf(app, element) {
   const dokument = app?.document;
   if (dokument?.documentName !== "Actor") return;
   if (dokument.type === LADEN_TYP) return;          // Der Laden selbst braucht ihn nicht.
-  if (!fuehrtEinenLaden(dokument)) return;
+
+  const hatLaden = fuehrtEinenLaden(dokument);
+  if (!hatLaden && !game.user.isGM) return;
 
   const wurzel = element instanceof HTMLElement ? element : element?.[0];
   const kopf = wurzel?.querySelector(".window-header");
   if (!kopf || kopf.querySelector(`.${MODULE_ID}-bogenknopf`)) return;
 
+  const beschriftung = game.i18n.localize(
+    hatLaden ? "SHOPS.Verknuepfung.Oeffnen" : "SHOPS.Verknuepfung.KeinLadenTitel");
+
   const knopf = document.createElement("button");
   knopf.type = "button";
   knopf.className = `header-control icon fa-solid fa-scale-balanced ${MODULE_ID}-bogenknopf`;
-  knopf.dataset.tooltip = game.i18n.localize("SHOPS.Verknuepfung.Oeffnen");
-  knopf.setAttribute("aria-label", game.i18n.localize("SHOPS.Verknuepfung.Oeffnen"));
+  if (!hatLaden) knopf.classList.add(`${MODULE_ID}-ohne-laden`);
+  knopf.dataset.tooltip = beschriftung;
+  knopf.setAttribute("aria-label", beschriftung);
   knopf.addEventListener("click", ereignis => {
     ereignis.preventDefault();
     ereignis.stopPropagation();

@@ -45,28 +45,29 @@ export class AnfragePacken extends HandlebarsApplicationMixin(ApplicationV2) {
     body: { template: `modules/${MODULE_ID}/templates/anfrage-packen.hbs`, scrollable: [".shops-packliste"] }
   };
 
-  #laden;
+  /** Ein Laden oder eine Person - dem Packen ist das gleich. */
+  #gegenueber;
   #figur;
   /** itemId -> Menge. Was gerade im Korb liegt. */
   #korb = new Map();
 
-  constructor(laden, figur, options = {}) {
+  constructor(gegenueber, figur, options = {}) {
     super(options);
-    this.#laden = laden;
+    this.#gegenueber = gegenueber;
     this.#figur = figur;
   }
 
   get title() {
-    return game.i18n.format("SHOPS.Anfrage.PackenTitel", { laden: this.#laden?.name ?? "" });
+    return game.i18n.format("SHOPS.Anfrage.PackenTitel", { laden: this.#gegenueber?.name ?? "" });
   }
 
   async _prepareContext(options) {
     const ctx = await super._prepareContext(options);
     const laufend = eigeneAnfrage();
-    const meine = laufend && laufend.ladenUuid === this.#laden?.uuid ? laufend : null;
+    const meine = laufend && laufend.gegenueberUuid === this.#gegenueber?.uuid ? laufend : null;
 
     return Object.assign(ctx, {
-      ladenName: this.#laden?.name,
+      gegenueberName: this.#gegenueber?.name,
       figurName: this.#figur?.name,
       anfrage: meine,
       wartet: meine?.zustand === ZUSTAND.GEPACKT,
@@ -108,7 +109,7 @@ export class AnfragePacken extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static #abschicken() {
     if (!this.#korb.size) return ui.notifications.warn(game.i18n.localize("SHOPS.Anfrage.KorbLeer"));
-    anfrageStellen(this.#laden, this.#figur,
+    anfrageStellen(this.#gegenueber, this.#figur,
       [...this.#korb].map(([itemId, menge]) => ({ itemId, menge })));
     this.#korb.clear();
     this.render(false);
@@ -230,10 +231,15 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
 let packen = null;
 let verhandeln = null;
 
-/** Das Packfenster oeffnen. */
-export function packenOeffnen(laden, figur) {
+/**
+ * Das Packfenster oeffnen.
+ *
+ * @param {Actor} gegenueber  Ein Laden oder eine Person ohne Laden
+ * @param {Actor} figur
+ */
+export function packenOeffnen(gegenueber, figur) {
   if (packen?.rendered) packen.close();
-  packen = new AnfragePacken(laden, figur);
+  packen = new AnfragePacken(gegenueber, figur);
   packen.render(true);
   return packen;
 }

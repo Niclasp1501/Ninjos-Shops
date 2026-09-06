@@ -22,6 +22,16 @@
  * seinem Client; stuenden die Preise darin, koennte er sich jeden beliebigen
  * schicken. Und es ueberlebt ein Neuladen.
  *
+ * **Ein Angebot darf an mehrere gehen, und das bleibt so.** Am Tisch haelt
+ * man ein Schwert in die Runde und nicht einem Einzelnen unter die Nase; ein
+ * Handel, der nur an eine Person gehen kann, waere ein Werkzeug fuer einen
+ * Fall, den es selten gibt. Nur: Das Schwert gibt es einmal. Deshalb ist
+ * **der Bestand die Wahrheit und nicht das Angebot** - wer zuerst zugreift,
+ * bekommt es, und bei allen anderen verschwindet es aus dem Fenster
+ * (`handelAbgleichen`). Dass nicht zwei gleichzeitig gewinnen koennen, sichert
+ * die Wahl in vorsitz.js: Genau eine Verbindung fuehrt aus, und sie tut es
+ * nacheinander.
+ *
  * **Das Geld der Person.** Ein NSC in dnd5e hat eine Boerse, und sie wird
  * belastet und gutgeschrieben. Sie **blockiert** aber nicht: Wer den Preis
  * genannt hat, hat entschieden, und ein Handel, der am leeren Beutel eines
@@ -111,6 +121,53 @@ export function handelTraeger() {
   return game.users.filter(u => u.getFlag(MODULE_ID, OFFENER_HANDEL));
 }
 
+/**
+ * Alle offenen Angebote dieser Person am wirklichen Bestand nachziehen.
+ *
+ * Der Fall, um den es geht: Die Spielleitung legt einer ganzen Gruppe
+ * dasselbe einzelne Stueck hin. Einer nimmt es. Ohne diese Funktion stuende
+ * es bei den anderen weiter im Fenster, sie klickten darauf, und erst danach
+ * saehen sie „Das liegt nicht mehr da". Mit ihr verschwindet es - und was nur
+ * teilweise weg ist (drei von fuenf Fackeln), steht mit der Zahl da, die noch
+ * stimmt.
+ *
+ * Laeuft nur bei der Spielleitung; ein Spieler schreibt fremde Merkmale nicht.
+ *
+ * @param {Actor} person
+ * @param {{benutzerId: string, itemId: string}} [verbraucht]
+ *        Was gerade genommen wurde - fuer den Nehmer ist dieser Posten
+ *        erledigt, auch wenn noch Bestand da ist.
+ */
+export async function handelAbgleichen(person, verbraucht = null) {
+  if (!game.user.isGM || !person) return;
+
+  for (const benutzer of game.users) {
+    const handel = benutzer.getFlag(MODULE_ID, OFFENER_HANDEL);
+    if (handel?.personUuid !== person.uuid) continue;
+
+    const neu = [];
+    for (const posten of handel.posten ?? []) {
+      if (verbraucht?.benutzerId === benutzer.id && verbraucht.itemId === posten.itemId) continue;
+      const bestand = Number(person.items.get(posten.itemId)?.system?.quantity ?? 0);
+      if (bestand <= 0) continue;
+      neu.push(bestand < posten.menge ? { ...posten, menge: bestand } : posten);
+    }
+
+    const kennung = liste => liste.map(p => `${p.itemId}:${p.menge}`).join("|");
+    if (kennung(handel.posten ?? []) === kennung(neu)) continue;
+
+    // Bleibt nichts und darf der Spieler auch nichts anbieten, ist der Handel
+    // vorbei - ein leeres Fenster ist eine Frage ohne Inhalt.
+    const nachher = (neu.length || handel.nimmtAn) ? { ...handel, posten: neu } : null;
+    if (nachher) await benutzer.setFlag(MODULE_ID, OFFENER_HANDEL, nachher);
+    else await benutzer.unsetFlag(MODULE_ID, OFFENER_HANDEL);
+
+    const paket = { typ: SOCKET.HANDEL, tat: "offen", an: [benutzer.id], handel: nachher };
+    game.socket.emit(SOCKET.NAME, paket);
+    if (benutzer.id === game.user.id) aufHandel(paket);
+  }
+}
+
 /* ── Was der Spieler sieht und tut ─────────────────────────────────── */
 
 /** Der eigene offene Handel, fertig fuer die Anzeige. */
@@ -177,6 +234,14 @@ export function handelAblehnen() {
  * dazwischen ab, gibt es den Gegenstand doppelt statt gar nicht - die
  * verkraftbare Haelfte des Ungluecks.
  */
+/**
+ * Waehrend ein Zugriff laeuft, raeumt er selbst auf.
+ *
+ * Ohne das schriebe der Haken unten mitten in den Vorgang hinein: `item.delete()`
+ * loest ihn aus, und dann aendern zwei Stellen dasselbe Merkmal.
+ */
+let laeuft = false;
+
 async function nehmenAusfuehren({ itemId, figurUuid, kaeuferId }) {
   const kaeufer = game.users.get(kaeuferId);
   const handel = kaeufer?.getFlag(MODULE_ID, OFFENER_HANDEL);
@@ -199,6 +264,7 @@ async function nehmenAusfuehren({ itemId, figurUuid, kaeuferId }) {
   }
 
   try {
+    laeuft = true;
     const kopie = item.toObject();
     delete kopie._id;
     kopie.system = kopie.system ?? {};
@@ -217,16 +283,17 @@ async function nehmenAusfuehren({ itemId, figurUuid, kaeuferId }) {
       await person.update({ "system.currency": schreibeGut(person.system.currency, summeCp) });
     }
 
-    // Der Posten ist verbraucht.
-    const rest2 = handel.posten.filter(p => p.itemId !== itemId);
-    if (rest2.length || handel.nimmtAn) {
-      await kaeufer.setFlag(MODULE_ID, OFFENER_HANDEL, { ...handel, posten: rest2 });
-    } else {
-      await kaeufer.unsetFlag(MODULE_ID, OFFENER_HANDEL);
-    }
+    /*
+     * Der Posten ist verbraucht - und zwar nicht nur beim Nehmer. Wer sonst
+     * dasselbe Angebot offen hat, sieht ab jetzt den Bestand, den es
+     * wirklich noch gibt.
+     */
+    await handelAbgleichen(person, { benutzerId: kaeuferId, itemId });
   } catch (fehler) {
     console.error(`${MODULE_ID} | Handel abgebrochen`, fehler);
     return { ok: false, grund: "SHOPS.Kauf.Abgebrochen" };
+  } finally {
+    laeuft = false;
   }
 
   const { schreibeHandel } = await import("./marktbuch.js");
@@ -241,6 +308,33 @@ async function nehmenAusfuehren({ itemId, figurUuid, kaeuferId }) {
       menge: posten.menge, name: posten.name, preis: alsText(summeCp, kuerzel)
     })
   };
+}
+
+/**
+ * Haken anmelden. Gehoert in `ready`.
+ *
+ * Nicht nur ein Zugriff veraendert den Bestand: Die Spielleitung nimmt einem
+ * NSC etwas ab, waehrend sein Angebot bei drei Leuten offen steht. Auch dann
+ * soll dort stehen, was es wirklich noch gibt.
+ *
+ * `createItem` fehlt mit Absicht. Was einmal aus einem Angebot herausgefallen
+ * ist, kommt nicht von selbst zurueck - das Angebot ist eine Zusage der
+ * Spielleitung, und die erneuert sie, indem sie es noch einmal hinlegt.
+ */
+export function handelEinrichten() {
+  if (!game.user.isGM) return;
+
+  const nachziehen = dokument => {
+    if (laeuft) return;
+    const person = dokument?.parent;
+    if (!person?.uuid) return;
+    const betroffen = game.users.some(u =>
+      u.getFlag(MODULE_ID, OFFENER_HANDEL)?.personUuid === person.uuid);
+    if (betroffen) handelAbgleichen(person);
+  };
+
+  Hooks.on("updateItem", nachziehen);
+  Hooks.on("deleteItem", nachziehen);
 }
 
 /** Einstiegspunkt aus socket.js. */

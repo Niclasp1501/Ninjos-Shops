@@ -22,6 +22,15 @@
  *
  * **Jede Aenderung setzt die Zusage zurueck.** Wer packt, nachdem die
  * Spielleitung einen Preis genannt hat, verhandelt neu.
+ *
+ * **Das Gegenueber muss kein Laden sein.** Anfangs war es einer, und die
+ * Sitzung hiess entsprechend `ladenUuid`. Dann kam der Handel mit Leuten ohne
+ * Laden dazu (handel.js) - und dessen Rueckweg ist Zeile fuer Zeile dasselbe:
+ * Der Spieler packt zusammen, die Spielleitung nennt einen Preis, beide sagen
+ * ja oder nein. Zwei Verhandlungen nebeneinander zu bauen hiesse, jede
+ * kuenftige Aenderung zweimal zu machen und die zweite beim ersten Mal zu
+ * vergessen. Deshalb heisst es hier `gegenueber`, und nur an zwei Stellen wird
+ * gefragt, ob es ein Laden ist: bei den Zahlen und beim Ausfuehren.
  */
 
 import { MODULE_ID, SOCKET, LADEN_TYP } from "./const.js";
@@ -41,6 +50,22 @@ export const ZUSTAND = {
 };
 
 const VORBEI = [ZUSTAND.ANGENOMMEN, ZUSTAND.ABGELEHNT, ZUSTAND.ZURUECKGEZOGEN];
+
+/**
+ * Was eine Person ohne Laden ueblicherweise zahlt, als Faktor auf den
+ * Grundpreis.
+ *
+ * Ein Laden hat dafuer ein Feld (`ankauf`), das im Werkszustand **0** ist -
+ * „kauft nichts an", damit kein Dorf ungefragt alles aufkauft. Eine Person
+ * hat kein solches Feld, und 0 waere hier die falsche Antwort: Die
+ * Spielleitung hat den Handel gerade selbst eroeffnet, will also handeln. Sie
+ * bekaeme nur drei Nullen hingelegt und muesste den Preis aus dem Nichts
+ * greifen.
+ *
+ * Die Haelfte ist die Zahl, die am Tisch ohnehin fällt. Sie ist ein
+ * **Vorschlag**, kein Preis: Was am Ende gilt, tippt die Spielleitung.
+ */
+const PERSON_ANKAUF = 0.5;
 
 /** Offene Anfragen. Nur auf dem Client der Spielleitung gefuellt. */
 const sitzungen = new Map();
@@ -91,14 +116,14 @@ async function beiSpielleitungWennGewaehlt(paket) {
 /**
  * Eine Anfrage abschicken.
  *
- * @param {Actor} laden
+ * @param {Actor} gegenueber  Ein Laden oder eine Person
  * @param {Actor} figur
  * @param {{itemId: string, menge: number}[]} posten
  */
-export function anfrageStellen(laden, figur, posten) {
+export function anfrageStellen(gegenueber, figur, posten) {
   anDieSpielleitung({
     tat: "stellen",
-    ladenUuid: laden.uuid,
+    gegenueberUuid: gegenueber.uuid,
     figurUuid: figur.uuid,
     posten: posten.map(p => ({ itemId: p.itemId, menge: Math.max(1, Math.floor(p.menge || 1)) }))
   });
@@ -199,11 +224,21 @@ async function beiSpielleitung(paket) {
  * vertretbar waere, und ueberlaesst die Entscheidung dem Tisch. Alles andere
  * waere eine Wirtschaftssimulation, und die ist ausdruecklich nicht gewollt.
  */
-async function anfrageAufnehmen({ ladenUuid, figurUuid, posten, von }) {
-  const laden = await fromUuid(ladenUuid);
+async function anfrageAufnehmen({ gegenueberUuid, figurUuid, posten, von }) {
+  const gegenueber = await fromUuid(gegenueberUuid);
   const figur = await fromUuid(figurUuid);
   const spieler = game.users.get(von);
-  if (laden?.type !== LADEN_TYP || !figur || !spieler) return;
+  if (!gegenueber || !figur || !spieler) return;
+
+  /*
+   * Ein Laden hat eine Ankaufspolitik, eine Person hat keine. Das sind die
+   * beiden einzigen Stellen im Ablauf, an denen der Unterschied zaehlt - der
+   * Rest der Verhandlung ist derselbe.
+   */
+  const istLaden = gegenueber.type === LADEN_TYP;
+  const politik = istLaden
+    ? gegenueber.system
+    : { ankauf: PERSON_ANKAUF, spielraum: 0.25 };
 
   // Eine Anfrage je Spieler. Eine zweite ersetzt die erste - aus demselben
   // Grund, aus dem es nur einen offenen Laden gibt.
@@ -224,17 +259,17 @@ async function anfrageAufnehmen({ ladenUuid, figurUuid, posten, von }) {
       menge,
       // Nur fuer die Spielleitung - wird vor dem Versand an den Spieler entfernt.
       grundCp,
-      ueblichCp: ankaufCp(grundCp, laden.system) * menge
+      ueblichCp: ankaufCp(grundCp, politik) * menge
     });
   }
   if (!zeilen.length) return;
 
   const ueblichCp = zeilen.reduce((s, z) => s + z.ueblichCp, 0);
-  const spielraum = laden.system.spielraum ?? 0.25;
+  const spielraum = politik.spielraum ?? 0.25;
 
   const sitzung = {
     id: foundry.utils.randomID(),
-    ladenUuid, ladenName: laden.name,
+    gegenueberUuid, gegenueberName: gegenueber.name, istLaden,
     figurUuid, figurName: figur.name,
     spielerId: von, spielerName: spieler.name,
     posten: zeilen,

@@ -27,6 +27,7 @@ import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.js";
 import { handelFensterEinrichten } from "./handel-fenster.js";
+import { handelEinrichten } from "./handel.js";
 import { schauWiederherstellen } from "./schau.js";
 import { monitorEinstellungEinrichten } from "./monitore.js";
 import { marktbuchEinstellungEinrichten } from "./marktbuch.js";
@@ -149,6 +150,7 @@ Hooks.once("ready", async () => {
   buchFensterEinrichten();
   verknuepfungEinrichten();
   handelFensterEinrichten();
+  handelEinrichten();
   szenenBogenEinrichten();
   await verknuepfungNachtragen();
   await offenenLadenWiederherstellen();

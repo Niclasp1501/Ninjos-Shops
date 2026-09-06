@@ -196,9 +196,27 @@ export class HandelFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     if (sicher) handelAblehnen();
   }
 
-  /** „Ich haette da auch etwas" - der Weg zurueck, wenn er offen steht. */
+  /**
+   * „Ich haette da auch etwas" - der Weg zurueck.
+   *
+   * **Dasselbe Fenster wie am Ladentresen.** Der Spieler packt zusammen, die
+   * Spielleitung nennt einen Preis, beide sagen ja oder nein. Ein zweites
+   * Fenster daneben zu bauen, das dasselbe tut, hiesse jede kuenftige
+   * Aenderung zweimal zu machen - und die zweite beim ersten Mal zu vergessen.
+   * Was `anfrage.js` dafuer kennen musste, war nur, dass ein Gegenueber nicht
+   * zwingend ein Laden ist.
+   */
   static async #anbieten() {
-    ui.notifications.info(game.i18n.localize("SHOPS.Handel.AnbietenSpaeter"));
+    const handel = eigenerHandel();
+    const figur = game.user.character;
+    if (!figur) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeineFigur"));
+    if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
+
+    const person = handel?.personUuid ? await fromUuid(handel.personUuid) : null;
+    if (!person) return;
+
+    const { packenOeffnen } = await import("./anfrage-fenster.js");
+    packenOeffnen(person, figur);
   }
 }
 

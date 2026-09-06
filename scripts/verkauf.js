@@ -225,18 +225,27 @@ export function verkaufslisteAufbereiten(laden, figur) {
  * Preis statt dem Ankaufsfaktor - und ohne die Pruefung auf den Haken: Die
  * Spielleitung hat der Sache eben ausdruecklich zugestimmt, das ist die
  * staerkere Erlaubnis.
+ *
+ * **Das Gegenueber kann eine Person ohne Laden sein.** Dann gilt, was in
+ * handel.js zur Boerse steht: Sie wird belastet, aber sie **blockiert nicht**.
+ * Wer den Preis genannt hat, hat entschieden; ein Handel, der am leeren Beutel
+ * eines NSC scheitert, den die Spielleitung selbst aufgesetzt hat, waere eine
+ * Ueberraschung ohne Nutzen. Ein Laden mit `eigeneKasse` kann sehr wohl
+ * pleitegehen - das ist der Unterschied zwischen einem Ort und einem Menschen,
+ * den man gerade am Feuer getroffen hat.
  */
 export async function fuehreAnkaufAus(sitzung) {
-  const laden = await fromUuid(sitzung.ladenUuid);
+  const gegenueber = await fromUuid(sitzung.gegenueberUuid);
   const figur = await fromUuid(sitzung.figurUuid);
-  if (!laden || !figur) return { ok: false, grund: "SHOPS.Kauf.KeinLaden" };
+  if (!gegenueber || !figur) return { ok: false, grund: "SHOPS.Kauf.KeinLaden" };
 
+  const istLaden = gegenueber.type === LADEN_TYP;
   const summeCp = Math.max(0, Math.round(sitzung.angebotCp ?? 0));
 
-  /* Kann der Laden das ueberhaupt zahlen? */
+  /* Kann der Laden das ueberhaupt zahlen? Eine Person wird nicht gefragt. */
   let ladenZahlt = null;
-  if (laden.system.eigeneKasse) {
-    ladenZahlt = bezahle(laden.system.kasse, summeCp);
+  if (istLaden && gegenueber.system.eigeneKasse) {
+    ladenZahlt = bezahle(gegenueber.system.kasse, summeCp);
     if (!ladenZahlt) return { ok: false, grund: "SHOPS.Verkauf.LadenPleite" };
   }
 
@@ -250,7 +259,7 @@ export async function fuehreAnkaufAus(sitzung) {
       namen.push(item.name);
 
       // Erst anlegen, dann abziehen - wie ueberall in diesem Modul.
-      const vorhanden = laden.items.find(i => i.name === item.name && i.type === item.type);
+      const vorhanden = gegenueber.items.find(i => i.name === item.name && i.type === item.type);
       if (vorhanden) {
         await vorhanden.update({ "system.quantity": Number(vorhanden.system.quantity ?? 0) + stueck });
       } else {
@@ -259,7 +268,7 @@ export async function fuehreAnkaufAus(sitzung) {
         kopie.system = kopie.system ?? {};
         kopie.system.quantity = stueck;
         delete kopie.flags?.[MODULE_ID];
-        await laden.createEmbeddedDocuments("Item", [kopie]);
+        await gegenueber.createEmbeddedDocuments("Item", [kopie]);
       }
 
       const rest = Number(item.system?.quantity ?? 0) - stueck;
@@ -268,28 +277,42 @@ export async function fuehreAnkaufAus(sitzung) {
     }
 
     await figur.update({ "system.currency": schreibeGut(figur.system?.currency ?? {}, summeCp) });
-    if (ladenZahlt) await laden.update({ "system.kasse": ladenZahlt.bestand });
+    if (ladenZahlt) await gegenueber.update({ "system.kasse": ladenZahlt.bestand });
+
+    // Der Beutel der Person, falls sie einen hat. Reicht er nicht, bleibt er
+    // unberuehrt - der Handel gilt trotzdem, siehe oben.
+    if (!istLaden && gegenueber.system?.currency) {
+      const gezahlt = bezahle(gegenueber.system.currency, summeCp);
+      if (gezahlt) await gegenueber.update({ "system.currency": gezahlt.bestand });
+    }
   } catch (fehler) {
     console.error(`${MODULE_ID} | Ankauf abgebrochen`, fehler);
     return { ok: false, grund: "SHOPS.Kauf.Abgebrochen" };
   }
 
-  await schreibeVerkaufErgebnis({
-    laden, name: namen.join(", "), figur,
-    verkaeufer: game.users.get(sitzung.spielerId),
-    ok: true, stueck: sitzung.posten.length, summeCp
-  });
+  const verkaeufer = game.users.get(sitzung.spielerId);
+  const was = sitzung.posten.map(p => ({ name: p.name, menge: p.menge }));
 
-  await buchen(laden, {
-    art: "verkauf",
-    userId: sitzung.spielerId,
-    userName: sitzung.spielerName,
-    figurName: figur.name,
-    was: sitzung.posten.map(p => ({ name: p.name, menge: p.menge })),
-    summeCp,
-    // Ein ausgehandelter Preis ist keiner nach Faktor - das gehoert dazu.
-    sonderpreis: true
-  });
+  if (istLaden) {
+    await schreibeVerkaufErgebnis({
+      laden: gegenueber, name: namen.join(", "), figur, verkaeufer,
+      ok: true, stueck: sitzung.posten.length, summeCp
+    });
+
+    // Nur ein Laden fuehrt ein Buch. Eine Person hat keines.
+    await buchen(gegenueber, {
+      art: "verkauf",
+      userId: sitzung.spielerId,
+      userName: sitzung.spielerName,
+      figurName: figur.name,
+      was, summeCp,
+      // Ein ausgehandelter Preis ist keiner nach Faktor - das gehoert dazu.
+      sonderpreis: true
+    });
+  } else {
+    const { schreibeHandelVerkauf } = await import("./marktbuch.js");
+    await schreibeHandelVerkauf({ person: gegenueber, verkaeufer, figur, ok: true, was, summeCp });
+  }
 
   return { ok: true, text: game.i18n.format("SHOPS.Anfrage.Erledigt", { preis: alsText(summeCp, kuerzel) }) };
 }

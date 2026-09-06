@@ -5,6 +5,32 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
 ## [Unveröffentlicht]
 
+### Hinzugefügt
+- **„Ich hätte da auch etwas" tut jetzt etwas.** Der Knopf im Handelsfenster
+  zeigte bisher nur die Meldung, der Weg zurück werde gerade gebaut. Er öffnet
+  jetzt dasselbe Packfenster wie am Ladentresen: zusammenpacken, die
+  Spielleitung nennt einen Preis, beide sagen ja oder nein. Dafür kennt die
+  Verhandlung ein **Gegenüber** statt eines Ladens — eine Person hat keine
+  Ankaufspolitik, deshalb schlägt das Modul ihr die halbe Grundsumme vor und
+  schreibt daneben, dass es ein Vorschlag ist.
+- **Der Ladenknopf steht am Bogen jeder Person**, nicht nur bei denen, die
+  schon einen Laden führen. Ohne Laden fragt er, ob ein vorhandener verbunden
+  oder ein neuer angelegt werden soll. Vorher musste man wissen, dass die
+  Verknüpfung über ein Feld im Ladenbogen läuft — also in einem Fenster, das
+  es noch gar nicht gab.
+
+### Geändert
+- **Ein Angebot an mehrere Leute räumt sich selbst auf.** Wer ein einzelnes
+  Stück einer ganzen Gruppe hinlegt, hatte bisher das Problem, dass es nach dem
+  ersten Zugriff bei allen anderen im Fenster stehen blieb; sie klickten darauf
+  und erfuhren erst danach, dass sie zu spät waren. Jetzt entscheidet der
+  Bestand: Was weg ist, verschwindet, und was nur teilweise weg ist, steht mit
+  der Zahl da, die noch stimmt. Das gilt auch, wenn die Spielleitung dem NSC
+  von Hand etwas abnimmt.
+- **Eine Fußleiste im Handelsfenster statt zweier.** „Danke, nein" und „Ich
+  hätte da auch etwas" standen in getrennten Kästen untereinander, und der
+  Hinweistext daneben wurde auf schmalen Fenstern abgeschnitten.
+
 ### Behoben
 - **Verborgene Ware trug zwei durchgestrichene Augen.** Eines kam aus der
   Vorlage, eines aus dem Stylesheet. Geblieben ist das aus der Vorlage — es

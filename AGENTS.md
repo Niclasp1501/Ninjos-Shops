@@ -38,8 +38,8 @@ für den Monitor und die Brücke zu den In-Person Tools.
 | `scripts/fensterpassen.js` | kein Fenster größer als der Bildschirm |
 | `scripts/zugaenge.js` | Verzeichnis-Knopf, Szenenwerkzeug, In-Person-Knopf |
 | `scripts/willkommen.js` | Willkommensfenster |
-| Schauansicht, Monitorbrücke | **existiert nicht** (Schritt 6) |
-| Rückweg im Handel ohne Laden | vorbereitet, nicht angeschlossen |
+| `scripts/schau.js`, `monitore.js` | Schauansicht und Monitorbrücke |
+| `scripts/szenenfeld.js` | Szenen an einen Laden hängen, per Drag & Drop |
 
 **Alles hier ist an der laufenden Welt „Geheimnisse der Abgründe" geprüft**
 (Foundry 14.367, dnd5e 5.3.3), am 06.09.2026 zuletzt mit **zwei Clients** —
@@ -362,11 +362,75 @@ dieselbe Begründung wie bei `angebot.js`: Die Antwort kommt vom Client des
 Spielers; stünden die Preise darin, könnte er sich jeden beliebigen schicken.
 Und es übersteht ein Neuladen.
 
+### Ein Angebot darf an mehrere gehen — der Bestand entscheidet
+
+Am Tisch hält man ein Schwert in die Runde, nicht einem Einzelnen unter die
+Nase. Ein Handel, der nur an eine Person gehen kann, wäre ein Werkzeug für
+einen Fall, den es selten gibt. Nur: Das Schwert gibt es einmal.
+
+Deshalb ist **der Bestand die Wahrheit und nicht das Angebot.** Wer zuerst
+zugreift, bekommt es. Dass nicht zwei gleichzeitig gewinnen können, sichert
+die Wahl in `vorsitz.js` — genau eine Verbindung führt aus, und sie tut es
+nacheinander; die zweite Bitte findet den Bestand schon verringert vor.
+
+`handelAbgleichen(person)` zieht danach **alle** offenen Angebote dieser Person
+am wirklichen Bestand nach: Was weg ist, verschwindet aus den anderen Fenstern;
+was nur teilweise weg ist (drei von fünf Fackeln), steht mit der Zahl da, die
+noch stimmt. Ohne das klickten die anderen auf etwas, das es nicht mehr gibt,
+und erfuhren erst danach, dass sie zu spät waren.
+
+Ein Haken auf `updateItem`/`deleteItem` macht dasselbe, wenn die Spielleitung
+dem NSC von Hand etwas abnimmt. Während ein Zugriff läuft, hält er still
+(`laeuft`) — sonst schrieben zwei Stellen dasselbe Merkmal. `createItem` fehlt
+mit Absicht: Was einmal aus einem Angebot gefallen ist, kommt nicht von selbst
+zurück; das Angebot ist eine Zusage, und die erneuert die Spielleitung, indem
+sie es noch einmal hinlegt.
+
+### Der Rückweg ist dieselbe Verhandlung, nicht eine zweite
+
+„Ich hätte da auch etwas" öffnet **das Packfenster aus `anfrage-fenster.js`** —
+dasselbe wie am Ladentresen. Dafür musste `anfrage.js` lernen, dass ein
+Gegenüber nicht zwingend ein Laden ist: Die Sitzung heißt seither
+`gegenueberUuid`/`gegenueberName` und trägt ein `istLaden`.
+
+Der Unterschied liegt an genau **zwei** Stellen:
+
+- **Die Zahlen.** Ein Laden hat `ankauf` (ab Werk 0 — „kauft nichts an"). Eine
+  Person hat kein solches Feld, und 0 wäre hier falsch: Die Spielleitung hat
+  den Handel gerade selbst eröffnet, will also handeln, bekäme aber drei Nullen
+  hingelegt. Für eine Person gilt `PERSON_ANKAUF = 0.5` und Spielraum 0.25 —
+  ein **Vorschlag**, kein Preis. Im Verhandlungsfenster steht deshalb
+  „ohne Laden — die Zahlen sind nur ein Vorschlag" daneben, sonst liest man sie
+  als Politik eines Ladens.
+- **Das Ausführen.** `fuehreAnkaufAus` legt die Ware beim Gegenüber ab, gleich
+  welcher Art. Nur zahlt ein Laden mit `eigeneKasse` und kann pleitegehen,
+  während der Beutel einer Person nie blockiert (siehe Punkt 3 oben). Und nur
+  ein Laden führt ein `ladenbuch`; für eine Person schreibt
+  `schreibeHandelVerkauf` ins Marktbuch.
+
+Zwei Verhandlungen nebeneinander zu bauen hieße, jede künftige Änderung zweimal
+zu machen — und die zweite beim ersten Mal zu vergessen.
+
 ## Die Verknüpfung pflegt sich selbst
 
 `VERKNUEPFT` (`flags["ninjos-shops"].laeden`) stand vom ersten Tag an in
 `const.js` und wurde von **nichts** gelesen — der Laden kannte seinen Händler,
 der Händler seinen Laden nicht.
+
+**Der Knopf am Bogen steht für die Spielleitung immer da**, auch wenn die
+Person noch keinen Laden führt — dann führt er zum Verbinden oder Anlegen
+(`ohneLaden`). Vorher erschien er nur mit Laden, und damit war er als Anzeige
+brauchbar und als Weg unbrauchbar: Wer einem NSC einen Laden geben wollte,
+musste wissen, dass das über ein Feld **im Ladenbogen** geht — also im Fenster,
+das er noch gar nicht hat. Man legt einen Laden aber an, während man die Person
+vor sich hat. Für Spieler bleibt er verborgen, solange kein Laden dranhängt:
+Ein Knopf, der nur zu Werkzeugen führt, die sie nicht bedienen dürfen, ist im
+Weg.
+
+`Actor.implementation.create` löst `preUpdateActor` **nicht** aus — der Haken
+sieht nur Änderungen. Beim Anlegen wird `listeSetzen` deshalb von Hand
+gerufen, sonst hätte der neue Laden einen Verkäufer, aber der Verkäufer keinen
+Knopf zu seinem Laden.
 
 **Von Hand gepflegt wäre sie falsch.** Zwei Angaben, die dasselbe meinen,
 laufen immer auseinander, und dann öffnet ein Token einen Laden, den es nicht

@@ -50,26 +50,31 @@
       <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsVorgelegt"}}</p>
     {{/if}}
 
-    {{!-- Ohne Ablehnen bliebe das Fenster stehen, bis die Spielleitung es
+    {{!-- Eine Fußleiste, nicht zwei. Beides ist dieselbe Frage — was mache ich
+          mit dem, was mir hingehalten wird — und stand vorher in zwei
+          getrennten Kästen untereinander.
+
+          Ohne Ablehnen bliebe das Fenster stehen, bis die Spielleitung es
           zurücknimmt — und die merkt nicht, dass der Spieler längst weiter
           ist. Ein Angebot, das man nur annehmen oder ignorieren kann, ist
           keine Frage, sondern eine Auslage. --}}
     <footer class="shops-handel-fuss">
-      <button type="button" class="shops-kaufen shops-zweit" data-action="ablehnen">
-        <i class="fa-solid fa-hand"></i>
-        {{localize "SHOPS.Handel.Ablehnen"}}
-      </button>
-    </footer>
-
-    {{#if handel.nimmtAn}}
-      <div class="shops-anfrage-start">
-        <button type="button" class="shops-kaufen shops-zweit" data-action="anbieten">
-          <i class="fa-solid fa-hand-holding"></i>
-          {{localize "SHOPS.Handel.Anbieten"}}
+      <div class="shops-handel-knoepfe">
+        {{#if handel.nimmtAn}}
+          <button type="button" class="shops-kaufen" data-action="anbieten">
+            <i class="fa-solid fa-hand-holding"></i>
+            {{localize "SHOPS.Handel.Anbieten"}}
+          </button>
+        {{/if}}
+        <button type="button" class="shops-kaufen shops-zweit" data-action="ablehnen">
+          <i class="fa-solid fa-hand"></i>
+          {{localize "SHOPS.Handel.Ablehnen"}}
         </button>
-        <span class="shops-blockhinweis">{{localize "SHOPS.Handel.AnbietenHinweis"}}</span>
       </div>
-    {{/if}}
+      {{#if handel.nimmtAn}}
+        <span class="shops-blockhinweis">{{localize "SHOPS.Handel.AnbietenHinweis"}}</span>
+      {{/if}}
+    </footer>
   {{else}}
     <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsVorgelegt"}}</p>
   {{/if}}

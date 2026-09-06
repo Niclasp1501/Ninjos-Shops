@@ -67,7 +67,13 @@
           <header class="shops-anfrage-kopf">
             <strong>{{spielerName}}</strong>
             <span class="shops-anfrage-figur">{{figurName}}</span>
-            <span class="shops-anfrage-laden">{{localize "SHOPS.Marktbuch.AnLaden" laden=ladenName}}</span>
+            <span class="shops-anfrage-laden">{{localize "SHOPS.Marktbuch.AnLaden" laden=gegenueberName}}</span>
+            {{!-- Bei einer Person stammen die drei Zahlen unten aus keiner
+                  Ladeneinstellung, sondern aus der halben Grundsumme. Das muss
+                  dabeistehen, sonst liest man sie als Politik eines Ladens. --}}
+            {{#unless istLaden}}
+              <span class="shops-marke-person">{{localize "SHOPS.Anfrage.OhneLaden"}}</span>
+            {{/unless}}
           </header>
 
           <ol class="shops-ware shops-anfrage-posten">

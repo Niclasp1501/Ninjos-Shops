@@ -83,6 +83,17 @@ Titelleiste **jedes** Personenbogens: anhaken, was vorgelegt wird, Menge und
 Preis setzen, Empfänger wählen. Der Spieler sieht genau das — und nichts
 anderes von diesem Bogen. Ausgelöst wird das immer von der Spielleitung.
 
+Ein Angebot darf an mehrere gehen; man hält am Tisch ja auch ein Schwert in
+die Runde. Entscheidend ist dann der Bestand und nicht das Angebot: Wer zuerst
+zugreift, bekommt es, und bei allen anderen verschwindet es aus dem Fenster.
+
+Der Spieler kann ablehnen — dann erfahren Sie es, statt auf eine Antwort zu
+warten, die längst gefallen ist. Und wenn Sie „Sie nimmt auch etwas an"
+angehakt haben, packt er über **„Ich hätte da auch etwas"** seinerseits
+zusammen, und Sie nennen einen Preis. Das ist dasselbe Fenster wie am
+Ladentresen; nur stehen die drei Vorschlagszahlen dort nicht für eine
+Ankaufspolitik, sondern für die halbe Grundsumme — was gilt, tippen Sie.
+
 ### Die Schauansicht
 
 Der Laden auf dem Bildschirm an der Wand: Vollbild ohne Fensterrahmen, sechs
@@ -105,6 +116,11 @@ Wer im Laden einen Verkäufer einträgt, hat ihn verknüpft: Sein Bogen bekommt
 einen Knopf „Laden öffnen", ebenso das Kontextmenü im Akteursverzeichnis und —
 wo es eine Leinwand gibt — das Bedienfeld seines Tokens. Ein Händler darf zwei
 Stände führen; dann wird gefragt, welcher gemeint ist.
+
+Der Knopf am Bogen steht für die Spielleitung **immer** da. Führt die Person
+noch keinen Laden, fragt er, ob ein vorhandener verbunden oder ein neuer
+angelegt werden soll — Sie legen einen Laden ja an, während Sie die Person vor
+sich haben, nicht andersherum.
 
 ---
 
