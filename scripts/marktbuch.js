@@ -108,6 +108,21 @@ export async function schreibeFreigabe({ laden, eintrag, ok, wer, satz }) {
   });
 }
 
+/**
+ * Ein Handel mit einer Person, die keinen Laden hat.
+ *
+ * Steht im selben Buch wie die Kaeufe: Die Frage „wo sind die 400 Gold
+ * geblieben" kennt den Unterschied zwischen Laden und Person nicht.
+ */
+export async function schreibeHandel({ person, kaeufer, figur, ok, was, summeCp, grund }) {
+  await eintragen({
+    art: "kauf", ok: !!ok, ausHandel: true,
+    ladenName: person?.name ?? "?", ladenUuid: person?.uuid ?? null,
+    userName: kaeufer?.name ?? "?", figurName: figur?.name ?? null,
+    was: was ?? [], summeCp: summeCp ?? 0, grund: ok ? null : (grund ?? null)
+  });
+}
+
 /** Ein Verkaufsversuch, der scheitert. */
 export async function schreibeVerkaufVorgang({ laden, item, figur, verkaeufer, pruefung }) {
   if (pruefung.ok) return;

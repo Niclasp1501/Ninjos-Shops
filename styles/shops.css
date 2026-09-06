@@ -2385,3 +2385,109 @@
   color: var(--shops-text-blass);
   background: var(--shops-nav);
 }
+
+/* ── Handel mit einer Person ───────────────────────────────────────── */
+
+/*
+ * Kein Laden, kein Regal — eine Person hält etwas hin. Deshalb steht oben ihr
+ * Gesicht und kein Ladenschild, und deshalb ist der Kopf schmal: Er ordnet
+ * ein, er ist nicht das Bild einer Auslage.
+ */
+.ninjos-shops .shops-teil-handel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ninjos-shops .shops-handel-kopf {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+
+.ninjos-shops .shops-handel-kopf img {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border: 1px solid var(--shops-rand);
+  border-radius: 6px;
+}
+
+.ninjos-shops .shops-handel-kopf > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ninjos-shops .shops-handel-kopf strong { font-size: 1.02rem; }
+.ninjos-shops .shops-handel-kopf span {
+  font-size: 0.8rem;
+  color: var(--shops-text-blass);
+}
+.ninjos-shops .shops-handel-satz { font-style: italic; }
+
+/* Die Auswahlliste beim Zusammenstellen: Menge und Preis stehen daneben,
+   weil man an beidem fast immer etwas ändert. */
+.ninjos-shops .shops-handel-waren .shops-zeile { gap: 10px; }
+
+.ninjos-shops .shops-handel-menge,
+.ninjos-shops .shops-handel-preis {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.ninjos-shops .shops-handel-menge > span,
+.ninjos-shops .shops-handel-preis > span:first-child {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-handel-menge input { width: 4rem; }
+.ninjos-shops .shops-handel-preis input { width: 5.5rem; }
+
+.ninjos-shops .shops-handel-alle {
+  float: right;
+  display: flex;
+  gap: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ninjos-shops .shops-handel-alle button {
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  color: var(--shops-text);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ninjos-shops .shops-handel-figur {
+  font-size: 0.76rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-schalterzeile {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.ninjos-shops .shops-schalterzeile em {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--shops-text-blass);
+}

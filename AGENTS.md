@@ -304,6 +304,32 @@ entfernt werden — dort hätte ein Blick in die Konsole die Verhandlung entwert
 Client; ohne Grenze wächst ein vielbesuchter Laden unbemerkt weiter, bis jemand
 beim Laden der Welt wartet und niemand weiß, warum.
 
+## Handel ohne Laden — und warum nur die Spielleitung ihn auslöst
+
+Nicht jeder, der etwas hergibt, führt ein Geschäft. Für den Fremden am Feuer
+einen Laden anzulegen wäre Buchhaltung für eine Szene, die drei Sätze dauert.
+`handel.js` und `handel-fenster.js` machen daraus einen Handel mit einer
+**Person** — jedem Akteur, ohne Ladentyp, ohne Einstellungen.
+
+Drei Entscheidungen darin:
+
+1. **Die Spielleitung löst aus, immer.** Ein Spieler kann keinen Handel
+   beginnen und niemanden ansprechen. Sonst stünde am Tisch die Frage im
+   Raum, mit wem man alles handeln darf — und die beantwortet das Gespräch,
+   nicht ein Fenster.
+2. **Was angehakt ist, sieht der Spieler; sonst nichts.** Der Bogen einer
+   Person enthält ihre ganze Ausrüstung, ihre Zauber, ihr Erspartes. Vorgelegt
+   wird, was gemeint ist, zum Preis, der gemeint ist.
+3. **Die Börse der Person blockiert nie.** Sie wird belastet und
+   gutgeschrieben, aber ein Handel scheitert nicht am leeren Beutel eines NSC,
+   den die Spielleitung selbst aufgesetzt hat. Wer einen Beutel will, der leer
+   werden kann, nimmt einen Laden mit `eigeneKasse`.
+
+Das Angebot liegt als Merkmal **am Benutzer**, nicht in der Socket-Nachricht —
+dieselbe Begründung wie bei `angebot.js`: Die Antwort kommt vom Client des
+Spielers; stünden die Preise darin, könnte er sich jeden beliebigen schicken.
+Und es übersteht ein Neuladen.
+
 ## Die Verknüpfung pflegt sich selbst
 
 `VERKNUEPFT` (`flags["ninjos-shops"].laeden`) stand vom ersten Tag an in

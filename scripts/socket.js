@@ -25,6 +25,7 @@ import { fuehreVerkaufAus } from "./verkauf.js";
 import { aufAnfrage } from "./anfrage.js";
 import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
+import { aufHandel } from "./handel.js";
 
 /** Eingehende Socket-Nachricht verteilen. */
 async function onSocket(daten) {
@@ -37,6 +38,7 @@ async function onSocket(daten) {
     case SOCKET.ANGEBOT:     return void aufAngebot(daten);
     case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
     case SOCKET.VORSITZ:     return void aufVorsitz(daten);
+    case SOCKET.HANDEL:      return void aufHandel(daten);
 
     case SOCKET.KAUFEN: {
       if (!await darfIchAusfuehren(daten.bitteId)) return;

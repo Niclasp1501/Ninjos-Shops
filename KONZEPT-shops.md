@@ -479,6 +479,14 @@ trägt weiterhin einen Vorschlag.
    scheitert, scheitert sofort, ohne jemanden zu fragen. Ein Kauf zu einem
    zugesagten Angebotspreis braucht kein zweites Ja.
 
+9. **Handel geht auch ohne Laden.** Eine Person legt ausgewählte Stücke vor,
+   zu Preisen, die die Spielleitung setzt — für den Fremden am Feuer, den
+   Bauern mit zwei Fackeln. Ausgelöst wird das **immer** von der Spielleitung;
+   ein Spieler kann niemanden ansprechen, denn mit wem man handeln darf,
+   beantwortet das Gespräch und nicht ein Fenster. Die Börse der Person wird
+   belastet und gutgeschrieben, blockiert aber nie — wer einen Beutel will,
+   der leer werden kann, nimmt einen Laden mit `eigeneKasse`.
+
 ### Noch offen
 
 6. **Braucht es Ladenöffnungszeiten oder Nachschub über Nacht?** Vorschlag:

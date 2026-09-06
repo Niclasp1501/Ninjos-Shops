@@ -25,6 +25,7 @@ import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
 import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.js";
+import { handelFensterEinrichten } from "./handel-fenster.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
 
 function einstellungenEinrichten() {
@@ -119,6 +120,7 @@ Hooks.once("ready", async () => {
   anfrageFensterEinrichten();
   buchFensterEinrichten();
   verknuepfungEinrichten();
+  handelFensterEinrichten();
   await verknuepfungNachtragen();
   await offenenLadenWiederherstellen();
   await willkommenZeigen();

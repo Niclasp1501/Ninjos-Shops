@@ -1,0 +1,59 @@
+{{!--
+  Was jemand dem Spieler hingelegt hat.
+
+  Kein Laden, kein Regal, keine Auslage — eine Person hält etwas hin. Deshalb
+  steht oben ihr Gesicht und nicht ein Ladenschild, und deshalb gibt es keine
+  Bestandsspalte: Was hier steht, ist genau das, was gemeint ist.
+--}}
+<div class="shops-teil-handel">
+
+  {{#if handel}}
+    <header class="shops-handel-kopf">
+      {{#if handel.personBild}}<img src="{{handel.personBild}}" alt="">{{/if}}
+      <div>
+        <strong>{{handel.personName}}</strong>
+        {{#if handel.satz}}<span class="shops-handel-satz">„{{handel.satz}}"</span>{{/if}}
+      </div>
+    </header>
+
+    {{#if figurName}}
+      <div class="shops-boerse">
+        <i class="fa-solid fa-coins"></i>
+        <span class="shops-boerse-label">{{figurName}}</span>
+        <strong>{{boerse}}</strong>
+      </div>
+    {{/if}}
+
+    {{#if handel.posten.length}}
+      <ol class="shops-ware shops-handel-liste">
+        {{#each handel.posten}}
+          <li class="shops-zeile" data-item-id="{{itemId}}">
+            {{#if img}}<img src="{{img}}" alt="">
+            {{else}}<i class="fa-solid fa-cube shops-kein-bild"></i>{{/if}}
+            <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+            <span class="shops-menge">{{menge}}&times;</span>
+            <span class="shops-preis">{{summeText}}</span>
+            <button type="button" class="shops-kaufen" data-action="nehmen">
+              <i class="fa-solid fa-hand-holding"></i>
+              {{localize "SHOPS.Handel.Nehmen"}}
+            </button>
+          </li>
+        {{/each}}
+      </ol>
+    {{else}}
+      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsVorgelegt"}}</p>
+    {{/if}}
+
+    {{#if handel.nimmtAn}}
+      <div class="shops-anfrage-start">
+        <button type="button" class="shops-kaufen shops-zweit" data-action="anbieten">
+          <i class="fa-solid fa-hand-holding"></i>
+          {{localize "SHOPS.Handel.Anbieten"}}
+        </button>
+        <span class="shops-blockhinweis">{{localize "SHOPS.Handel.AnbietenHinweis"}}</span>
+      </div>
+    {{/if}}
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsVorgelegt"}}</p>
+  {{/if}}
+</div>

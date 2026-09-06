@@ -1,0 +1,94 @@
+{{!--
+  Einen Handel zusammenstellen.
+
+  Die Spielleitung wählt aus, was vorgelegt wird — nicht der ganze Bogen. Eine
+  Person hat ihre ganze Ausrüstung dabei, und das meiste davon ist nicht
+  gemeint.
+--}}
+<div class="shops-teil-handel">
+
+  <header class="shops-handel-kopf">
+    {{#if personBild}}<img src="{{personBild}}" alt="">{{/if}}
+    <div>
+      <strong>{{personName}}</strong>
+      <span>{{localize "SHOPS.Handel.KopfHinweis"}}</span>
+    </div>
+  </header>
+
+  <section class="shops-block">
+    <h3>{{localize "SHOPS.Handel.AnWen"}}</h3>
+    <ul class="shops-zugriffsliste">
+      {{#each spieler}}
+        <li>
+          <label>
+            <input type="checkbox" data-feld="spieler" value="{{id}}">
+            <span class="shops-spielername">{{name}}</span>
+            {{#if figur}}<em class="shops-handel-figur">{{figur}}</em>{{/if}}
+            {{#if aktiv}}<i class="fa-solid fa-circle shops-online"
+                            title="{{localize 'SHOPS.Zugriff.Angemeldet'}}"></i>{{/if}}
+          </label>
+        </li>
+      {{/each}}
+    </ul>
+  </section>
+
+  <section class="shops-block">
+    <h3>
+      {{localize "SHOPS.Handel.WasVorlegen"}}
+      <span class="shops-handel-alle">
+        <button type="button" data-action="allesWaehlen" data-wert="an">{{localize "SHOPS.Handel.Alle"}}</button>
+        <button type="button" data-action="allesWaehlen" data-wert="aus">{{localize "SHOPS.Handel.Keine"}}</button>
+      </span>
+    </h3>
+
+    {{#if waren.length}}
+      <ol class="shops-ware shops-handel-waren">
+        {{#each waren}}
+          <li class="shops-zeile" data-item-id="{{id}}">
+            <input type="checkbox" data-feld="ware">
+            <img src="{{img}}" alt="">
+            <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+
+            {{!-- Menge und Preis stehen daneben, nicht in einem Untermenü:
+                  Beides ändert man beim Zusammenstellen fast immer. --}}
+            <label class="shops-handel-menge">
+              <span>{{localize "SHOPS.Handel.Menge"}}</span>
+              <input type="number" data-menge value="1" min="1" max="{{menge}}">
+            </label>
+            <label class="shops-handel-preis">
+              <span>{{localize "SHOPS.Handel.Preis"}}</span>
+              <span class="shops-preisfeld">
+                <input type="number" data-preis value="{{preisGp}}" min="0" step="0.1">
+                <span class="shops-muenzmarke">{{localize "SHOPS.Muenze.gp"}}</span>
+              </span>
+            </label>
+          </li>
+        {{/each}}
+      </ol>
+    {{else}}
+      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsDabei"}}</p>
+    {{/if}}
+  </section>
+
+  <section class="shops-block">
+    <label class="shops-schalterzeile">
+      <input type="checkbox" data-feld="nimmtAn">
+      <span>
+        <strong>{{localize "SHOPS.Handel.NimmtAn"}}</strong>
+        <em>{{localize "SHOPS.Handel.NimmtAnHinweis"}}</em>
+      </span>
+    </label>
+
+    <label class="shops-breit">
+      <span>{{localize "SHOPS.Anfrage.Satz"}}</span>
+      <input type="text" data-feld="satz" placeholder="{{localize 'SHOPS.Handel.SatzPlatzhalter'}}">
+    </label>
+  </section>
+
+  <footer class="shops-anfrage-fuss">
+    <button type="button" data-action="senden">
+      <i class="fa-solid fa-handshake"></i>
+      {{localize "SHOPS.Handel.Senden"}}
+    </button>
+  </footer>
+</div>

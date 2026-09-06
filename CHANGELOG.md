@@ -27,6 +27,14 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   beim Drehen oder Aufklappen der Tastatur nachgezogen.
 
 ### Hinzugefügt
+- **Handel mit einer Person, die keinen Laden hat.** Ein Knopf in der
+  Titelleiste jedes Personenbogens: Du hakst an, welche Stücke vorgelegt
+  werden, setzt Menge und Preis, wählst die Empfänger — und nur das sieht der
+  Spieler, nichts anderes von diesem Bogen. Er nimmt Stück für Stück; das Geld
+  wandert in die Börse der Person, falls sie eine hat. **Ausgelöst wird das
+  immer von der Spielleitung**, ein Spieler kann niemanden ansprechen. Der Weg
+  zurück — der Spieler bietet seinerseits etwas an — ist vorbereitet
+  („Sie nimmt auch etwas an") und wird als Nächstes gebaut.
 - **Ein Klick auf den Händler öffnet seinen Laden.** Das Merkmal dafür stand
   seit dem ersten Tag im Modul und wurde von nichts gelesen. Es pflegt sich
   jetzt selbst aus dem Verkäufer-Feld: Wer dort jemanden einträgt, hat die
