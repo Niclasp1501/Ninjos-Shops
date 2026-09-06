@@ -211,5 +211,14 @@
   "SHOPS.Marktbuch.Leeren": "Clear",
   "SHOPS.Marktbuch.LeerenTitel": "Clear the market ledger?",
   "SHOPS.Marktbuch.LeerenFrage": "Every line will be deleted. This cannot be undone.",
-  "SHOPS.Marktbuch.LeerenJa": "Clear"
+  "SHOPS.Marktbuch.LeerenJa": "Clear",
+  "SHOPS.Bogen.Mehr": "More for this item",
+  "SHOPS.Bogen.Oeffnen": "Open the item",
+  "SHOPS.Vorzeigen.Besucher": "Visitors",
+  "SHOPS.Menue.Verborgen": "Under the counter",
+  "SHOPS.Menue.Dienst": "A service",
+  "SHOPS.Menue.Ankauf": "Takes it back",
+  "SHOPS.Menue.Anbieten": "Offer to someone",
+  "SHOPS.Menue.Oeffnen": "Open the item",
+  "SHOPS.Menue.Entfernen": "Take off the shelves"
 }

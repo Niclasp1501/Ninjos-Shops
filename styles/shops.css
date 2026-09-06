@@ -2097,3 +2097,136 @@
   font-size: 0.72em;
   color: var(--shops-text-blass);
 }
+
+/* ── Das Menü einer Warenzeile ─────────────────────────────────────── */
+
+/*
+ * Ein Knopf statt fünf. Fünf blasse Symbole nebeneinander lesen sich als
+ * grauer Schleier, nicht als fünf Schalter — und vier davon braucht man
+ * selten: verborgen legt man einmal fest, angeboten wird ab und zu, gelöscht
+ * fast nie. Der *Zustand* bleibt trotzdem sichtbar (siehe `.shops-marke`);
+ * etwas, das man erst nach dem Aufklappen erfährt, hat man beim Überfliegen
+ * nicht.
+ */
+.ninjos-shops .shops-zeilenmenue {
+  flex: 0 0 30px;
+  height: 30px;
+  padding: 0;
+  color: var(--shops-text-blass);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ninjos-shops .shops-zeile:hover .shops-zeilenmenue { border-color: var(--shops-rand); }
+
+.ninjos-shops .shops-zeilenmenue:hover:not([disabled]) {
+  color: var(--shops-text);
+  background: var(--shops-nav);
+  border-color: var(--shops-gold);
+}
+
+/* Die Marken hinter dem Namen: Zustand auf einen Blick */
+.ninjos-shops .shops-marke {
+  margin-left: 5px;
+  font-size: 0.72em;
+  color: var(--shops-text-blass);
+  vertical-align: baseline;
+}
+
+/* Das aufgeklappte Menü */
+/* Das Menue haengt am Koerper; die Zeile braucht keinen Bezugsrahmen mehr. */
+
+.shops-menue {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: 6px;
+  z-index: 20;
+  min-width: 13rem;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 7px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.shops-menue hr {
+  margin: 3px 6px;
+  border: none;
+  border-top: 1px solid var(--shops-rand);
+}
+
+.shops-menue button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 6px 9px;
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--shops-text);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.shops-menue button > span { flex: 1; }
+
+.shops-menue button i:first-child {
+  width: 1rem;
+  text-align: center;
+  color: var(--shops-text-blass);
+}
+
+.shops-menue button:hover { background: var(--shops-nav); }
+
+/* Was eingeschaltet ist, trägt den Haken und die Hausfarbe im Symbol */
+.shops-menue button.shops-an i:first-child { color: var(--shops-rot); }
+.shops-menue .shops-haken { color: var(--shops-rot); font-size: 0.8em; }
+
+/* Löschen ist die eine gefährliche Zeile - und sieht erst beim Zielen so aus */
+.shops-menue button.shops-gefahr:hover {
+  color: #fff;
+  background: var(--shops-rot);
+}
+.shops-menue button.shops-gefahr:hover i { color: #fff; }
+
+/* ── Besucher: eine Überschrift über den Namen ─────────────────────── */
+
+.ninjos-shops .shops-besucher-marke {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 9px 0 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--shops-text-blass);
+}
+
+/* ── Die Verkäufer-Ablage stand auf dem Text darüber ───────────────── */
+
+/*
+ * Die Marke sitzt absolut auf der Oberkante des Rahmens. Ohne Abstand nach
+ * oben legt sie sich auf die letzte Zeile des Blocks darüber - im Bild lag
+ * "VERKÄUFER" quer über dem Hinweis zum Ausschnitt.
+ */
+.ninjos-shops .shops-haendler { margin-top: 18px; }
+
+/* ── Die Werkzeugspalte ist schmaler geworden ──────────────────────── */
+
+.ninjos-shops .shops-spalte-schalter { flex: 0 0 30px; }
+.ninjos-shops .shops-werkzeuge { gap: 6px; }
+
+/* Festpreis und Menü sind jetzt die einzigen Werkzeuge - sie dürfen
+   sichtbar bleiben, statt bis zum Überfahren zu verblassen. */
+.ninjos-shops .shops-werkzeuge { opacity: 0.55; }
+.ninjos-shops .shops-zeile:hover .shops-werkzeuge,
+.ninjos-shops .shops-zeile:focus-within .shops-werkzeuge { opacity: 1; }

@@ -28,6 +28,13 @@
         </button>
       </div>
 
+      {{!-- Ohne Überschrift steht dort nur ein Name, und niemand weiß, was
+            er bedeutet: Wer den Laden gerade offen hat. --}}
+      <span class="shops-besucher-marke">
+        {{localize "SHOPS.Vorzeigen.Besucher"}}
+        {{#if zuschauer.length}}<span class="shops-anzahl">{{zuschauer.length}}</span>{{/if}}
+      </span>
+
       {{#if zuschauer.length}}
         <ul class="shops-zuschauer">
           {{#each zuschauer}}

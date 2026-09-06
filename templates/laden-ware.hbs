@@ -34,7 +34,18 @@
           <img src="{{img}}" alt="" data-action="wareOeffnen">
 
           <div class="shops-name">
-            <span class="shops-warenname" data-action="wareOeffnen">{{name}}</span>
+            <span class="shops-warenname" data-action="wareOeffnen">
+              {{name}}
+              {{!-- Zustand bleibt sichtbar, auch wenn die Handlungen im Menü
+                    liegen. Etwas, das man nur nach dem Aufklappen erfährt,
+                    hat man beim Überfliegen nicht. --}}
+              {{#if verborgen}}<i class="fa-solid fa-eye-slash shops-marke"
+                    title="{{localize 'SHOPS.Bogen.Verborgen'}}"></i>{{/if}}
+              {{#if dienst}}<i class="fa-solid fa-handshake shops-marke"
+                    title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>{{/if}}
+              {{#if ankauf}}<i class="fa-solid fa-arrow-rotate-left shops-marke"
+                    title="{{localize 'SHOPS.Bogen.KauftAn'}}"></i>{{/if}}
+            </span>
             <input type="text" data-ware-feld="hinweis" value="{{hinweis}}"
                    placeholder="{{localize 'SHOPS.Bogen.HinweisPlatzhalter'}}"
                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
@@ -72,47 +83,14 @@
             </select>
           </div>
 
-          <div class="shops-schalter">
-            <button type="button" class="{{#if verborgen}}shops-an{{/if}}"
-                    data-action="wareSchalter" data-merkmal="verborgen"
-                    title="{{localize 'SHOPS.Bogen.Verborgen'}}"
-                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-              <i class="fa-solid {{#if verborgen}}fa-eye-slash{{else}}fa-eye{{/if}}"></i>
-            </button>
-
-            <button type="button" class="{{#if dienst}}shops-an{{/if}}"
-                    data-action="wareSchalter" data-merkmal="dienst"
-                    title="{{localize 'SHOPS.Bogen.Dienst'}}"
-                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-              <i class="fa-solid fa-handshake"></i>
-            </button>
-
-            {{!-- Anbieten steht bei den Werkzeugen und nicht bei den
-                  Schaltern: Es aendert nichts an der Ware, es legt sie
-                  jemandem hin. --}}
-            {{!-- Kauft der Laden genau dieses wieder an? Ohne den Haken geht
-                  ein Verkauf nur ueber eine Anfrage - der Ankaufsfaktor allein
-                  sagt nichts darueber, ob ein Kraeuterhaendler Langschwerter
-                  will. --}}
-            <button type="button" class="{{#if ankauf}}shops-an{{/if}}"
-                    data-action="wareSchalter" data-merkmal="ankauf"
-                    title="{{localize 'SHOPS.Bogen.KauftAn'}}"
-                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-              <i class="fa-solid fa-arrow-rotate-left"></i>
-            </button>
-
-            <button type="button" data-action="wareAnbieten"
-                    title="{{localize 'SHOPS.Angebot.Knopf'}}"
-                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-              <i class="fa-solid fa-hand-holding"></i>
-            </button>
-
-            <button type="button" class="shops-loeschen" data-action="wareLoeschen"
-                    title="{{localize 'SHOPS.Bogen.WareLoeschen'}}"
-                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
+          {{!-- Ein Knopf statt fünf. Fünf blasse Symbole nebeneinander
+                lesen sich als grauer Schleier, nicht als fünf Schalter -
+                und vier davon braucht man selten. --}}
+          <button type="button" class="shops-zeilenmenue" data-action="wareMenue"
+                  title="{{localize 'SHOPS.Bogen.Mehr'}}"
+                  {{#unless @root.bearbeitbar}}disabled{{/unless}}>
+            <i class="fa-solid fa-ellipsis"></i>
+          </button>
           </div>
         </li>
       {{/each}}

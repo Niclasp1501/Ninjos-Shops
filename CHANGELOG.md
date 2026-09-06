@@ -12,6 +12,12 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
   Verknüpfung steht neutral „Verkäufer" da.
 
 ### Geändert
+- **Ein Menü je Warenzeile** statt fünf blasser Symbole. Verborgen,
+  Dienstleistung und Ankauf bleiben als kleine Marken hinter dem Namen sichtbar
+  — nur die Handlungen sind ins Menü gewandert.
+- **„Besucher" steht jetzt über der Namensliste.** Vorher stand dort ein Name
+  ohne Überschrift, und niemand wusste, was er bedeutet.
+- Das Verkäufer-Feld lag mit seiner Beschriftung auf dem Hinweistext darüber.
 - **Rot-Diät.** Überschriften, zweitrangige Knöpfe und Preise tragen kein Rot
   mehr — es blieb für die Fensterleiste, die eine Hauptaktion je Block und für
   Warnungen. Überschriften ordnen jetzt über eine dünne Linie.

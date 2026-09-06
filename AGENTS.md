@@ -227,6 +227,30 @@ ihn nicht. Fehlt die Verknüpfung, tritt das neutrale Wort „Verkäufer" an die
 Stelle — ein Laden ohne benannten Händler ist ein gültiger Fall, kein
 halbfertiger.
 
+## Ein Menü je Warenzeile — und drei Fallen dabei
+
+Fünf blasse Symbole nebeneinander lesen sich als grauer Schleier, nicht als
+fünf Schalter; vier davon braucht man selten. Sie liegen deshalb in einem Menü
+hinter „⋯". **Der Zustand bleibt trotzdem sichtbar**: Verborgen,
+Dienstleistung und Ankauf stehen als kleine Marken hinter dem Namen — was man
+erst nach dem Aufklappen erführe, hat man beim Überfliegen nicht.
+
+Drei Dinge sind dabei schiefgegangen und stehen hier, damit sie es nicht
+wieder tun:
+
+1. **Kurze Wörter, nicht die Erklärungen.** Zuerst waren die Tooltip-Schlüssel
+   wiederverwendet — im Menü standen drei ganze Sätze untereinander und sahen
+   aus wie ein Absatz, nicht wie eine Auswahl. Dafür gibt es jetzt
+   `SHOPS.Menue.*`.
+2. **Die Liste scrollt.** Ein Menü *in* der Zeile wird an der Unterkante der
+   Liste abgeschnitten: bei der vorletzten Zeile sah man zwei von sieben
+   Einträgen. Es hängt jetzt am `document.body`, fest positioniert am Knopf,
+   und klappt nach oben, wenn unten kein Platz ist.
+3. **Am Körper greift `.ninjos-shops …` nicht mehr.** Alle Regeln des Moduls
+   sind darunter verschachtelt — das Menü stand als Reihe nackter Knöpfe auf
+   der Karte. Es trägt die Modulklasse jetzt selbst, und seine Regeln stehen
+   unverschachtelt als `.shops-menue …`.
+
 ## Wofür Rot da ist — und wofür nicht
 
 Rot stand einmal an jeder Überschrift, in der Schrift jedes zweiten Knopfes, an

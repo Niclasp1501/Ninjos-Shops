@@ -64,6 +64,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       wareOeffnen: LadenBogen.#wareOeffnen,
       wareLoeschen: LadenBogen.#wareLoeschen,
       wareSchalter: LadenBogen.#wareSchalter,
+      wareMenue: LadenBogen.#wareMenue,
       einstellungenOeffnen: LadenBogen.#einstellungen,
       wareAnbieten: LadenBogen.#wareAnbieten,
       angebotZurueck: LadenBogen.#angebotZurueck,
@@ -157,6 +158,11 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
   /** @override */
   _onRender(context, options) {
     super._onRender(context, options);
+
+    // Ein Menue am Koerper ueberlebt sonst das Neuzeichnen seiner Zeile und
+    // steht dann verwaist im Bild.
+    document.querySelector(".shops-menue")?.remove();
+
     if (!this.isEditable) return;
 
     /*
@@ -254,6 +260,120 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       defaultYes: false
     });
     if (sicher) await item.delete();
+  }
+
+  /**
+   * Das Menü einer Warenzeile.
+   *
+   * **Warum ein Menü und keine Schalterreihe.** Fünf blasse Symbole
+   * nebeneinander lesen sich als grauer Schleier; man erkennt sie erst beim
+   * Zielen. Vier der fünf braucht man ausserdem selten - verborgen legt man
+   * einmal fest, angeboten wird ab und zu, geloescht fast nie.
+   *
+   * Der **Zustand** bleibt trotzdem sichtbar: Verborgen, Dienstleistung und
+   * Ankauf stehen als kleine Marken hinter dem Namen. Etwas, das man erst
+   * nach dem Aufklappen erfaehrt, hat man beim Ueberfliegen nicht.
+   */
+  static #wareMenue(ereignis, ziel) {
+    const zeile = ziel.closest("[data-item-id]");
+    const item = this.document.items.get(zeile?.dataset.itemId);
+    if (!item) return;
+
+    // Ein zweiter Klick auf denselben Knopf schliesst wieder.
+    const offen = this.element.querySelector(".shops-menue");
+    const warMeins = offen?.dataset.fuer === item.id;
+    offen?.remove();
+    if (warMeins) return;
+
+    /*
+     * Kurze Woerter, nicht die Erklaerungen. Die langen Saetze sind
+     * Kurzhinweise fuer die Symbole in der Zeile - in einem Menue liest sie
+     * niemand zu Ende, und drei Zeilen Text nebeneinander sehen aus wie ein
+     * Absatz, nicht wie eine Auswahl.
+     */
+    const merkmal = item.flags?.[MODULE_ID] ?? {};
+    const eintraege = [
+      { tat: "verborgen", symbol: "fa-eye-slash", text: "SHOPS.Menue.Verborgen",
+        an: merkmal[WARE.VERBORGEN] === true },
+      { tat: "dienst", symbol: "fa-handshake", text: "SHOPS.Menue.Dienst",
+        an: merkmal[WARE.DIENST] === true },
+      { tat: "ankauf", symbol: "fa-arrow-rotate-left", text: "SHOPS.Menue.Ankauf",
+        an: merkmal[WARE.ANKAUF] === true },
+      { trenner: true },
+      { tat: "anbieten", symbol: "fa-hand-holding", text: "SHOPS.Menue.Anbieten" },
+      { tat: "oeffnen", symbol: "fa-up-right-from-square", text: "SHOPS.Menue.Oeffnen" },
+      { trenner: true },
+      { tat: "loeschen", symbol: "fa-trash", text: "SHOPS.Menue.Entfernen", gefahr: true }
+    ];
+
+    const menue = document.createElement("nav");
+    /*
+     * Die Modulklasse steht am Menue selbst. Es haengt am Koerper und nicht
+     * im Fenster - alle Regeln unter `.ninjos-shops …` greifen dort nicht
+     * mehr, und das Menue stand als Reihe nackter Knoepfe auf der Karte.
+     */
+    menue.className = "ninjos-shops shops-menue";
+    menue.dataset.fuer = item.id;
+    menue.innerHTML = eintraege.map(e => e.trenner
+      ? `<hr>`
+      : `<button type="button" data-tat="${e.tat}" class="${e.an ? "shops-an" : ""} ${e.gefahr ? "shops-gefahr" : ""}">
+           <i class="fa-solid ${e.symbol}"></i>
+           <span>${game.i18n.localize(e.text)}</span>
+           ${e.an ? '<i class="fa-solid fa-check shops-haken"></i>' : ""}
+         </button>`).join("");
+
+    /*
+     * **An den Koerper, nicht in die Zeile.** Die Liste scrollt
+     * (`overflow-y: auto`), und ein Menue darin wird an ihrer Unterkante
+     * abgeschnitten - bei der vorletzten Zeile sah man zwei von sieben
+     * Eintraegen. Fest positioniert am Knopf entkommt es dem Rahmen.
+     */
+    const anker = ziel.getBoundingClientRect();
+    menue.style.position = "fixed";
+    menue.style.top = `${anker.bottom + 4}px`;
+    menue.style.right = `${window.innerWidth - anker.right}px`;
+    document.body.append(menue);
+
+    // Unten kein Platz mehr? Dann klappt es nach oben auf.
+    const eigen = menue.getBoundingClientRect();
+    if (eigen.bottom > window.innerHeight - 8) {
+      menue.style.top = "";
+      menue.style.bottom = `${window.innerHeight - anker.top + 4}px`;
+    }
+
+    menue.addEventListener("click", async ereignis2 => {
+      const knopf = ereignis2.target.closest("[data-tat]");
+      if (!knopf) return;
+      menue.remove();
+      const tat = knopf.dataset.tat;
+
+      if (["verborgen", "dienst", "ankauf"].includes(tat)) {
+        return void item.setFlag(MODULE_ID, tat, !(item.flags?.[MODULE_ID]?.[tat] === true));
+      }
+      if (tat === "oeffnen") return void item.sheet?.render(true);
+      if (tat === "anbieten") {
+        const wahl = await angebotDialog(this.document, item);
+        if (wahl) await angebotSenden(this.document, item, wahl);
+        return void this.render(false);
+      }
+      if (tat === "loeschen") return void LadenBogen.#wareLoeschen.call(this, ereignis2, knopf.closest("[data-item-id]") ?? zeile);
+    });
+
+    /*
+     * Ein Klick daneben schliesst - wie jedes Menue. Und ein Scrollen
+     * ebenfalls: Das Menue haengt jetzt am Koerper und wanderte sonst
+     * ueber die Liste, waehrend seine Zeile darunter wegrutscht.
+     */
+    setTimeout(() => {
+      const zu = e => {
+        if (e?.type === "click" && menue.contains(e.target)) return;
+        menue.remove();
+        document.removeEventListener("click", zu);
+        window.removeEventListener("scroll", zu, true);
+      };
+      document.addEventListener("click", zu);
+      window.addEventListener("scroll", zu, true);
+    }, 0);
   }
 
   /** "Verborgen" und "Dienstleistung" umlegen. */

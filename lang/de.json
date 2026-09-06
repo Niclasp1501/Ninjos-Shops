@@ -211,5 +211,14 @@
   "SHOPS.Marktbuch.Leeren": "Leeren",
   "SHOPS.Marktbuch.LeerenTitel": "Marktbuch leeren?",
   "SHOPS.Marktbuch.LeerenFrage": "Alle Zeilen werden gelöscht. Das lässt sich nicht rückgängig machen.",
-  "SHOPS.Marktbuch.LeerenJa": "Leeren"
+  "SHOPS.Marktbuch.LeerenJa": "Leeren",
+  "SHOPS.Bogen.Mehr": "Mehr zu dieser Ware",
+  "SHOPS.Bogen.Oeffnen": "Gegenstand öffnen",
+  "SHOPS.Vorzeigen.Besucher": "Besucher",
+  "SHOPS.Menue.Verborgen": "Unter der Theke",
+  "SHOPS.Menue.Dienst": "Dienstleistung",
+  "SHOPS.Menue.Ankauf": "Kauft er zurück",
+  "SHOPS.Menue.Anbieten": "Jemandem anbieten",
+  "SHOPS.Menue.Oeffnen": "Gegenstand öffnen",
+  "SHOPS.Menue.Entfernen": "Aus der Auslage nehmen"
 }
