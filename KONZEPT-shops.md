@@ -1,4 +1,4 @@
-# Konzept: Ninjo's Shops & Trade — Läden am Tisch
+# Konzept: Ninjo's DnD Shops & Trade — Läden am Tisch
 
 Stand 05.09.2026, zweite Fassung. Grundlage: die fünf tatsächlich vorhandenen
 Ladenmodule im Foundry-Katalog, der Quelltext von `dnd5e/module/config.mjs` und
@@ -446,13 +446,23 @@ trägt weiterhin einen Vorschlag.
    `Ninjos-Shops`. Die Mehrzahl ist gemeint: Es sind viele kleine Läden, kein
    ein großer Marktplatz.
 
-   **Nachgezogen am 07.09.2026 auf `Ninjo's Shops & Trade`.** Der Handel mit
+   **Nachgezogen am 07.09.2026 auf `Ninjo's DnD Shops & Trade`.** Der Handel mit
    Leuten ohne Laden war da fertig, in beide Richtungen, und ist keine
    Nebenfunktion — wer im Katalog ein Tauschfenster sucht, überliest „Shops".
    Der Titel ist jederzeit änderbar, solange `module.json` und die Katalogseite
    gleich lauten; die **Kennung bleibt `ninjos-shops`** und wird es immer, denn
    Foundry führt jede Installation darüber. Eine geänderte Kennung wäre für
    jede bestehende Installation ein anderes Modul.
+
+   **Und `DnD` steht am selben Tag dazu.** Das Modul ist an dnd5e gebunden, und
+   zwar in der Substanz: die Münztabelle in `preise.js`, `system.price` als
+   `{ value, denomination }`, `system.quantity`, `system.currency`, die
+   Gegenstandstypen. In einem fremden System stürzt nichts ab — `grundpreisCp`
+   findet kein Preisfeld und gibt **0** zurück, also ist jedes Stück geschenkt
+   und niemand merkt es. Ein leises Scheitern ist schlimmer als ein lautes,
+   deshalb steht die Bindung im Namen und nicht nur im Manifest. Die
+   Hausregel dahinter: Was an ein System gebunden ist, sagt es im Namen (NDRS,
+   die Übersetzung) — was es nicht ist, lässt es weg (FANG, In-Person Tools).
 2. **Spieler dürfen verkaufen — je Laden eingestellt, ab Werk aus.** Und der
    Laden bekommt *wahlweise* eine eigene Kasse (`eigeneKasse`, Abschnitt 4):
    unbegrenztes Geld als Normalfall, ein Geldbeutel, der leer werden kann, wo

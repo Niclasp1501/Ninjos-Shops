@@ -1,4 +1,4 @@
-# Deploy Ninjo's Shops & Trade to a Foundry server. ASCII-only (PowerShell 5.1 compatibility).
+# Deploy Ninjo's DnD Shops & Trade to a Foundry server. ASCII-only (PowerShell 5.1 compatibility).
 #
 # Same shape as tools/deploy-inperson.ps1 in Ninjos-InPerson-Tools. Default target
 # is the test server; production must be named on purpose.

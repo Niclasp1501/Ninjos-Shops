@@ -1,5 +1,5 @@
 /**
- * Socket-Empfang fuer Ninjo's Shops & Trade.
+ * Socket-Empfang fuer Ninjo's DnD Shops & Trade.
  *
  * ZEIGEN / SCHLIESSEN / STAND steuern das Spielerfenster, ANGEBOT legt einem
  * Spieler etwas zum Sonderpreis hin, KAUFEN traegt seine Bitte zur

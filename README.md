@@ -1,4 +1,4 @@
-# Ninjo's Shops & Trade
+# Ninjo's DnD Shops & Trade
 
 Läden, die die Spielleitung **vorzeigt**, statt sie suchen zu lassen. Ein Laden
 ist ein eigenes Dokument mit echten Gegenständen im Inventar; wer ihn zu sehen
