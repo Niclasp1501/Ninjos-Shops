@@ -39,8 +39,10 @@
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
               </div>
+              {{!-- Kein Preis am Stück: Was sie will, steht als eine Zahl
+                    unten. Neun Grundpreise daneben sind eine Rechnung, die
+                    niemand aufgemacht hat. --}}
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{summeText}}</span>
             </li>
           {{/each}}
           {{#if stand.geldNsc}}
@@ -69,7 +71,7 @@
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
               </div>
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{summeText}}</span>
+              <span class="shops-preis">{{anrechnungText}}</span>
               <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
                       aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
                       title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
@@ -110,23 +112,22 @@
 
     {{!-- Die Waage. Sie ist der eigentliche Grund für dieses Fenster: Man
           sieht, was der Tausch kostet, während man ihn zusammenstellt. --}}
-    <div class="shops-tisch-waage {{#if stand.zahltSpieler}}shops-zahlt{{/if}}
-                {{#if stand.bekommtSpieler}}shops-bekommt{{/if}}">
-      <span class="shops-tisch-summe">{{stand.nscText}}</span>
+    {{!-- Die Waage. Sie ist der eigentliche Grund für dieses Fenster: Was sie
+          will, was ich bringe, was dazwischen fehlt. --}}
+    <div class="shops-tisch-waage {{#if stand.fehlt}}shops-zahlt{{/if}}
+                {{#if stand.zuViel}}shops-bekommt{{/if}}">
+      <span class="shops-tisch-summe">
+        <small>{{localize "SHOPS.Tisch.Verlangt"}}</small> {{stand.verlangtText}}
+      </span>
       <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
-      <span class="shops-tisch-summe">{{stand.spielerText}}</span>
+      <span class="shops-tisch-summe">
+        <small>{{localize "SHOPS.Tisch.Hingelegt"}}</small> {{stand.gebrachtText}}
+      </span>
       <strong class="shops-tisch-differenz">
-        {{#if stand.ausgeglichen}}
-          {{localize "SHOPS.Tisch.Ausgeglichen"}}
-        {{else if stand.zahltSpieler}}
-          {{localize "SHOPS.Tisch.DuZahlst" geld=stand.differenzText}}
-        {{else}}
-          {{localize "SHOPS.Tisch.DuBekommst" geld=stand.differenzText}}
-        {{/if}}
+        {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
+        {{else if stand.fehlt}}{{localize "SHOPS.Tisch.Fehlt" geld=stand.offenText}}
+        {{else}}{{localize "SHOPS.Tisch.ZuViel" geld=stand.offenText}}{{/if}}
       </strong>
-      {{#if stand.ueberschrieben}}
-        <em class="shops-tisch-ausgehandelt">{{localize "SHOPS.Tisch.Ausgehandelt"}}</em>
-      {{/if}}
     </div>
 
     <footer class="shops-tisch-fuss">

@@ -42,9 +42,9 @@
  */
 
 import { MODULE_ID, SOCKET, WARE } from "./const.js";
-import { grundpreisCp, preisCp, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText,
+import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, ausMuenzfeld,
          PREIS_SORTEN, KUPFERWERT } from "./preise.js";
-import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
+import { bezahle, schreibeGut, vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
 import { einlagern } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
@@ -75,9 +75,28 @@ function wertHergeben(person, item) {
                  Number.isFinite(fest) ? fest : null);
 }
 
-/** Was die Person für dieses Stück gibt. */
-function wertAnnehmen(item) {
-  return Math.floor(grundpreisCp(item.system?.price) * PERSON_ANKAUF);
+/**
+ * Die Ankaufspolitik hinter dieser Person.
+ *
+ * Fuehrt sie einen Laden, gilt dessen eingestellter Ankaufswert - dieselbe
+ * Zahl, mit der das Ladenfenster und die Verkaufsanfragen rechnen. Eine Person
+ * ohne Laden hat keine Politik; dann die Haelfte, wie in anfrage.js.
+ */
+function politikVon(person) {
+  const laeden = laedenVon(person);
+  const laden = laeden.length === 1 ? laeden[0] : null;
+  return laden?.system ?? { ankauf: PERSON_ANKAUF, spielraum: 0.25 };
+}
+
+/** Was die Person für dieses Stück von sich aus gäbe - ihr Ankaufswert. */
+function ankaufWert(person, item) {
+  return ankaufCp(grundpreisCp(item.system?.price), politikVon(person));
+}
+
+/** Wie weit sie sich davon wegbewegt, wenn sie gut oder schlecht gelaunt ist. */
+function spielraumVon(person) {
+  const wert = Number(politikVon(person).spielraum);
+  return Number.isFinite(wert) ? wert : 0.25;
 }
 
 const summe = seite => (seite ?? []).reduce((s, p) => s + p.wertCp * p.menge, 0);
@@ -96,63 +115,102 @@ const seitenwert = (seite, geldCp) => summe(seite) + Math.max(0, Math.round(geld
 /**
  * Der Handel, fertig für die Anzeige.
  *
- * `differenzCp` ist positiv, wenn der Spieler zahlt. Ein überschriebener Preis
- * ersetzt sie - dann rechnet niemand mehr nach, dann gilt das Wort.
+ * **Zwei Zahlen, nicht neun.** Bis zum 08.09.2026 stand hinter jedem Stueck
+ * sein gerechneter Preis, und unten die Differenz. Das las sich wie eine
+ * Rechnung, war aber keine: Der Spieler sah Grundpreise, die niemand von ihm
+ * verlangt hatte, und die Summe darunter kam scheinbar aus dem Nichts.
+ *
+ * Jetzt gibt es genau zwei Betraege. **Was sie verlangt** - eine Zahl, die
+ * die Spielleitung setzt (vorgeschlagen wird die Summe ihrer Preise). Und
+ * **was er bringt**: was sie ihm fuer seine Ware anrechnet, plus die Muenzen,
+ * die er hingelegt hat. Was dazwischen fehlt, steht daneben.
+ *
+ * Ihre eigenen Muenzen zaehlen zu ihrer Seite - sie gibt sie ja heraus.
  */
 export function tischStand(handel) {
   if (!handel) return null;
-  const nscCp = seitenwert(handel.seiteNsc, handel.geldNsc);
-  const spielerCp = seitenwert(handel.seiteSpieler, handel.geldSpieler);
-  const roh = nscCp - spielerCp;
-  const gilt = Number.isFinite(handel.preisCp) ? handel.preisCp : roh;
 
-  const schmuecken = seite => (seite ?? []).map(p => ({
-    ...p, summeText: alsText(p.wertCp * p.menge, kuerzel)
-  }));
+  const geldNsc = Math.max(0, Math.round(handel.geldNsc || 0));
+  const geldSpieler = Math.max(0, Math.round(handel.geldSpieler || 0));
+
+  /* Was sie fuer ihre Ware will. Ohne Vorgabe: die Summe ihrer Preise. */
+  const vorschlagCp = summe(handel.seiteNsc);
+  const gefordertCp = Number.isFinite(handel.forderungCp) ? handel.forderungCp : vorschlagCp;
+
+  /* Was sie ihm fuer ein Stueck anrechnet - ohne Vorgabe ihr Ankaufswert. */
+  const angerechnet = p => Number.isFinite(p.anrechnungCp) ? p.anrechnungCp : p.wertCp * p.menge;
+  const gebrachtCp = (handel.seiteSpieler ?? []).reduce((s, p) => s + angerechnet(p), 0);
+
+  const linksCp = gefordertCp + geldNsc;
+  const rechtsCp = gebrachtCp + geldSpieler;
+  const offenCp = linksCp - rechtsCp;
 
   return {
     ...handel,
-    seiteNsc: schmuecken(handel.seiteNsc),
-    seiteSpieler: schmuecken(handel.seiteSpieler),
-    nscText: alsText(nscCp, kuerzel),
-    spielerText: alsText(spielerCp, kuerzel),
-    differenzCp: gilt,
+    /* Ihre Seite: die Preise sieht nur die Spielleitung - siehe die Vorlagen. */
+    seiteNsc: (handel.seiteNsc ?? []).map(p => ({
+      ...p, summeText: alsText(p.wertCp * p.menge, kuerzel)
+    })),
+    /* Seine Seite: was sie anrechnet, und fuer die Spielleitung die Spanne. */
+    seiteSpieler: (handel.seiteSpieler ?? []).map(p => {
+      const wert = angerechnet(p);
+      return {
+        ...p,
+        anrechnungText: alsText(wert, kuerzel),
+        grundText: alsText((p.grundCp ?? 0) * p.menge, kuerzel),
+        eigenerWert: Number.isFinite(p.anrechnungCp),
+        anrechnungFeld: alsMuenzfeld(wert),
+        spanne: spanneVon(p)
+      };
+    }),
+
+    geldNsc, geldSpieler,
+    geldNscText: muenzText(handel.muenzenNsc) || alsText(geldNsc, kuerzel),
+    geldSpielerText: muenzText(handel.muenzenSpieler) || alsText(geldSpieler, kuerzel),
+
+    gefordertCp,
+    gefordertText: alsText(gefordertCp, kuerzel),
+    gebrachtText: alsText(rechtsCp, kuerzel),
+    verlangtText: alsText(linksCp, kuerzel),
+    forderungFeld: alsMuenzfeld(gefordertCp),
+    ueberschrieben: Number.isFinite(handel.forderungCp) && handel.forderungCp !== vorschlagCp,
+
+    offenCp,
+    offenText: alsText(Math.abs(offenCp), kuerzel),
+    fehlt: offenCp > 0,
+    zuViel: offenCp < 0,
+    ausgeglichen: offenCp === 0,
+
     /*
-     * **Zwei Zusagen, nicht eine.** Bis hierher schloss der Spieler allein ab:
-     * Er konnte etwas auf seine Seite legen und sofort bestaetigen, ohne dass
-     * die Spielleitung dieser Zusammenstellung je zugestimmt haette. Ein
-     * Tausch ist aber eine Abrede zwischen zweien.
-     *
-     * **Jede Aenderung setzt beide zurueck.** Wer nach der Zusage noch etwas
-     * dazulegt oder den Preis anfasst, handelt einen anderen Tausch aus - und
-     * die alte Zusage galt ihm nicht.
+     * **Zwei Zusagen, nicht eine.** Ein Tausch ist eine Abrede zwischen
+     * zweien; jede Aenderung danach setzt beide zurueck, denn die alte Zusage
+     * galt einem anderen Tisch.
      */
     bereitSpieler: handel.bereitSpieler === true,
     bereitGm: handel.bereitGm === true,
-    ueberschrieben: Number.isFinite(handel.preisCp) && handel.preisCp !== roh,
-    zahltSpieler: gilt > 0,
-    bekommtSpieler: gilt < 0,
-    ausgeglichen: gilt === 0,
-    differenzText: alsText(Math.abs(gilt), kuerzel),
-    /*
-     * Fürs Eingabefeld der Spielleitung: Zahl **und** Münzsorte. Nur Gold
-     * anzubieten hiess, dass sechs Silber als „0,6" getippt werden mussten und
-     * drei Kupfer gar nicht gingen. Das Vorzeichen bleibt erhalten - negativ
-     * heisst, die Person gibt heraus.
-     */
-    preisFeld: alsMuenzfeld(gilt, { vorzeichen: true }),
-    geldNsc: handel.geldNsc ?? 0,
-    geldSpieler: handel.geldSpieler ?? 0,
-    /*
-     * Muenzen stehen so da, wie sie hingelegt wurden - „2 GM · 5 SM", nicht
-     * als umgerechnete Summe. Wer fuenfzehn Silber hinlegt, hat nicht „1 GM
-     * 5 SM" hingelegt; die Waage darunter rechnet ohnehin in Kupfer.
-     */
-    geldNscText: muenzText(handel.muenzenNsc) || alsText(handel.geldNsc ?? 0, kuerzel),
-    geldSpielerText: muenzText(handel.muenzenSpieler) || alsText(handel.geldSpieler ?? 0, kuerzel),
-    leer: !(handel.seiteNsc?.length || handel.seiteSpieler?.length
-            || handel.geldNsc || handel.geldSpieler)
+
+    leer: !((handel.seiteNsc ?? []).length || (handel.seiteSpieler ?? []).length
+            || geldNsc || geldSpieler)
   };
+}
+
+/**
+ * Die drei Zahlen, mit denen die Spielleitung einen Anrechnungswert setzt.
+ *
+ * Dieselbe Spanne wie bei den Verkaufsanfragen (anfrage.js) und aus demselben
+ * Grund: Wer den Haendler verstimmt hat, bekommt die linke Zahl, wer gut mit
+ * ihm steht, die rechte. Entschieden wird am Tisch.
+ */
+function spanneVon(posten) {
+  const ueblich = posten.wertCp * posten.menge;
+  if (!ueblich) return null;
+  const spielraum = Number.isFinite(posten.spielraum) ? posten.spielraum : 0.25;
+  const werte = [
+    Math.max(0, Math.floor(ueblich * (1 - spielraum))),
+    ueblich,
+    Math.ceil(ueblich * (1 + spielraum))
+  ];
+  return werte.map(cp => ({ cp, text: alsText(cp, kuerzel) }));
 }
 
 /** Der eigene offene Handel. */
@@ -270,6 +328,14 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
   const traeger = seite === "nsc" ? person : benutzer.character;
   if (!traeger) return;
 
+  const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
+  /*
+   * Was die Spielleitung fuer ein Stueck eingetragen hat, bleibt stehen -
+   * solange dasselbe Stueck in derselben Menge daliegt. Wer die Menge aendert,
+   * handelt einen anderen Posten aus.
+   */
+  const vorher = new Map((handel[feld] ?? []).map(p => [p.itemId, p]));
+
   const liste = [];
   for (const p of posten ?? []) {
     const item = traeger.items.get(p.itemId);
@@ -277,31 +343,65 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
     const vorrat = item.type === "container" ? 1 : Number(item.system?.quantity ?? 1);
     const menge = Math.min(Math.max(1, Math.floor(Number(p.menge) || 1)), vorrat);
     if (menge <= 0) continue;
-    liste.push({
+
+    const alt = vorher.get(item.id);
+    const zeile = {
       itemId: item.id, name: item.name, img: item.img || null, menge,
-      wertCp: seite === "nsc" ? wertHergeben(person, item) : wertAnnehmen(item)
-    });
+      wertCp: seite === "nsc" ? wertHergeben(person, item) : ankaufWert(person, item)
+    };
+    if (seite === "spieler") {
+      zeile.grundCp = grundpreisCp(item.system?.price);
+      zeile.spielraum = spielraumVon(person);
+      if (alt && alt.menge === menge && Number.isFinite(alt.anrechnungCp)) {
+        zeile.anrechnungCp = alt.anrechnungCp;
+      }
+    }
+    liste.push(zeile);
   }
 
-  const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
   const gedeckelt = muenzenDeckeln(muenzen, traeger.system?.currency);
-  await benutzer.setFlag(MODULE_ID, TISCH, {
-    ...handel, [feld]: liste, ...muenzFelder(seite, gedeckelt),
-    preisCp: null, bereitSpieler: false, bereitGm: false
-  });
+  const neu = { ...handel, [feld]: liste, ...muenzFelder(seite, gedeckelt),
+                bereitSpieler: false, bereitGm: false };
+  // Ihre Ware hat sich geaendert - dann gilt auch ihre alte Forderung nicht mehr.
+  if (seite === "nsc") neu.forderungCp = null;
+  await benutzer.setFlag(MODULE_ID, TISCH, neu);
   await funken([benutzerId]);
 }
 
-/** Den Preis überschreiben. `null` gibt die Rechnung wieder frei. */
-export async function preisSetzen(benutzerId, preisCp) {
+/**
+ * Was sie fuer ihre Seite verlangt. `null` gibt die Rechnung wieder frei.
+ *
+ * Das Modul rechnet vor, die Spielleitung entscheidet: Ein Freundschaftspreis,
+ * ein Aufschlag fuer den Unsympathen, ein glatter Betrag.
+ */
+export async function forderungSetzen(benutzerId, betragCp) {
   if (!game.user.isGM) return;
   const benutzer = game.users.get(benutzerId);
   const handel = benutzer?.getFlag(MODULE_ID, TISCH);
   if (!handel) return;
-  const wert = preisCp === null ? null : Math.round(Number(preisCp) || 0);
-  // Ein neuer Preis ist ein neuer Handel - beide sagen noch einmal zu.
+  const wert = betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0));
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, preisCp: wert, bereitSpieler: false, bereitGm: false });
+    { ...handel, forderungCp: wert, bereitSpieler: false, bereitGm: false });
+  await funken([benutzerId]);
+}
+
+/**
+ * Was sie ihm fuer ein Stueck anrechnet. `null` nimmt wieder ihren Ankaufswert.
+ *
+ * Das ist die Antwort auf „was ist dir das wert" - und der Grund, warum auf
+ * seiner Seite ueberhaupt eine Zahl steht. Ohne sie waere sein Krummsaebel
+ * einfach ein Bild auf dem Tisch.
+ */
+export async function anrechnenSetzen(benutzerId, itemId, betragCp) {
+  if (!game.user.isGM) return;
+  const benutzer = game.users.get(benutzerId);
+  const handel = benutzer?.getFlag(MODULE_ID, TISCH);
+  if (!handel) return;
+  const liste = (handel.seiteSpieler ?? []).map(p => p.itemId !== itemId ? p : {
+    ...p, anrechnungCp: betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0))
+  });
+  await benutzer.setFlag(MODULE_ID, TISCH,
+    { ...handel, seiteSpieler: liste, bereitSpieler: false, bereitGm: false });
   await funken([benutzerId]);
 }
 
@@ -405,18 +505,35 @@ async function abschliessenAusfuehren(benutzerId) {
   const figur = benutzer.character;
   if (!person || !figur) return { ok: false, grund: "SHOPS.Kauf.KeineFigur" };
 
-  const stand = tischStand(handel);
-  const zahlt = stand.differenzCp;
+  /*
+   * **Es wandert genau das, was auf dem Tisch liegt.**
+   *
+   * Bis zum 08.09.2026 wanderte stattdessen die *Differenz*: Das Modul buchte
+   * sie aus der Boerse ab, und die hingelegten Muenzen blieben liegen, wo sie
+   * waren. Wer 2 GM hinlegte, bekam den Dolch fuer 2 GM 4 SM um genau diese
+   * 2 GM billiger - jede hingelegte Muenze war ein Rabatt auf sich selbst.
+   *
+   * Jetzt greift niemand mehr in eine Boerse hinein. Was fehlt, steht auf der
+   * Waage; hinlegen muss es der, dem es fehlt. Und wer zu viel hinlegt,
+   * bekommt es heraus, indem die andere Seite Muenzen dazulegt - so, wie es
+   * an einem Tisch auch zugeht.
+   */
+  const legtSpieler = muenzenSaeubern(handel.muenzenSpieler);
+  const legtPerson = muenzenSaeubern(handel.muenzenNsc);
+  const personHatKasse = !!person.system?.currency;
 
-  // Reicht das Geld? Nur der Spieler wird gefragt.
-  let gezahlt = null;
-  if (zahlt > 0) {
-    gezahlt = bezahle(figur.system?.currency ?? {}, zahlt);
-    if (!gezahlt) {
-      return { ok: false, grund: "SHOPS.Kauf.ZuWenigGeld",
-               fehltCp: zahlt - vermoegenCp(figur.system?.currency ?? {}) };
-    }
+  // Nichts anfassen, bevor feststeht, dass alles noch da ist.
+  let spielerKasse = muenzenAbziehen(figur.system?.currency ?? {}, legtSpieler);
+  if (!spielerKasse) return { ok: false, grund: "SHOPS.Tisch.GeldWeg" };
+  if (Object.keys(legtPerson).length && !personHatKasse) {
+    return { ok: false, grund: "SHOPS.Tisch.GeldWeg" };
   }
+  let personKasse = personHatKasse
+    ? muenzenAbziehen(person.system.currency, legtPerson) : null;
+  if (personHatKasse && !personKasse) return { ok: false, grund: "SHOPS.Tisch.GeldWeg" };
+
+  spielerKasse = muenzenDazu(spielerKasse, legtPerson);
+  if (personKasse) personKasse = muenzenDazu(personKasse, legtSpieler);
 
   // Liegt alles noch da, was auf dem Tisch liegt?
   for (const [seite, traeger] of [["seiteNsc", person], ["seiteSpieler", figur]]) {
@@ -440,19 +557,9 @@ async function abschliessenAusfuehren(benutzerId) {
       }
     }
 
-    // Und das Geld.
-    if (zahlt > 0) {
-      await figur.update({ "system.currency": gezahlt.bestand });
-      if (person.system?.currency) {
-        await person.update({ "system.currency": schreibeGut(person.system.currency, zahlt) });
-      }
-    } else if (zahlt < 0) {
-      await figur.update({ "system.currency": schreibeGut(figur.system?.currency ?? {}, -zahlt) });
-      if (person.system?.currency) {
-        const raus = bezahle(person.system.currency, -zahlt);
-        if (raus) await person.update({ "system.currency": raus.bestand });
-      }
-    }
+    // Und die Muenzen - beide Boersen stehen oben schon fertig da.
+    await figur.update({ "system.currency": spielerKasse });
+    if (personKasse) await person.update({ "system.currency": personKasse });
 
     await benutzer.unsetFlag(MODULE_ID, TISCH);
   } catch (fehler) {
@@ -473,18 +580,21 @@ async function abschliessenAusfuehren(benutzerId) {
   const was = [...(handel.seiteNsc ?? []), ...(handel.seiteSpieler ?? [])]
     .map(p => ({ name: p.name, menge: p.menge }));
 
+  /*
+   * Ins Buch gehoert, was unterm Strich an Geld die Seite gewechselt hat -
+   * die hingelegten Muenzen also mitgerechnet. „Dolch fuer 40 KM" waere in
+   * dem Beispiel oben eine glatte Falschauskunft gewesen.
+   */
+  const nettoCp = muenzenCp(legtSpieler) - muenzenCp(legtPerson);
   if (was.length) {
-    const schreiben = zahlt < 0 ? schreibeHandelVerkauf : schreibeHandel;
+    const schreiben = nettoCp < 0 ? schreibeHandelVerkauf : schreibeHandel;
     await schreiben({
-      person, figur, ok: true, was, summeCp: Math.abs(zahlt),
+      person, figur, ok: true, was, summeCp: Math.abs(nettoCp),
       kaeufer: benutzer, verkaeufer: benutzer
     });
   }
 
-  const zurueck = gezahlt ? wechselgeldText(gezahlt.zurueck, kuerzel) : null;
-  const satz = game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name });
-  return { ok: true, text: zurueck
-    ? `${satz} ${game.i18n.format("SHOPS.Kauf.Wechselgeld", { geld: zurueck })}` : satz };
+  return { ok: true, text: game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name }) };
 }
 
 /* ── Was der Spieler schickt ───────────────────────────────────────── */
@@ -743,8 +853,11 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     actions: {
       ansehen: HandelstischGM.#ansehen,
       wegnehmen: HandelstischGM.#wegnehmen,
-      preisUebernehmen: HandelstischGM.#preisUebernehmen,
-      preisFrei: HandelstischGM.#preisFrei,
+      forderungUebernehmen: HandelstischGM.#forderungUebernehmen,
+      forderungFrei: HandelstischGM.#forderungFrei,
+      anrechnen: HandelstischGM.#anrechnen,
+      anrechnenSchnell: HandelstischGM.#anrechnenSchnell,
+      anrechnenFrei: HandelstischGM.#anrechnenFrei,
       bestaetigen: HandelstischGM.#bestaetigen,
       geldWeg: HandelstischGM.#geldWeg,
       beenden: HandelstischGM.#beenden,
@@ -821,14 +934,35 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     if (zeile) wegnehmen(this.benutzerId, seite, zeile.dataset.itemId);
   }
 
-  static #preisUebernehmen() {
-    const feld = this.element.querySelector("[data-preis]");
-    const sorte = this.element.querySelector("[data-sorte]");
+  static #forderungUebernehmen() {
+    const feld = this.element.querySelector("[data-forderung]");
+    const sorte = this.element.querySelector("[data-forderungsorte]");
     if (!feld) return;
-    preisSetzen(this.benutzerId, ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
+    forderungSetzen(this.benutzerId, ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
   }
 
-  static #preisFrei() { preisSetzen(this.benutzerId, null); }
+  static #forderungFrei() { forderungSetzen(this.benutzerId, null); }
+
+  /** Was ihr sein Stueck wert ist - aus dem Feld in seiner Zeile. */
+  static #anrechnen(ereignis, ziel) {
+    const zeile = ziel.closest("[data-item-id]");
+    const feld = zeile?.querySelector("[data-anrechnung]");
+    const sorte = zeile?.querySelector("[data-anrechnungsorte]");
+    if (!feld) return;
+    anrechnenSetzen(this.benutzerId, zeile.dataset.itemId,
+                    ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
+  }
+
+  /** Einer der drei Vorschlaege - ein Griff statt einer Zahl. */
+  static #anrechnenSchnell(ereignis, ziel) {
+    const zeile = ziel.closest("[data-item-id]");
+    if (zeile) anrechnenSetzen(this.benutzerId, zeile.dataset.itemId, Number(ziel.dataset.wert) || 0);
+  }
+
+  static #anrechnenFrei(ereignis, ziel) {
+    const zeile = ziel.closest("[data-item-id]");
+    if (zeile) anrechnenSetzen(this.benutzerId, zeile.dataset.itemId, null);
+  }
 
   static #geldWeg() { geldSetzen(this.benutzerId, "nsc", {}); }
 

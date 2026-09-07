@@ -78,17 +78,49 @@
         <h3>{{localize "SHOPS.Tisch.ErGibt" spieler=spielerName}}</h3>
         <ol class="shops-ware shops-tisch-spieler">
           {{#each stand.seiteSpieler}}
-            <li class="shops-zeile" data-item-id="{{itemId}}">
-              {{#if img}}<img src="{{img}}" alt="">
-              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
-              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
-              <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{summeText}}</span>
-              <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
-                      aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
-                      title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
-                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-              </button>
+            {{!-- Hier steht die Frage, die nur sie beantworten kann: Was ist
+                  ihr das wert? Der Grundpreis daneben ist die Auskunft dazu,
+                  die drei Zahlen darunter sind ihre Spanne. --}}
+            <li class="shops-zeile shops-zeile-breit" data-item-id="{{itemId}}">
+              <div class="shops-zeile-oben">
+                {{#if img}}<img src="{{img}}" alt="">
+                {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+                <div class="shops-name">
+                  <span class="shops-warenname">{{name}}</span>
+                  {{#if grundCp}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
+                </div>
+                <span class="shops-menge">{{menge}}&times;</span>
+                <span class="shops-preis {{#if eigenerWert}}shops-fest{{/if}}">{{anrechnungText}}</span>
+                <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
+                        aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
+                        title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="shops-zeile-unten">
+                {{#each spanne}}
+                  <button type="button" class="shops-klein" data-action="anrechnenSchnell" data-wert="{{cp}}">
+                    {{text}}
+                  </button>
+                {{/each}}
+                <span class="shops-preisfeld">
+                  <input type="number" data-anrechnung min="0" step="1" value="{{anrechnungFeld.value}}"
+                         aria-label="{{localize 'SHOPS.Tisch.WasWert'}}">
+                  <select data-anrechnungsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
+                    {{#each ../muenzsorten}}
+                      <option value="{{sorte}}" {{#if (eq sorte ../anrechnungFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
+                    {{/each}}
+                  </select>
+                </span>
+                <button type="button" class="shops-klein" data-action="anrechnen">
+                  {{localize "SHOPS.Tisch.Anrechnen"}}
+                </button>
+                {{#if eigenerWert}}
+                  <button type="button" class="shops-klein" data-action="anrechnenFrei">
+                    {{localize "SHOPS.Tisch.WiederRechnen"}}
+                  </button>
+                {{/if}}
+              </div>
             </li>
           {{/each}}
           {{#if stand.geldSpieler}}
@@ -105,43 +137,45 @@
       </section>
     </div>
 
-    <div class="shops-tisch-waage {{#if stand.zahltSpieler}}shops-zahlt{{/if}}
-                {{#if stand.bekommtSpieler}}shops-bekommt{{/if}}">
-      <span class="shops-tisch-summe">{{stand.nscText}}</span>
+    <div class="shops-tisch-waage {{#if stand.fehlt}}shops-zahlt{{/if}}
+                {{#if stand.zuViel}}shops-bekommt{{/if}}">
+      <span class="shops-tisch-summe">
+        <small>{{localize "SHOPS.Tisch.Verlangt"}}</small> {{stand.verlangtText}}
+      </span>
       <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
-      <span class="shops-tisch-summe">{{stand.spielerText}}</span>
+      <span class="shops-tisch-summe">
+        <small>{{localize "SHOPS.Tisch.Hingelegt"}}</small> {{stand.gebrachtText}}
+      </span>
       <strong class="shops-tisch-differenz">
         {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
-        {{else if stand.zahltSpieler}}{{localize "SHOPS.Tisch.ErZahlt" geld=stand.differenzText}}
-        {{else}}{{localize "SHOPS.Tisch.ErBekommt" geld=stand.differenzText}}{{/if}}
+        {{else if stand.fehlt}}{{localize "SHOPS.Tisch.Fehlt" geld=stand.offenText}}
+        {{else}}{{localize "SHOPS.Tisch.ZuViel" geld=stand.offenText}}{{/if}}
       </strong>
     </div>
 
-    {{!-- Das Modul rechnet vor, die Spielleitung entscheidet. Ein Freundschafts-
-          preis, ein Aufschlag für den Unsympathen, ein glatter Betrag: Was hier
-          steht, gilt — die Rechnung darüber ist dann nur noch Auskunft. --}}
+    {{!-- Was sie für ihre Seite haben will. Vorgeschlagen ist die Summe ihrer
+          Preise; was hier steht, gilt. --}}
     <div class="shops-tisch-preisfeld">
       <label>
-        <span>{{localize "SHOPS.Tisch.PreisSetzen"}}</span>
+        <span>{{localize "SHOPS.Tisch.SieVerlangt"}}</span>
         <span class="shops-preisfeld">
-          <input type="number" data-preis step="1" value="{{stand.preisFeld.value}}"
-                 aria-label="{{localize 'SHOPS.Tisch.PreisSetzen'}}">
-          <select data-sorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
+          <input type="number" data-forderung min="0" step="1" value="{{stand.forderungFeld.value}}"
+                 aria-label="{{localize 'SHOPS.Tisch.SieVerlangt'}}">
+          <select data-forderungsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
             {{#each muenzsorten}}
-              <option value="{{sorte}}" {{#if (eq sorte ../stand.preisFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
+              <option value="{{sorte}}" {{#if (eq sorte ../stand.forderungFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
             {{/each}}
           </select>
         </span>
       </label>
-      <button type="button" class="shops-kaufen shops-zweit" data-action="preisUebernehmen">
+      <button type="button" class="shops-kaufen shops-zweit" data-action="forderungUebernehmen">
         {{localize "SHOPS.Tisch.PreisUebernehmen"}}
       </button>
       {{#if stand.ueberschrieben}}
-        <button type="button" class="shops-kaufen shops-zweit" data-action="preisFrei">
-          {{localize "SHOPS.Tisch.PreisFrei"}}
+        <button type="button" class="shops-kaufen shops-zweit" data-action="forderungFrei">
+          {{localize "SHOPS.Tisch.WiederRechnen"}}
         </button>
       {{/if}}
-      <span class="shops-blockhinweis">{{localize "SHOPS.Tisch.PreisHinweis"}}</span>
     </div>
 
     <footer class="shops-tisch-fuss">

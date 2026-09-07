@@ -10,7 +10,7 @@
  */
 
 import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
-import { bezahle, vermoegenCp, schreibeGut } from "../scripts/kasse.js";
+import { bezahle, vermoegenCp, schreibeGut, muenzenAbziehen, muenzenDazu } from "../scripts/kasse.js";
 
 let gelaufen = 0, gefallen = 0;
 
@@ -170,6 +170,31 @@ for (let cp = 1; cp <= 5000; cp++) {
   if (grundpreisCp(feld) !== cp) feldfehler++;
 }
 pruefe("5000 Festpreise gehen hin und zurueck", feldfehler, 0);
+
+/* ── Muenzen auf den Tisch legen ───────────────────────────────────── */
+
+/*
+ * Am 08.09.2026 bekam ein Spieler einen Dolch fuer 2 GM 4 SM, indem er 2 GM
+ * auf den Tisch legte: Die Waage zog sie ab, aus der Boerse gingen nur die
+ * fehlenden 40 Kupfer, und die 2 GM blieben liegen, wo sie waren. Seither
+ * wandern hingelegte Muenzen wirklich - als die Muenzen, die sie sind.
+ */
+pruefe("drei Silber sind drei Silber, kein gewechseltes Gold",
+  muenzenAbziehen({ pp: 0, gp: 2, ep: 0, sp: 5, cp: 0 }, { sp: 3 }),
+  { cp: 0, sp: 2, ep: 0, gp: 2, pp: 0 });
+pruefe("was nicht da ist, wird nicht hingelegt",
+  muenzenAbziehen({ pp: 0, gp: 0, ep: 0, sp: 2, cp: 0 }, { sp: 3 }), null);
+pruefe("ein Goldstueck wird dafuer nicht aufgebrochen",
+  muenzenAbziehen({ pp: 0, gp: 9, ep: 0, sp: 0, cp: 0 }, { sp: 1 }), null);
+pruefe("nichts hinlegen aendert nichts",
+  muenzenAbziehen({ pp: 1, gp: 2, ep: 3, sp: 4, cp: 5 }, {}),
+  { cp: 5, sp: 4, ep: 3, gp: 2, pp: 1 });
+pruefe("drueben kommen dieselben Muenzen an",
+  muenzenDazu({ pp: 0, gp: 1, ep: 0, sp: 0, cp: 0 }, { sp: 3 }),
+  { cp: 0, sp: 3, ep: 0, gp: 1, pp: 0 });
+pruefe("hin und zurueck ist der Ausgangsbestand",
+  muenzenDazu(muenzenAbziehen({ pp: 1, gp: 7, ep: 0, sp: 3, cp: 9 }, { gp: 5, cp: 4 }), { gp: 5, cp: 4 }),
+  { cp: 9, sp: 3, ep: 0, gp: 7, pp: 1 });
 
 /* ── Ergebnis ──────────────────────────────────────────────────────── */
 

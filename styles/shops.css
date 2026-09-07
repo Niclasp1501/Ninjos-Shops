@@ -3819,6 +3819,74 @@
   border-bottom: 1px solid var(--shops-rand);
 }
 .ninjos-shops .shops-tisch-waage > i { color: var(--shops-text-blass); }
+/*
+ * Die Zeile der Spielleitung wird zweizeilig: oben das Stueck, unten die
+ * Frage „was ist es dir wert". Nur dort - beim Spieler bleibt sie einzeilig.
+ */
+.ninjos-shops .shops-zeile-breit {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+.ninjos-shops .shops-zeile-oben,
+.ninjos-shops .shops-zeile-unten {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/*
+ * Das Bild braucht seine Groesse noch einmal: Die Regel oben trifft nur
+ * direkte Kinder von `.shops-zeile`, und hier steckt es eine Ebene tiefer.
+ * Ohne das zog `align-items: stretch` die Laterne ueber die halbe Spalte.
+ */
+.ninjos-shops .shops-zeile-oben > img,
+.ninjos-shops .shops-zeile-oben > .shops-kein-bild {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border: 1px solid var(--shops-rand);
+  border-radius: 4px;
+}
+.ninjos-shops .shops-zeile-oben > .shops-name { flex: 1 1 auto; min-width: 0; }
+.ninjos-shops .shops-zeile-unten {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding-top: 6px;
+  border-top: 1px dashed var(--shops-rand);
+}
+.ninjos-shops .shops-zeile-unten .shops-preisfeld input { width: 4.5rem; }
+.ninjos-shops .shops-zeile-unten .shops-klein {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 0.82rem;
+  color: var(--shops-text);
+  background: var(--shops-bg);
+  border: 1px solid var(--shops-rand);
+  border-radius: 4px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.ninjos-shops .shops-zeile-unten .shops-klein:hover { border-color: var(--shops-gold); }
+/* Der Grundpreis ist Auskunft, nicht Forderung - er tritt zurueck. */
+.ninjos-shops .shops-grundpreis {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--shops-text-blass);
+}
+
+/* „Verlangt" und „Hingelegt" benennen die beiden Summen - ohne sie waeren es
+   zwei Zahlen nebeneinander, die man raten muss. */
+.ninjos-shops .shops-tisch-summe small {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--shops-text-blass);
+}
+
 .ninjos-shops .shops-tisch-summe {
   font-variant-numeric: tabular-nums;
   color: var(--shops-text-blass);

@@ -106,6 +106,40 @@ export function schreibeGut(bestand, betragCp) {
   return neu;
 }
 
+/**
+ * Bestimmte Muenzen aus einem Bestand nehmen - Stueck fuer Stueck, ohne zu
+ * wechseln.
+ *
+ * Das ist etwas anderes als {@link bezahle}: Wer drei Silberlinge auf den
+ * Tisch legt, legt drei Silberlinge hin und kein Goldstueck, das zu 97 Kupfer
+ * herausgegeben wird. Fehlt auch nur eine Muenze der verlangten Sorte, gibt es
+ * `null` - halb hinlegen gibt es nicht.
+ *
+ * @returns {?object} neuer Bestand, oder `null`
+ */
+export function muenzenAbziehen(bestand, muenzen) {
+  const neu = {};
+  for (const s of SORTEN_AUFSTEIGEND) neu[s] = Math.max(0, Number(bestand?.[s]) || 0);
+  for (const [s, n] of Object.entries(muenzen ?? {})) {
+    const anzahl = Math.max(0, Math.floor(Number(n) || 0));
+    if (!anzahl) continue;
+    if (!(s in neu) || neu[s] < anzahl) return null;
+    neu[s] -= anzahl;
+  }
+  return neu;
+}
+
+/** Dieselben Muenzen woanders dazulegen. Keine Umrechnung, kein Wechseln. */
+export function muenzenDazu(bestand, muenzen) {
+  const neu = {};
+  for (const s of SORTEN_AUFSTEIGEND) neu[s] = Math.max(0, Number(bestand?.[s]) || 0);
+  for (const [s, n] of Object.entries(muenzen ?? {})) {
+    const anzahl = Math.max(0, Math.floor(Number(n) || 0));
+    if (anzahl && s in neu) neu[s] += anzahl;
+  }
+  return neu;
+}
+
 /*
  * Warum Schritt 3 immer eine Muenze findet:
  *
