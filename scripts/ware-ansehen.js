@@ -59,6 +59,15 @@ export function wareAnsehen(traeger, itemId) {
   delete daten._id;
   delete daten.flags?.[MODULE_ID];
 
+  /*
+   * **Die Rechte muessen mit.** `toObject()` kopiert `ownership` gleich mit -
+   * also die Rechte des Ladens, an dem der Spieler keine hat. Die Kopie war
+   * damit genauso gesperrt wie das Original, und Foundry wies sie mit
+   * „dir fehlt die Berechtigung" ab. Sie liegt in keiner Datenbank und lebt
+   * nur in diesem Client; wer sie sehen darf, entscheidet niemand ausser uns.
+   */
+  daten.ownership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER };
+
   let kopie;
   try {
     kopie = new Item.implementation(daten, { parent: null });
