@@ -259,7 +259,6 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
           preis: zeile?.preisText ?? "?",
           laden: foundry.utils.escapeHTML(this.#laden.name)
         })}</p>
-        <p class="shops-blockhinweis">${game.i18n.localize("SHOPS.Verkauf.Hinweis")}</p>
       </div>`;
 
     const sicher = await foundry.applications.api.DialogV2.confirm({
@@ -393,9 +392,6 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     game.socket.emit(SOCKET.NAME, bitte);
   }
 
-  /** Dieselbe Bitte wie der Knopf im Regal, von aussen aufrufbar. */
-  kaufenVon(item) { return this.#bitteSenden(item, 1, null); }
-
   /**
    * @override
    *
@@ -444,18 +440,6 @@ function wegklickenVergessen() {
 export function wurdeWeggeklickt(ladenUuid) {
   try { return window.localStorage.getItem(WEGGEKLICKT) === ladenUuid; }
   catch { return false; }
-}
-
-/**
- * Von aussen kaufen - aus dem Ansehen-Fenster heraus.
- *
- * Es geht durch dieselbe Tuer wie der Knopf im Regal: derselbe Dialog,
- * dieselbe Bitte, dieselbe Pruefung bei der Spielleitung.
- */
-export function spielerFensterKaufen(itemId) {
-  const item = offen?.laden?.items?.get(itemId);
-  if (!item) return;
-  offen.kaufenVon(item);
 }
 
 /**

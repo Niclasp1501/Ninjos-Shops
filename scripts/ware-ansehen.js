@@ -1,124 +1,88 @@
 /**
- * Ein Stück aus der Nähe ansehen.
+ * Ein Stueck ansehen - im richtigen Gegenstandsbogen.
  *
- * **Was fehlte.** Im Spielerfenster stand jede Ware als Zeile da, und ein
- * Klick darauf tat nichts. Wer wissen wollte, was ein „Seil des Kletterns"
- * eigentlich kann, hatte keinen Weg dorthin - die Beschreibung steht am
- * Gegenstand, und der gehört dem Laden.
+ * **Was hier vorher stand und warum es weg ist.** Bis zum 08.09.2026 zeigte
+ * diese Datei eine eigene Nahansicht: Bild gross, Preis, Bestand, Beschreibung,
+ * Kaufknopf. Die Begruendung dafuer war, ein Bogen mit Eingabefeldern und
+ * Reitern sei die Ansicht fuer die Spielleitung und nicht die fuer jemanden,
+ * der im Regal stoebert.
  *
- * **Warum nicht einfach `item.sheet.render()`.** Der Laden gehört keinem
- * Spieler (das ist zugesichert, siehe AGENTS.md), also darf niemand seinen
- * Gegenstandsbogen öffnen. Und selbst wenn: Ein Bogen mit Eingabefeldern,
- * Aktivitäten und Reitern ist die Ansicht für die Spielleitung, nicht die für
- * jemanden, der im Regal stöbert.
+ * Das war zur Haelfte richtig und in der Sache falsch. Wer wissen will, ob das
+ * Langschwert vielseitig ist, wieviel es wiegt, welchen Schaden es macht und
+ * ob er es ueberhaupt fuehren kann, findet nichts davon in einer
+ * Beschreibung - das steht in den Feldern. Eine huebschere Ansicht, die die
+ * Haelfte weglaesst, ist keine bessere Ansicht.
  *
- * Hier steht deshalb genau das, was ein Käufer sehen will: das Bild groß, der
- * Satz des Händlers, der Preis, der Bestand, die Beschreibung - und der Knopf,
- * mit dem er es nimmt, ohne zurückblättern zu müssen.
+ * **Warum es trotzdem nicht der Bogen des Ladens ist.** Der Laden gehoert
+ * keinem Spieler (das ist zugesichert, siehe AGENTS.md), und deshalb darf
+ * niemand seine Gegenstaende oeffnen - Foundry weist das ab, bevor irgendetwas
+ * erscheint. Ihm dafuer Rechte am Laden zu geben, ist ausgeschlossen: Er haette
+ * ihn danach im Akteursverzeichnis stehen und koennte den Spielleiter-Bogen
+ * samt verborgener Ware aufmachen (vorzeigen.js sagt dasselbe zum Vorzeigen).
+ *
+ * **Also eine fluechtige Kopie.** Aus den Daten des Stuecks entsteht ein
+ * Gegenstand, der in keiner Datenbank liegt und niemandem gehoert ausser dem,
+ * der ihn gerade erzeugt hat. Sein Bogen ist derselbe wie ueberall sonst - mit
+ * allen Feldern, die das System kennt - und wird **nicht bearbeitbar**
+ * geoeffnet: Was der Spieler dort aendern koennte, aendert ohnehin nichts, und
+ * ein Feld, das sich anfassen laesst und nichts bewirkt, ist ein Versprechen,
+ * das niemand einloest.
+ *
+ * Die Ladenmerkmale (Festpreis, verborgen, Dienstleistung) werden vorher
+ * entfernt. Sie gehoeren dem Laden und haetten im Bogen nichts zu suchen.
  */
 
-import { MODULE_ID, WARE, KAUFMODUS } from "./const.js";
-import { grundpreisCp, preisCp, alsText } from "./preise.js";
+import { MODULE_ID } from "./const.js";
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
+/**
+ * Den Gegenstandsbogen eines Stueckes zeigen, ohne Rechte am Besitzer.
+ *
+ * @param {Actor} traeger  Wer es haelt - ein Laden oder eine Person
+ * @param {string} itemId
+ * @returns {?Application}
+ */
+export function wareAnsehen(traeger, itemId) {
+  const item = traeger?.items?.get(itemId);
+  if (!item) return null;
 
-export class WareAnsehen extends HandlebarsApplicationMixin(ApplicationV2) {
-  static DEFAULT_OPTIONS = {
-    id: `${MODULE_ID}-ansehen`,
-    classes: ["ninjos-shops", "shops-ansehen"],
-    position: { width: 520, height: "auto" },
-    window: { icon: "fa-solid fa-magnifying-glass", resizable: true },
-    actions: { hierKaufen: WareAnsehen.#hierKaufen }
-  };
-
-  static PARTS = {
-    body: { template: `modules/${MODULE_ID}/templates/ware-ansehen.hbs`, scrollable: [".shops-ansehen-text"] }
-  };
-
-  #traeger;
-  #itemId;
-  #vorgabe;
-
-  /**
-   * @param {Actor} traeger   Wer das Stueck haelt - ein Laden oder eine Person
-   * @param {string} itemId
-   * @param {object} [vorgabe]
-   * @param {number} [vorgabe.preisCp]   Fester Preis (Handel, Angebot)
-   * @param {Function} [vorgabe.kaufen]  Was der Kaufknopf tut
+  /*
+   * Die Spielleitung darf den echten Bogen ohnehin - dann bekommt sie ihn
+   * auch, samt Bearbeitung. Eine Kopie waere hier nur eine Attrappe, in der
+   * jede Aenderung verpufft.
    */
-  constructor(traeger, itemId, vorgabe = null, options = {}) {
-    super(options);
-    this.#traeger = traeger;
-    this.#itemId = itemId;
-    this.#vorgabe = vorgabe;
+  if (item.isOwner) {
+    item.sheet.render(true);
+    return item.sheet;
   }
 
-  get title() {
-    return this.#traeger?.items?.get(this.#itemId)?.name ?? game.i18n.localize("SHOPS.Ansehen.Titel");
+  const daten = item.toObject();
+  delete daten._id;
+  delete daten.flags?.[MODULE_ID];
+
+  let kopie;
+  try {
+    kopie = new Item.implementation(daten, { parent: null });
+  } catch (fehler) {
+    console.error(`${MODULE_ID} | Gegenstandsbogen konnte nicht geoeffnet werden`, fehler);
+    ui.notifications.warn(game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
+    return null;
   }
 
-  async _prepareContext(options) {
-    const ctx = await super._prepareContext(options);
-    const item = this.#traeger?.items?.get(this.#itemId);
-    if (!item) return Object.assign(ctx, { name: "?", beschreibung: null });
+  /*
+   * `editable: false` gehoert in den **Aufbau** des Bogens, nicht in den
+   * Aufruf von `render`: Ein Bogen merkt sich seine Optionen beim Erzeugen,
+   * und `document.sheet` liefert einen, den es womoeglich schon gibt.
+   */
+  const Bogen = kopie._getSheetClass?.() ?? kopie.sheet?.constructor;
+  if (!Bogen) return null;
 
-    const merkmal = item.flags?.[MODULE_ID] ?? {};
-    const fest = Number.isFinite(merkmal[WARE.FESTPREIS]) ? merkmal[WARE.FESTPREIS] : null;
-    const dienst = merkmal[WARE.DIENST] === true;
-    const menge = Number(item.system?.quantity ?? 1);
-
-    /*
-     * Die Beschreibung durch Foundrys Aufbereitung: Sie loest @UUID-Verweise
-     * und Wuerfelformeln auf. Roh ausgegeben stuenden dort die Klammern.
-     */
-    const roh = item.system?.description?.value ?? "";
-    let beschreibung = null;
-    if (roh) {
-      try {
-        beschreibung = await foundry.applications.ux.TextEditor.implementation
-          .enrichHTML(roh, { async: true, relativeTo: item });
-      } catch { beschreibung = roh; }
-    }
-
-    return Object.assign(ctx, {
-      name: item.name,
-      img: item.img,
-      hinweis: merkmal[WARE.HINWEIS] ?? "",
-      dienst,
-      menge,
-      beschreibung,
-      /*
-       * **Ein Preis kann von aussen kommen.** Im Laden rechnet ihn der Laden;
-       * bei einem Handel oder einem Angebot steht er fest, und dann waere die
-       * Ladenrechnung schlicht falsch - eine Person hat keinen Aufschlag.
-       */
-      preisText: alsText(
-        Number.isFinite(this.#vorgabe?.preisCp)
-          ? this.#vorgabe.preisCp
-          : preisCp(grundpreisCp(item.system?.price), this.#traeger.system, fest),
-        kuerzel),
-      // Gesperrt heisst ansehen ja, kaufen nein - genau hier ist der Fall.
-      kaufbar: this.#vorgabe
-        ? typeof this.#vorgabe.kaufen === "function"
-        : (this.#traeger.system?.kaufmodus !== KAUFMODUS.GESPERRT
-           && (dienst || menge > 0) && !!game.users.activeGM)
-    });
+  let app;
+  try {
+    // ApplicationV2 nimmt ein Objekt, die alte Application zwei Argumente.
+    app = new Bogen({ document: kopie, editable: false });
+  } catch {
+    app = new Bogen(kopie, { editable: false });
   }
-
-  /** Von hier aus kaufen - dasselbe wie im Regal, nur ohne Zurueckblaettern. */
-  static async #hierKaufen() {
-    const id = this.#itemId;
-    const eigen = this.#vorgabe?.kaufen;
-    this.close();
-    if (eigen) return void eigen(id);
-    const { spielerFensterKaufen } = await import("./spieler-fenster.js");
-    spielerFensterKaufen(id);
-  }
-}
-
-/** Ein Stueck ansehen. Ein zweites ersetzt das erste. */
-export function wareAnsehen(traeger, itemId, vorgabe = null) {
-  foundry.applications.instances.get(`${MODULE_ID}-ansehen`)?.close();
-  return new WareAnsehen(traeger, itemId, vorgabe).render(true);
+  app.render(true);
+  return app;
 }

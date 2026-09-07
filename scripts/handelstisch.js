@@ -440,10 +440,8 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!itemId || !handel) return;
     const traeger = seite === "nsc" ? await fromUuid(handel.personUuid) : game.user.character;
     if (!traeger) return;
-    const posten = (seite === "nsc" ? handel.seiteNsc : handel.seiteSpieler)
-      ?.find(p => p.itemId === itemId);
     const { wareAnsehen } = await import("./ware-ansehen.js");
-    wareAnsehen(traeger, itemId, posten ? { preisCp: posten.wertCp * posten.menge } : null);
+    wareAnsehen(traeger, itemId);
   }
 
   static #auflegen(ereignis, ziel) {
