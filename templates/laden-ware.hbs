@@ -40,11 +40,11 @@
                     liegen. Etwas, das man nur nach dem Aufklappen erfährt,
                     hat man beim Überfliegen nicht. --}}
               {{#if verborgen}}<i class="fa-solid fa-eye-slash shops-marke"
-                    title="{{localize 'SHOPS.Bogen.Verborgen'}}"></i>{{/if}}
+                    title="{{localize 'SHOPS.Bogen.Verborgen'}}" aria-hidden="true"></i>{{/if}}
               {{#if dienst}}<i class="fa-solid fa-handshake shops-marke"
-                    title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>{{/if}}
+                    title="{{localize 'SHOPS.Bogen.Dienst'}}" aria-hidden="true"></i>{{/if}}
               {{#if ankauf}}<i class="fa-solid fa-arrow-rotate-left shops-marke"
-                    title="{{localize 'SHOPS.Bogen.KauftAn'}}"></i>{{/if}}
+                    title="{{localize 'SHOPS.Bogen.KauftAn'}}" aria-hidden="true"></i>{{/if}}
             </span>
             <input type="text" data-ware-feld="hinweis" value="{{hinweis}}"
                    placeholder="{{localize 'SHOPS.Bogen.HinweisPlatzhalter'}}"
@@ -88,8 +88,8 @@
                 und vier davon braucht man selten. --}}
           <button type="button" class="shops-zeilenmenue" data-action="wareMenue"
                   title="{{localize 'SHOPS.Bogen.Mehr'}}"
-                  {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-            <i class="fa-solid fa-ellipsis"></i>
+                  {{#unless @root.bearbeitbar}}disabled{{/unless}} aria-label="{{localize 'SHOPS.Bogen.Mehr'}}">
+            <i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
           </button>
           </div>
         </li>

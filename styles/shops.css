@@ -30,7 +30,7 @@
   --shops-gold: #d4af37;
   --shops-kopftext: #ffffff;
   --shops-schatten-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shops-schrift: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --shops-schrift: var(--ninjo-schrift);
 }
 
 /* ── Grundfläche ───────────────────────────────────────────────────── */
@@ -2631,9 +2631,9 @@
   inset: 0;
   z-index: 200;
   display: flex;
-  background: #14100c;
-  color: #f3ece0;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--ninjo-grund);
+  color: var(--ninjo-text);
+  font-family: var(--ninjo-schrift);
   /* Nichts hier wird bedient. */
   cursor: none;
   user-select: none;
@@ -2715,7 +2715,7 @@
   margin: .25em 0 0;
   font-size: clamp(.85rem, 1.35vw, 1.35rem);
   font-style: italic;
-  color: #d8cfc0;
+  color: var(--ninjo-text);
 }
 
 /* ── Das Gitter der Ware ──────────────────────────────────────────── */
@@ -2749,8 +2749,8 @@
   min-height: 0;
   padding: clamp(.6rem, 1.6vh, 1.4rem);
   text-align: center;
-  background: #1e1912;
-  border: 1px solid #3b3227;
+  background: var(--ninjo-flaeche);
+  border: 1px solid var(--ninjo-rand);
   border-radius: 12px;
 }
 
@@ -2761,7 +2761,7 @@
   aspect-ratio: 1;
   object-fit: contain;
   border: none;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, .55));
+  filter: drop-shadow(var(--ninjo-schatten-md));
 }
 
 .ninjos-shops .shops-schau-text {
@@ -2782,7 +2782,7 @@
 .ninjos-shops .shops-schau-hinweis {
   font-size: clamp(.75rem, 1.05vw, 1.1rem);
   font-style: italic;
-  color: #b8ab98;
+  color: var(--ninjo-text-blass);
 }
 
 .ninjos-shops .shops-schau-preis {
@@ -2805,7 +2805,7 @@
   place-items: center;
   margin: 0;
   font-size: clamp(1.1rem, 2vw, 2rem);
-  color: #8d8578;
+  color: var(--ninjo-text-blass);
 }
 
 /* ── Fuß: Seitenzahl und Fortschritt ──────────────────────────────── */
@@ -2817,7 +2817,7 @@
   gap: 1rem;
   padding-top: .2rem;
   font-size: clamp(.75rem, 1.1vw, 1.1rem);
-  color: #9d9384;
+  color: var(--ninjo-text-blass);
 }
 
 /*
@@ -2830,7 +2830,7 @@
   font-size: clamp(1.1rem, 1.9vw, 2.1rem);
   font-weight: 700;
   letter-spacing: .04em;
-  color: #cfc3ad;
+  color: var(--ninjo-text);
 }
 
 /* ── Die Sanduhr ──────────────────────────────────────────────────── */
@@ -3226,7 +3226,9 @@
   --shops-rand: #cdbf9f;
   --shops-text: #2b2318;
   --shops-text-blass: #6f6350;
-  --shops-faser: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.14'/%3E%3C/svg%3E");
+  /* Die Faser steht in ninjo-marke.css - dort hat die dunkle
+     Fassung ihre eigene, schwaechere. */
+  --shops-faser: var(--ninjo-faser);
 }
 
 /*
@@ -3274,30 +3276,47 @@
  * besser zu lesen. Welcher Raum es ist, weiß nur der Tisch — deshalb eine
  * Einstellung und keine Entscheidung im Modul.
  */
+/*
+ * Der Pergament-Zustand der Schau überschreibt **dieselben Rollen** wie die
+ * dunkle Fassung — er ist kein zweites Design, sondern derselbe Bogen bei
+ * anderem Licht.
+ *
+ * Die Werte sind tiefer als das Pergament im Fenster (`#fdfbf7`): Ein
+ * Monitor mit zwei Metern Diagonale wäre in dieser Helligkeit eine Lampe im
+ * Raum. Dieselbe Überlegung, aus der die dunkle Fassung überhaupt entstanden
+ * ist, nur in die andere Richtung.
+ *
+ * Weil es Rollen sind, folgt alles Abgeleitete von selbst — Karte, Name,
+ * Hinweis, Preis, Seitenzahl. Vorher standen dafür zehn eigene Regeln.
+ */
 .ninjos-shops.shops-schau-pergament {
-  background-color: #e6d9bd;
-  background-image: var(--shops-faser);
+  --ninjo-grund:       #e6d9bd;
+  --ninjo-flaeche:     #f6efdc;
+  --ninjo-rand:        #c3b28c;
+  --ninjo-text:        #2b2318;
+  --ninjo-text-blass:  #6f6350;
+  /* Gold leuchtet auf hellem Grund nicht — es braucht eine Stufe mehr Tiefe. */
+  --ninjo-akzent-text: #8a6d16;
+  --ninjo-schatten-sm: 0 1px 3px rgba(60, 45, 20, .12);
+
+  background-color: var(--ninjo-grund);
+  background-image: var(--ninjo-faser);
   background-blend-mode: multiply;
-  color: #2b2318;
+  color: var(--ninjo-text);
 }
 
 .ninjos-shops.shops-schau-pergament .shops-schau-karte {
-  background-color: #f6efdc;
-  background-image: var(--shops-faser);
+  background-color: var(--ninjo-flaeche);
+  background-image: var(--ninjo-faser);
   background-blend-mode: multiply;
-  border-color: #c3b28c;
-  box-shadow: 0 1px 3px rgba(60, 45, 20, .12);
+  border-color: var(--ninjo-rand);
+  box-shadow: var(--ninjo-schatten-sm);
 }
 
-.ninjos-shops.shops-schau-pergament .shops-schau-name { color: #2b2318; }
-.ninjos-shops.shops-schau-pergament .shops-schau-hinweis { color: #6f6350; }
-
-/* Gold leuchtet auf hellem Grund nicht — es braucht eine Stufe mehr Tiefe. */
 .ninjos-shops.shops-schau-pergament .shops-schau-preis,
-.ninjos-shops.shops-schau-pergament .shops-schau-haendler { color: #8a6d16; }
+.ninjos-shops.shops-schau-pergament .shops-schau-haendler { color: var(--ninjo-akzent-text); }
 
 .ninjos-shops.shops-schau-pergament .shops-schau-seite { color: #5d5138; }
-.ninjos-shops.shops-schau-pergament .shops-schau-pause { color: #6f6350; }
 
 .ninjos-shops.shops-schau-pergament .shops-sanduhr-glas path {
   stroke: rgba(60, 45, 20, .45);

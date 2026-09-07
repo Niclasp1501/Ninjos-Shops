@@ -1019,3 +1019,59 @@ zeigt auf `/modules`. **Vor der ersten Veröffentlichung** gehört der Eintrag i
   und `:63`).
 
   Hinweis aus der Übersetzungs-Session vom 06.09.2026, dort nachgeprüft.
+
+
+## Oberfläche: die acht Regeln
+
+Sie stehen vollständig in der [CLAUDE.md des Workspace](../../CLAUDE.md),
+Abschnitt „Regelgrundsätze für die Oberfläche der Foundry-Module", und gelten
+für jedes Modul: Fenster passen ins Bild · die Marke steht in einer Datei · die
+Schrift liefert Foundry · kein sichtbarer Text ohne Sprachschlüssel · die
+Rückmeldung steht dort, wo der Mensch hinschaut · jeder Knopf hat einen Namen ·
+Unwiderrufliches fragt vorher · neue Fenster sind ApplicationV2.
+
+Zwei Dateien werden dafür **kopiert, nicht geteilt** — wie `willkommen.js`:
+
+| Datei | Angepasst wird |
+|---|---|
+| `styles/ninjo-marke.css` | nichts, sie ist überall identisch |
+| `scripts/fensterpassen.js` | nur der `MODUL`-Block ganz oben |
+
+Verbessert man eine davon, gehört sie in alle Module nachgezogen.
+
+### Was hier gilt
+
+**Fensterklasse:** `ninjos-shops`.
+
+**Regel 1 stammt von hier.** `fensterpassen.js` ist in diesem Modul entstanden
+und am 07.09.2026 verallgemeinert worden: Die Fensterklassen und die scrollenden
+Teile stehen jetzt im `MODUL`-Block, das äußere Element wird für beide
+Fensterbauarten geholt, und `alleNachziehen()` durchsucht auch `ui.windows`.
+Für dieses Modul ändert sich am Verhalten nichts — aber Änderungen daran gehören
+ab jetzt in alle sechs Kopien.
+
+### Die drei Helligkeiten, und warum es drei sind
+
+Das war am 07.09.2026 kurz als „zweite Palette, unklar" notiert. Sie ist nicht
+unklar, sie war nur unbenannt:
+
+| | Wo | Warum |
+|---|---|---|
+| **Pergament** | `:root` in `ninjo-marke.css` | die Marke, wie überall |
+| **Gealtertes Pergament** | zweiter `.ninjos-shops`-Block am Ende von `shops.css` | Ein Laden ist eine Holzbude, kein Büro. Wärmer und mit Faser — das Modul nimmt sich hier ausdrücklich das Recht, eine Rolle anders zu füllen. |
+| **Dunkel** | `.ninjo-dunkel`, gesetzt von `lichtSetzen()` in `schau.js` | Die Schau steht auf einem Monitor im abgedunkelten Zimmer. Auf OLED verbraucht echtes Schwarz nichts. |
+
+**Alle drei sind derselbe Bogen bei anderem Licht.** Seit dem 07.09.2026 stehen
+sie als Rollen, nicht als Zahlen: Die dunkle Fassung kommt aus
+`ninjo-marke.css` und ist damit für jedes Ninjo-Modul verfügbar; der
+Pergament-Modus der Schau überschreibt dieselben Rollen mit tieferen Werten
+(`--ninjo-grund: #e6d9bd`), weil ein Monitor im Weiß des Fensters eine Lampe
+wäre. Aus zehn Sonderregeln wurde dadurch ein Token-Block.
+
+**Wer die Schau anfasst, schreibt keine Farbe hinein.** Der Bereich ist frei von
+festen Werten; beide Helligkeiten folgen den Rollen. Eine neue Farbe dort heißt,
+dass eine Rolle fehlt — dann gehört sie in die Marke, nicht in `shops.css`.
+
+**Offen:** vier `aria`-Attribute auf 14 Vorlagen — bei einem Fenster, das
+Spieler am Tablet bedienen, die größte Lücke. Und `title=`-Tooltips gibt es
+auf Touch nicht; wo eine Erklärung nötig ist, gehört sie in den sichtbaren Text.

@@ -20,7 +20,7 @@
         <li class="shops-anfrage shops-freigabe" data-freigabe-id="{{id}}">
 
           <header class="shops-anfrage-kopf">
-            <i class="fa-solid fa-hand-holding"></i>
+            <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
             <strong>{{spielerName}}</strong>
             <span class="shops-anfrage-figur">{{figurName}}</span>
             <span class="shops-anfrage-laden">{{localize "SHOPS.Marktbuch.AnLaden" laden=ladenName}}</span>
@@ -29,7 +29,7 @@
           <ol class="shops-ware shops-anfrage-posten">
             <li class="shops-zeile">
               {{#if img}}<img src="{{img}}" alt="">
-              {{else}}<i class="fa-solid fa-cube shops-kein-bild"></i>{{/if}}
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
               <div class="shops-name"><span class="shops-warenname">{{itemName}}</span></div>
               <span class="shops-menge">{{menge}}&times;</span>
               <span class="shops-preis">{{summeText}}</span>
@@ -45,11 +45,11 @@
 
           <footer class="shops-anfrage-fuss">
             <button type="button" data-action="freigeben">
-              <i class="fa-solid fa-check"></i>
+              <i class="fa-solid fa-check" aria-hidden="true"></i>
               {{localize "SHOPS.Freigabe.Freigeben"}}
             </button>
             <button type="button" class="shops-zweit" data-action="kaufAblehnen">
-              <i class="fa-solid fa-hand"></i>
+              <i class="fa-solid fa-hand" aria-hidden="true"></i>
               {{localize "SHOPS.Freigabe.Ablehnen"}}
             </button>
           </footer>
@@ -82,7 +82,7 @@
                 {{!-- Nicht jedes Stueck hat ein Bild. Ein leerer weisser Kasten
                       sieht aus wie ein Ladefehler, ein Symbol nicht. --}}
                 {{#if img}}<img src="{{img}}" alt="">
-                {{else}}<i class="fa-solid fa-cube shops-kein-bild"></i>{{/if}}
+                {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
                 <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
                 <span class="shops-menge">{{menge}}&times;</span>
                 <span class="shops-preis">{{wertText}}</span>
@@ -144,11 +144,11 @@
 
           <footer class="shops-anfrage-fuss">
             <button type="button" data-action="bieten">
-              <i class="fa-solid fa-hand-holding"></i>
+              <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
               {{localize "SHOPS.Anfrage.Bieten"}}
             </button>
             <button type="button" class="shops-zweit" data-action="abweisen">
-              <i class="fa-solid fa-hand"></i>
+              <i class="fa-solid fa-hand" aria-hidden="true"></i>
               {{localize "SHOPS.Anfrage.Abweisen"}}
             </button>
           </footer>

@@ -11,7 +11,7 @@
 
     {{#if wartet}}
       <section class="shops-wartet">
-        <i class="fa-solid fa-hourglass-half"></i>
+        <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i>
         <div>
           <strong>{{localize "SHOPS.Anfrage.Unterwegs"}}</strong>
           <p>{{localize "SHOPS.Anfrage.UnterwegsHinweis"}}</p>
@@ -33,7 +33,7 @@
 
     {{#if abgelehnt}}
       <section class="shops-abgelehnt">
-        <i class="fa-solid fa-hand"></i>
+        <i class="fa-solid fa-hand" aria-hidden="true"></i>
         <div>
           <strong>{{localize "SHOPS.Anfrage.Abgelehnt"}}</strong>
           {{#if anfrage.satz}}<p>„{{anfrage.satz}}"</p>{{/if}}
@@ -43,7 +43,7 @@
 
     {{#if angenommen}}
       <section class="shops-erledigt">
-        <i class="fa-solid fa-check"></i>
+        <i class="fa-solid fa-check" aria-hidden="true"></i>
         <strong>{{localize "SHOPS.Anfrage.Erledigt2"}}</strong>
       </section>
     {{/if}}
@@ -61,17 +61,17 @@
     <footer class="shops-packen-fuss">
       {{#if wartet}}
         <button type="button" class="shops-zweit" data-action="zuruecknehmen">
-          <i class="fa-solid fa-rotate-left"></i>
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
           {{localize "SHOPS.Anfrage.Zurueckziehen"}}
         </button>
       {{/if}}
       {{#if vorschlag}}
         <button type="button" data-action="annehmen">
-          <i class="fa-solid fa-hand-holding"></i>
+          <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
           {{localize "SHOPS.Anfrage.Annehmen"}}
         </button>
         <button type="button" class="shops-zweit" data-action="ablehnen">
-          <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           {{localize "SHOPS.Anfrage.Ablehnen"}}
         </button>
       {{/if}}
@@ -109,7 +109,7 @@
 
     <footer class="shops-packen-fuss">
       <button type="button" data-action="abschicken" {{#if korbLeer}}disabled{{/if}}>
-        <i class="fa-solid fa-paper-plane"></i>
+        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
         {{localize "SHOPS.Anfrage.Abschicken"}}
       </button>
     </footer>

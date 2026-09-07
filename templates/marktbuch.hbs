@@ -33,11 +33,11 @@
         <li class="shops-buchzeile {{#if freigabe}}shops-buch-frei{{else}}{{#unless ok}}shops-buch-fehl{{else}}{{#if gekauft}}shops-buch-kauf{{else}}shops-buch-verkauf{{/if}}{{/unless}}{{/if}}">
           <span class="shops-buch-pfeil">
             {{#if freigabe}}
-              {{#if ok}}<i class="fa-solid fa-check"></i>
-              {{else}}<i class="fa-solid fa-hand"></i>{{/if}}
-            {{else}}{{#unless ok}}<i class="fa-solid fa-xmark"></i>
-            {{else if gekauft}}<i class="fa-solid fa-arrow-right"></i>
-            {{else}}<i class="fa-solid fa-arrow-left"></i>{{/unless}}{{/if}}
+              {{#if ok}}<i class="fa-solid fa-check" aria-hidden="true"></i>
+              {{else}}<i class="fa-solid fa-hand" aria-hidden="true"></i>{{/if}}
+            {{else}}{{#unless ok}}<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            {{else if gekauft}}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            {{else}}<i class="fa-solid fa-arrow-left" aria-hidden="true"></i>{{/unless}}{{/if}}
           </span>
 
           <div class="shops-buch-inhalt">
@@ -74,7 +74,7 @@
   <footer class="shops-buch-fuss">
     <span>{{localize "SHOPS.Marktbuch.Fusshinweis"}}</span>
     <button type="button" class="shops-zweit" data-action="leeren">
-      <i class="fa-solid fa-trash"></i>
+      <i class="fa-solid fa-trash" aria-hidden="true"></i>
       {{localize "SHOPS.Marktbuch.Leeren"}}
     </button>
   </footer>

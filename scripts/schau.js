@@ -94,10 +94,18 @@ function schichtHolen() {
   return schicht;
 }
 
-/** Dunkel oder Pergament - der Raum entscheidet, nicht das Modul. */
+/**
+ * Dunkel oder Pergament - der Raum entscheidet, nicht das Modul.
+ *
+ * `ninjo-dunkel` ist die dunkle Fassung der Marke (ninjo-marke.css) und in
+ * jedem Ninjo-Modul dieselbe. Die Schau setzt sie nur; wie sie aussieht, steht
+ * dort - und damit auch fuer jedes andere Modul, das einmal dunkel werden soll.
+ */
 function lichtSetzen(el) {
   const licht = game.settings.get(MODULE_ID, SETTINGS.SCHAU_LICHT) ?? "dunkel";
-  el.classList.toggle("shops-schau-pergament", licht === "pergament");
+  const pergament = licht === "pergament";
+  el.classList.toggle("shops-schau-pergament", pergament);
+  el.classList.toggle("ninjo-dunkel", !pergament);
 }
 
 /** Nach einer Aenderung der Helligkeit dasselbe Bild neu zeichnen. */

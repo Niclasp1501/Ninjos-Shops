@@ -48,8 +48,8 @@
         <img src="{{haendler.img}}" alt="">
         <span class="shops-haendler-name">{{haendler.name}}</span>
         <button type="button" class="shops-haendler-weg" data-haendler-weg
-                title="{{localize 'SHOPS.Haendler.Loesen'}}">
-          <i class="fa-solid fa-xmark"></i>
+                title="{{localize 'SHOPS.Haendler.Loesen'}}" aria-label="{{localize 'SHOPS.Haendler.Loesen'}}">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
       {{else}}
         <span class="shops-haendler-leer">{{localize "SHOPS.Haendler.Ablegen"}}</span>
@@ -164,7 +164,7 @@
                      {{checked erlaubt}} {{#unless ../bearbeitbar}}disabled{{/unless}}>
               <span class="shops-spielername">{{name}}</span>
               {{#if active}}<i class="fa-solid fa-circle shops-online"
-                               title="{{localize 'SHOPS.Zugriff.Angemeldet'}}"></i>{{/if}}
+                               title="{{localize 'SHOPS.Zugriff.Angemeldet'}}" aria-hidden="true"></i>{{/if}}
             </label>
           </li>
         {{/each}}
@@ -193,7 +193,7 @@
     --}}
     {{#unless spielerDuerfenOeffnen}}
       <p class="shops-warnung">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
         {{localize "SHOPS.Zugriff.SchalterAus"}}
       </p>
     {{/unless}}

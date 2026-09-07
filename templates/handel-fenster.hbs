@@ -18,7 +18,7 @@
 
     {{#if figurName}}
       <div class="shops-boerse">
-        <i class="fa-solid fa-coins"></i>
+        <i class="fa-solid fa-coins" aria-hidden="true"></i>
         <span class="shops-boerse-label">{{figurName}}</span>
         <strong>{{boerse}}</strong>
       </div>
@@ -32,7 +32,7 @@
                   weiß, was ihm hingehalten wird, kauft es auch nicht. --}}
             {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
                             title="{{localize 'SHOPS.Ansehen.Knopf'}}">
-            {{else}}<i class="fa-solid fa-cube shops-kein-bild"></i>{{/if}}
+            {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
             <div class="shops-name">
               <span class="shops-warenname" data-action="ansehen"
                     title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
@@ -40,7 +40,7 @@
             <span class="shops-menge">{{menge}}&times;</span>
             <span class="shops-preis">{{summeText}}</span>
             <button type="button" class="shops-kaufen" data-action="nehmen">
-              <i class="fa-solid fa-hand-holding"></i>
+              <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
               {{localize "SHOPS.Handel.Nehmen"}}
             </button>
           </li>
@@ -62,12 +62,12 @@
       <div class="shops-handel-knoepfe">
         {{#if handel.nimmtAn}}
           <button type="button" class="shops-kaufen" data-action="anbieten">
-            <i class="fa-solid fa-hand-holding"></i>
+            <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
             {{localize "SHOPS.Handel.Anbieten"}}
           </button>
         {{/if}}
         <button type="button" class="shops-kaufen shops-zweit" data-action="ablehnen">
-          <i class="fa-solid fa-hand"></i>
+          <i class="fa-solid fa-hand" aria-hidden="true"></i>
           {{localize "SHOPS.Handel.Ablehnen"}}
         </button>
       </div>

@@ -45,7 +45,7 @@
       </div>
       <button type="button" class="shops-kaufen" data-action="angebotAnnehmen"
               {{#if keinSpielleiter}}disabled{{/if}}>
-        <i class="fa-solid fa-hand-holding"></i>
+        <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
         <span>{{localize "SHOPS.Angebot.Annehmen"}}</span>
       </button>
     </section>
@@ -54,7 +54,7 @@
   {{#if boerse}}
     <aside class="shops-boerse" title="{{localize 'SHOPS.Spieler.BoerseHinweis'}}">
       <span class="shops-boerse-label">
-        <i class="fa-solid fa-coins"></i>
+        <i class="fa-solid fa-coins" aria-hidden="true"></i>
         {{#if figurName}}{{figurName}}{{else}}{{localize "SHOPS.Spieler.Boerse"}}{{/if}}
       </span>
       <span class="shops-boerse-muenzen">
@@ -100,7 +100,7 @@
                     title="{{localize 'SHOPS.Ansehen.Knopf'}}">
                 {{name}}
                 {{#if dienst}}
-                  <i class="fa-solid fa-handshake" title="{{localize 'SHOPS.Bogen.Dienst'}}"></i>
+                  <i class="fa-solid fa-handshake" title="{{localize 'SHOPS.Bogen.Dienst'}}" aria-hidden="true"></i>
                 {{/if}}
               </span>
               {{#if hinweis}}
@@ -119,7 +119,7 @@
             {{#if @root.gesperrt}}
               <button type="button" class="shops-kaufen" disabled
                       title="{{localize 'SHOPS.Kauf.Gesperrt'}}">
-                <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
                 <span>{{localize "SHOPS.Spieler.NurAnsehen"}}</span>
               </button>
             {{else if ausverkauft}}
@@ -135,7 +135,7 @@
               <button type="button" class="shops-kaufen {{#if zuTeuer}}shops-knapp{{/if}}"
                       data-action="kaufen"
                       title="{{#if zuTeuer}}{{localize 'SHOPS.Kauf.ZuWenigGeld'}}{{/if}}">
-                <i class="fa-solid fa-hand-holding"></i>
+                <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
                 <span>{{localize "SHOPS.Spieler.Kaufen"}}</span>
               </button>
             {{/if}}
@@ -152,7 +152,7 @@
         Weg, etwas loszuwerden. --}}
   <section class="shops-anfrage-start">
     <button type="button" class="shops-kaufen shops-zweit" data-action="anfrageStellen">
-      <i class="fa-solid fa-hand-holding"></i>
+      <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
       <span>{{localize "SHOPS.Anfrage.Knopf"}}</span>
     </button>
     <span class="shops-leer">{{localize "SHOPS.Anfrage.KnopfHinweis"}}</span>
@@ -185,7 +185,7 @@
               {{else}}
                 <button type="button" class="shops-kaufen" data-action="verkaufen"
                         {{#if @root.keinSpielleiter}}disabled{{/if}}>
-                  <i class="fa-solid fa-hand-holding"></i>
+                  <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
                   <span>{{localize "SHOPS.Verkauf.Knopf"}}</span>
                 </button>
               {{/if}}

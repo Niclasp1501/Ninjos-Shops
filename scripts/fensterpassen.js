@@ -1,17 +1,22 @@
 /**
  * Kein Fenster darf groesser sein als der Bildschirm.
  *
- * **Der Fall, der das ausgeloest hat.** Auf einem Tablet stand das
- * Spielerfenster oben am Rand und lief unten aus dem Bild heraus: Die untere
- * Haelfte der Auslage, die Verkaufsliste und die Fussleiste waren nicht mehr
- * erreichbar. Verschieben half nicht - die Titelleiste war schon oben, und
- * weiter nach oben geht nicht. Die einzige Rettung waere gewesen, das Fenster
- * an seiner unteren Kante kleiner zu ziehen, und die lag ausserhalb des
- * Bildes.
+ * **In jedem Ninjo-Modul dieselbe Datei**, angepasst wird nur der MODUL-Block
+ * ganz oben — wie bei `willkommen.js`. Kopiert statt geteilt: Die Module
+ * erscheinen einzeln im Katalog und sollen sich nicht gegenseitig brauchen.
  *
- * Das ist keine Eigenheit dieses Moduls, sondern die uebliche Falle bei
+ * **Der Fall, der das ausgeloest hat.** Auf einem Tablet stand das
+ * Spielerfenster von Shops oben am Rand und lief unten aus dem Bild heraus:
+ * Die untere Haelfte der Auslage, die Verkaufsliste und die Fussleiste waren
+ * nicht mehr erreichbar. Verschieben half nicht - die Titelleiste war schon
+ * oben, und weiter nach oben geht nicht. Die einzige Rettung waere gewesen,
+ * das Fenster an seiner unteren Kante kleiner zu ziehen, und die lag
+ * ausserhalb des Bildes.
+ *
+ * Das ist keine Eigenheit eines Moduls, sondern die uebliche Falle bei
  * `height: "auto"`: Foundry misst den Inhalt und macht das Fenster so hoch,
- * wie es sein will. Auf einem grossen Bildschirm faellt das nie auf.
+ * wie es sein will. Auf einem grossen Bildschirm faellt das nie auf. Am
+ * 07.09.2026 hatte NDRS deshalb `width: 1100` - breiter als ein iPad quer.
  *
  * **Die Regel.** Ein Fenster ist hoechstens so gross wie das Bild minus einem
  * Rand, und es liegt immer vollstaendig darin. Was nicht hineinpasst, wird
@@ -22,6 +27,30 @@
  * eines Tablets, aufklappende Bildschirmtastatur, geteilter Bildschirm.
  */
 
+/* ── Das Einzige, was je Modul angepasst wird ─────────────────────── */
+
+const MODUL = {
+  /**
+   * Klassen, an denen dieses Modul seine eigenen Fenster erkennt.
+   *
+   * Eine Liste, weil kaum ein Modul mit einer auskommt: FANG hat
+   * `fang-app-window` fuer das Hauptfenster und `fang-dialog` fuer die
+   * Dialoge. Es genuegt, wenn **eine** davon am Fenster haengt.
+   */
+  marke: ["ninjos-shops"],
+
+  /**
+   * Teile, die selbst scrollen — zusaetzlich zu `.window-content`.
+   *
+   * Aus ihnen liest die Hoehenrechnung ab, wie viel dem Fenster fehlt. Ohne
+   * sie waechst ein Fenster nur, wenn der Rahmen ueberlaeuft; mit ihnen auch
+   * dann, wenn innen eine Liste abgeschnitten ist. Die Liste darf leer sein.
+   */
+  scrollteile: [".shops-ware", ".shops-anfrageliste", ".shops-buchliste", ".shops-ansehen-text"]
+};
+
+/* ── Ab hier ist die Datei in jedem Modul gleich ───────────────────── */
+
 /** Abstand zum Bildrand. Genug, um die Kante zum Ziehen zu treffen. */
 const RAND = 8;
 
@@ -31,47 +60,50 @@ const MINDEST = { breite: 280, hoehe: 200 };
 /**
  * Um wie viel ein Fenster beim ersten Aufmachen wachsen darf.
  *
- * **Warum ueberhaupt.** Die Fenster tragen feste Breiten - 780 fuer den
- * Ladenbogen, 660 fuer den Tresen, 520 fuer das Spielerfenster. Das sind
+ * **Warum ueberhaupt.** Die Fenster tragen feste Breiten - 780 fuer einen
+ * Ladenbogen, 660 fuer einen Tresen, 520 fuer ein Spielerfenster. Das sind
  * Zahlen fuer einen Laptop. Auf einem 2333 Pixel breiten Schirm nutzte der
  * Ladenbogen die Haelfte davon und liess den Rest schwarz.
  *
  * **Warum ein Faktor und kein Anteil am Bildschirm.** „Sechzig Prozent der
- * Breite" macht aus dem Spielerfenster auf einem grossen Schirm eine
+ * Breite" macht aus einem schmalen Fenster auf einem grossen Schirm eine
  * Landebahn, auf der eine Liste von zehn Zeilen verloren steht. Jedes Fenster
  * hat eine Breite, die zu seinem Inhalt passt; sie um die Haelfte zu dehnen
- * bleibt in diesem Verhaeltnis - und beim Ladenbogen reicht es genau, damit
- * die Auslage zweispaltig wird (siehe die Container-Abfrage in shops.css).
+ * bleibt in diesem Verhaeltnis.
  */
 const WACHSTUM = 1.5;
 
-/**
- * Was wir zuletzt selbst gesetzt haben - je Fenster.
- *
- * **Damit laesst sich „vom Benutzer gezogen" von „von uns geklemmt"
- * unterscheiden.** Ein Tablet, das gedreht wird, soll seine Fenster wieder
- * gross bekommen; wer dagegen von Hand kleiner zieht, will es kleiner haben
- * und darf nicht beim naechsten Drehen ueberfahren werden. Stimmt die
- * aktuelle Breite mit unserer letzten ueberein, hat niemand sie angefasst -
- * dann duerfen wir sie erneut anfassen. Weicht sie ab, gehoert sie jemand
- * anderem, und wir ruehren sie nur noch an, wenn sie nicht mehr ins Bild
- * passt.
- */
+/** Was wir zuletzt selbst gesetzt haben - je Fenster. */
 const zuletztGesetzt = new WeakMap();
 
 /** Welche Fenster schon einmal gewachsen sind. Gewachsen wird genau einmal. */
 const gewachsen = new WeakSet();
 
+/**
+ * Das aeussere Element eines Fensters.
+ *
+ * ApplicationV2 gibt ein `HTMLElement`, die alte `Application` ein
+ * jQuery-Objekt. Beide Bauarten laufen im selben Spiel nebeneinander - Player
+ * Wheel und das MCP-Modul stehen noch auf der alten -, und diese eine Zeile
+ * ist der ganze Unterschied.
+ */
+function element(app) {
+  const el = app?.element;
+  if (!el) return null;
+  return el instanceof HTMLElement ? el : (el[0] ?? null);
+}
+
 /** Gehoert das Fenster diesem Modul? */
 function unseres(app) {
-  return app?.element?.classList?.contains("ninjos-shops") === true;
+  const liste = element(app)?.classList;
+  return liste ? MODUL.marke.some(k => liste.contains(k)) : false;
 }
 
 /** Was den scrollenden Teilen an Hoehe fehlt - der groesste Fehlbetrag. */
 function fehlbetrag(el) {
   let fehlt = 0;
-  const teile = [el.querySelector(".window-content"),
-                 ...el.querySelectorAll(".shops-ware, .shops-anfrageliste, .shops-buchliste, .shops-ansehen-text")];
+  const teile = [el.querySelector(".window-content")];
+  for (const wahl of MODUL.scrollteile) teile.push(...el.querySelectorAll(wahl));
   for (const teil of teile) {
     if (teil) fehlt = Math.max(fehlt, teil.scrollHeight - teil.clientHeight);
   }
@@ -86,7 +118,7 @@ function fehlbetrag(el) {
  * Platz frei), dann die Hoehe.
  */
 export function insBildRuecken(app) {
-  const el = app?.element;
+  const el = element(app);
   if (!el || !el.isConnected) return;
 
   const bildBreite = window.innerWidth;
@@ -124,7 +156,7 @@ export function insBildRuecken(app) {
   }
   const breite = Math.max(MINDEST.breite, Math.min(wunschBreite, bildBreite - 2 * RAND));
 
-  // Zuerst, denn sie aendert den Umbruch: Mit 1170 statt 780 Pixeln steht die
+  // Zuerst, denn sie aendert den Umbruch: Mit 1170 statt 780 Pixeln steht eine
   // Auslage zweispaltig und braucht die halbe Hoehe.
   if (Math.abs(breite - sollBreite) > 1) app.setPosition({ width: Math.round(breite) });
 
@@ -140,7 +172,7 @@ export function insBildRuecken(app) {
    * `clientHeight`. Fehlt wenig, kommt genau das dazu - ein Fenster wegen
    * zwanzig Pixeln auf Bildschirmhoehe zu ziehen waere unverschaemt. Fehlt
    * viel, geht es gleich bis zum Rand: Der Zuschlag allein reichte dann nicht,
-   * weil Teile des Fensters **mitwachsen** (der Verkaufsbereich steht auf
+   * weil Teile des Fensters **mitwachsen** koennen (etwa ein Bereich auf
    * `max-height: 42%`).
    *
    * **Nicht nur beim ersten Zeichnen.** Genau das ging schief: Beim ersten Mal
@@ -199,22 +231,28 @@ export function insBildRuecken(app) {
   });
 }
 
-/** Alle offenen Fenster dieses Moduls nachziehen. */
+/**
+ * Alle offenen Fenster dieses Moduls nachziehen.
+ *
+ * Zwei Verzeichnisse, weil es zwei Fensterbauarten gibt:
+ * `foundry.applications.instances` kennt nur ApplicationV2, `ui.windows` nur
+ * die alten. Ein Modul, das gerade umgestellt wird, hat beide gleichzeitig.
+ */
 function alleNachziehen() {
-  for (const app of foundry.applications.instances.values()) {
+  const alle = [
+    ...(foundry.applications?.instances?.values?.() ?? []),
+    ...Object.values(ui.windows ?? {})
+  ];
+  for (const app of alle) {
     if (unseres(app)) insBildRuecken(app);
   }
 }
 
 /**
  * Anmelden. Gehoert in `ready`.
- *
- * Das Zeichnen misst der Browser erst im naechsten Bild - vorher stehen im
- * `getBoundingClientRect` noch die Masse von davor. Deshalb ein
- * `requestAnimationFrame` und nicht der direkte Aufruf.
  */
 export function fensterPassenEinrichten() {
-  Hooks.on("renderApplicationV2", app => {
+  const beimZeichnen = app => {
     if (!unseres(app)) return;
     /*
      * **Kein `requestAnimationFrame`.** Der naheliegende Weg, auf das fertige
@@ -229,21 +267,26 @@ export function fensterPassenEinrichten() {
      * selbst haengt der Inhalt noch nicht vollstaendig am Dokument.
      */
     setTimeout(() => insBildRuecken(app), 0);
-  });
+  };
+
+  Hooks.on("renderApplicationV2", beimZeichnen);
+  // Die alte Bauart. Solange ein Modul sie noch benutzt, gilt die Regel dort
+  // genauso - ein zu grosses Fenster ist unabhaengig davon kaputt, mit welcher
+  // Klasse es gebaut wurde.
+  Hooks.on("renderApplication", beimZeichnen);
 
   let takt = null;
-  window.addEventListener("resize", () => {
+  const nachziehen = () => {
     clearTimeout(takt);
     takt = setTimeout(alleNachziehen, 120);
-  });
+  };
+
+  window.addEventListener("resize", nachziehen);
 
   /*
    * Auf Tablets aendert sich die Hoehe beim Drehen und beim Aufklappen der
    * Tastatur, ohne dass "resize" verlaesslich kommt. `visualViewport` meldet
    * beides.
    */
-  window.visualViewport?.addEventListener("resize", () => {
-    clearTimeout(takt);
-    takt = setTimeout(alleNachziehen, 120);
-  });
+  window.visualViewport?.addEventListener("resize", nachziehen);
 }

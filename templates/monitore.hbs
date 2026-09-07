@@ -9,7 +9,7 @@
 
   <p class="shops-blockhinweis {{#if fremd}}shops-monitor-fremd{{/if}}">
     {{#if fremd}}
-      <i class="fa-solid fa-link"></i>
+      <i class="fa-solid fa-link" aria-hidden="true"></i>
       {{localize "SHOPS.Monitor.AusInPerson"}}
     {{else}}
       {{localize "SHOPS.Monitor.Erklaerung"}}
@@ -25,7 +25,7 @@
           <span class="shops-spielername">{{name}}</span>
           {{#if gm}}<em class="shops-handel-figur">{{localize "SHOPS.Vorzeigen.Spielleitung"}}</em>{{/if}}
           {{#if aktiv}}<i class="fa-solid fa-circle shops-online"
-                          title="{{localize 'SHOPS.Zugriff.Angemeldet'}}"></i>{{/if}}
+                          title="{{localize 'SHOPS.Zugriff.Angemeldet'}}" aria-hidden="true"></i>{{/if}}
         </label>
       </li>
     {{/each}}
@@ -34,7 +34,7 @@
   {{#unless fremd}}
     <footer class="shops-anfrage-fuss">
       <button type="button" data-action="sichern">
-        <i class="fa-solid fa-check"></i>
+        <i class="fa-solid fa-check" aria-hidden="true"></i>
         {{localize "SHOPS.Monitor.Sichern"}}
       </button>
     </footer>

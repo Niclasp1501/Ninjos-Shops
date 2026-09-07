@@ -20,11 +20,11 @@
                 es ist gar nichts geflossen. --}}
           <span class="shops-buch-pfeil" title="{{#if abgelehnt}}{{localize 'SHOPS.Buch.Abgelehnt'}}{{else}}{{#if gekauft}}{{localize 'SHOPS.Buch.Gekauft'}}{{else}}{{localize 'SHOPS.Buch.Verkauft'}}{{/if}}{{/if}}">
             {{#if abgelehnt}}
-              <i class="fa-solid fa-hand"></i>
+              <i class="fa-solid fa-hand" aria-hidden="true"></i>
             {{else}}{{#if gekauft}}
-              <i class="fa-solid fa-arrow-right"></i>
+              <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             {{else}}
-              <i class="fa-solid fa-arrow-left"></i>
+              <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
             {{/if}}{{/if}}
           </span>
 
@@ -50,11 +50,11 @@
 
     <footer class="shops-buch-fuss">
       <span>
-        <i class="fa-solid fa-arrow-right"></i>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         {{localize "SHOPS.Buch.Ausgegeben"}} <strong>{{ausgegebenText}}</strong>
       </span>
       <span>
-        <i class="fa-solid fa-arrow-left"></i>
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
         {{localize "SHOPS.Buch.Eingenommen"}} <strong>{{eingenommenText}}</strong>
       </span>
     </footer>

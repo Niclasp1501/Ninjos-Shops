@@ -14,16 +14,16 @@
             um und waren ohne Beschriftung nicht zu lesen. --}}
       <div class="shops-vorzeigen-aktionen">
         <button type="button" data-action="zeigenAllen">
-          <i class="fa-solid fa-users"></i>
+          <i class="fa-solid fa-users" aria-hidden="true"></i>
           {{localize "SHOPS.Vorzeigen.AllenZeigen"}}
         </button>
         <button type="button" class="shops-zweit" data-action="zeigenAuswahl">
-          <i class="fa-solid fa-user-check"></i>
+          <i class="fa-solid fa-user-check" aria-hidden="true"></i>
           {{localize "SHOPS.Vorzeigen.AuswahlZeigen"}}
         </button>
         <button type="button" class="shops-zweit" data-action="schliessenAllen"
                 {{#unless zuschauer.length}}disabled{{/unless}}>
-          <i class="fa-solid fa-eye-slash"></i>
+          <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
           {{localize "SHOPS.Vorzeigen.AllenSchliessen"}}
         </button>
       </div>
@@ -40,17 +40,17 @@
       {{#if schau}}
         <div class="shops-schau-steuer">
           <button type="button" data-action="schauZurueck"
-                  data-tooltip="{{localize 'SHOPS.Schau.Zurueck'}}">
-            <i class="fa-solid fa-chevron-left"></i>
+                  data-tooltip="{{localize 'SHOPS.Schau.Zurueck'}}" aria-label="{{localize 'SHOPS.Schau.Zurueck'}}">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
           </button>
           <button type="button" data-action="schauHalt" class="shops-schau-halt">
-            <i class="fa-solid {{#if schau.laeuft}}fa-pause{{else}}fa-play{{/if}}"></i>
+            <i class="fa-solid {{#if schau.laeuft}}fa-pause{{else}}fa-play{{/if}}" aria-hidden="true"></i>
             <span>{{#if schau.laeuft}}{{localize "SHOPS.Schau.Halten"}}
                   {{else}}{{localize "SHOPS.Schau.Weiter"}}{{/if}}</span>
           </button>
           <button type="button" data-action="schauVor"
-                  data-tooltip="{{localize 'SHOPS.Schau.Vor'}}">
-            <i class="fa-solid fa-chevron-right"></i>
+                  data-tooltip="{{localize 'SHOPS.Schau.Vor'}}" aria-label="{{localize 'SHOPS.Schau.Vor'}}">
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
           </button>
           <span class="shops-schau-stand">{{schau.seiteAnzeige}} / {{schau.seiten}}</span>
         </div>
@@ -61,26 +61,26 @@
           {{#each zuschauer}}
             <li>
               <span class="{{#unless active}}shops-leer{{/unless}}">
-                {{#if active}}<i class="fa-solid fa-circle shops-online"></i>
-                {{else}}<i class="fa-regular fa-circle"></i>{{/if}}
+                {{#if active}}<i class="fa-solid fa-circle shops-online" aria-hidden="true"></i>
+                {{else}}<i class="fa-regular fa-circle" aria-hidden="true"></i>{{/if}}
                 {{name}}
               </span>
 
               {{#if angebot}}
                 <span class="shops-zuschauer-angebot"
                       title="{{localize 'SHOPS.Angebot.Offen'}}">
-                  <i class="fa-solid fa-hand-holding"></i>
+                  <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
                   {{angebot.name}} · {{angebot.preisText}}
                   <button type="button" data-action="angebotZurueck" data-user-id="{{id}}"
-                          title="{{localize 'SHOPS.Angebot.Zuruecknehmen'}}">
-                    <i class="fa-solid fa-rotate-left"></i>
+                          title="{{localize 'SHOPS.Angebot.Zuruecknehmen'}}" aria-label="{{localize 'SHOPS.Angebot.Zuruecknehmen'}}">
+                    <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
                   </button>
                 </span>
               {{/if}}
 
               <button type="button" data-action="schliessenUser" data-user-id="{{id}}"
-                      title="{{localize 'SHOPS.Vorzeigen.EinzelnSchliessen'}}">
-                <i class="fa-solid fa-xmark"></i>
+                      title="{{localize 'SHOPS.Vorzeigen.EinzelnSchliessen'}}" aria-label="{{localize 'SHOPS.Vorzeigen.EinzelnSchliessen'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             </li>
           {{/each}}
