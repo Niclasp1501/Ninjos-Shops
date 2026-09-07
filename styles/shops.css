@@ -3929,3 +3929,17 @@
   margin-left: 6px;
   opacity: 0.7;
 }
+
+/* Stückzahl neben dem Kauf- und Verkaufsknopf. Schmal — sie steht in einer
+   Zeile, die schon Bild, Namen, Bestand und Preis trägt. */
+.ninjos-shops .shops-stueckzahl {
+  flex: 0 0 3.4rem;
+  width: 3.4rem;
+  min-height: 30px;
+  padding: 2px 4px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 3px;
+}

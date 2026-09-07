@@ -46,13 +46,12 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     id: `${MODULE_ID}-spieler`,
     classes: ["ninjos-shops", "spieler-fenster"],
     position: { width: 580, height: 660 },
-    window: {
-      icon: "fa-solid fa-scale-balanced",
-      resizable: true,
-      controls: [
-        { icon: "fa-solid fa-scroll", label: "SHOPS.Buch.Knopf", action: "ladenbuch" }
-      ]
-    },
+    /*
+     * Kein Eintrag im Fenstermenue mehr: Beim Ladenbogen steht das Buch als
+     * Knopf im Kopfbild, hier lag es im Menue - dieselbe Sache an zwei
+     * verschiedenen Orten, je nachdem wer hinsieht. Jetzt beide im Kopfbild.
+     */
+    window: { icon: "fa-solid fa-scale-balanced", resizable: true },
     actions: {
       kaufen: SpielerFenster.#kaufen,
       wareAnsehen: SpielerFenster.#wareAnsehen,
@@ -182,6 +181,15 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
             && (Date.now() - merkmal[WARE.HERVORGEHOLT]) < 3600000,
           dienst,
           ausverkauft: !dienst && menge <= 0,
+          /*
+           * Wieviel man auf einmal nehmen darf. Der Laden kann eine Grenze je
+           * Kauf setzen (`hoechstmenge`, gegen das leergekaufte Dorf); sonst
+           * gilt der Bestand. Eine Dienstleistung geht nie zur Neige, aber
+           * fuenf Uebernachtungen auf einmal sind auch dort sinnvoll.
+           */
+          hoechst: dienst ? 99 : Math.max(1, Math.min(
+            Number(menge) || 1,
+            system.hoechstmenge > 0 ? system.hoechstmenge : Number(menge) || 1)),
           zuTeuer: !!figur && habeCp < preis
         };
       })
@@ -231,10 +239,13 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #kaufen(ereignis, ziel) {
-    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
-    const item = this.#laden.items.get(itemId);
+    const zeile = ziel.closest("[data-item-id]");
+    const item = this.#laden.items.get(zeile?.dataset.itemId);
     if (!item) return;
-    await this.#bitteSenden(item, 1, null);
+    // Was im Feld daneben steht. Ohne Feld bleibt es bei einem Stueck.
+    const menge = Math.max(1, Math.floor(
+      Number(zeile.querySelector("[data-menge]")?.value) || 1));
+    await this.#bitteSenden(item, menge, null);
   }
 
   /**
@@ -246,17 +257,21 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   static async #verkaufen(ereignis, ziel) {
     const figur = eigeneFigur();
-    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    const zeile = ziel.closest("[data-item-id]");
+    const itemId = zeile?.dataset.itemId;
     const item = figur?.items.get(itemId);
     if (!item) return;
     if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
 
-    const zeile = verkaufslisteAufbereiten(this.#laden, figur).find(z => z.id === itemId);
+    const menge = Math.max(1, Math.floor(
+      Number(zeile.querySelector("[data-menge]")?.value) || 1));
+    const angabe = verkaufslisteAufbereiten(this.#laden, figur).find(z => z.id === itemId);
     const inhalt = `
       <div class="shops-kaufdialog">
         <p>${game.i18n.format("SHOPS.Verkauf.Frage", {
+          menge,
           name: foundry.utils.escapeHTML(item.name),
-          preis: zeile?.preisText ?? "?",
+          preis: angabe?.preisText ?? "?",
           laden: foundry.utils.escapeHTML(this.#laden.name)
         })}</p>
       </div>`;
@@ -276,7 +291,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       ladenUuid: this.#laden.uuid,
       itemId: item.id,
       figurUuid: figur.uuid,
-      menge: 1,
+      menge,
       verkaeuferId: game.user.id,
       // Woran die Spielleitungen erkennen, dass sie dieselbe Bitte meinen.
       bitteId: foundry.utils.randomID()

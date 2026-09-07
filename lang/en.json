@@ -146,7 +146,7 @@
   "SHOPS.Verkauf.Knopf": "Sell",
   "SHOPS.Verkauf.Titel": "Sell it?",
   "SHOPS.Verkauf.Ja": "Sell",
-  "SHOPS.Verkauf.Frage": "Hand <strong>{name}</strong> to {laden} for <strong>{preis}</strong>.",
+  "SHOPS.Verkauf.Frage": "Hand <strong>{menge}× {name}</strong> to {laden} at <strong>{preis}</strong> each.",
   "SHOPS.Verkauf.NichtsDabei": "Nothing in your pack is anything this shop would take.",
   "SHOPS.Verkauf.Wertlos": "Worthless",
   "SHOPS.Verkauf.Gelungen": "Sold {menge}× {name} for {preis}.",

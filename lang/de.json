@@ -146,7 +146,7 @@
   "SHOPS.Verkauf.Knopf": "Verkaufen",
   "SHOPS.Verkauf.Titel": "Verkaufen?",
   "SHOPS.Verkauf.Ja": "Verkaufen",
-  "SHOPS.Verkauf.Frage": "<strong>{name}</strong> für <strong>{preis}</strong> an {laden} geben.",
+  "SHOPS.Verkauf.Frage": "<strong>{menge}× {name}</strong> für <strong>{preis}</strong> das Stück an {laden} geben.",
   "SHOPS.Verkauf.NichtsDabei": "In deinem Rucksack ist nichts, was dieser Laden nehmen würde.",
   "SHOPS.Verkauf.Wertlos": "Wertlos",
   "SHOPS.Verkauf.Gelungen": "{menge}× {name} für {preis} verkauft.",

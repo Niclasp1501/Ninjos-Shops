@@ -27,6 +27,14 @@
         </span>
       </div>
     {{/if}}
+
+    {{!-- Derselbe Knopf an derselben Stelle wie im Ladenbogen. Vorher lag er
+          hier im Fenstermenü und dort im Kopfbild — dieselbe Sache an zwei
+          Orten, je nachdem wer hinsieht. --}}
+    <button type="button" class="shops-zahnrad shops-buchknopf" data-action="ladenbuch"
+            title="{{localize 'SHOPS.Buch.Knopf'}}" aria-label="{{localize 'SHOPS.Buch.Knopf'}}">
+      <i class="fa-solid fa-scroll" aria-hidden="true"></i>
+    </button>
   </header>
 
   {{#if angebot}}
@@ -156,6 +164,12 @@
                 <span>{{localize "SHOPS.Spieler.NiemandDa"}}</span>
               </button>
             {{else}}
+              {{!-- Wieviel. Vorher ging immer genau ein Stück, und zwanzig
+                    Fackeln hießen zwanzig Klicks. --}}
+              <input type="number" class="shops-stueckzahl" data-menge value="1"
+                     min="1" max="{{hoechst}}"
+                     aria-label="{{localize 'SHOPS.Handel.Menge'}}"
+                     title="{{localize 'SHOPS.Handel.Menge'}}">
               <button type="button" class="shops-kaufen {{#if zuTeuer}}shops-knapp{{/if}}"
                       data-action="kaufen"
                       title="{{#if zuTeuer}}{{localize 'SHOPS.Kauf.ZuWenigGeld'}}{{/if}}">
@@ -208,6 +222,10 @@
                   <span>{{localize "SHOPS.Verkauf.Wertlos"}}</span>
                 </button>
               {{else}}
+                <input type="number" class="shops-stueckzahl" data-menge value="1"
+                       min="1" max="{{menge}}"
+                       aria-label="{{localize 'SHOPS.Handel.Menge'}}"
+                       title="{{localize 'SHOPS.Handel.Menge'}}">
                 <button type="button" class="shops-kaufen" data-action="verkaufen"
                         {{#if @root.keinSpielleiter}}disabled{{/if}}>
                   <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
