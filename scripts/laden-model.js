@@ -74,6 +74,21 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
        * einem Requisit und einem Ort - siehe Konzept, Abschnitt 4.
        */
       eigeneKasse: new BooleanField({ initial: false }),
+
+      /**
+       * Muss der Kaeufer passend zahlen?
+       *
+       * **Ab Werk nein**, und das ist die richtige Vorgabe: Regel zwei in
+       * kasse.js lautet „ein Platinstueck muss einen Dolch kaufen koennen".
+       * Das Wechselgeld wird ausgerechnet und herausgegeben, ohne dass jemand
+       * Muenzen zaehlt.
+       *
+       * An heisst: Der Laden gibt nichts heraus. Wer 2 GM zahlen soll und nur
+       * ein Platinstueck hat, kauft nicht - er muss erst wechseln. Das ist
+       * eine Haerte, die manche Tische wollen und die meisten nicht; deshalb
+       * steht sie je Laden und nicht als Weltschalter.
+       */
+      passendZahlen: new BooleanField({ initial: false }),
       kasse: new SchemaField(kassenFelder()),
 
       /**

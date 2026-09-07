@@ -140,6 +140,15 @@ export const WARE = {
   HINWEIS: "hinweis",
   /** Unter der Theke - Spieler sehen es nicht. */
   VERBORGEN: "verborgen",
+  /**
+   * Wann ein Stueck unter der Theke hervorgeholt wurde, als Zeitstempel.
+   *
+   * Ware, die eben noch verborgen war und jetzt in der Auslage steht, ist
+   * fuer den Spieler etwas anderes als Ware, die immer dalag - sie ist
+   * gerade erst hervorgeholt worden, und das soll man sehen. Gesetzt wird
+   * es beim Sichtbarmachen, geloescht beim Verbergen.
+   */
+  HERVORGEHOLT: "hervorgeholt",
   /** Dienstleistung: kostet Geld, wechselt nicht den Besitzer. */
   DIENST: "dienst",
   /**

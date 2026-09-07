@@ -114,6 +114,17 @@
         <small>{{localize "SHOPS.Feld.HoechstmengeHinweis"}}</small>
       </label>
 
+      {{!-- Ab Werk aus: „Ein Platinstück muss einen Dolch kaufen können" ist
+            Regel zwei in kasse.js. Wer die Härte will, schaltet sie an. --}}
+      <label class="shops-breit shops-schalterzeile">
+        <input type="checkbox" name="system.passendZahlen" {{checked laden.passendZahlen}}
+               {{#unless bearbeitbar}}disabled{{/unless}}>
+        <span>
+          {{localize "SHOPS.Feld.PassendZahlen"}}
+          <small>{{localize "SHOPS.Feld.PassendZahlenHinweis"}}</small>
+        </span>
+      </label>
+
       <label class="shops-breit shops-schalterzeile">
         <input type="checkbox" name="system.eigeneKasse" {{checked laden.eigeneKasse}}
                {{#unless bearbeitbar}}disabled{{/unless}}>

@@ -40,6 +40,14 @@
       </div>
     {{/if}}
 
+    {{!-- Das Ladenbuch stand nur im Fenstermenü. Dort findet es niemand, der
+          nicht weiß, dass es dort ist — und es ist das, was man während einer
+          Szene am zweithäufigsten aufmacht. --}}
+    <button type="button" class="shops-zahnrad shops-buchknopf" data-action="ladenbuch"
+            title="{{localize 'SHOPS.Buch.Knopf'}}" aria-label="{{localize 'SHOPS.Buch.Knopf'}}">
+      <i class="fa-solid fa-scroll" aria-hidden="true"></i>
+    </button>
+
     {{#if istGM}}
       <button type="button" class="shops-zahnrad" data-action="einstellungenOeffnen"
               title="{{localize 'SHOPS.Bogen.EinstellungenOeffnen'}}" aria-label="{{localize 'SHOPS.Bogen.EinstellungenOeffnen'}}">

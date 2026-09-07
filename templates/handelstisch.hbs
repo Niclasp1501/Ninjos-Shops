@@ -1,0 +1,140 @@
+{{!--
+  Der Handelstisch, Seite des Spielers.
+
+  Ein Blatt: links, was sie hinlegt, rechts, was ich hinlege, unten die
+  Differenz. Kein Blättern, kein zweites Fenster, kein Zahlenfeld — was der
+  Tausch kostet, steht da, während man ihn zusammenstellt.
+--}}
+<div class="shops-teil-tisch">
+
+  {{#if stand}}
+    <header class="shops-tisch-kopf">
+      {{#if stand.personBild}}
+        <img src="{{stand.personBild}}" alt="">
+      {{/if}}
+      <div>
+        <strong>{{stand.personName}}</strong>
+        {{#if stand.satz}}<span class="shops-tisch-satz">„{{stand.satz}}"</span>{{/if}}
+      </div>
+      {{#if figurName}}
+        <span class="shops-boerse">
+          <i class="fa-solid fa-coins" aria-hidden="true"></i>
+          <span class="shops-boerse-label">{{figurName}}</span>
+          <strong>{{boerse}}</strong>
+        </span>
+      {{/if}}
+    </header>
+
+    <div class="shops-tisch-platte">
+
+      <section class="shops-tisch-seite" data-seite="nsc">
+        <h3>{{localize "SHOPS.Tisch.SieGibt" person=stand.personName}}</h3>
+        <ol class="shops-ware shops-tisch-nsc">
+          {{#each stand.seiteNsc}}
+            <li class="shops-zeile" data-item-id="{{itemId}}">
+              {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
+                              title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name">
+                <span class="shops-warenname" data-action="ansehen"
+                      title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+              </div>
+              <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{summeText}}</span>
+            </li>
+          {{else}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.SieLegtNichts"}}</li>
+          {{/each}}
+        </ol>
+      </section>
+
+      <section class="shops-tisch-seite" data-seite="spieler">
+        <h3>{{localize "SHOPS.Tisch.DuGibst"}}</h3>
+        <ol class="shops-ware shops-tisch-spieler">
+          {{#each stand.seiteSpieler}}
+            <li class="shops-zeile" data-item-id="{{itemId}}">
+              {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
+                              title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name">
+                <span class="shops-warenname" data-action="ansehen"
+                      title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+              </div>
+              <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{summeText}}</span>
+              <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
+                      aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
+                      title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </li>
+          {{else}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.DuLegstNichts"}}</li>
+          {{/each}}
+        </ol>
+      </section>
+    </div>
+
+    {{!-- Die Waage. Sie ist der eigentliche Grund für dieses Fenster: Man
+          sieht, was der Tausch kostet, während man ihn zusammenstellt. --}}
+    <div class="shops-tisch-waage {{#if stand.zahltSpieler}}shops-zahlt{{/if}}
+                {{#if stand.bekommtSpieler}}shops-bekommt{{/if}}">
+      <span class="shops-tisch-summe">{{stand.nscText}}</span>
+      <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+      <span class="shops-tisch-summe">{{stand.spielerText}}</span>
+      <strong class="shops-tisch-differenz">
+        {{#if stand.ausgeglichen}}
+          {{localize "SHOPS.Tisch.Ausgeglichen"}}
+        {{else if stand.zahltSpieler}}
+          {{localize "SHOPS.Tisch.DuZahlst" geld=stand.differenzText}}
+        {{else}}
+          {{localize "SHOPS.Tisch.DuBekommst" geld=stand.differenzText}}
+        {{/if}}
+      </strong>
+      {{#if stand.ueberschrieben}}
+        <em class="shops-tisch-ausgehandelt">{{localize "SHOPS.Tisch.Ausgehandelt"}}</em>
+      {{/if}}
+    </div>
+
+    {{#if vorrat.length}}
+      <details class="shops-tisch-vorratsblock">
+        <summary>{{localize "SHOPS.Tisch.WasDuHast"}}</summary>
+        <ol class="shops-ware shops-tisch-vorrat">
+          {{#each vorrat}}
+            <li class="shops-zeile" data-item-id="{{id}}">
+              {{#if img}}<img src="{{img}}" alt="">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+              <label class="shops-handel-menge">
+                <span>{{localize "SHOPS.Handel.Menge"}}</span>
+                <input type="number" data-menge value="1" min="1" max="{{menge}}"
+                       aria-label="{{localize 'SHOPS.Handel.Menge'}}">
+              </label>
+              <span class="shops-preis">{{wertText}}</span>
+              <button type="button" class="shops-kaufen" data-action="auflegen">
+                <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                {{localize "SHOPS.Tisch.Auflegen"}}
+              </button>
+            </li>
+          {{/each}}
+        </ol>
+      </details>
+    {{/if}}
+
+    <footer class="shops-tisch-fuss">
+      <button type="button" class="shops-kaufen" data-action="annehmen"
+              {{#if stand.leer}}disabled{{/if}}>
+        <i class="fa-solid fa-handshake" aria-hidden="true"></i>
+        {{localize "SHOPS.Tisch.Abschliessen"}}
+      </button>
+      <button type="button" class="shops-kaufen shops-zweit" data-action="aufgeben">
+        <i class="fa-solid fa-hand" aria-hidden="true"></i>
+        {{localize "SHOPS.Tisch.Aufgeben"}}
+      </button>
+      <span class="shops-blockhinweis">{{localize "SHOPS.Tisch.ZumachenHinweis"}}</span>
+    </footer>
+
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsVorgelegt"}}</p>
+  {{/if}}
+</div>

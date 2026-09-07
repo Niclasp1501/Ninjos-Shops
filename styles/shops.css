@@ -3663,3 +3663,269 @@
 }
 .ninjos-shops .shops-handel-fuss .shops-kaufen { flex: 1 1 12rem; justify-content: center; }
 .ninjos-shops .shops-handel-fuss .shops-blockhinweis { margin: 0; }
+
+/* ── Der Handelstisch ──────────────────────────────────────────────────
+ *
+ * Ein Blatt statt vier Fenster. Die Anordnung ist der eigentliche Inhalt:
+ * links seine Seite, rechts meine, dazwischen nichts, darunter die Waage.
+ * Wer sie sieht, muss nicht rechnen.
+ */
+
+.ninjos-shops.shops-tisch .window-content { padding: 0; }
+
+.ninjos-shops .shops-teil-tisch {
+  display: flex;
+  flex-direction: column;
+  background: var(--shops-bg);
+  color: var(--shops-text);
+  font-family: var(--shops-schrift);
+}
+
+.ninjos-shops .shops-tisch-kopf {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-tisch-kopf img {
+  width: 46px; height: 46px;
+  object-fit: cover;
+  border: 1px solid var(--shops-rand);
+  border-radius: 3px;
+  flex: 0 0 auto;
+}
+.ninjos-shops .shops-tisch-kopf > div { flex: 1 1 auto; min-width: 0; }
+.ninjos-shops .shops-tisch-kopf strong { display: block; font-size: 1.05rem; }
+.ninjos-shops .shops-tisch-satz {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+/* Zwei Seiten nebeneinander — und untereinander, wo es eng wird. */
+.ninjos-shops .shops-tisch-platte {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--shops-rand);
+}
+@media (max-width: 640px) {
+  .ninjos-shops .shops-tisch-platte { grid-template-columns: 1fr; }
+}
+
+.ninjos-shops .shops-tisch-seite {
+  background: var(--shops-bg);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ninjos-shops .shops-tisch-seite h3 {
+  margin: 0;
+  padding: 7px 14px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--shops-text-blass);
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-tisch-nsc,
+.ninjos-shops .shops-tisch-spieler {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  min-height: 5.5rem;
+  max-height: 17rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ninjos-shops .shops-tisch-weg {
+  flex: 0 0 auto;
+  width: 26px; height: 26px;
+  padding: 0;
+  line-height: 1;
+  color: var(--shops-text-blass);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.ninjos-shops .shops-tisch-weg:hover {
+  color: var(--shops-rot);
+  border-color: var(--shops-rand);
+}
+
+/* Die Waage — der Grund, warum es dieses Fenster gibt. */
+.ninjos-shops .shops-tisch-waage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--shops-nav);
+  border-top: 1px solid var(--shops-rand);
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-tisch-waage > i { color: var(--shops-text-blass); }
+.ninjos-shops .shops-tisch-summe {
+  font-variant-numeric: tabular-nums;
+  color: var(--shops-text-blass);
+  font-size: 0.9rem;
+}
+.ninjos-shops .shops-tisch-differenz {
+  margin-left: auto;
+  font-size: 1.02rem;
+  font-variant-numeric: tabular-nums;
+}
+.ninjos-shops .shops-tisch-waage.shops-zahlt .shops-tisch-differenz { color: #8a6d16; }
+.ninjos-shops .shops-tisch-waage.shops-bekommt .shops-tisch-differenz { color: #2f6b34; }
+.ninjos-shops .shops-tisch-ausgehandelt {
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+.ninjos-shops .shops-tisch-preisfeld {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-tisch-preisfeld label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.85rem;
+}
+.ninjos-shops .shops-tisch-preisfeld .shops-blockhinweis {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
+.ninjos-shops .shops-tisch-vorratsblock {
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-tisch-vorratsblock > summary {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--shops-text-blass);
+  background: var(--shops-nav);
+}
+.ninjos-shops .shops-tisch-vorrat {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  max-height: 15rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ninjos-shops .shops-tisch-fuss {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+}
+.ninjos-shops .shops-tisch-fuss .shops-kaufen { flex: 0 1 auto; }
+.ninjos-shops .shops-tisch-fuss .shops-blockhinweis { flex: 1 1 100%; margin: 0; }
+
+.ninjos-shops .shops-tisch-wahl { max-height: 16rem; overflow-y: auto; }
+
+/*
+ * Der Knopf, der einen weggeklickten Tisch zurückholt.
+ *
+ * Er liegt frei über der Oberfläche, weil es keine Leiste gibt, die dem Modul
+ * gehört — und er verschwindet, sobald das Fenster wieder steht oder der
+ * Handel vorbei ist. Über Foundrys Fenstern (105) und unter Dialogen.
+ */
+.shops-tischchip {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--ninjo-tippziel, 44px);
+  padding: 8px 16px;
+  font-family: var(--shops-schrift);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--shops-kopftext);
+  background: linear-gradient(#332a1c, #221b12);
+  border: 1px solid var(--shops-rand);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+.shops-tischchip:hover { border-color: var(--shops-gold); }
+.shops-tischchip i { color: var(--shops-gold); }
+
+/*
+ * „Gerade hervorgeholt" — Ware, die eben noch unter der Theke lag.
+ *
+ * Gold, nicht rot: Es ist kein Warnhinweis, sondern eine Gelegenheit. Und
+ * bewusst als Wort statt als Symbol — ein Abzeichen, das man deuten muss,
+ * deutet niemand.
+ */
+.ninjos-shops .shops-frisch {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  vertical-align: 1px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #6b4e05;
+  background: linear-gradient(#f5e2a3, #e8cf7d);
+  border: 1px solid #cdb15a;
+  border-radius: 999px;
+}
+
+/*
+ * Kaufen und Verkaufen sind zwei Absichten, nicht zwei Listen untereinander.
+ * Vorher wuchs das Fenster nach unten, sobald es etwas zu verkaufen gab, und
+ * die Auslage wurde dabei kleiner - man bekam weniger zu sehen, weil man mehr
+ * dabeihatte.
+ */
+.ninjos-shops .shops-blickleiste {
+  display: flex;
+  gap: 2px;
+  padding: 0 14px;
+  background: var(--shops-nav);
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-blickleiste button {
+  flex: 1 1 0;
+  min-height: var(--ninjo-tippziel, 44px);
+  padding: 9px 12px;
+  font-family: var(--shops-schrift);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--shops-text-blass);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+}
+.ninjos-shops .shops-blickleiste button:hover { color: var(--shops-text); }
+.ninjos-shops .shops-blickleiste button[aria-selected="true"] {
+  color: var(--shops-text);
+  border-bottom-color: var(--shops-rot);
+}
+.ninjos-shops .shops-blickleiste .shops-anzahl {
+  margin-left: 6px;
+  opacity: 0.7;
+}

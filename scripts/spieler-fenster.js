@@ -59,7 +59,8 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       verkaufen: SpielerFenster.#verkaufen,
       anfrageStellen: SpielerFenster.#anfrage,
       ladenbuch: SpielerFenster.#ladenbuch,
-      angebotAnnehmen: SpielerFenster.#angebotAnnehmen
+      angebotAnnehmen: SpielerFenster.#angebotAnnehmen,
+      blickWechseln: SpielerFenster.#blickWechseln
     }
   };
 
@@ -72,6 +73,16 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** @type {Actor} */
   #laden;
+
+  /**
+   * „kaufen" oder „verkaufen" - welche Absicht gerade dran ist.
+   *
+   * Zwei Listen untereinander liessen das Fenster wachsen, sobald der Spieler
+   * etwas dabeihatte, und machten dabei die Auslage kleiner: Man sah weniger
+   * Ware, weil man mehr besass. Zwei Knoepfe trennen die Absichten, und beide
+   * Listen bekommen die ganze Hoehe.
+   */
+  #blick = "kaufen";
 
   constructor(laden, options = {}) {
     super(options);
@@ -107,6 +118,9 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       begruessung: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         system.begruessung ?? "", { relativeTo: laden, secrets: false }
       ),
+      blick: this.#blick,
+      zeigtKaufen: this.#blick === "kaufen",
+      zeigtVerkaufen: this.#blick === "verkaufen",
       ware: this.#wareAufbereiten(system),
       boerse: this.#boerseAufbereiten(figur),
       figurName: figur?.name ?? null,
@@ -158,6 +172,14 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
           menge,
           preisText: alsText(preis, kuerzel),
           hinweis: merkmal[WARE.HINWEIS] ?? "",
+          /*
+           * Eben noch unter der Theke, jetzt in der Auslage. Eine Stunde lang
+           * traegt das Stueck die Marke - lange genug fuer die Szene, in der
+           * es hervorgeholt wurde, und kurz genug, dass nicht der halbe Laden
+           * dauerhaft „neu" heisst.
+           */
+          frisch: Number.isFinite(merkmal[WARE.HERVORGEHOLT])
+            && (Date.now() - merkmal[WARE.HERVORGEHOLT]) < 3600000,
           dienst,
           ausverkauft: !dienst && menge <= 0,
           zuTeuer: !!figur && habeCp < preis
@@ -181,6 +203,14 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     const gefuellt = alle.filter(m => m.wert > 0);
     // Ganz ohne Geld bleibt eine Null stehen, sonst waere die Zeile leer.
     return gefuellt.length ? gefuellt : [alle.find(m => m.sorte === "gp")];
+  }
+
+  /** Zwischen Kaufen und Verkaufen umschalten. */
+  static #blickWechseln(ereignis, ziel) {
+    const wohin = ziel.dataset.blick;
+    if (!wohin || wohin === this.#blick) return;
+    this.#blick = wohin;
+    this.render(false);
   }
 
   /* ── Aktionen ────────────────────────────────────────────────────── */

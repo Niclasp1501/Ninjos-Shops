@@ -69,6 +69,24 @@
     </aside>
   {{/if}}
 
+  {{!-- Zwei Absichten, zwei Knöpfe. Vorher standen Auslage und eigene Habe
+        untereinander: Wer viel dabeihatte, sah weniger Ware. --}}
+  <nav class="shops-blickleiste" role="tablist">
+    <button type="button" role="tab" data-action="blickWechseln" data-blick="kaufen"
+            aria-selected="{{#if zeigtKaufen}}true{{else}}false{{/if}}">
+      <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+      {{localize "SHOPS.Spieler.BlickKaufen"}}
+      {{#if ware.length}}<span class="shops-anzahl">{{ware.length}}</span>{{/if}}
+    </button>
+    <button type="button" role="tab" data-action="blickWechseln" data-blick="verkaufen"
+            aria-selected="{{#if zeigtVerkaufen}}true{{else}}false{{/if}}">
+      <i class="fa-solid fa-hand-holding" aria-hidden="true"></i>
+      {{localize "SHOPS.Spieler.BlickVerkaufen"}}
+      {{#if verkauf.length}}<span class="shops-anzahl">{{verkauf.length}}</span>{{/if}}
+    </button>
+  </nav>
+
+  {{#if zeigtKaufen}}
   <section class="shops-auslage shops-spieler-auslage">
     <h3>
       {{localize "SHOPS.Bogen.Auslage"}}
@@ -101,6 +119,12 @@
                 {{name}}
                 {{#if dienst}}
                   <i class="fa-solid fa-handshake" title="{{localize 'SHOPS.Bogen.Dienst'}}" aria-hidden="true"></i>
+                {{/if}}
+                {{!-- Eben noch unter der Theke. Das ist der Unterschied
+                      zwischen „liegt hier rum" und „das hat er für euch
+                      herausgeholt". --}}
+                {{#if frisch}}
+                  <span class="shops-frisch">{{localize "SHOPS.Spieler.Frisch"}}</span>
                 {{/if}}
               </span>
               {{#if hinweis}}
@@ -146,7 +170,9 @@
       <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Spieler.AuslageLeer"}}</p>
     {{/if}}
   </section>
+  {{/if}}
 
+  {{#if zeigtVerkaufen}}
   {{!-- Der Weg zur Anfrage steht immer da, auch wenn der Laden nichts ohne
         Frage nimmt: Sonst haette ein Spieler bei so einem Laden gar keinen
         Weg, etwas loszuwerden. --}}
@@ -196,6 +222,7 @@
         <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Verkauf.NichtsDabei"}}</p>
       {{/if}}
     </section>
+  {{/if}}
   {{/if}}
 
   {{#if freigabe}}

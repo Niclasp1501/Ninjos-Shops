@@ -1,0 +1,149 @@
+{{!--
+  Derselbe Tisch, von der anderen Seite.
+
+  Die Spielleitung sieht, was der Spieler sieht — und kann zusätzlich die
+  Seite der Person decken und den Preis setzen. Bewusst dieselbe Anordnung:
+  Wer beide Fenster kennt, muss nicht zweimal lernen, wo was steht.
+--}}
+<div class="shops-teil-tisch">
+
+  {{#if stand}}
+    <header class="shops-tisch-kopf">
+      {{#if stand.personBild}}<img src="{{stand.personBild}}" alt="">{{/if}}
+      <div>
+        <strong>{{stand.personName}}</strong>
+        <span class="shops-tisch-satz">{{localize "SHOPS.Tisch.MitSpieler"
+          spieler=spielerName figur=figurName}}</span>
+      </div>
+      {{#if boerse}}
+        <span class="shops-boerse">
+          <i class="fa-solid fa-coins" aria-hidden="true"></i>
+          <span class="shops-boerse-label">{{figurName}}</span>
+          <strong>{{boerse}}</strong>
+        </span>
+      {{/if}}
+    </header>
+
+    <div class="shops-tisch-platte">
+
+      <section class="shops-tisch-seite" data-seite="nsc">
+        <h3>{{localize "SHOPS.Tisch.SieGibt" person=stand.personName}}</h3>
+        <ol class="shops-ware shops-tisch-nsc">
+          {{#each stand.seiteNsc}}
+            <li class="shops-zeile" data-item-id="{{itemId}}">
+              {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
+                              title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+              <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{summeText}}</span>
+              <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
+                      aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
+                      title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </li>
+          {{else}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.NochNichtsHingelegt"}}</li>
+          {{/each}}
+        </ol>
+      </section>
+
+      <section class="shops-tisch-seite" data-seite="spieler">
+        <h3>{{localize "SHOPS.Tisch.ErGibt" spieler=spielerName}}</h3>
+        <ol class="shops-ware shops-tisch-spieler">
+          {{#each stand.seiteSpieler}}
+            <li class="shops-zeile" data-item-id="{{itemId}}">
+              {{#if img}}<img src="{{img}}" alt="">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+              <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{summeText}}</span>
+              <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
+                      aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
+                      title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </li>
+          {{else}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.ErLegtNichts"}}</li>
+          {{/each}}
+        </ol>
+      </section>
+    </div>
+
+    <div class="shops-tisch-waage {{#if stand.zahltSpieler}}shops-zahlt{{/if}}
+                {{#if stand.bekommtSpieler}}shops-bekommt{{/if}}">
+      <span class="shops-tisch-summe">{{stand.nscText}}</span>
+      <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+      <span class="shops-tisch-summe">{{stand.spielerText}}</span>
+      <strong class="shops-tisch-differenz">
+        {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
+        {{else if stand.zahltSpieler}}{{localize "SHOPS.Tisch.ErZahlt" geld=stand.differenzText}}
+        {{else}}{{localize "SHOPS.Tisch.ErBekommt" geld=stand.differenzText}}{{/if}}
+      </strong>
+    </div>
+
+    {{!-- Das Modul rechnet vor, die Spielleitung entscheidet. Ein Freundschafts-
+          preis, ein Aufschlag für den Unsympathen, ein glatter Betrag: Was hier
+          steht, gilt — die Rechnung darüber ist dann nur noch Auskunft. --}}
+    <div class="shops-tisch-preisfeld">
+      <label>
+        <span>{{localize "SHOPS.Tisch.PreisSetzen"}}</span>
+        <span class="shops-preisfeld">
+          <input type="number" data-preis step="0.1" value="{{stand.differenzGp}}"
+                 aria-label="{{localize 'SHOPS.Tisch.PreisSetzen'}}">
+          <span class="shops-muenzmarke">{{localize "SHOPS.Muenze.gp"}}</span>
+        </span>
+      </label>
+      <button type="button" class="shops-kaufen shops-zweit" data-action="preisUebernehmen">
+        {{localize "SHOPS.Tisch.PreisUebernehmen"}}
+      </button>
+      {{#if stand.ueberschrieben}}
+        <button type="button" class="shops-kaufen shops-zweit" data-action="preisFrei">
+          {{localize "SHOPS.Tisch.PreisFrei"}}
+        </button>
+      {{/if}}
+      <span class="shops-blockhinweis">{{localize "SHOPS.Tisch.PreisHinweis"}}</span>
+    </div>
+
+    {{#if vorrat.length}}
+      <details class="shops-tisch-vorratsblock" open>
+        <summary>{{localize "SHOPS.Tisch.WasSieHat" person=stand.personName}}</summary>
+        <ol class="shops-ware shops-tisch-vorrat">
+          {{#each vorrat}}
+            <li class="shops-zeile" data-item-id="{{id}}">
+              {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
+                              title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+              <label class="shops-handel-menge">
+                <span>{{localize "SHOPS.Handel.Menge"}}</span>
+                <input type="number" data-menge value="1" min="1" max="{{menge}}"
+                       aria-label="{{localize 'SHOPS.Handel.Menge'}}">
+              </label>
+              <span class="shops-preis">{{wertText}}</span>
+              <button type="button" class="shops-kaufen" data-action="auflegen">
+                <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+                {{localize "SHOPS.Tisch.Auflegen"}}
+              </button>
+            </li>
+          {{/each}}
+        </ol>
+      </details>
+    {{else}}
+      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsDabei"}}</p>
+    {{/if}}
+
+    <footer class="shops-tisch-fuss">
+      <button type="button" class="shops-kaufen shops-zweit" data-action="beenden">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        {{localize "SHOPS.Tisch.Zuruecknehmen"}}
+      </button>
+      <span class="shops-blockhinweis">{{localize "SHOPS.Tisch.GMHinweis"}}</span>
+    </footer>
+
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.KeinTisch"}}</p>
+  {{/if}}
+</div>

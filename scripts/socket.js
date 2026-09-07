@@ -25,7 +25,7 @@ import { fuehreVerkaufAus } from "./verkauf.js";
 import { aufAnfrage } from "./anfrage.js";
 import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
-import { aufHandel } from "./handel.js";
+import { aufTisch } from "./handelstisch.js";
 import { aufSchau, schauNachfuehren } from "./schau.js";
 import { alsText } from "./preise.js";
 
@@ -40,7 +40,7 @@ async function onSocket(daten) {
     case SOCKET.ANGEBOT:     return void aufAngebot(daten);
     case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
     case SOCKET.VORSITZ:     return void aufVorsitz(daten);
-    case SOCKET.HANDEL:      return void aufHandel(daten);
+    case SOCKET.HANDEL:      return void aufTisch(daten);
     case SOCKET.SCHAU:       return void aufSchau(daten);
 
     case SOCKET.KAUFEN: {

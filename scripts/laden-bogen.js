@@ -375,7 +375,16 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       const tat = knopf.dataset.tat;
 
       if (["verborgen", "dienst", "ankauf"].includes(tat)) {
-        return void item.setFlag(MODULE_ID, tat, !(item.flags?.[MODULE_ID]?.[tat] === true));
+        const an = !(item.flags?.[MODULE_ID]?.[tat] === true);
+        /*
+         * Wer etwas unter der Theke hervorholt, hat einen Moment geschaffen:
+         * Eben lag es nicht da, jetzt schon. Der Zeitstempel traegt genau das
+         * ins Spielerfenster - und verschwindet, sobald es wieder verschwindet.
+         */
+        if (tat === "verborgen") {
+          await item.setFlag(MODULE_ID, WARE.HERVORGEHOLT, an ? null : Date.now());
+        }
+        return void item.setFlag(MODULE_ID, tat, an);
       }
       if (tat === "oeffnen") return void item.sheet?.render(true);
       if (tat === "anbieten") {
@@ -506,4 +515,18 @@ export function ladenBogenEinrichten() {
     Actor, MODULE_ID, LadenBogen,
     { types: [LADEN_TYP], makeDefault: true, label: "SHOPS.Bogen.Name" }
   );
+
+  /*
+   * **Wer geht, verschwindet aus der Besucherliste.**
+   *
+   * Die Liste zeigt Abwesende laengst anders - hohler Kreis statt gruenem
+   * Punkt. Nur wurde sie nie neu gezeichnet, wenn jemand die Verbindung
+   * verliess: Der Punkt blieb gruen, bis die Spielleitung zufaellig etwas
+   * anderes anfasste, und sie redete gegen einen leeren Stuhl.
+   */
+  Hooks.on("userConnected", () => {
+    for (const app of foundry.applications.instances.values()) {
+      if (app instanceof LadenBogen) app.render(false);
+    }
+  });
 }

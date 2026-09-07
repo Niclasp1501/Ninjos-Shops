@@ -80,6 +80,16 @@ export function pruefeKauf({ laden, item, figur, menge, angebotCp = null }) {
     };
   }
 
+  /*
+   * „Passend zahlen" heisst: Der Laden gibt nichts heraus. Geprueft wird am
+   * Wechselgeld und nicht an den Muenzsorten - `bezahle` bricht ohnehin schon
+   * die kleinste ausreichende Muenze auf, und was danach zurueckkaeme, ist
+   * genau das, was der Laden nicht herausgeben will.
+   */
+  if (system.passendZahlen && Object.keys(gezahlt.zurueck ?? {}).length) {
+    return { ok: false, grund: "SHOPS.Kauf.NichtPassend" };
+  }
+
   return { ok: true, stueck, dienst, einzelCp, summeCp, gezahlt, bestand };
 }
 
