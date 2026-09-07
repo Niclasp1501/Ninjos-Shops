@@ -103,6 +103,14 @@
       <button type="button" class="shops-kaufen shops-zweit" data-action="preisUebernehmen">
         {{localize "SHOPS.Tisch.PreisUebernehmen"}}
       </button>
+      {{#if stand.hatAngebot}}
+        {{!-- Was der Spieler von sich aus bietet. Ein Klick macht es zum
+              Preis — feilschen ohne Abtippen. --}}
+        <button type="button" class="shops-kaufen" data-action="angebotNehmen">
+          <i class="fa-solid fa-comment-dollar" aria-hidden="true"></i>
+          {{localize "SHOPS.Tisch.ErBietet" geld=stand.angebotText}}
+        </button>
+      {{/if}}
       {{#if stand.ueberschrieben}}
         <button type="button" class="shops-kaufen shops-zweit" data-action="preisFrei">
           {{localize "SHOPS.Tisch.PreisFrei"}}
@@ -140,6 +148,18 @@
     {{/if}}
 
     <footer class="shops-tisch-fuss">
+      <button type="button" class="shops-kaufen {{#if stand.bereitGm}}shops-zweit{{/if}}"
+              data-action="bestaetigen" {{#if stand.leer}}disabled{{/if}}>
+        <i class="fa-solid {{#if stand.bereitGm}}fa-rotate-left{{else}}fa-handshake{{/if}}"
+           aria-hidden="true"></i>
+        {{#if stand.bereitGm}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
+        {{else}}{{localize "SHOPS.Tisch.Bestaetigen"}}{{/if}}
+      </button>
+      {{#if stand.bereitGm}}
+        <span class="shops-tisch-zusage">{{localize "SHOPS.Tisch.WartetAufIhn" spieler=spielerName}}</span>
+      {{else if stand.bereitSpieler}}
+        <span class="shops-tisch-zusage shops-zugesagt">{{localize "SHOPS.Tisch.ErHatZugesagt" spieler=spielerName}}</span>
+      {{/if}}
       <button type="button" class="shops-kaufen shops-zweit" data-action="beenden">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         {{localize "SHOPS.Tisch.Zuruecknehmen"}}

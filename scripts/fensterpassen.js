@@ -30,6 +30,9 @@
 /* ── Das Einzige, was je Modul angepasst wird ─────────────────────── */
 
 const MODUL = {
+  /** Die Modulkennung - fuer die Einstellung „auch fremde Fenster". */
+  id: "ninjos-shops",
+
   /**
    * Klassen, an denen dieses Modul seine eigenen Fenster erkennt.
    *
@@ -93,6 +96,18 @@ function element(app) {
   return el instanceof HTMLElement ? el : (el[0] ?? null);
 }
 
+/**
+ * Duerfen auch fremde Fenster ins Bild gerueckt werden?
+ *
+ * Ab Werk ja: Ein Dialog, an dessen Rand niemand mehr kommt, ist kaputt -
+ * gleich wer ihn gebaut hat. Wer es abstellen will, findet den Schalter in
+ * den Moduleinstellungen.
+ */
+function fremdeKlemmen() {
+  try { return game.settings.get(MODUL.id, "fremdeFensterKlemmen") !== false; }
+  catch { return true; }
+}
+
 /** Gehoert das Fenster diesem Modul? */
 function unseres(app) {
   const liste = element(app)?.classList;
@@ -117,7 +132,7 @@ function fehlbetrag(el) {
  * die Breite (sie aendert den Umbruch), dann die Lage nach oben (sie gibt den
  * Platz frei), dann die Hoehe.
  */
-export function insBildRuecken(app) {
+export function insBildRuecken(app, { nurKlemmen = false } = {}) {
   const el = element(app);
   if (!el || !el.isConnected) return;
 
@@ -146,7 +161,14 @@ export function insBildRuecken(app) {
   /* ── Breite ─────────────────────────────────────────────────────── */
 
   let wunschBreite = sollBreite;
-  if (!gewachsen.has(app)) {
+  if (nurKlemmen) {
+    /*
+     * Fremde Fenster werden nur **kleiner** gemacht, nie groesser. Ein Dialog,
+     * der in den Schirm passt, gehoert dem Modul, das ihn gebaut hat - wir
+     * greifen erst ein, wenn er darueber hinauslaeuft und niemand mehr an
+     * seinen Rand kommt.
+     */
+  } else if (!gewachsen.has(app)) {
     gewachsen.add(app);
     wunschBreite = Math.min(sollBreite * WACHSTUM, bildBreite - 2 * RAND);
   } else if (unberuehrt && unsere?.wunsch) {
@@ -181,7 +203,7 @@ export function insBildRuecken(app) {
    * Solange niemand selbst gezogen hat, darf es bei jedem Zeichnen nachwachsen;
    * es aendert sich ohnehin nur, wenn wirklich etwas fehlt.
    */
-  if (unberuehrt) {
+  if (unberuehrt && !nurKlemmen) {
     const fehlt = fehlbetrag(el);
     if (fehlt > 1) {
       hoehe = fehlt > bildHoehe * 0.15
@@ -286,7 +308,21 @@ export function fensterPassenEinrichten() {
   fingerZiehenErlauben();
 
   const beimZeichnen = app => {
-    if (!unseres(app)) return;
+    const eigenes = unseres(app);
+    /*
+     * **Fremde Fenster auch - aber nur klemmen.**
+     *
+     * Am 08.09.2026 am Tisch: Auf einem Tablet oeffnete der Trefferwuerfel-
+     * Dialog von dnd5e groesser als der Schirm, und man kam nicht mehr heraus -
+     * kein Rand zum Ziehen, kein Schliessen-Kreuz im Bild. Dasselbe beim
+     * Bearbeiten der Trefferpunkte. Das sind nicht unsere Fenster, und
+     * trotzdem sitzt der Spieler fest.
+     *
+     * Wir machen sie deshalb nur kleiner, nie groesser, und ruecken sie ins
+     * Bild. Wer das nicht will, schaltet es ab - dann bleibt es bei den
+     * eigenen Fenstern.
+     */
+    if (!eigenes && !fremdeKlemmen()) return;
     /*
      * **Kein `requestAnimationFrame`.** Der naheliegende Weg, auf das fertige
      * Bild zu warten, ist hier der falsche: Ein Browser, dessen Fenster
@@ -299,7 +335,7 @@ export function fensterPassenEinrichten() {
      * `setTimeout` laeuft auch dann. Warten muss man trotzdem: Im Haken
      * selbst haengt der Inhalt noch nicht vollstaendig am Dokument.
      */
-    setTimeout(() => insBildRuecken(app), 0);
+    setTimeout(() => insBildRuecken(app, { nurKlemmen: !eigenes }), 0);
   };
 
   Hooks.on("renderApplicationV2", beimZeichnen);

@@ -3728,9 +3728,24 @@
 }
 
 /* Zwei Seiten nebeneinander — und untereinander, wo es eng wird. */
+/*
+ * **Die Spalten nehmen nur, was sie brauchen.**
+ *
+ * Vorher streckten sie sich über die halbe Fensterhöhe, auch wenn drei Zeilen
+ * darin standen - und der Vorrat, also die Fläche, auf der man tatsächlich
+ * etwas hinlegt, war eine zugeklappte Zeile am unteren Rand. Auf einem Tablet
+ * mit 768 Pixeln Höhe war das der ganze Unterschied zwischen bedienbar und
+ * nicht.
+ */
 .ninjos-shops .shops-tisch-platte {
-  flex: 1 1 auto;
-  min-height: 0;
+  /*
+   * Nicht schrumpfen: Was auf dem Tisch liegt, ist der Handel selbst - es
+   * nimmt seinen Inhalt, bis zu zwei Fuenfteln des Fensters. Der Vorrat
+   * darunter nimmt, was uebrig bleibt, und schrumpft an seiner Stelle.
+   */
+  flex: 0 0 auto;
+  min-height: 7rem;
+  max-height: 40%;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -3768,9 +3783,8 @@
   list-style: none;
   margin: 0;
   padding: 8px;
-  /* Gibt nach, wenn der Platz knapp wird - bis auf zwei Zeilen. */
   flex: 1 1 auto;
-  min-height: 3.5rem;
+  min-height: 3rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -3840,12 +3854,8 @@
 }
 
 .ninjos-shops .shops-tisch-vorratsblock {
-  /*
-   * `<details>` gibt als Flex-Element nicht zuverlaessig nach - deshalb hier
-   * ein festes Zugestaendnis statt eines Versprechens: Der Vorrat bekommt
-   * hoechstens seinen Anteil und scrollt darin.
-   */
-  flex: 0 1 auto;
+  /* Der Vorrat ist die Arbeitsflaeche - er bekommt, was uebrig bleibt. */
+  flex: 1 1 0;
   min-height: 0;
   overflow: hidden;
   display: flex;
@@ -3868,7 +3878,6 @@
   padding: 8px;
   flex: 1 1 auto;
   min-height: 0;
-  max-height: 11rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -3996,4 +4005,41 @@
   background: var(--shops-karte);
   border: 1px solid var(--shops-rand);
   border-radius: 3px;
+}
+
+
+/* Wo der Spieler einen Preis nennt. Direkt unter der Waage — dort steht die
+   Zahl, auf die er antwortet. */
+.ninjos-shops .shops-tisch-bieten {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--shops-rand);
+}
+.ninjos-shops .shops-tisch-bieten label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+.ninjos-shops .shops-tisch-geboten {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+
+/* Wo die Zusagen stehen. Grün, wenn die andere Seite schon zugesagt hat —
+   dann fehlt nur noch die eigene. */
+.ninjos-shops .shops-tisch-zusage {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--shops-text-blass);
+}
+.ninjos-shops .shops-tisch-zusage.shops-zugesagt {
+  font-style: normal;
+  font-weight: 600;
+  color: #2f6b34;
 }

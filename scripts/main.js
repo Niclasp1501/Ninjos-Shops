@@ -82,6 +82,23 @@ function einstellungenEinrichten() {
     onChange: () => ui.actors?.render()
   });
 
+  /*
+   * Fremde Fenster ins Bild ruecken. Ab Werk an: Ein Dialog, der ueber den
+   * Schirm hinauslaeuft, hat keinen Rand mehr zum Anfassen und kein Kreuz zum
+   * Schliessen - der Spieler sitzt fest. Gemessen am 08.09.2026 auf einem
+   * Tablet mit dem Trefferwuerfel-Dialog von dnd5e.
+   *
+   * Groesser gemacht wird ein fremdes Fenster nie, nur kleiner.
+   */
+  game.settings.register(MODULE_ID, "fremdeFensterKlemmen", {
+    name: "SHOPS.Einstellung.FremdeFenster.Name",
+    hint: "SHOPS.Einstellung.FremdeFenster.Hinweis",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register(MODULE_ID, SETTINGS.SCHAU_LICHT, {
     name: "SHOPS.Einstellung.SchauLicht.Name",
     hint: "SHOPS.Einstellung.SchauLicht.Hinweis",

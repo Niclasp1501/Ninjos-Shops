@@ -96,8 +96,37 @@
       {{/if}}
     </div>
 
+    {{!-- Der Ort, an dem man einen Preis nennt. Ohne ihn konnte der Spieler
+          nur Ware hinlegen und warten — wer Gold drauflegen wollte, hatte
+          keine Stelle dafür. --}}
+    <div class="shops-tisch-bieten">
+      <label>
+        <span>{{localize "SHOPS.Tisch.IchBiete"}}</span>
+        <span class="shops-preisfeld">
+          <input type="number" data-angebot step="1" value="{{stand.angebotFeld.value}}"
+                 aria-label="{{localize 'SHOPS.Tisch.IchBiete'}}">
+          <select data-angebotsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
+            {{#each muenzsorten}}
+              <option value="{{sorte}}" {{#if (eq sorte ../stand.angebotFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
+            {{/each}}
+          </select>
+        </span>
+      </label>
+      <button type="button" class="shops-kaufen shops-zweit" data-action="bieten">
+        <i class="fa-solid fa-comment-dollar" aria-hidden="true"></i>
+        {{localize "SHOPS.Tisch.Bieten"}}
+      </button>
+      {{#if stand.hatAngebot}}
+        <span class="shops-tisch-geboten">
+          {{#if stand.angebotGilt}}{{localize "SHOPS.Tisch.AngebotAngenommen"}}
+          {{else}}{{localize "SHOPS.Tisch.AngebotOffen" geld=stand.angebotText}}{{/if}}
+        </span>
+      {{/if}}
+    </div>
+
     {{#if vorrat.length}}
-      <details class="shops-tisch-vorratsblock">
+      {{!-- Offen: Das ist die Arbeitsfläche, nicht eine Fußnote. --}}
+      <details class="shops-tisch-vorratsblock" open>
         <summary>{{localize "SHOPS.Tisch.WasDuHast"}}</summary>
         <ol class="shops-ware shops-tisch-vorrat">
           {{#each vorrat}}
@@ -122,11 +151,24 @@
     {{/if}}
 
     <footer class="shops-tisch-fuss">
-      <button type="button" class="shops-kaufen" data-action="annehmen"
-              {{#if stand.leer}}disabled{{/if}}>
-        <i class="fa-solid fa-handshake" aria-hidden="true"></i>
-        {{localize "SHOPS.Tisch.Abschliessen"}}
+      {{!-- Zwei Zusagen. Der Knopf zeigt, wo man steht: zusagen, warten, oder
+            die Zusage zurücknehmen. --}}
+      <button type="button" class="shops-kaufen {{#if stand.bereitSpieler}}shops-zweit{{/if}}"
+              data-action="annehmen" {{#if stand.leer}}disabled{{/if}}>
+        <i class="fa-solid {{#if stand.bereitSpieler}}fa-rotate-left{{else}}fa-handshake{{/if}}"
+           aria-hidden="true"></i>
+        {{#if stand.bereitSpieler}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
+        {{else}}{{localize "SHOPS.Tisch.Abschliessen"}}{{/if}}
       </button>
+      {{#if stand.bereitSpieler}}
+        <span class="shops-tisch-zusage">
+          {{localize "SHOPS.Tisch.WartetAufSie" person=stand.personName}}
+        </span>
+      {{else if stand.bereitGm}}
+        <span class="shops-tisch-zusage shops-zugesagt">
+          {{localize "SHOPS.Tisch.SieHatZugesagt" person=stand.personName}}
+        </span>
+      {{/if}}
       <button type="button" class="shops-kaufen shops-zweit" data-action="aufgeben">
         <i class="fa-solid fa-hand" aria-hidden="true"></i>
         {{localize "SHOPS.Tisch.Aufgeben"}}

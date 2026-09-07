@@ -6,6 +6,35 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Ein Handel ließ sich einseitig abschließen.** Der Spieler konnte etwas auf
+  seine Seite legen und sofort bestätigen — die Spielleitung hatte dieser
+  Zusammenstellung nie zugestimmt. Ein Tausch ist eine Abrede zwischen zweien;
+  jetzt sagen **beide** zu, und **jede Änderung setzt beide Zusagen zurück**.
+  Wer nach der Zusage noch etwas dazulegt oder den Preis anfasst, handelt einen
+  anderen Tausch aus, und die alte Zusage galt ihm nicht.
+- **Fremde Fenster liefen auf dem Tablet aus dem Bild.** Der
+  Trefferwürfel-Dialog von dnd5e öffnete größer als der Schirm: kein Rand zum
+  Ziehen, kein Kreuz zum Schließen, kein Entkommen. Dasselbe beim Bearbeiten
+  der Trefferpunkte. Das sind nicht unsere Fenster — trotzdem sitzt der Spieler
+  fest. `fensterpassen.js` klemmt sie jetzt mit, **macht sie aber nie größer**;
+  abschaltbar in den Einstellungen.
+
+### Hinzugefügt
+- **Der Spieler kann einen Preis nennen.** Bisher konnte nur die Spielleitung
+  einen setzen; wer Gold drauflegen wollte, hatte keinen Ort dafür. Ein Feld
+  unter der Waage — Zahl und Münzsorte —, und die Spielleitung übernimmt das
+  Gebot mit einem Klick.
+
+### Geändert
+- **Der Handelstisch verteilt seinen Platz anders.** Die beiden Seiten
+  streckten sich über die halbe Fensterhöhe, auch mit drei Zeilen darin,
+  während „was du dabeihast" — die Fläche, auf der man tatsächlich etwas
+  hinlegt — als zugeklappte Zeile am unteren Rand saß. Jetzt nehmen die Seiten
+  ihren Inhalt (höchstens zwei Fünftel), und der Vorrat steht offen und bekommt
+  den Rest. Auf einem Tablet mit 768 Pixeln ist das der Unterschied zwischen
+  bedienbar und nicht.
+
+### Behoben
 - **Auf dem Tablet war nur die halbe Handelsansicht zu sehen.** Gemessen bei
   1058×577: Der Inhalt brauchte 637 Pixel bei 523 verfügbaren, und
   abgeschnitten wurde unten — also genau der Knopf, mit dem man den Handel
