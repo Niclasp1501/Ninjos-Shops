@@ -42,12 +42,14 @@
  */
 
 import { MODULE_ID, SOCKET, WARE } from "./const.js";
-import { grundpreisCp, preisCp, alsText, wechselgeldText, alsMuenzfeld, ausMuenzfeld,
-         PREIS_SORTEN } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText,
+         PREIS_SORTEN, KUPFERWERT } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { einlagern } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
+import { verkaufbareSachen } from "./verkauf.js";
+import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -141,10 +143,13 @@ export function tischStand(handel) {
     preisFeld: alsMuenzfeld(gilt, { vorzeichen: true }),
     geldNsc: handel.geldNsc ?? 0,
     geldSpieler: handel.geldSpieler ?? 0,
-    geldNscText: alsText(handel.geldNsc ?? 0, kuerzel),
-    geldSpielerText: alsText(handel.geldSpieler ?? 0, kuerzel),
-    geldNscFeld: alsMuenzfeld(handel.geldNsc ?? 0),
-    geldSpielerFeld: alsMuenzfeld(handel.geldSpieler ?? 0),
+    /*
+     * Muenzen stehen so da, wie sie hingelegt wurden - „2 GM · 5 SM", nicht
+     * als umgerechnete Summe. Wer fuenfzehn Silber hinlegt, hat nicht „1 GM
+     * 5 SM" hingelegt; die Waage darunter rechnet ohnehin in Kupfer.
+     */
+    geldNscText: muenzText(handel.muenzenNsc) || alsText(handel.geldNsc ?? 0, kuerzel),
+    geldSpielerText: muenzText(handel.muenzenSpieler) || alsText(handel.geldSpieler ?? 0, kuerzel),
     leer: !(handel.seiteNsc?.length || handel.seiteSpieler?.length
             || handel.geldNsc || handel.geldSpieler)
   };
@@ -188,44 +193,6 @@ export async function tischOeffnen(person, benutzerIds, satz = "") {
     { anzahl: an.length, person: person.name }));
 }
 
-/** Etwas auf eine Seite legen. Läuft immer bei der Spielleitung. */
-export async function auflegen(benutzerId, seite, itemId, menge = 1) {
-  if (!game.user.isGM) return;
-  const benutzer = game.users.get(benutzerId);
-  const handel = benutzer?.getFlag(MODULE_ID, TISCH);
-  if (!handel) return;
-
-  const person = await fromUuid(handel.personUuid);
-  const figur = benutzer.character;
-  const traeger = seite === "nsc" ? person : figur;
-  const item = traeger?.items?.get(itemId);
-  if (!item) return;
-
-  const vorrat = Number(item.system?.quantity ?? 1);
-  const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
-  const liste = [...(handel[feld] ?? [])];
-  const drin = liste.find(p => p.itemId === itemId);
-  const wunsch = Math.max(1, Math.floor(Number(menge) || 1));
-
-  // Nie mehr auflegen, als wirklich da liegt.
-  const schon = drin?.menge ?? 0;
-  const platz = Math.max(0, vorrat - schon);
-  if (platz <= 0) return;
-  const dazu = Math.min(wunsch, platz);
-
-  if (drin) drin.menge += dazu;
-  else liste.push({
-    itemId, name: item.name, img: item.img || null, menge: dazu,
-    wertCp: seite === "nsc" ? wertHergeben(person, item) : wertAnnehmen(item)
-  });
-
-  // Jede Änderung setzt einen überschriebenen Preis zurück: Er galt für einen
-  // anderen Tisch als den, der jetzt daliegt.
-  await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, [feld]: liste, preisCp: null, bereitSpieler: false, bereitGm: false });
-  await funken([benutzerId]);
-}
-
 /** Etwas wieder herunternehmen. */
 export async function wegnehmen(benutzerId, seite, itemId) {
   if (!game.user.isGM) return;
@@ -240,27 +207,88 @@ export async function wegnehmen(benutzerId, seite, itemId) {
 }
 
 /**
- * Geld auf eine Seite legen.
+ * Muenzen auf eine Seite legen.
  *
- * Es zaehlt wie Ware: Die Summe der Seite waechst, und die Waage unten sagt
- * sofort, was danach noch fehlt. Mehr als da ist, geht nicht - wer nichts hat,
- * legt nichts hin.
+ * Sie zaehlen wie Ware: Die Summe der Seite waechst, und die Waage unten sagt
+ * sofort, was danach noch fehlt. Je Sorte nie mehr als da ist - wer drei Gold
+ * hat, legt hoechstens drei hin.
+ *
+ * Gespeichert wird beides: die Muenzen, wie sie liegen (fuer die Anzeige),
+ * und ihr Kupferwert (fuer die Waage).
  */
-export async function geldSetzen(benutzerId, seite, betragCp) {
+export async function geldSetzen(benutzerId, seite, muenzen) {
+  if (!game.user.isGM) return;
+  const benutzer = game.users.get(benutzerId);
+  const handel = benutzer?.getFlag(MODULE_ID, TISCH);
+  if (!handel) return;
+  const traeger = seite === "nsc"
+    ? await fromUuid(handel.personUuid)
+    : benutzer.character;
+  const gedeckelt = muenzenDeckeln(muenzen, traeger?.system?.currency);
+  await benutzer.setFlag(MODULE_ID, TISCH, {
+    ...handel, ...muenzFelder(seite, gedeckelt),
+    preisCp: null, bereitSpieler: false, bereitGm: false
+  });
+  await funken([benutzerId]);
+}
+
+/** Je Sorte hoechstens so viel, wie der Traeger hat. */
+function muenzenDeckeln(muenzen, boerse) {
+  const raus = {};
+  for (const [sorte, n] of Object.entries(muenzenSaeubern(muenzen))) {
+    const habe = Math.floor(Number(boerse?.[sorte] ?? 0));
+    if (habe > 0) raus[sorte] = Math.min(n, habe);
+  }
+  return raus;
+}
+
+const muenzenCp = muenzen => Object.entries(muenzen ?? {})
+  .reduce((s, [sorte, n]) => s + (KUPFERWERT[sorte] ?? 0) * n, 0);
+
+/** Die beiden Merkmalsfelder einer Seite, aus den Muenzen. */
+function muenzFelder(seite, muenzen) {
+  return seite === "nsc"
+    ? { muenzenNsc: muenzen, geldNsc: muenzenCp(muenzen) }
+    : { muenzenSpieler: muenzen, geldSpieler: muenzenCp(muenzen) };
+}
+
+/**
+ * Eine ganze Seite auf einmal hinlegen - Ware und Muenzen.
+ *
+ * Das ist, was die Lage ueber dem Tisch abschickt, wenn man fertig ist: nicht
+ * ein Stueck nach dem anderen, sondern die Seite, wie sie jetzt sein soll.
+ * Bewertet wird hier, bei der Spielleitung - der Client schickt Kennungen und
+ * Mengen, keine Werte.
+ */
+export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
   if (!game.user.isGM) return;
   const benutzer = game.users.get(benutzerId);
   const handel = benutzer?.getFlag(MODULE_ID, TISCH);
   if (!handel) return;
 
-  const traeger = seite === "nsc"
-    ? await fromUuid(handel.personUuid)
-    : benutzer.character;
-  const habe = vermoegenCp(traeger?.system?.currency ?? {});
-  const wert = Math.max(0, Math.min(Math.round(Number(betragCp) || 0), habe));
+  const person = await fromUuid(handel.personUuid);
+  const traeger = seite === "nsc" ? person : benutzer.character;
+  if (!traeger) return;
 
-  const feld = seite === "nsc" ? "geldNsc" : "geldSpieler";
-  await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, [feld]: wert, preisCp: null, bereitSpieler: false, bereitGm: false });
+  const liste = [];
+  for (const p of posten ?? []) {
+    const item = traeger.items.get(p.itemId);
+    if (!item || liste.some(z => z.itemId === item.id)) continue;
+    const vorrat = item.type === "container" ? 1 : Number(item.system?.quantity ?? 1);
+    const menge = Math.min(Math.max(1, Math.floor(Number(p.menge) || 1)), vorrat);
+    if (menge <= 0) continue;
+    liste.push({
+      itemId: item.id, name: item.name, img: item.img || null, menge,
+      wertCp: seite === "nsc" ? wertHergeben(person, item) : wertAnnehmen(item)
+    });
+  }
+
+  const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
+  const gedeckelt = muenzenDeckeln(muenzen, traeger.system?.currency);
+  await benutzer.setFlag(MODULE_ID, TISCH, {
+    ...handel, [feld]: liste, ...muenzFelder(seite, gedeckelt),
+    preisCp: null, bereitSpieler: false, bereitGm: false
+  });
   await funken([benutzerId]);
 }
 
@@ -468,11 +496,11 @@ function bitte(tat, mehr = {}) {
   if (game.user.isGM) aufTisch(paket);
 }
 
-export const tischAuflegen  = (itemId, menge) => bitte("auflegen", { seite: "spieler", itemId, menge });
 export const tischWegnehmen = itemId => bitte("wegnehmen", { seite: "spieler", itemId });
 export const tischAnnehmen  = () => bitte("annehmen");
 export const tischWiderrufen = () => bitte("widerrufen");
-export const tischGeld      = cp => bitte("geld", { betragCp: cp });
+export const tischGeld      = muenzen => bitte("geld", { muenzen });
+export const tischSeite     = (posten, muenzen) => bitte("seite", { posten, muenzen });
 export const tischAufgeben  = () => bitte("aufgeben");
 
 /* ── Empfang ───────────────────────────────────────────────────────── */
@@ -499,9 +527,9 @@ export async function aufTisch(daten) {
   if (!await darfIchAusfuehren(daten.bitteId)) return;
 
   switch (daten.tat) {
-    case "auflegen":  return void await auflegen(daten.spielerId, "spieler", daten.itemId, daten.menge);
     case "wegnehmen": return void await wegnehmen(daten.spielerId, "spieler", daten.itemId);
-    case "geld":      return void await geldSetzen(daten.spielerId, "spieler", daten.betragCp);
+    case "geld":      return void await geldSetzen(daten.spielerId, "spieler", daten.muenzen);
+    case "seite":     return void await seiteSetzen(daten.spielerId, "spieler", daten.posten, daten.muenzen);
     case "aufgeben": {
       const handel = game.users.get(daten.spielerId)?.getFlag(MODULE_ID, TISCH);
       await tischBeenden([daten.spielerId]);
@@ -528,21 +556,30 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     window: { icon: "fa-solid fa-handshake", resizable: true },
     actions: {
       ansehen: Handelstisch.#ansehen,
-      auflegen: Handelstisch.#auflegen,
       wegnehmen: Handelstisch.#wegnehmen,
       annehmen: Handelstisch.#annehmen,
-      geldLegen: Handelstisch.#geldLegen,
-      geldWeg: () => tischGeld(0),
-      aufgeben: Handelstisch.#aufgeben
+      geldWeg: () => tischGeld({}),
+      aufgeben: Handelstisch.#aufgeben,
+      ...WAHL_AKTIONEN
     }
   };
 
   static PARTS = {
     body: {
       template: `modules/${MODULE_ID}/templates/handelstisch.hbs`,
-      scrollable: [".shops-tisch-nsc", ".shops-tisch-spieler", ".shops-tisch-vorrat"]
+      scrollable: [".shops-tisch-nsc", ".shops-tisch-spieler", ".shops-wahl-liste"]
     }
   };
+
+  /* Die Lage ueber dem Tisch - siehe tisch-wahl.js. */
+  wahl = new Wahl();
+  wahlLiegt() {
+    const h = eigenerTisch();
+    return { posten: h?.seiteSpieler ?? [], muenzen: h?.muenzenSpieler ?? {} };
+  }
+  wahlVorrat() { return verkaufbareSachen(game.user.character); }
+  wahlBoerse() { return game.user.character?.system?.currency ?? {}; }
+  wahlAbschicken(posten, muenzen) { tischSeite(posten, muenzen); }
 
   get title() {
     return game.i18n.format("SHOPS.Tisch.Titel", { person: eigenerTisch()?.personName ?? "" });
@@ -553,21 +590,14 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     const handel = eigenerTisch();
     const figur = game.user.character;
     const stand = tischStand(handel);
-    const aufDemTisch = new Set((handel?.seiteSpieler ?? []).map(p => p.itemId));
+    // Ist der Tisch weg, ist auch nichts mehr auszusuchen.
+    if (!handel) this.wahl.modus = "tisch";
 
-    const { verkaufbareSachen } = await import("./verkauf.js");
     return Object.assign(ctx, {
       stand,
-      muenzsorten: PREIS_SORTEN.map(sorte => ({ sorte, kuerzel: kuerzel(sorte) })),
       figurName: figur?.name ?? null,
       boerse: figur ? alsText(vermoegenCp(figur.system?.currency ?? {}), kuerzel) : null,
-      // Was der Spieler noch hinlegen könnte.
-      vorrat: figur ? verkaufbareSachen(figur)
-        .filter(i => !aufDemTisch.has(i.id))
-        .map(i => ({ id: i.id, name: i.name, img: i.img,
-                     menge: Number(i.system?.quantity ?? 1),
-                     wertText: alsText(wertAnnehmen(i), kuerzel) }))
-        .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang)) : []
+      wahl: this.wahl.kontext(this.wahlVorrat(), this.wahlBoerse())
     });
   }
 
@@ -582,12 +612,6 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     wareAnsehen(traeger, itemId);
   }
 
-  static #auflegen(ereignis, ziel) {
-    const zeile = ziel.closest("[data-item-id]");
-    const menge = Number(zeile?.querySelector("[data-menge]")?.value) || 1;
-    if (zeile) tischAuflegen(zeile.dataset.itemId, menge);
-  }
-
   static #wegnehmen(ereignis, ziel) {
     const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
     if (itemId) tischWegnehmen(itemId);
@@ -597,14 +621,6 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     // Schon zugesagt? Dann nimmt der Knopf die Zusage zurueck.
     if (eigenerTisch()?.bereitSpieler) tischWiderrufen();
     else tischAnnehmen();
-  }
-
-  /** Geld auf die eigene Seite legen. */
-  static #geldLegen() {
-    const feld = this.element.querySelector("[data-geld]");
-    const sorte = this.element.querySelector("[data-geldsorte]");
-    if (!feld) return;
-    tischGeld(ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
   }
 
   static async #aufgeben() {
@@ -690,6 +706,11 @@ export function tischZeichnen() {
  * zurück. Als Fenster, wenn er neu ist; als Knopf, wenn er schon lief.
  */
 export function tischEinrichten() {
+  // Die Lage ueber dem Tisch ist ein Teilstueck beider Vorlagen.
+  foundry.applications.handlebars.loadTemplates({
+    "shops-tisch-wahl": `modules/${MODULE_ID}/templates/handelstisch-wahl.hbs`
+  });
+
   Hooks.on("updateUser", (benutzer, aenderungen) => {
     if (benutzer.id !== game.user.id) return;
     if (!foundry.utils.hasProperty(aenderungen, `flags.${MODULE_ID}.${TISCH}`)) return;
@@ -705,6 +726,9 @@ export function tischEinrichten() {
 
 /* ── Das Fenster der Spielleitung ──────────────────────────────────── */
 
+/** Was von einer Person ueber den Tisch gehen kann. Keine Zauber, keine Merkmale. */
+const HANDELBAR = new Set(["weapon", "equipment", "consumable", "tool", "loot", "container", "backpack"]);
+
 /**
  * Dieselbe Ansicht, andere Seite: Die Spielleitung deckt den Tisch der Person
  * und setzt den Preis. Ein Fenster je Spieler - zwei Leute, die gleichzeitig
@@ -718,25 +742,38 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     window: { icon: "fa-solid fa-handshake", resizable: true },
     actions: {
       ansehen: HandelstischGM.#ansehen,
-      auflegen: HandelstischGM.#auflegen,
       wegnehmen: HandelstischGM.#wegnehmen,
       preisUebernehmen: HandelstischGM.#preisUebernehmen,
       preisFrei: HandelstischGM.#preisFrei,
       bestaetigen: HandelstischGM.#bestaetigen,
-      geldLegen: HandelstischGM.#geldLegen,
       geldWeg: HandelstischGM.#geldWeg,
-      beenden: HandelstischGM.#beenden
+      beenden: HandelstischGM.#beenden,
+      ...WAHL_AKTIONEN
     }
   };
 
   static PARTS = {
     body: {
       template: `modules/${MODULE_ID}/templates/handelstisch-gm.hbs`,
-      scrollable: [".shops-tisch-nsc", ".shops-tisch-spieler", ".shops-tisch-vorrat"]
+      scrollable: [".shops-tisch-nsc", ".shops-tisch-spieler", ".shops-wahl-liste"]
     }
   };
 
   #benutzerId;
+  /** Die Person, deren Seite die Spielleitung deckt - bei jedem Zeichnen geholt. */
+  #person = null;
+
+  /* Die Lage ueber dem Tisch - siehe tisch-wahl.js. Hier fuer die Seite der Person. */
+  wahl = new Wahl();
+  wahlLiegt() {
+    const h = game.users.get(this.#benutzerId)?.getFlag(MODULE_ID, TISCH);
+    return { posten: h?.seiteNsc ?? [], muenzen: h?.muenzenNsc ?? {} };
+  }
+  wahlVorrat() {
+    return (this.#person?.items ?? []).filter(i => HANDELBAR.has(i.type));
+  }
+  wahlBoerse() { return this.#person?.system?.currency ?? {}; }
+  wahlAbschicken(posten, muenzen) { seiteSetzen(this.#benutzerId, "nsc", posten, muenzen); }
 
   constructor(benutzerId, options = {}) {
     super(options);
@@ -755,11 +792,9 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     const benutzer = game.users.get(this.#benutzerId);
     const handel = benutzer?.getFlag(MODULE_ID, TISCH);
     const stand = tischStand(handel);
-    const person = handel ? await fromUuid(handel.personUuid) : null;
-    const aufDemTisch = new Set((handel?.seiteNsc ?? []).map(p => p.itemId));
+    this.#person = handel ? await fromUuid(handel.personUuid) : null;
+    if (!handel) this.wahl.modus = "tisch";
 
-    const handelbar = new Set(["weapon", "equipment", "consumable", "tool",
-                               "loot", "container", "backpack"]);
     return Object.assign(ctx, {
       stand,
       muenzsorten: PREIS_SORTEN.map(sorte => ({ sorte, kuerzel: kuerzel(sorte) })),
@@ -767,12 +802,7 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
       figurName: benutzer?.character?.name ?? null,
       boerse: benutzer?.character
         ? alsText(vermoegenCp(benutzer.character.system?.currency ?? {}), kuerzel) : null,
-      vorrat: person ? person.items
-        .filter(i => handelbar.has(i.type) && !aufDemTisch.has(i.id))
-        .map(i => ({ id: i.id, name: i.name, img: i.img,
-                     menge: Number(i.system?.quantity ?? 1),
-                     wertText: alsText(wertHergeben(person, i), kuerzel) }))
-        .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang)) : []
+      wahl: this.wahl.kontext(this.wahlVorrat(), this.wahlBoerse())
     });
   }
 
@@ -783,12 +813,6 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!itemId || !person) return;
     const { wareAnsehen } = await import("./ware-ansehen.js");
     wareAnsehen(person, itemId);
-  }
-
-  static #auflegen(ereignis, ziel) {
-    const zeile = ziel.closest("[data-item-id]");
-    const menge = Number(zeile?.querySelector("[data-menge]")?.value) || 1;
-    if (zeile) auflegen(this.benutzerId, "nsc", zeile.dataset.itemId, menge);
   }
 
   static #wegnehmen(ereignis, ziel) {
@@ -806,16 +830,7 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static #preisFrei() { preisSetzen(this.benutzerId, null); }
 
-  /** Was der Spieler bietet, zum Preis machen. */
-  /** Geld auf die Seite der Person legen. */
-  static #geldLegen() {
-    const feld = this.element.querySelector("[data-geld]");
-    const sorte = this.element.querySelector("[data-geldsorte]");
-    if (!feld) return;
-    geldSetzen(this.benutzerId, "nsc", ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
-  }
-
-  static #geldWeg() { geldSetzen(this.benutzerId, "nsc", 0); }
+  static #geldWeg() { geldSetzen(this.benutzerId, "nsc", {}); }
 
   /** Die Zusage der Spielleitung - und der Abschluss, wenn beide stehen. */
   static #bestaetigen() {

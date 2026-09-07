@@ -56,24 +56,20 @@
               </button>
             </li>
           {{/if}}
+          {{#unless stand.seiteNsc.length}}{{#unless stand.geldNsc}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.NochNichtsHingelegt"}}</li>
+          {{/unless}}{{/unless}}
         </ol>
-        {{!-- Auch sie kann Geld hinlegen — etwa wenn sie etwas ankauft. --}}
-        <div class="shops-geldfeld">
-          <i class="fa-solid fa-coins" aria-hidden="true"></i>
-          <label>
-            <span>{{localize "SHOPS.Tisch.GeldDazu"}}</span>
-            <span class="shops-preisfeld">
-              <input type="number" data-geld min="0" step="1" value="{{stand.geldNscFeld.value}}"
-                     aria-label="{{localize 'SHOPS.Tisch.GeldDazu'}}">
-              <select data-geldsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
-                {{#each muenzsorten}}
-                  <option value="{{sorte}}" {{#if (eq sorte ../stand.geldNscFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
-                {{/each}}
-              </select>
-            </span>
-          </label>
-          <button type="button" class="shops-kaufen shops-zweit" data-action="geldLegen">
-            {{localize "SHOPS.Tisch.GeldLegen"}}
+        {{!-- Aussuchen passiert in einer Lage über dem Tisch — siehe
+              tisch-wahl.js. Hier stehen nur die zwei Knöpfe, die sie öffnen. --}}
+        <div class="shops-tisch-werkzeuge">
+          <button type="button" class="shops-kaufen shops-zweit" data-action="wahlSachen">
+            <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+            {{localize "SHOPS.Tisch.Sachen"}}
+          </button>
+          <button type="button" class="shops-kaufen shops-zweit" data-action="wahlMuenzen">
+            <i class="fa-solid fa-coins" aria-hidden="true"></i>
+            {{localize "SHOPS.Tisch.Muenzen"}}
           </button>
         </div>
       </section>
@@ -148,34 +144,6 @@
       <span class="shops-blockhinweis">{{localize "SHOPS.Tisch.PreisHinweis"}}</span>
     </div>
 
-    {{#if vorrat.length}}
-      <details class="shops-tisch-vorratsblock" open>
-        <summary>{{localize "SHOPS.Tisch.WasSieHat" person=stand.personName}}</summary>
-        <ol class="shops-ware shops-tisch-vorrat">
-          {{#each vorrat}}
-            <li class="shops-zeile" data-item-id="{{id}}">
-              {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
-                              title="{{localize 'SHOPS.Ansehen.Knopf'}}">
-              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
-              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
-              <label class="shops-handel-menge">
-                <span>{{localize "SHOPS.Handel.Menge"}}</span>
-                <input type="number" data-menge value="1" min="1" max="{{menge}}"
-                       aria-label="{{localize 'SHOPS.Handel.Menge'}}">
-              </label>
-              <span class="shops-preis">{{wertText}}</span>
-              <button type="button" class="shops-kaufen" data-action="auflegen">
-                <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
-                {{localize "SHOPS.Tisch.Auflegen"}}
-              </button>
-            </li>
-          {{/each}}
-        </ol>
-      </details>
-    {{else}}
-      <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Handel.NichtsDabei"}}</p>
-    {{/if}}
-
     <footer class="shops-tisch-fuss">
       <button type="button" class="shops-kaufen {{#if stand.bereitGm}}shops-zweit{{/if}}"
               data-action="bestaetigen" {{#if stand.leer}}disabled{{/if}}>
@@ -195,6 +163,8 @@
       </button>
       <span class="shops-blockhinweis">{{localize "SHOPS.Tisch.GMHinweis"}}</span>
     </footer>
+
+    {{#if wahl}}{{> "shops-tisch-wahl" wahl=wahl}}{{/if}}
 
   {{else}}
     <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.KeinTisch"}}</p>
