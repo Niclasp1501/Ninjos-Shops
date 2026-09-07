@@ -23,6 +23,7 @@
 
 import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.js";
 import { grundpreisCp, preisCp, alsText, wechselgeldText } from "./preise.js";
+import { einlagern } from "./lager.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { schreibeVorgang, schreibeErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
@@ -127,15 +128,7 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
   try {
     // 1. Erst anlegen. Bricht es danach ab, gibt es den Gegenstand doppelt
     //    statt gar nicht - das ist die verkraftbare Haelfte des Ungluecks.
-    if (!dienst) {
-      const kopie = item.toObject();
-      delete kopie._id;
-      kopie.system = kopie.system ?? {};
-      kopie.system.quantity = stueck;
-      // Die Ladenmerkmale gehoeren dem Laden, nicht der Ware im Rucksack.
-      delete kopie.flags?.[MODULE_ID];
-      await figur.createEmbeddedDocuments("Item", [kopie]);
-    }
+    if (!dienst) await einlagern(figur, item, stueck);
 
     // 2. Dann bezahlen.
     await figur.update({ "system.currency": gezahlt.bestand });

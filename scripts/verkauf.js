@@ -21,6 +21,7 @@
 
 import { MODULE_ID, WARE, LADEN_TYP } from "./const.js";
 import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
+import { einlagern } from "./lager.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { schreibeVerkaufVorgang, schreibeVerkaufErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
@@ -125,19 +126,7 @@ export async function fuehreVerkaufAus({ ladenUuid, itemId, figurUuid, menge = 1
      * zweite Zeile daneben zu stellen. Sonst stuenden nach drei Verkaeufen drei
      * Zeilen "Langschwert" in der Auslage.
      */
-    const vorhanden = laden.items.find(i => i.name === name && i.type === item.type);
-    if (vorhanden) {
-      await vorhanden.update({ "system.quantity": Number(vorhanden.system.quantity ?? 0) + stueck });
-    } else {
-      const kopie = item.toObject();
-      delete kopie._id;
-      kopie.system = kopie.system ?? {};
-      kopie.system.quantity = stueck;
-      // Die Merkmale des Ladens gehoeren dem Laden - eine angekaufte Ware
-      // erbt nicht den Festpreis oder das "verborgen" aus einem fremden.
-      delete kopie.flags?.[MODULE_ID];
-      await laden.createEmbeddedDocuments("Item", [kopie]);
-    }
+    await einlagern(laden, item, stueck);
 
     // Geld an die Figur.
     await figur.update({ "system.currency": schreibeGut(figur.system?.currency ?? {}, summeCp) });
@@ -259,17 +248,7 @@ export async function fuehreAnkaufAus(sitzung) {
       namen.push(item.name);
 
       // Erst anlegen, dann abziehen - wie ueberall in diesem Modul.
-      const vorhanden = gegenueber.items.find(i => i.name === item.name && i.type === item.type);
-      if (vorhanden) {
-        await vorhanden.update({ "system.quantity": Number(vorhanden.system.quantity ?? 0) + stueck });
-      } else {
-        const kopie = item.toObject();
-        delete kopie._id;
-        kopie.system = kopie.system ?? {};
-        kopie.system.quantity = stueck;
-        delete kopie.flags?.[MODULE_ID];
-        await gegenueber.createEmbeddedDocuments("Item", [kopie]);
-      }
+      await einlagern(gegenueber, item, stueck);
 
       const rest = Number(item.system?.quantity ?? 0) - stueck;
       if (rest > 0) await item.update({ "system.quantity": rest });

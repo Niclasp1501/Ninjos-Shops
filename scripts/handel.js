@@ -42,6 +42,7 @@
 
 import { MODULE_ID, SOCKET } from "./const.js";
 import { alsText, wechselgeldText } from "./preise.js";
+import { einlagern } from "./lager.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 
@@ -265,12 +266,7 @@ async function nehmenAusfuehren({ itemId, figurUuid, kaeuferId }) {
 
   try {
     laeuft = true;
-    const kopie = item.toObject();
-    delete kopie._id;
-    kopie.system = kopie.system ?? {};
-    kopie.system.quantity = posten.menge;
-    delete kopie.flags?.[MODULE_ID];
-    await figur.createEmbeddedDocuments("Item", [kopie]);
+    await einlagern(figur, item, posten.menge);
 
     await figur.update({ "system.currency": gezahlt.bestand });
 
