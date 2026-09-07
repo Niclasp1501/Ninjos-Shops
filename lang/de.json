@@ -313,6 +313,7 @@
   "SHOPS.Tisch.Zurueckholen": "Handel mit {person}",
   "SHOPS.Tisch.KeinTisch": "Für diesen Spieler ist gerade kein Tisch gedeckt.",
   "SHOPS.Tisch.Gelungen": "Handel mit {person} abgeschlossen.",
+  "SHOPS.Tisch.GMGelungen": "{spieler} hat den Handel mit {person} abgeschlossen — {geld}.",
   "SHOPS.Anfrage.NullIstKeinPreis": "Null ist kein Preis. Nenne eine Zahl oder weise die Anfrage ab.",
   "SHOPS.Schau.Gross": "groß",
   "SHOPS.Schau.GrossHinweis": "Die Schauansicht für den Bildschirm an der Wand — ohne Fenster, ohne Knöpfe, aus zwei Metern lesbar.",

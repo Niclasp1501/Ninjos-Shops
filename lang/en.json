@@ -313,6 +313,7 @@
   "SHOPS.Tisch.Zurueckholen": "Trading with {person}",
   "SHOPS.Tisch.KeinTisch": "No table is set for this player right now.",
   "SHOPS.Tisch.Gelungen": "Deal with {person} closed.",
+  "SHOPS.Tisch.GMGelungen": "{spieler} closed the deal with {person} — {geld}.",
   "SHOPS.Anfrage.NullIstKeinPreis": "Zero is not a price. Name a number, or refuse the request.",
   "SHOPS.Schau.Gross": "large",
   "SHOPS.Schau.GrossHinweis": "The display view for the screen on the wall — no window, no buttons, readable from two metres.",

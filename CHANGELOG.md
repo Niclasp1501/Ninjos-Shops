@@ -6,6 +6,25 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Auf dem Tablet war nur die halbe Handelsansicht zu sehen.** Gemessen bei
+  1058×577: Der Inhalt brauchte 637 Pixel bei 523 verfügbaren, und
+  abgeschnitten wurde unten — also genau der Knopf, mit dem man den Handel
+  abschließt. Das Fenster selbst blieb im Bild, `fensterpassen.js` hatte seine
+  Arbeit getan; das Problem lag darin, dass **jeder Teil eine feste Höhe hatte
+  und keiner nachgab.** Jetzt stehen Kopf, Waage, Preisfeld und Fuß fest, und
+  die Listen teilen sich, was übrig bleibt. Bei 916×414 geprüft: nichts
+  abgeschnitten.
+- **Fenster ließen sich auf dem Tablet nicht mit dem Finger verschieben.** Der
+  Browser wertet eine Wischgeste über der Titelleiste als Scrollen und bricht
+  das Ziehen ab, sobald der Finger sich bewegt — mit der Maus fällt das nie
+  auf. `touch-action: none` auf Titelleiste und Anfassern. Steht in
+  `fensterpassen.js` und wandert damit in jedes Modul, das die Datei bekommt.
+- **Die Spielleitung erfuhr nicht, wenn ein Handel zustande kam.** Das Ergebnis
+  ging nur an den Spieler — dabei hat sie den Preis gesetzt und sitzt womöglich
+  nicht daneben. Sie sah den Tisch verschwinden und wusste nicht, ob
+  abgeschlossen oder abgebrochen wurde.
+
+### Behoben
 - **Ein Klick auf „üblich" bot das Hundertfache.** Die drei Vorschlagsknöpfe in
   der Verhandlung tragen ihren Wert in **Kupfer**; das Feld daneben stand in
   **Gold**. Der Knopf schrieb die Zahl roh hinein — aus 50 Kupfer wurden 50

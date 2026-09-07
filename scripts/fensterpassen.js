@@ -251,7 +251,40 @@ function alleNachziehen() {
 /**
  * Anmelden. Gehoert in `ready`.
  */
+/**
+ * Fenster mit dem Finger verschiebbar machen.
+ *
+ * **Der Fehler.** Am 08.09.2026 liess sich auf dem Tablet kein Fenster dieses
+ * Moduls verschieben. Foundry zieht die Titelleiste ueber Zeigerereignisse,
+ * und die kommen auf einem Touchscreen auch an - nur entscheidet der Browser
+ * vorher, dass eine Wischgeste ueber einem Element ein *Scrollen* ist, und
+ * bricht das Ziehen ab, sobald der Finger sich bewegt. Mit der Maus faellt
+ * das nie auf, weil ein Mauszeiger nicht scrollt.
+ *
+ * `touch-action: none` sagt dem Browser, dass er die Geste dem Element
+ * ueberlassen soll. Nur fuer die Titelleiste und die Anfasser zum Groesse-
+ * aendern - nicht fuer den Inhalt, der weiter mit dem Finger gescrollt
+ * werden muss.
+ *
+ * Steht hier und nicht im Stylesheet, damit es mit dieser Datei in jedes
+ * Modul wandert: Ein Fenster, das man nicht anfassen kann, ist derselbe
+ * Fehler wie eines, das aus dem Bild laeuft.
+ */
+function fingerZiehenErlauben() {
+  const id = "ninjo-fensterpassen-touch";
+  if (document.getElementById(id)) return;
+  const wahl = MODUL.marke.map(k =>
+    `.${k} .window-header, .${k} .window-resize-handle, .${k} [data-action="resize"]`
+  ).join(", ");
+  const stil = document.createElement("style");
+  stil.id = id;
+  stil.textContent = `${wahl} { touch-action: none; }`;
+  document.head.append(stil);
+}
+
 export function fensterPassenEinrichten() {
+  fingerZiehenErlauben();
+
   const beimZeichnen = app => {
     if (!unseres(app)) return;
     /*

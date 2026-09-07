@@ -3671,15 +3671,38 @@
  * Wer sie sieht, muss nicht rechnen.
  */
 
-.ninjos-shops.shops-tisch .window-content { padding: 0; }
+/*
+ * **Was nachgibt, sind die Listen — nicht die Fußleiste.**
+ *
+ * Am 08.09.2026 auf einem Tablet quer: Das Fenster blieb im Bild, aber der
+ * Inhalt brauchte 637 Pixel bei 523 verfügbaren. Abgeschnitten wurde unten,
+ * also genau der Knopf, mit dem man den Handel abschließt. Der Grund war,
+ * dass jeder Teil eine feste Höhe hatte und keiner nachgab.
+ *
+ * Kopf, Waage, Preisfeld und Fuß stehen deshalb fest; die beiden Seiten und
+ * der Vorrat teilen sich, was übrig bleibt, und scrollen in sich.
+ */
+.ninjos-shops.shops-tisch .window-content {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
 
 .ninjos-shops .shops-teil-tisch {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: var(--shops-bg);
   color: var(--shops-text);
   font-family: var(--shops-schrift);
 }
+
+.ninjos-shops .shops-tisch-kopf,
+.ninjos-shops .shops-tisch-waage,
+.ninjos-shops .shops-tisch-preisfeld,
+.ninjos-shops .shops-tisch-fuss { flex: 0 0 auto; }
 
 .ninjos-shops .shops-tisch-kopf {
   display: flex;
@@ -3706,6 +3729,8 @@
 
 /* Zwei Seiten nebeneinander — und untereinander, wo es eng wird. */
 .ninjos-shops .shops-tisch-platte {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
@@ -3718,6 +3743,13 @@
 .ninjos-shops .shops-tisch-seite {
   background: var(--shops-bg);
   min-width: 0;
+  /*
+   * `min-height: 0` ist die eigentliche Zeile hier. Ohne sie waechst ein
+   * Rasterfeld mit seinem Inhalt, statt ihn scrollen zu lassen - und die
+   * laengere Spalte quoll unter die Waage, wo sie nichts zu suchen hat.
+   */
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -3736,8 +3768,9 @@
   list-style: none;
   margin: 0;
   padding: 8px;
-  min-height: 5.5rem;
-  max-height: 17rem;
+  /* Gibt nach, wenn der Platz knapp wird - bis auf zwei Zeilen. */
+  flex: 1 1 auto;
+  min-height: 3.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -3807,8 +3840,19 @@
 }
 
 .ninjos-shops .shops-tisch-vorratsblock {
+  /*
+   * `<details>` gibt als Flex-Element nicht zuverlaessig nach - deshalb hier
+   * ein festes Zugestaendnis statt eines Versprechens: Der Vorrat bekommt
+   * hoechstens seinen Anteil und scrollt darin.
+   */
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   border-bottom: 1px solid var(--shops-rand);
 }
+.ninjos-shops .shops-tisch-vorratsblock > summary { flex: 0 0 auto; }
 .ninjos-shops .shops-tisch-vorratsblock > summary {
   padding: 8px 16px;
   cursor: pointer;
@@ -3822,7 +3866,9 @@
   list-style: none;
   margin: 0;
   padding: 8px;
-  max-height: 15rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 11rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -3830,6 +3876,14 @@
 }
 
 .ninjos-shops .shops-tisch-fuss {
+  /*
+   * Eigener Grund und eine Lage darueber: Ohne das schien der Vorrat durch
+   * die Fussleiste hindurch, sobald es unten eng wurde.
+   */
+  position: relative;
+  z-index: 1;
+  background: var(--shops-bg);
+  border-top: 1px solid var(--shops-rand);
   display: flex;
   align-items: center;
   flex-wrap: wrap;

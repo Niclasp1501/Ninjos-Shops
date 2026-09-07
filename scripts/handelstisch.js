@@ -383,10 +383,29 @@ export async function aufTisch(daten) {
       return;
     }
     case "annehmen": {
+      const spieler = game.users.get(daten.spielerId);
+      const vorher = spieler?.getFlag(MODULE_ID, TISCH);
       const ergebnis = await abschliessenAusfuehren(daten.spielerId);
       const { aufAntwort } = await import("./socket.js");
       game.socket.emit(SOCKET.NAME, { typ: SOCKET.ANTWORT, an: [daten.spielerId], ergebnis });
       if (daten.spielerId === game.user.id) aufAntwort({ an: [daten.spielerId], ergebnis });
+
+      /*
+       * **Auch die Spielleitung erfaehrt es.** Die Antwort ging bisher nur an
+       * den Spieler - dabei hat sie den Preis gesetzt und sitzt womoeglich
+       * gar nicht neben ihm. Sie sah den Tisch verschwinden und wusste nicht,
+       * ob abgeschlossen oder abgebrochen wurde.
+       */
+      if (ergebnis?.ok) {
+        const stand = tischStand(vorher);
+        ui.notifications.info(game.i18n.format("SHOPS.Tisch.GMGelungen", {
+          spieler: spieler?.name ?? "?",
+          person: vorher?.personName ?? "?",
+          geld: stand ? stand.differenzText : ""
+        }));
+        // Der Tisch ist abgeraeumt - ein leeres Fenster dazu braucht niemand.
+        foundry.applications.instances.get(`${MODULE_ID}-tisch-gm-${daten.spielerId}`)?.close();
+      }
       await funken([daten.spielerId]);
       return;
     }
