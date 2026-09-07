@@ -176,11 +176,39 @@ export function wechselgeldText(zurueck, kuerzel = s => s) {
  * @param {number} cp
  * @returns {{value: number, denomination: string}}
  */
-export function alsMuenzfeld(cp) {
-  const betrag = Math.max(0, Math.round(Number(cp) || 0));
+export function alsMuenzfeld(cp, { vorzeichen = false } = {}) {
+  const roh = Math.round(Number(cp) || 0);
+  const betrag = vorzeichen ? Math.abs(roh) : Math.max(0, roh);
+  const minus = vorzeichen && roh < 0 ? -1 : 1;
   if (betrag === 0) return { value: 0, denomination: "gp" };
   for (const s of ["pp", "gp", "sp"]) {
-    if (betrag % KUPFERWERT[s] === 0) return { value: betrag / KUPFERWERT[s], denomination: s };
+    if (betrag % KUPFERWERT[s] === 0) {
+      return { value: minus * (betrag / KUPFERWERT[s]), denomination: s };
+    }
   }
-  return { value: betrag, denomination: "cp" };
+  return { value: minus * betrag, denomination: "cp" };
+}
+
+/**
+ * Die Umkehrung: was in einem Muenzfeld steht, in Kupfer.
+ *
+ * **Warum es das braucht.** Zwei Preisfelder liessen bis zum 08.09.2026 nur
+ * Gold zu - die Verhandlung und der Preis am Handelstisch. Wer sechs Silber
+ * verlangen wollte, musste `0.6` eintippen und hoffen, dass die Rundung ihm
+ * nicht sieben daraus macht; wer drei Kupfer wollte, hatte gar keine Chance.
+ * Das Festpreisfeld und die Sonderangebote konnten die Sorte laengst waehlen,
+ * diese beiden nicht.
+ *
+ * **Das Vorzeichen bleibt erhalten.** Am Handelstisch ist ein negativer Preis
+ * sinnvoll: Er heisst, dass die Person dem Spieler etwas herausgibt.
+ *
+ * @param {number|string} wert
+ * @param {string} sorte
+ * @returns {number} ganzzahlig, mit Vorzeichen
+ */
+export function ausMuenzfeld(wert, sorte) {
+  const zahl = Number(wert);
+  if (!Number.isFinite(zahl)) return 0;
+  const muenze = KUPFERWERT[sorte] ?? KUPFERWERT.gp;
+  return Math.round(zahl * muenze);
 }

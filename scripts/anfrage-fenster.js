@@ -166,7 +166,11 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
 
   async _prepareContext(options) {
     const ctx = await super._prepareContext(options);
+    const { PREIS_SORTEN } = await import("./preise.js");
     return Object.assign(ctx, {
+      muenzsorten: PREIS_SORTEN.map(sorte => ({
+        sorte, kuerzel: game.i18n.localize(`SHOPS.Muenze.${sorte}`)
+      })),
       freigaben: offeneFreigaben(),
       anfragen: offeneAnfragen().map(s => ({
         ...s,
@@ -184,19 +188,32 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
   }
 
   /** Einen der drei Vorschlagswerte ins Feld schreiben. */
-  static #uebernehmen(ereignis, ziel) {
-    const feld = ziel.closest("[data-anfrage-id]")?.querySelector("[data-preis]");
-    if (feld) feld.value = ziel.dataset.wert;
+  static async #uebernehmen(ereignis, ziel) {
+    const kasten = ziel.closest("[data-anfrage-id]");
+    const feld = kasten?.querySelector("[data-preis]");
+    const sorte = kasten?.querySelector("[data-sorte]");
+    if (!feld) return;
+    /*
+     * Die drei Vorschlagswerte stehen in Kupfer. Frueher landete diese Zahl
+     * roh im Goldfeld - aus 50 Kupfer wurden 50 Gold. Jetzt wird sie in die
+     * groesste glatt aufgehende Sorte zerlegt, wie beim Festpreis.
+     */
+    const { alsMuenzfeld } = await import("./preise.js");
+    const feldwert = alsMuenzfeld(Number(ziel.dataset.wert) || 0);
+    feld.value = feldwert.value;
+    if (sorte) sorte.value = feldwert.denomination;
   }
 
-  static #bieten(ereignis, ziel) {
+  static async #bieten(ereignis, ziel) {
     const kasten = ziel.closest("[data-anfrage-id]");
     const id = kasten?.dataset.anfrageId;
-    const gp = Number(kasten?.querySelector("[data-preis]")?.value) || 0;
     const satz = kasten?.querySelector("[data-satz]")?.value ?? "";
     if (!id) return;
-    // Das Feld steht in Gold - die Rechnung im Modul in Kupfer.
-    preisVorschlagen(id, Math.round(gp * 100), satz);
+    // Zahl und Muenzsorte - das Modul rechnet in Kupfer.
+    const { ausMuenzfeld } = await import("./preise.js");
+    preisVorschlagen(id, ausMuenzfeld(
+      kasten.querySelector("[data-preis]")?.value,
+      kasten.querySelector("[data-sorte]")?.value ?? "gp"), satz);
     this.render(false);
   }
 

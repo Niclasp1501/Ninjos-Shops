@@ -6,6 +6,19 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 ## [Unveröffentlicht]
 
 ### Behoben
+- **Ein Klick auf „üblich" bot das Hundertfache.** Die drei Vorschlagsknöpfe in
+  der Verhandlung tragen ihren Wert in **Kupfer**; das Feld daneben stand in
+  **Gold**. Der Knopf schrieb die Zahl roh hinein — aus 50 Kupfer wurden 50
+  Gold, und abgeschickt war es mit einem weiteren Klick. Genau die Art Fehler,
+  die niemandem auffällt, weil beide Zahlen plausibel aussehen.
+- **Preise ließen sich nur in Gold nennen.** Betroffen waren die Verhandlung
+  und der Preis am Handelstisch: Wer sechs Silber verlangen wollte, musste
+  „0,6" tippen; drei Kupfer gingen gar nicht. Beide Felder haben jetzt Zahl und
+  Münzsorte — so wie das Festpreisfeld und die Sonderangebote es längst hatten.
+  Am Handelstisch bleibt dabei das Vorzeichen erhalten: negativ heißt, die
+  Person gibt heraus.
+
+### Behoben
 - **Ein weggeklickter Laden kam nach dem Neuladen von selbst zurück.**
   `close()` räumte nur eine modulinterne Variable weg; das Merkmal am Benutzer
   blieb stehen, und die Wiederherstellung beim Start machte das Fenster wieder

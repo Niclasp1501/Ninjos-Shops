@@ -91,9 +91,13 @@
       <label>
         <span>{{localize "SHOPS.Tisch.PreisSetzen"}}</span>
         <span class="shops-preisfeld">
-          <input type="number" data-preis step="0.1" value="{{stand.differenzGp}}"
+          <input type="number" data-preis step="1" value="{{stand.preisFeld.value}}"
                  aria-label="{{localize 'SHOPS.Tisch.PreisSetzen'}}">
-          <span class="shops-muenzmarke">{{localize "SHOPS.Muenze.gp"}}</span>
+          <select data-sorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
+            {{#each muenzsorten}}
+              <option value="{{sorte}}" {{#if (eq sorte ../stand.preisFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
+            {{/each}}
+          </select>
         </span>
       </label>
       <button type="button" class="shops-kaufen shops-zweit" data-action="preisUebernehmen">

@@ -9,7 +9,7 @@
  * traegt ihn ein, bevor er ihn behebt.
  */
 
-import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
+import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
 import { bezahle, vermoegenCp, schreibeGut } from "../scripts/kasse.js";
 
 let gelaufen = 0, gefallen = 0;
@@ -150,6 +150,18 @@ pruefe("1 cp bleibt 1 cp", alsMuenzfeld(1), { value: 1, denomination: "cp" });
 pruefe("205 cp passen in keine groessere Sorte", alsMuenzfeld(205), { value: 205, denomination: "cp" });
 pruefe("0 zeigt 0 gp, nicht 0 cp", alsMuenzfeld(0), { value: 0, denomination: "gp" });
 pruefe("negativ wird 0", alsMuenzfeld(-5), { value: 0, denomination: "gp" });
+
+// Am Handelstisch ist ein negativer Preis sinnvoll: die Person gibt heraus.
+pruefe("mit Vorzeichen bleibt negativ", alsMuenzfeld(-600, { vorzeichen: true }), { value: -6, denomination: "gp" });
+pruefe("mit Vorzeichen: 60 KM sind -6 SM", alsMuenzfeld(-60, { vorzeichen: true }), { value: -6, denomination: "sp" });
+
+// Die Umkehrung - genau das, was zwei Preisfelder bis dahin nicht konnten.
+pruefe("6 SM sind 60 KM", ausMuenzfeld(6, "sp"), 60);
+pruefe("3 KM bleiben 3 KM", ausMuenzfeld(3, "cp"), 3);
+pruefe("2,5 GM sind 250 KM", ausMuenzfeld(2.5, "gp"), 250);
+pruefe("negativ bleibt negativ", ausMuenzfeld(-6, "sp"), -60);
+pruefe("Unsinn wird 0", ausMuenzfeld("", "gp"), 0);
+pruefe("hin und zurueck ueber Silber", ausMuenzfeld(...Object.values(alsMuenzfeld(60))), 60);
 
 // 5000 Werte hin und zurueck. Genau hier verliert sonst jemand seinen Festpreis.
 let feldfehler = 0;

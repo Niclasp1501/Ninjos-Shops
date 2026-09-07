@@ -42,7 +42,8 @@
  */
 
 import { MODULE_ID, SOCKET, WARE } from "./const.js";
-import { grundpreisCp, preisCp, alsText, wechselgeldText, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, wechselgeldText, alsMuenzfeld, ausMuenzfeld,
+         PREIS_SORTEN } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { einlagern } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
@@ -108,8 +109,13 @@ export function tischStand(handel) {
     bekommtSpieler: gilt < 0,
     ausgeglichen: gilt === 0,
     differenzText: alsText(Math.abs(gilt), kuerzel),
-    // In Gold fürs Eingabefeld der Spielleitung.
-    differenzGp: (gilt / KUPFERWERT.gp) || 0,
+    /*
+     * Fürs Eingabefeld der Spielleitung: Zahl **und** Münzsorte. Nur Gold
+     * anzubieten hiess, dass sechs Silber als „0,6" getippt werden mussten und
+     * drei Kupfer gar nicht gingen. Das Vorzeichen bleibt erhalten - negativ
+     * heisst, die Person gibt heraus.
+     */
+    preisFeld: alsMuenzfeld(gilt, { vorzeichen: true }),
     leer: !(handel.seiteNsc?.length || handel.seiteSpieler?.length)
   };
 }
@@ -605,6 +611,7 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
                                "loot", "container", "backpack"]);
     return Object.assign(ctx, {
       stand,
+      muenzsorten: PREIS_SORTEN.map(sorte => ({ sorte, kuerzel: kuerzel(sorte) })),
       spielerName: benutzer?.name ?? "?",
       figurName: benutzer?.character?.name ?? null,
       boerse: benutzer?.character
@@ -641,8 +648,9 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static #preisUebernehmen() {
     const feld = this.element.querySelector("[data-preis]");
+    const sorte = this.element.querySelector("[data-sorte]");
     if (!feld) return;
-    preisSetzen(this.benutzerId, Math.round((Number(feld.value) || 0) * KUPFERWERT.gp));
+    preisSetzen(this.benutzerId, ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
   }
 
   static #preisFrei() { preisSetzen(this.benutzerId, null); }

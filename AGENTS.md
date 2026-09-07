@@ -53,6 +53,29 @@ Fenster, das unten aus dem Bild lief.
 Token-Knöpfe und keine betrachtete Szene. Und die Spielleitung ist oft
 **zweimal** angemeldet, weil ein Tablet danebenliegt.
 
+## Als Nächstes: der Tausch zieht aus den In-Person Tools hierher um
+
+**Noch nicht anfangen.** Erst muss die Fehlerliste vom 08.09.2026 abgearbeitet
+und am laufenden Spiel geprüft sein.
+
+Dann: `scripts/trade.js` aus **Ninjos-InPerson-Tools** wandert in dieses Modul.
+Der Spieler-gegen-Spieler-Tausch und der Handelstisch hier sind dieselbe Sache
+aus zwei Richtungen — zwei Tauschfenster in zwei Modulen nebeneinander sind
+genau die Uneinheitlichkeit, gegen die der Tisch gebaut wurde.
+
+Drei Dinge gehören dazu, und das dritte wird gern vergessen:
+
+1. Den Tausch hierher holen und auf den Handelstisch legen — dieselbe
+   Anordnung, dieselben Knöpfe.
+2. Eine Schnittstelle einrichten, über die die In-Person Tools ihn aufrufen
+   können, falls dort ein Weg bestehen bleiben soll. Die Verbindung bleibt
+   **einseitig**: Dieses Modul hängt sich an das andere, nie umgekehrt
+   (siehe `inPersonKnopf` in zugaenge.js).
+3. **An der alten Stelle einen Hinweis hinterlassen**, dass die Funktion jetzt
+   in Ninjo's DnD Shops & Trade steckt. Wer sie dort sucht und wortlos nicht
+   findet, hält das Modul für kaputt — und die In-Person Tools haben Nutzer,
+   die von diesem Modul nichts wissen.
+
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
 
 ## Vor jeder Änderung an preise.js oder kasse.js
