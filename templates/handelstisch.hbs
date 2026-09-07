@@ -42,9 +42,17 @@
               <span class="shops-menge">{{menge}}&times;</span>
               <span class="shops-preis">{{summeText}}</span>
             </li>
-          {{else}}
-            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.SieLegtNichts"}}</li>
           {{/each}}
+          {{#if stand.geldNsc}}
+            <li class="shops-zeile shops-geldzeile">
+              <i class="fa-solid fa-coins" aria-hidden="true"></i>
+              <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
+              <span class="shops-preis">{{stand.geldNscText}}</span>
+            </li>
+          {{/if}}
+          {{#unless stand.seiteNsc.length}}{{#unless stand.geldNsc}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.SieLegtNichts"}}</li>
+          {{/unless}}{{/unless}}
         </ol>
       </section>
 
@@ -68,10 +76,40 @@
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             </li>
-          {{else}}
-            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.DuLegstNichts"}}</li>
           {{/each}}
+          {{#if stand.geldSpieler}}
+            <li class="shops-zeile shops-geldzeile">
+              <i class="fa-solid fa-coins" aria-hidden="true"></i>
+              <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
+              <span class="shops-preis">{{stand.geldSpielerText}}</span>
+              <button type="button" class="shops-tisch-weg" data-action="geldWeg"
+                      aria-label="{{localize 'SHOPS.Tisch.GeldWeg'}}"
+                      title="{{localize 'SHOPS.Tisch.GeldWeg'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </li>
+          {{/if}}
         </ol>
+        {{!-- Geld ist ein Ding, das man hinlegt — keine Sonderrechnung. Was
+              hier steht, zählt sofort in der Waage darunter. --}}
+        <div class="shops-geldfeld">
+          <i class="fa-solid fa-coins" aria-hidden="true"></i>
+          <label>
+            <span>{{localize "SHOPS.Tisch.GeldDazu"}}</span>
+            <span class="shops-preisfeld">
+              <input type="number" data-geld min="0" step="1" value="{{stand.geldSpielerFeld.value}}"
+                     aria-label="{{localize 'SHOPS.Tisch.GeldDazu'}}">
+              <select data-geldsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
+                {{#each muenzsorten}}
+                  <option value="{{sorte}}" {{#if (eq sorte ../stand.geldSpielerFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
+                {{/each}}
+              </select>
+            </span>
+          </label>
+          <button type="button" class="shops-kaufen shops-zweit" data-action="geldLegen">
+            {{localize "SHOPS.Tisch.GeldLegen"}}
+          </button>
+        </div>
       </section>
     </div>
 
@@ -93,34 +131,6 @@
       </strong>
       {{#if stand.ueberschrieben}}
         <em class="shops-tisch-ausgehandelt">{{localize "SHOPS.Tisch.Ausgehandelt"}}</em>
-      {{/if}}
-    </div>
-
-    {{!-- Der Ort, an dem man einen Preis nennt. Ohne ihn konnte der Spieler
-          nur Ware hinlegen und warten — wer Gold drauflegen wollte, hatte
-          keine Stelle dafür. --}}
-    <div class="shops-tisch-bieten">
-      <label>
-        <span>{{localize "SHOPS.Tisch.IchBiete"}}</span>
-        <span class="shops-preisfeld">
-          <input type="number" data-angebot step="1" value="{{stand.angebotFeld.value}}"
-                 aria-label="{{localize 'SHOPS.Tisch.IchBiete'}}">
-          <select data-angebotsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
-            {{#each muenzsorten}}
-              <option value="{{sorte}}" {{#if (eq sorte ../stand.angebotFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
-            {{/each}}
-          </select>
-        </span>
-      </label>
-      <button type="button" class="shops-kaufen shops-zweit" data-action="bieten">
-        <i class="fa-solid fa-comment-dollar" aria-hidden="true"></i>
-        {{localize "SHOPS.Tisch.Bieten"}}
-      </button>
-      {{#if stand.hatAngebot}}
-        <span class="shops-tisch-geboten">
-          {{#if stand.angebotGilt}}{{localize "SHOPS.Tisch.AngebotAngenommen"}}
-          {{else}}{{localize "SHOPS.Tisch.AngebotOffen" geld=stand.angebotText}}{{/if}}
-        </span>
       {{/if}}
     </div>
 
@@ -169,7 +179,9 @@
           {{localize "SHOPS.Tisch.SieHatZugesagt" person=stand.personName}}
         </span>
       {{/if}}
-      <button type="button" class="shops-kaufen shops-zweit" data-action="aufgeben">
+      {{!-- Abgesetzt nach rechts: „abschließen" und „beenden" nebeneinander
+            sind auf einem Tablet ein Vertipper auseinander. --}}
+      <button type="button" class="shops-kaufen shops-zweit shops-abseits" data-action="aufgeben">
         <i class="fa-solid fa-hand" aria-hidden="true"></i>
         {{localize "SHOPS.Tisch.Aufgeben"}}
       </button>

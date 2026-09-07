@@ -3854,8 +3854,16 @@
 }
 
 .ninjos-shops .shops-tisch-vorratsblock {
-  /* Der Vorrat ist die Arbeitsflaeche - er bekommt, was uebrig bleibt. */
-  flex: 1 1 0;
+  /*
+   * Der Vorrat ist die Arbeitsflaeche - er bekommt, was uebrig bleibt.
+   *
+   * Basis `auto`, nicht `0`: Das Fenster oeffnet mit `height: "auto"`, und
+   * eine Basis von 0 hiess dort, dass der Block gar nicht mitgezaehlt wurde -
+   * das Fenster endete unter der Waage, der Vorrat war da und null Pixel hoch.
+   * Mit `auto` nimmt er seinen Inhalt; deckelt fensterpassen.js das Fenster am
+   * Bildschirmrand, schrumpft er (min-height 0) und scrollt innen.
+   */
+  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
   display: flex;
@@ -3900,6 +3908,36 @@
   padding: 12px 16px;
 }
 .ninjos-shops .shops-tisch-fuss .shops-kaufen { flex: 0 1 auto; }
+/*
+ * „Handel abschliessen" und „Handel beenden" standen nebeneinander - auf
+ * einem Tablet ein Daumen breit auseinander, und der eine macht rueckgaengig,
+ * was der andere gerade zugesagt hat. Der zweite geht nach rechts.
+ */
+.ninjos-shops .shops-tisch-fuss .shops-abseits { margin-left: auto; }
+
+/*
+ * Die Spalten fluchten.
+ *
+ * Menge und Preis standen frei hinter dem Namen, also bei jeder Zeile woanders
+ * - und weil die rechte Spalte zusaetzlich den Wegnehmen-Knopf traegt, auch
+ * zwischen den beiden Seiten des Tisches verschoben. Feste Breiten, rechts
+ * ausgerichtet, plus eine Luecke in der linken Spalte, wo rechts der Knopf
+ * sitzt: Damit liegen beide Preisspalten uebereinander.
+ */
+.ninjos-shops .shops-tisch-nsc .shops-menge,
+.ninjos-shops .shops-tisch-spieler .shops-menge {
+  flex: 0 0 2.6rem;
+  text-align: right;
+  color: var(--shops-text-blass);
+  font-variant-numeric: tabular-nums;
+}
+.ninjos-shops .shops-tisch-nsc .shops-preis,
+.ninjos-shops .shops-tisch-spieler .shops-preis {
+  flex: 0 0 6.5rem;
+  text-align: right;
+}
+.ninjos-shops .shops-tisch-nsc > li.shops-zeile:not(:has(.shops-tisch-weg)),
+.ninjos-shops .shops-tisch-spieler > li.shops-zeile:not(:has(.shops-tisch-weg)) { padding-right: calc(8px + 26px + 8px); }
 .ninjos-shops .shops-tisch-fuss .shops-blockhinweis { flex: 1 1 100%; margin: 0; }
 
 .ninjos-shops .shops-tisch-wahl { max-height: 16rem; overflow-y: auto; }
@@ -4008,27 +4046,50 @@
 }
 
 
-/* Wo der Spieler einen Preis nennt. Direkt unter der Waage — dort steht die
-   Zahl, auf die er antwortet. */
-.ninjos-shops .shops-tisch-bieten {
+/*
+ * Geld auf dem Tisch.
+ *
+ * Vorher gab es dafuer ein Feld unter der Waage, in das man einen Preis
+ * schrieb - eine Zahl neben dem Tausch, die mit ihm nichts zu tun hatte und
+ * auf die die andere Seite antworten musste. Jetzt liegt Geld auf der Seite,
+ * auf die es gehoert, und zaehlt in derselben Waage wie alles andere.
+ *
+ * Das Feld sitzt unten in der eigenen Spalte, unter der Ware - dort, wo man
+ * hinschaut, wenn die Waage sagt, dass etwas fehlt.
+ */
+.ninjos-shops .shops-geldfeld {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--shops-rand);
+  gap: 8px;
+  padding: 8px;
+  border-top: 1px solid var(--shops-rand);
+  background: var(--shops-nav);
 }
-.ninjos-shops .shops-tisch-bieten label {
+.ninjos-shops .shops-geldfeld > i {
+  color: var(--shops-gold);
+  flex: 0 0 auto;
+}
+.ninjos-shops .shops-geldfeld label {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
-.ninjos-shops .shops-tisch-geboten {
-  font-size: 0.8rem;
-  font-style: italic;
+.ninjos-shops .shops-geldfeld label > span:first-child {
   color: var(--shops-text-blass);
+  white-space: nowrap;
+}
+.ninjos-shops .shops-geldfeld input[data-geld] { width: 4.5rem; }
+.ninjos-shops .shops-geldfeld .shops-kaufen { flex: 0 0 auto; }
+
+/* Liegendes Geld ist eine Zeile wie jede andere - nur ohne Bild. */
+.ninjos-shops .shops-geldzeile > i {
+  flex: 0 0 34px;
+  text-align: center;
+  color: var(--shops-gold);
 }
 
 /* Wo die Zusagen stehen. Grün, wenn die andere Seite schon zugesagt hat —

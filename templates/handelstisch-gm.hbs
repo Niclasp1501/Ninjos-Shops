@@ -43,10 +43,39 @@
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             </li>
-          {{else}}
-            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.NochNichtsHingelegt"}}</li>
           {{/each}}
+          {{#if stand.geldNsc}}
+            <li class="shops-zeile shops-geldzeile">
+              <i class="fa-solid fa-coins" aria-hidden="true"></i>
+              <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
+              <span class="shops-preis">{{stand.geldNscText}}</span>
+              <button type="button" class="shops-tisch-weg" data-action="geldWeg"
+                      aria-label="{{localize 'SHOPS.Tisch.GeldWeg'}}"
+                      title="{{localize 'SHOPS.Tisch.GeldWeg'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </li>
+          {{/if}}
         </ol>
+        {{!-- Auch sie kann Geld hinlegen — etwa wenn sie etwas ankauft. --}}
+        <div class="shops-geldfeld">
+          <i class="fa-solid fa-coins" aria-hidden="true"></i>
+          <label>
+            <span>{{localize "SHOPS.Tisch.GeldDazu"}}</span>
+            <span class="shops-preisfeld">
+              <input type="number" data-geld min="0" step="1" value="{{stand.geldNscFeld.value}}"
+                     aria-label="{{localize 'SHOPS.Tisch.GeldDazu'}}">
+              <select data-geldsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
+                {{#each muenzsorten}}
+                  <option value="{{sorte}}" {{#if (eq sorte ../stand.geldNscFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
+                {{/each}}
+              </select>
+            </span>
+          </label>
+          <button type="button" class="shops-kaufen shops-zweit" data-action="geldLegen">
+            {{localize "SHOPS.Tisch.GeldLegen"}}
+          </button>
+        </div>
       </section>
 
       <section class="shops-tisch-seite" data-seite="spieler">
@@ -65,9 +94,17 @@
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
               </button>
             </li>
-          {{else}}
-            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.ErLegtNichts"}}</li>
           {{/each}}
+          {{#if stand.geldSpieler}}
+            <li class="shops-zeile shops-geldzeile">
+              <i class="fa-solid fa-coins" aria-hidden="true"></i>
+              <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
+              <span class="shops-preis">{{stand.geldSpielerText}}</span>
+            </li>
+          {{/if}}
+          {{#unless stand.seiteSpieler.length}}{{#unless stand.geldSpieler}}
+            <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.ErLegtNichts"}}</li>
+          {{/unless}}{{/unless}}
         </ol>
       </section>
     </div>
@@ -103,14 +140,6 @@
       <button type="button" class="shops-kaufen shops-zweit" data-action="preisUebernehmen">
         {{localize "SHOPS.Tisch.PreisUebernehmen"}}
       </button>
-      {{#if stand.hatAngebot}}
-        {{!-- Was der Spieler von sich aus bietet. Ein Klick macht es zum
-              Preis — feilschen ohne Abtippen. --}}
-        <button type="button" class="shops-kaufen" data-action="angebotNehmen">
-          <i class="fa-solid fa-comment-dollar" aria-hidden="true"></i>
-          {{localize "SHOPS.Tisch.ErBietet" geld=stand.angebotText}}
-        </button>
-      {{/if}}
       {{#if stand.ueberschrieben}}
         <button type="button" class="shops-kaufen shops-zweit" data-action="preisFrei">
           {{localize "SHOPS.Tisch.PreisFrei"}}
@@ -160,7 +189,7 @@
       {{else if stand.bereitSpieler}}
         <span class="shops-tisch-zusage shops-zugesagt">{{localize "SHOPS.Tisch.ErHatZugesagt" spieler=spielerName}}</span>
       {{/if}}
-      <button type="button" class="shops-kaufen shops-zweit" data-action="beenden">
+      <button type="button" class="shops-kaufen shops-zweit shops-abseits" data-action="beenden">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         {{localize "SHOPS.Tisch.Zuruecknehmen"}}
       </button>

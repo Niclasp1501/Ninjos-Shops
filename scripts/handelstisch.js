@@ -81,6 +81,17 @@ function wertAnnehmen(item) {
 const summe = seite => (seite ?? []).reduce((s, p) => s + p.wertCp * p.menge, 0);
 
 /**
+ * Was eine Seite insgesamt hinlegt - Ware **und** Geld.
+ *
+ * **Geld ist ein Ding auf dem Tisch, kein Sonderfall.** Der erste Entwurf
+ * kannte nur Ware und rechnete die Differenz aus; wer fuenf Gold drauflegen
+ * wollte, hatte keinen Ort dafuer. Ein Feld „ich biete" half nicht wirklich -
+ * das ist ein Vorschlag fuer den Endpreis, nicht dasselbe wie Muenzen, die
+ * man vor sich hinlegt und die jeder sofort mitrechnen sieht.
+ */
+const seitenwert = (seite, geldCp) => summe(seite) + Math.max(0, Math.round(geldCp || 0));
+
+/**
  * Der Handel, fertig für die Anzeige.
  *
  * `differenzCp` ist positiv, wenn der Spieler zahlt. Ein überschriebener Preis
@@ -88,8 +99,8 @@ const summe = seite => (seite ?? []).reduce((s, p) => s + p.wertCp * p.menge, 0)
  */
 export function tischStand(handel) {
   if (!handel) return null;
-  const nscCp = summe(handel.seiteNsc);
-  const spielerCp = summe(handel.seiteSpieler);
+  const nscCp = seitenwert(handel.seiteNsc, handel.geldNsc);
+  const spielerCp = seitenwert(handel.seiteSpieler, handel.geldSpieler);
   const roh = nscCp - spielerCp;
   const gilt = Number.isFinite(handel.preisCp) ? handel.preisCp : roh;
 
@@ -104,21 +115,6 @@ export function tischStand(handel) {
     nscText: alsText(nscCp, kuerzel),
     spielerText: alsText(spielerCp, kuerzel),
     differenzCp: gilt,
-    /*
-     * **Was der Spieler von sich aus bietet.** Bis hierher konnte nur die
-     * Spielleitung einen Preis setzen; der Spieler durfte Ware hinlegen und
-     * sonst nichts. Wer fuenf Gold drauflegen wollte, hatte keinen Ort dafuer
-     * - und „ein Angebot machen" war genau das, was am Tisch fehlte.
-     *
-     * Es ist ein **Vorschlag**, kein Preis: Was gilt, entscheidet weiter die
-     * Spielleitung. Sie sieht ihn und uebernimmt ihn mit einem Klick.
-     */
-    angebotCp: handel.angebotCp ?? null,
-    hatAngebot: Number.isFinite(handel.angebotCp),
-    angebotText: Number.isFinite(handel.angebotCp)
-      ? alsText(Math.abs(handel.angebotCp), kuerzel) : null,
-    angebotFeld: alsMuenzfeld(handel.angebotCp ?? 0, { vorzeichen: true }),
-    angebotGilt: Number.isFinite(handel.preisCp) && handel.preisCp === handel.angebotCp,
     /*
      * **Zwei Zusagen, nicht eine.** Bis hierher schloss der Spieler allein ab:
      * Er konnte etwas auf seine Seite legen und sofort bestaetigen, ohne dass
@@ -143,7 +139,14 @@ export function tischStand(handel) {
      * heisst, die Person gibt heraus.
      */
     preisFeld: alsMuenzfeld(gilt, { vorzeichen: true }),
-    leer: !(handel.seiteNsc?.length || handel.seiteSpieler?.length)
+    geldNsc: handel.geldNsc ?? 0,
+    geldSpieler: handel.geldSpieler ?? 0,
+    geldNscText: alsText(handel.geldNsc ?? 0, kuerzel),
+    geldSpielerText: alsText(handel.geldSpieler ?? 0, kuerzel),
+    geldNscFeld: alsMuenzfeld(handel.geldNsc ?? 0),
+    geldSpielerFeld: alsMuenzfeld(handel.geldSpieler ?? 0),
+    leer: !(handel.seiteNsc?.length || handel.seiteSpieler?.length
+            || handel.geldNsc || handel.geldSpieler)
   };
 }
 
@@ -173,8 +176,8 @@ export async function tischOeffnen(person, benutzerIds, satz = "") {
       personBild: person.prototypeToken?.texture?.src || person.img || null,
       satz: String(satz ?? "").slice(0, 200),
       seiteNsc: [], seiteSpieler: [],
+      geldNsc: 0, geldSpieler: 0,
       preisCp: null,
-      angebotCp: null,
       bereitSpieler: false,
       bereitGm: false,
       von: game.user.name
@@ -219,7 +222,7 @@ export async function auflegen(benutzerId, seite, itemId, menge = 1) {
   // Jede Änderung setzt einen überschriebenen Preis zurück: Er galt für einen
   // anderen Tisch als den, der jetzt daliegt.
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, [feld]: liste, preisCp: null, angebotCp: null, bereitSpieler: false, bereitGm: false });
+    { ...handel, [feld]: liste, preisCp: null, bereitSpieler: false, bereitGm: false });
   await funken([benutzerId]);
 }
 
@@ -232,31 +235,33 @@ export async function wegnehmen(benutzerId, seite, itemId) {
   const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
   const liste = (handel[feld] ?? []).filter(p => p.itemId !== itemId);
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, [feld]: liste, preisCp: null, angebotCp: null, bereitSpieler: false, bereitGm: false });
+    { ...handel, [feld]: liste, preisCp: null, bereitSpieler: false, bereitGm: false });
   await funken([benutzerId]);
 }
 
 /**
- * Was der Spieler bietet, festhalten.
+ * Geld auf eine Seite legen.
  *
- * Geschrieben wird - wie alles hier - bei der Spielleitung. Der Wert kommt vom
- * Client des Spielers, und genau deshalb ist er ein Vorschlag und kein Preis:
- * Waere er der Preis, koennte sich jeder seinen eigenen schicken.
+ * Es zaehlt wie Ware: Die Summe der Seite waechst, und die Waage unten sagt
+ * sofort, was danach noch fehlt. Mehr als da ist, geht nicht - wer nichts hat,
+ * legt nichts hin.
  */
-export async function angebotSetzen(benutzerId, angebotCp) {
+export async function geldSetzen(benutzerId, seite, betragCp) {
   if (!game.user.isGM) return;
   const benutzer = game.users.get(benutzerId);
   const handel = benutzer?.getFlag(MODULE_ID, TISCH);
   if (!handel) return;
-  const wert = angebotCp === null ? null : Math.round(Number(angebotCp) || 0);
+
+  const traeger = seite === "nsc"
+    ? await fromUuid(handel.personUuid)
+    : benutzer.character;
+  const habe = vermoegenCp(traeger?.system?.currency ?? {});
+  const wert = Math.max(0, Math.min(Math.round(Number(betragCp) || 0), habe));
+
+  const feld = seite === "nsc" ? "geldNsc" : "geldSpieler";
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, angebotCp: wert, bereitSpieler: false, bereitGm: false });
+    { ...handel, [feld]: wert, preisCp: null, bereitSpieler: false, bereitGm: false });
   await funken([benutzerId]);
-  if (wert !== null) {
-    ui.notifications.info(game.i18n.format("SHOPS.Tisch.BietetAn", {
-      spieler: benutzer.name, geld: alsText(Math.abs(wert), kuerzel)
-    }));
-  }
 }
 
 /** Den Preis überschreiben. `null` gibt die Rechnung wieder frei. */
@@ -467,7 +472,7 @@ export const tischAuflegen  = (itemId, menge) => bitte("auflegen", { seite: "spi
 export const tischWegnehmen = itemId => bitte("wegnehmen", { seite: "spieler", itemId });
 export const tischAnnehmen  = () => bitte("annehmen");
 export const tischWiderrufen = () => bitte("widerrufen");
-export const tischBieten    = cp => bitte("bieten", { angebotCp: cp });
+export const tischGeld      = cp => bitte("geld", { betragCp: cp });
 export const tischAufgeben  = () => bitte("aufgeben");
 
 /* ── Empfang ───────────────────────────────────────────────────────── */
@@ -496,7 +501,7 @@ export async function aufTisch(daten) {
   switch (daten.tat) {
     case "auflegen":  return void await auflegen(daten.spielerId, "spieler", daten.itemId, daten.menge);
     case "wegnehmen": return void await wegnehmen(daten.spielerId, "spieler", daten.itemId);
-    case "bieten":    return void await angebotSetzen(daten.spielerId, daten.angebotCp);
+    case "geld":      return void await geldSetzen(daten.spielerId, "spieler", daten.betragCp);
     case "aufgeben": {
       const handel = game.users.get(daten.spielerId)?.getFlag(MODULE_ID, TISCH);
       await tischBeenden([daten.spielerId]);
@@ -526,7 +531,8 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
       auflegen: Handelstisch.#auflegen,
       wegnehmen: Handelstisch.#wegnehmen,
       annehmen: Handelstisch.#annehmen,
-      bieten: Handelstisch.#bieten,
+      geldLegen: Handelstisch.#geldLegen,
+      geldWeg: () => tischGeld(0),
       aufgeben: Handelstisch.#aufgeben
     }
   };
@@ -593,12 +599,12 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     else tischAnnehmen();
   }
 
-  /** Einen Preis nennen. Ein Vorschlag - was gilt, sagt die Spielleitung. */
-  static #bieten() {
-    const feld = this.element.querySelector("[data-angebot]");
-    const sorte = this.element.querySelector("[data-angebotsorte]");
+  /** Geld auf die eigene Seite legen. */
+  static #geldLegen() {
+    const feld = this.element.querySelector("[data-geld]");
+    const sorte = this.element.querySelector("[data-geldsorte]");
     if (!feld) return;
-    tischBieten(ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
+    tischGeld(ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
   }
 
   static async #aufgeben() {
@@ -716,8 +722,9 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
       wegnehmen: HandelstischGM.#wegnehmen,
       preisUebernehmen: HandelstischGM.#preisUebernehmen,
       preisFrei: HandelstischGM.#preisFrei,
-      angebotNehmen: HandelstischGM.#angebotNehmen,
       bestaetigen: HandelstischGM.#bestaetigen,
+      geldLegen: HandelstischGM.#geldLegen,
+      geldWeg: HandelstischGM.#geldWeg,
       beenden: HandelstischGM.#beenden
     }
   };
@@ -800,15 +807,20 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
   static #preisFrei() { preisSetzen(this.benutzerId, null); }
 
   /** Was der Spieler bietet, zum Preis machen. */
+  /** Geld auf die Seite der Person legen. */
+  static #geldLegen() {
+    const feld = this.element.querySelector("[data-geld]");
+    const sorte = this.element.querySelector("[data-geldsorte]");
+    if (!feld) return;
+    geldSetzen(this.benutzerId, "nsc", ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
+  }
+
+  static #geldWeg() { geldSetzen(this.benutzerId, "nsc", 0); }
+
   /** Die Zusage der Spielleitung - und der Abschluss, wenn beide stehen. */
   static #bestaetigen() {
     const handel = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH);
     bereitSetzen(this.benutzerId, "gm", !handel?.bereitGm);
-  }
-
-  static #angebotNehmen() {
-    const handel = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH);
-    if (Number.isFinite(handel?.angebotCp)) preisSetzen(this.benutzerId, handel.angebotCp);
   }
 
   static async #beenden() {
@@ -877,6 +889,20 @@ async function empfaengerWaehlen(person) {
 /** Tisch mit dieser Person aufmachen - der eine Weg, den der Knopf nimmt. */
 export async function tischStarten(person) {
   if (!game.user.isGM || !person) return;
+
+  /*
+   * **Ein laufender Handel wird zurueckgeholt, nicht neu begonnen.** Machte
+   * die Spielleitung ihr Fenster zu, kam sie an den Tisch nicht mehr heran -
+   * der Spieler hat dafuer den Knopf unten rechts, sie hatte nichts. Der
+   * Knopf am Bogen fuehrt jetzt zurueck, wenn schon einer gedeckt ist.
+   */
+  const laufend = game.users.filter(u =>
+    u.getFlag(MODULE_ID, TISCH)?.personUuid === person.uuid);
+  if (laufend.length) {
+    for (const u of laufend) tischGMZeigen(u.id);
+    return;
+  }
+
   const wahl = await empfaengerWaehlen(person);
   if (!wahl?.an?.length) return;
   await tischOeffnen(person, wahl.an, wahl.satz);
