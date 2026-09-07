@@ -30,7 +30,8 @@ import {
 import {
   spielerFensterOeffnen,
   spielerFensterSchliessen,
-  spielerFensterAktualisieren
+  spielerFensterAktualisieren,
+  wurdeWeggeklickt
 } from "./spieler-fenster.js";
 
 /** Debounce fuer STAND - ein Drop mit drei Items soll nicht drei mal senden. */
@@ -182,7 +183,18 @@ export async function aufStand({ ladenUuid }) {
   spielerFensterAktualisieren(laden);
 }
 
-/** Nach Reload: offenen Laden aus dem Flag wiederherstellen. */
+/**
+ * Nach Reload: offenen Laden aus dem Flag wiederherstellen.
+ *
+ * **Nicht, wenn er hier weggeklickt wurde.** Das Merkmal sagt „die
+ * Spielleitung hat mir diesen Laden gezeigt" - es sagt nicht, dass ich das
+ * Fenster noch offen haben will. Wer zumacht und neu laedt, bekam den Laden
+ * bisher zurueck und musste ihn erneut wegklicken.
+ *
+ * Das Merkmal bleibt trotzdem stehen: Der Laden ist weiter vorgezeigt, taucht
+ * in der Zuschauerliste der Spielleitung auf, und der Zugangsknopf holt ihn
+ * zurueck (zugaenge.js). Nur ungefragt kommt er nicht wieder.
+ */
 export async function offenenLadenWiederherstellen() {
   const uuid = game.user.getFlag(MODULE_ID, OFFENER_LADEN);
   if (!uuid) return;
@@ -191,6 +203,7 @@ export async function offenenLadenWiederherstellen() {
     await flagSetzen(game.user, null);
     return;
   }
+  if (wurdeWeggeklickt(uuid)) return;
   spielerFensterOeffnen(laden);
 }
 

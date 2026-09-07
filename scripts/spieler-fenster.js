@@ -366,11 +366,54 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   /** Dieselbe Bitte wie der Knopf im Regal, von aussen aufrufbar. */
   kaufenVon(item) { return this.#bitteSenden(item, 1, null); }
 
-  /** @override */
+  /**
+   * @override
+   *
+   * **Wer selbst zumacht, will es zubehalten.** Bis hierher raeumte `close`
+   * nur die Variable oben weg; das Merkmal `OFFENER_LADEN` blieb stehen, und
+   * beim naechsten Neuladen stellte `offenenLadenWiederherstellen` das Fenster
+   * wieder hin. Man klickte es weg und es kam zurueck.
+   *
+   * Geloescht wird das Merkmal trotzdem nicht: Es beantwortet eine andere
+   * Frage - **wem die Spielleitung den Laden gezeigt hat**. Daran haengen ihre
+   * Zuschauerliste und der Weg, ein weggeklicktes Fenster ueber den
+   * Zugangsknopf zurueckzuholen (zugaenge.js). Beides waere weg, wenn ein
+   * Klick aufs Kreuz den Laden fuer beendet erklaerte.
+   *
+   * Stattdessen merkt sich **dieses Geraet**, dass hier zugemacht wurde. Am
+   * Tablet weggeklickt heisst nicht am Rechner weggeklickt.
+   */
   async close(options = {}) {
     if (offen === this) offen = null;
+    // `force` setzt nur das Modul selbst: die Spielleitung macht zu, oder ein
+    // anderer Laden nimmt den Platz ein. Das ist keine Entscheidung des Spielers.
+    if (!options.force) wegklickenMerken(this.ladenUuid);
     return super.close(options);
   }
+}
+
+/* ── Weggeklickt: eine Notiz auf diesem Geraet ─────────────────────── */
+
+const WEGGEKLICKT = `${MODULE_ID}:weggeklickt`;
+
+/**
+ * `localStorage` kann werfen - privates Fenster, gesperrte Seitendaten. Ein
+ * Laden, der sich einmal zu viel oeffnet, ist besser als ein Client, der beim
+ * Hochfahren aussteigt.
+ */
+function wegklickenMerken(ladenUuid) {
+  if (!ladenUuid) return;
+  try { window.localStorage.setItem(WEGGEKLICKT, ladenUuid); } catch { /* egal */ }
+}
+
+function wegklickenVergessen() {
+  try { window.localStorage.removeItem(WEGGEKLICKT); } catch { /* egal */ }
+}
+
+/** Wurde genau dieser Laden auf diesem Geraet weggeklickt? */
+export function wurdeWeggeklickt(ladenUuid) {
+  try { return window.localStorage.getItem(WEGGEKLICKT) === ladenUuid; }
+  catch { return false; }
 }
 
 /**
@@ -385,8 +428,15 @@ export function spielerFensterKaufen(itemId) {
   offen.kaufenVon(item);
 }
 
-/** Spielerfenster oeffnen. Ein zweites ersetzt das erste. */
+/**
+ * Spielerfenster oeffnen. Ein zweites ersetzt das erste.
+ *
+ * Aufmachen hebt das Wegklicken auf - egal ob die Spielleitung den Laden neu
+ * vorzeigt oder der Spieler ihn selbst wieder holt. Sonst kaeme er einmal und
+ * beim naechsten Neuladen nicht mehr.
+ */
 export function spielerFensterOeffnen(laden) {
+  wegklickenVergessen();
   if (offen) {
     if (offen.ladenUuid === laden.uuid) {
       offen.ladenSetzen(laden);

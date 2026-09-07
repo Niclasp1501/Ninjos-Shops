@@ -48,6 +48,11 @@ THIRD-PARTY MATERIAL
   `currentColor`, and an explanatory comment was added. The icon's own licence
   applies to that file and is not affected by the terms above.
 
+  assets/ninjo.png is original artwork, drawn on commission for the author by
+  the artist Roxy and used with his permission. It is the author's brand mark:
+  all rights reserved, not covered by any open licence, and not free to reuse.
+  It contains no third-party logos, marks or stock material.
+
   Everything else the module draws on -- Font Awesome glyphs used through CSS
   classes, and item images -- is provided by Foundry Virtual Tabletop or the
   game system at runtime and is not redistributed here.

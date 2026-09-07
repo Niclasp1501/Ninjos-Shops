@@ -5,6 +5,29 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
 ## [Unveröffentlicht]
 
+### Behoben
+- **Ein weggeklickter Laden kam nach dem Neuladen von selbst zurück.**
+  `close()` räumte nur eine modulinterne Variable weg; das Merkmal am Benutzer
+  blieb stehen, und die Wiederherstellung beim Start machte das Fenster wieder
+  auf. Man klickte es weg und es kam zurück.
+
+  Die Ursache lag tiefer: **Ein Merkmal beantwortete zwei Fragen** — „wem hat
+  die Spielleitung diesen Laden gezeigt" und „habe ich das Fenster gerade
+  offen". Das Merkmal bleibt deshalb stehen (sonst verlöre die Spielleitung
+  ihre Zuschauerliste und der Zugangsknopf den Weg, ein weggeklicktes Fenster
+  zurückzuholen), aber **das Gerät merkt sich, dass hier zugemacht wurde**. Am
+  Tablet weggeklickt heißt nicht am Rechner weggeklickt. Zeigt die Spielleitung
+  den Laden erneut vor oder holt man ihn selbst zurück, gilt die Notiz wieder
+  als erledigt.
+
+### Geändert (Lizenz)
+- **Die `LICENSE` benennt jetzt beide mitgelieferten Bilder.** Bisher stand
+  dort nur das Font-Awesome-Symbol, gefolgt von dem Satz, alles Weitere werde
+  von Foundry zur Laufzeit geliefert und nicht mitverteilt — was für
+  `assets/ninjo.png` schlicht falsch war. Foundry hat beim Prüfen der
+  Einreichung genau danach gefragt. Das Logo ist eine Auftragsarbeit, mit
+  Erlaubnis des Zeichners genutzt, alle Rechte vorbehalten.
+
 ### Hinzugefügt (Veröffentlichung)
 - **`LICENSE`** — proprietär, nicht quelloffen: Nutzung am eigenen Tisch
   ausdrücklich erlaubt, Weitergabe nicht. Die Richtung ist eine Einbahnstraße —
