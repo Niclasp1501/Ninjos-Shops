@@ -306,15 +306,25 @@ async function abschliessenAusfuehren(benutzerId) {
     return { ok: false, grund: "SHOPS.Kauf.Abgebrochen" };
   }
 
+  /*
+   * **Eine Zeile, nicht zwei.** Der erste Entwurf schrieb je Seite eine -
+   * und bei einem Tausch, den der Spieler bezahlt, stand daneben „verkauft
+   * fuer 0 KM". Er hatte aber einen Streitkolben hergegeben, nicht
+   * verschenkt. Das Buch beantwortet die Frage „wo sind die vierhundert Gold
+   * geblieben"; es fliesst genau ein Betrag, und der steht in einer Zeile.
+   * Was ueber den Tisch ging, steht vollstaendig daneben - in beide
+   * Richtungen.
+   */
   const { schreibeHandel, schreibeHandelVerkauf } = await import("./marktbuch.js");
-  const was = s => (handel[s] ?? []).map(p => ({ name: p.name, menge: p.menge }));
-  if (handel.seiteNsc?.length) {
-    await schreibeHandel({ person, kaeufer: benutzer, figur, ok: true,
-                           was: was("seiteNsc"), summeCp: Math.max(0, zahlt) });
-  }
-  if (handel.seiteSpieler?.length) {
-    await schreibeHandelVerkauf({ person, verkaeufer: benutzer, figur, ok: true,
-                                  was: was("seiteSpieler"), summeCp: Math.max(0, -zahlt) });
+  const was = [...(handel.seiteNsc ?? []), ...(handel.seiteSpieler ?? [])]
+    .map(p => ({ name: p.name, menge: p.menge }));
+
+  if (was.length) {
+    const schreiben = zahlt < 0 ? schreibeHandelVerkauf : schreibeHandel;
+    await schreiben({
+      person, figur, ok: true, was, summeCp: Math.abs(zahlt),
+      kaeufer: benutzer, verkaeufer: benutzer
+    });
   }
 
   const zurueck = gezahlt ? wechselgeldText(gezahlt.zurueck, kuerzel) : null;
