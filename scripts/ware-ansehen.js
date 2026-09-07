@@ -60,30 +60,52 @@ export function wareAnsehen(traeger, itemId) {
   delete daten.flags?.[MODULE_ID];
 
   /*
-   * **Die Rechte muessen mit.** `toObject()` kopiert `ownership` gleich mit -
-   * also die Rechte des Ladens, an dem der Spieler keine hat. Die Kopie war
-   * damit genauso gesperrt wie das Original, und Foundry wies sie mit
-   * „dir fehlt die Berechtigung" ab. Sie liegt in keiner Datenbank und lebt
-   * nur in diesem Client; wer sie sehen darf, entscheidet niemand ausser uns.
+   * **Die Rechte muessen mit** - und zwar die richtigen. `toObject()` kopiert
+   * `ownership` gleich mit, also die Rechte des Ladens, an dem der Spieler
+   * keine hat: Die Kopie war damit genauso gesperrt wie das Original, und
+   * Foundry wies sie mit „dir fehlt die Berechtigung" ab.
+   *
+   * **Beobachter, nicht Eigentuemer.** Der erste Versuch gab der Kopie
+   * Eigentuemerrechte - dann ging sie auf, aber mit Bearbeitungsknopf und
+   * offenen Feldern, also als Werkzeug statt als Auskunft. `editable: false`
+   * half nicht: dnd5e leitet seine Bearbeitbarkeit aus dem Recht ab, nicht aus
+   * der Option. Als Beobachter zeichnet derselbe Bogen von sich aus die
+   * Nur-Lesen-Fassung - dieselbe, die ein Spieler bei fremdem Besitz sieht.
    */
-  daten.ownership = { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER };
+  const STUFEN = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+  daten.ownership = { default: STUFEN.OBSERVER };
 
-  let kopie;
-  try {
-    kopie = new Item.implementation(daten, { parent: null });
-  } catch (fehler) {
-    console.error(`${MODULE_ID} | Gegenstandsbogen konnte nicht geoeffnet werden`, fehler);
+  const bauen = () => {
+    try {
+      return new Item.implementation(daten, { parent: null });
+    } catch (fehler) {
+      console.error(`${MODULE_ID} | Gegenstandsbogen konnte nicht geoeffnet werden`, fehler);
+      return null;
+    }
+  };
+
+  let kopie = bauen();
+  if (!kopie) {
+    ui.notifications.warn(game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
+    return null;
+  }
+
+  const Bogen = kopie._getSheetClass?.() ?? kopie.sheet?.constructor;
+  if (!Bogen) {
     ui.notifications.warn(game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
     return null;
   }
 
   /*
-   * `editable: false` gehoert in den **Aufbau** des Bogens, nicht in den
-   * Aufruf von `render`: Ein Bogen merkt sich seine Optionen beim Erzeugen,
-   * und `document.sheet` liefert einen, den es womoeglich schon gibt.
+   * Verlangt dieser Bogen mehr als Beobachter zum Ansehen, waere sonst gar
+   * nichts zu sehen. Dann lieber bearbeitbar als unsichtbar - gespeichert
+   * wird an der Kopie ohnehin nie etwas.
    */
-  const Bogen = kopie._getSheetClass?.() ?? kopie.sheet?.constructor;
-  if (!Bogen) return null;
+  const noetig = Bogen.DEFAULT_OPTIONS?.viewPermission;
+  if (Number.isFinite(noetig) && noetig > STUFEN.OBSERVER) {
+    daten.ownership = { default: noetig };
+    kopie = bauen() ?? kopie;
+  }
 
   let app;
   try {
