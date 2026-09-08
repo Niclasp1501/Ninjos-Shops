@@ -211,8 +211,18 @@ async function beiSpielleitung(paket) {
     default: return;
   }
 
-  verteilen(sitzung);
+  /*
+   * **Erst wegraeumen, dann Bescheid sagen.** Andersherum sah jeder, der auf
+   * die Meldung hin nachschaut, die eben erledigte Anfrage noch als offen -
+   * `offeneAnfragen()` kannte sie ja noch. Das Verhandlungsfenster blieb
+   * deshalb stehen, statt zuzugehen: Es fragte, ob noch etwas vorliegt, und
+   * bekam „ja" zur Antwort. Die Freigaben machen es seit jeher so herum.
+   *
+   * `verteilen` liest die Ablage nicht, sondern nur diese Sitzung - das
+   * Loeschen davor nimmt ihm nichts weg.
+   */
   if (VORBEI.includes(sitzung.zustand)) sitzungen.delete(sitzung.id);
+  verteilen(sitzung);
 }
 
 /**
