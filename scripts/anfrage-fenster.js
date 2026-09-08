@@ -270,6 +270,24 @@ export function packenOeffnen(gegenueber, figur) {
  * Der Spieler wartete auf eine Antwort, die niemand bemerkt hatte.
  * Deshalb ausklappen, nach vorn holen, und sagen, dass etwas da ist.
  */
+/**
+ * Nachziehen - und zumachen, wenn nichts mehr vorliegt.
+ *
+ * Dieses Fenster macht **niemand von Hand auf**: Es erscheint, wenn eine
+ * Anfrage eingeht. Also hat es auch keinen Grund stehenzubleiben, wenn keine
+ * mehr da ist. Vorher zeichnete es sich in seinen Leerzustand und blieb als
+ * Rest auf dem Schirm - „gerade liegt keine Anfrage vor", ein Fenster, das
+ * von sich aus gekommen war und nicht mehr wegging.
+ *
+ * Beide Listen zaehlen: Ein erledigter Kaufwunsch macht nicht zu, solange
+ * noch eine Verkaufsanfrage daneben liegt.
+ */
+function verhandelnNachziehen() {
+  if (!verhandeln?.rendered) return;
+  if (offeneFreigaben().length || offeneAnfragen().length) verhandeln.render(false);
+  else verhandeln.close();
+}
+
 export async function verhandelnOeffnen(sitzung = null, kaufwunsch = null) {
   verhandeln ??= new AnfrageVerhandeln();
   /*
@@ -306,7 +324,7 @@ export function anfrageFensterEinrichten() {
   freigabeBeobachten(eintrag => {
     if (!game.user.isGM) return;
     if (eintrag) verhandelnOeffnen(null, eintrag);
-    else verhandeln?.render(false);
+    else verhandelnNachziehen();
   });
 
   anfrageBeobachten((meine, sitzung) => {
@@ -314,6 +332,6 @@ export function anfrageFensterEinrichten() {
 
     if (!game.user.isGM) return;
     if (sitzung?.zustand === ZUSTAND.GEPACKT) verhandelnOeffnen(sitzung);
-    else verhandeln?.render(false);
+    else verhandelnNachziehen();
   });
 }

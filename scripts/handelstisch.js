@@ -626,9 +626,21 @@ async function funken(an) {
 export async function aufTisch(daten) {
   if (daten.tat === "stand") {
     tischZeichnen();
-    // Die Spielleitung sieht die Tische aller Spieler in ihrem eigenen Fenster.
-    for (const app of foundry.applications.instances.values()) {
-      if (app instanceof HandelstischGM) app.render(false);
+    /*
+     * Die Spielleitung sieht die Tische aller Spieler in ihrem eigenen
+     * Fenster - und **ein abgeraeumter Tisch macht seines zu.**
+     *
+     * Vorher wurde hier nur neu gezeichnet. Nach einem abgeschlossenen Handel
+     * ging das Fenster zu (das erledigt `abschliessen` selbst), nach jedem
+     * anderen Ende aber nicht: Es fiel in seinen Leerzustand und blieb als
+     * Rest stehen, der „fuer diesen Spieler ist gerade kein Tisch gedeckt"
+     * sagte. Das trifft das Abraeumen ebenso wie ein „Handel beenden" des
+     * Spielers.
+     */
+    for (const app of [...foundry.applications.instances.values()]) {
+      if (!(app instanceof HandelstischGM)) continue;
+      if (game.users.get(app.benutzerId)?.getFlag(MODULE_ID, TISCH)) app.render(false);
+      else if (app.rendered) app.close({ force: true });
     }
     return;
   }
