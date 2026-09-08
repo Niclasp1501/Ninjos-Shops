@@ -136,6 +136,28 @@ export function insBildRuecken(app, { nurKlemmen = false } = {}) {
   const el = element(app);
   if (!el || !el.isConnected) return;
 
+  /*
+   * **Fremdes nur, wenn es wirklich ein schwebendes Fenster ist.**
+   *
+   * Der Haken haengt an *jedem* `renderApplicationV2`, und in Foundry v13+
+   * sind auch die Seitenleiste, die Spielerliste, die Verzeichnisreiter und
+   * die Szenen-Werkzeuge ApplicationV2. Gemessen am 08.09.2026 in der
+   * laufenden Welt: `max-height: 1139px` stand im Stil von Players, Sidebar,
+   * ActorDirectory, CompendiumDirectory und PlaylistDirectory - von uns
+   * hineingeschrieben, und wie der Kommentar weiter unten sagt, wird der
+   * Deckel nie wieder zurueckgenommen. Bei einem kleineren Bild waere er
+   * schlicht falsch.
+   *
+   * Ein angedockter Reiter liegt im Fluss der Seite (`static`/`relative`), ein
+   * schwebendes Fenster nicht. Das ist der Unterschied, um den es geht - nicht
+   * ob ein Fenster einen Rahmen hat: Die Verzeichnisse haben einen und sind
+   * trotzdem angedockt.
+   */
+  if (nurKlemmen) {
+    const lage = getComputedStyle(el).position;
+    if (lage !== "absolute" && lage !== "fixed") return;
+  }
+
   const bildBreite = window.innerWidth;
   const bildHoehe = window.innerHeight;
   const hoechsteHoehe = bildHoehe - 2 * RAND;
