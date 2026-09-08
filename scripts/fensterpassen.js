@@ -198,7 +198,17 @@ export function insBildRuecken(app, { nurKlemmen = false } = {}) {
     // bekommt ein gedrehtes Tablet seine Fenster wieder gross.
     wunschBreite = Math.min(unsere.wunsch * WACHSTUM, bildBreite - 2 * RAND);
   }
-  const breite = Math.max(MINDEST.breite, Math.min(wunschBreite, bildBreite - 2 * RAND));
+  /*
+   * **Die Mindestgroesse gilt nur fuer eigene Fenster.** Am 08.09.2026 stand
+   * Monk's Common Display mit 280 x 200 im Bild, obwohl es `width: "auto"` und
+   * `height: 95` verlangt - die Haelfte des Fensters war leer. Fuer ein
+   * fremdes Fenster ist "zu klein" keine Diagnose, die uns zusteht: Wer es
+   * gebaut hat, kennt seinen Inhalt. Wir greifen nur ein, wenn es **groesser**
+   * ist als der Schirm.
+   */
+  const breite = nurKlemmen
+    ? Math.min(wunschBreite, bildBreite - 2 * RAND)
+    : Math.max(MINDEST.breite, Math.min(wunschBreite, bildBreite - 2 * RAND));
 
   // Zuerst, denn sie aendert den Umbruch: Mit 1170 statt 780 Pixeln steht eine
   // Auslage zweispaltig und braucht die halbe Hoehe.
@@ -233,7 +243,9 @@ export function insBildRuecken(app, { nurKlemmen = false } = {}) {
         : Math.min(nach.height + fehlt, hoechsteHoehe);
     }
   }
-  hoehe = Math.max(MINDEST.hoehe, Math.min(hoehe, hoechsteHoehe));
+  hoehe = nurKlemmen
+    ? Math.min(hoehe, hoechsteHoehe)
+    : Math.max(MINDEST.hoehe, Math.min(hoehe, hoechsteHoehe));
 
   /* ── Lage ───────────────────────────────────────────────────────── */
 
