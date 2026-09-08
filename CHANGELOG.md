@@ -5,7 +5,52 @@ Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
 ## [Unveröffentlicht]
 
+### Hinzugefügt
+- **Tausch zwischen zwei Spielern**, aus Ninjo's In-Person Tools hierher
+  gezogen. Er und der Handel mit einer Person sind dieselbe Sache aus zwei
+  Richtungen; zwei Tauschfenster in zwei Modulen, die je nach Installation
+  anders aussahen, halfen niemandem. Der Knopf drüben öffnet jetzt diesen
+  Tisch; ist das Modul nicht da, setzt Shops seinen eigenen über die
+  Spielerliste. **Zwischen zwei Spielern wird nichts bewertet** — auf dem
+  Tisch liegt, was daliegt.
+- **Aussuchen in einer Lage über dem Tisch**, für beide Tische gleich:
+  antippen, Menge über Stufenknöpfe (0 / −10 / − / + / +10 / alles), Münzen je
+  Sorte. Vorher stand der ganze Vorrat unter der Waage und drängte den Handel
+  selbst aus dem Bild; Geld kam über ein Zahlenfeld mit Auswahlmenü.
+- **Ein Behälter reist samt Inhalt.** Ware wandert jetzt für beide Tische
+  durch dieselbe Stelle: angelegt wird vor dem Wegnehmen, der Inhalt eines
+  Beutels wird umgehängt (er hängt an einer Kennung, die sich beim Kopieren
+  ändert), und `ownership`, `equipped` und `attuned` bleiben zurück.
+
+### Geändert
+- **Der Spieler sieht keine Grundpreise mehr.** Hinter jedem Stück der Person
+  stand ein gerechneter Preis — neun Zahlen, die ihm niemand genannt hatte,
+  und eine Summe darunter, die aus dem Nichts zu kommen schien. Jetzt gibt es
+  eine Zahl: was sie verlangt. Vorgeschlagen wird die Summe ihrer Preise, und
+  die Spielleitung kann sie auf alles setzen.
+- **Was der Spieler hereingibt, trägt die Spielleitung ein.** Vorher wurde es
+  still mit dem halben Grundpreis verrechnet. Jetzt steht ihr Ankaufswert im
+  Feld, ihre Spanne daneben als drei Knöpfe und der Grundpreis als Auskunft
+  darunter — alles nur für sie.
+
 ### Behoben
+- **Hingelegtes Geld wanderte nie.** Es zählte in der Waage, verließ die Börse
+  aber nicht: Wer 2 GM hinlegte, bekam den Dolch für 2 GM 4 SM um genau diese
+  2 GM billiger — jede hingelegte Münze war ein Rabatt auf sich selbst.
+  Gemessen an der laufenden Welt: 40 Kupfer für einen Dolch zu 2 GM 4 SM. Es
+  greift jetzt niemand mehr in eine Börse; es wandert, was auf dem Tisch liegt,
+  und die Münzen bleiben die Münzen, die sie sind.
+- **Ein Fenster ohne Gegenstand blieb stehen.** Der Handelstisch der
+  Spielleitung fiel beim Abräumen in seinen Leerzustand statt zuzugehen,
+  ebenso das Verhandlungsfenster, wenn keine Anfrage mehr vorlag. Letzteres
+  hatte eine tiefere Ursache: Die erledigte Anfrage wurde **gemeldet, bevor**
+  sie aus der Ablage flog — wer auf die Meldung hin nachsah, bekam einen Stand,
+  den es schon nicht mehr gab.
+- **Unser Fenster-Klemmen fasste Foundrys eigene Oberfläche an.** Es hängt an
+  jedem `renderApplicationV2`, und in Foundry v13+ sind auch Seitenleiste,
+  Spielerliste und Verzeichnisreiter ApplicationV2: `max-height: 1139px` stand
+  in ihrem Stil, von uns hineingeschrieben, und wird nie zurückgenommen.
+  Angefasst wird jetzt nur noch, was wirklich schwebt.
 - **Ein Handel ließ sich einseitig abschließen.** Der Spieler konnte etwas auf
   seine Seite legen und sofort bestätigen — die Spielleitung hatte dieser
   Zusammenstellung nie zugestimmt. Ein Tausch ist eine Abrede zwischen zweien;

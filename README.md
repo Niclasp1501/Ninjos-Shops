@@ -7,7 +7,9 @@ niemanden, weil er an eine Szene gebunden ist.
 
 Und **Handel mit Leuten, die keinen Laden führen**: Aus jedem NSC-Bogen legt die
 Spielleitung ausgewählte Stücke zu ausgewählten Preisen hin, in beide
-Richtungen. Deshalb steht „Trade" im Namen — es ist kein Anhängsel des
+Richtungen. Dazu der **Tausch zwischen zwei Spielern**, seit September 2026 aus
+Ninjo's In-Person Tools hierher gezogen — dieselbe Sache aus zwei Richtungen,
+auf demselben Tisch. Deshalb steht „Trade" im Namen: Es ist kein Anhängsel des
 Ladengeschäfts, sondern ein eigener Weg.
 
 Für Foundry VTT v14 und dnd5e. Die vollständige Begründung, warum es so gebaut
@@ -98,6 +100,26 @@ angehakt haben, packt er über **„Ich hätte da auch etwas"** seinerseits
 zusammen, und Sie nennen einen Preis. Das ist dasselbe Fenster wie am
 Ladentresen; nur stehen die drei Vorschlagszahlen dort nicht für eine
 Ankaufspolitik, sondern für die halbe Grundsumme — was gilt, tippen Sie.
+
+### Tausch zwischen zwei Spielern
+
+Ein Knopf über der Spielerliste — und in der Leiste der Blattansicht, wenn
+Ninjo's In-Person Tools dabei sind. Man sucht sich jemanden aus, der andere
+sagt ja, und dann liegt derselbe Tisch vor beiden: links, was er hinlegt,
+rechts, was ich hinlege. Ausgesucht wird in einer Lage darüber — antippen,
+Menge mit Stufenknöpfen, Münzen je Sorte, kein Tippen und kein Auswahlmenü.
+
+**Es zählt nur, was auf dem Tisch liegt.** Hier rechnet niemand aus, was ein
+Stück wert ist; das geht die beiden nichts an, solange sie sich einig sind.
+Jede Änderung setzt **beide** Zusagen zurück, und bewegt wird erst, wenn beide
+stehen. Ein Behälter reist samt Inhalt, Münzen bleiben die Münzen, die sie
+sind — es wird nichts gewechselt.
+
+Ausgeführt wird auf dem Client der Spielleitung, denn nur sie darf auf fremden
+Akteuren anlegen und löschen; ohne sie geht kein Tausch. Der laufende Tausch
+liegt als Merkmal an beiden Konten und übersteht ein Neuladen. Ob es ihn gibt,
+ob die Spielleitung als Partner erscheint und ob jeder Tausch im Chat angesagt
+wird, steht in den Moduleinstellungen.
 
 ### Die Schauansicht
 
@@ -207,6 +229,20 @@ einem Knopf je Stück. Das Geld wandert in die Börse der Person, falls sie
 eine hat; leer werden kann sie nicht — dafür ist ein Laden mit eigener Kasse
 da.
 
+### Mit einem anderen Spieler tauschen
+
+1. Über der Spielerliste auf **Tauschen** (auf dem Tablet in der Leiste der
+   Blattansicht).
+2. Die Person antippen, mit der getauscht werden soll — sie muss angemeldet
+   sein und eine Figur haben.
+3. Sie sagt ja, dann legen beide über **Sachen aussuchen** und **Münzen
+   dazulegen** hin, was mitsoll.
+4. Beide auf **Handel abschließen**. Wer noch etwas ändert, hebt beide Zusagen
+   auf.
+
+Eine Spielleitung muss angemeldet sein; sie führt den Tausch aus, sieht ihn
+aber nicht mit an.
+
 ### Den Laden auf den Bildschirm bringen
 
 1. **Auswählen …**, und beim Bildschirm den Schalter **groß** anhaken.
@@ -268,6 +304,12 @@ request where the GM sees a private price range and names a price. Shops can be
 bound to scenes, linked to the merchant who runs them, and there is a trade
 window for people who have no shop at all. Two ledgers: one per shop, filtered
 to whoever opens it, and one across all shops for the GM.
+
+**Players trade with each other** on the same table — moved here from Ninjo's
+In-Person Tools in September 2026, because that and trading with a merchant are
+the same thing from two directions. Nothing is valued between two players: what
+lies on the table is what changes hands. Any change clears both acceptances,
+containers travel with their contents, and coins stay the coins they are.
 
 Buying and selling always execute on the GM's client; which *connection* does
 so is decided by an election, because `activeGM` names a user and two tabs of
