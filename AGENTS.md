@@ -48,10 +48,17 @@ Chrome-Instanz. Was dabei gefunden wurde, steht in den Abschnitten unten;
 die beiden schwersten Fälle waren der doppelt ausgeführte Kauf und das
 Fenster, das unten aus dem Bild lief.
 
-**Zwei Eigenheiten dieser Welt**, die beim Bauen mehrfach den Ausschlag gaben:
+**Eine Eigenheit dieser Welt**, die beim Bauen mehrfach den Ausschlag gab:
 `core.noCanvas` steht auf **an** — es gibt keine Tokens, also auch keine
-Token-Knöpfe und keine betrachtete Szene. Und die Spielleitung ist oft
-**zweimal** angemeldet, weil ein Tablet danebenliegt.
+Token-Knöpfe und keine betrachtete Szene.
+
+**Am Tisch ist genau eine Spielleitung angemeldet, mit einem Konto.** Hier
+stand bis zum 09.09.2026 das Gegenteil („oft zweimal, weil ein Tablet
+danebenliegt"), und das ist falsch — es hat am 08.09.2026 eine Fehlersuche in
+die falsche Richtung geschickt. Zweite Verbindungen kommen vor, aber als
+Ausnahme: ein Spielleiter-Assistent, oder andere Kombinationen. Die
+Vorsitz-Wahl in `vorsitz.js` bleibt trotzdem richtig — sie kostet nichts und
+trägt genau diesen Ausnahmefall.
 
 ## Der Tausch ist am 08.09.2026 aus den In-Person Tools hierher gezogen
 
@@ -89,6 +96,32 @@ Figuren-Helfer, die die Bogenansicht braucht, stehen dort jetzt in
 überhaupt gibt.
 
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
+
+## Offen: Verkaufsanfragen liegen nur in einer Verbindung
+
+**Am 09.09.2026 zu prüfen.** Die Sitzungen in `anfrage.js` stehen in einer
+`Map` im Speicher derjenigen Spielleiter-Verbindung, die die Vorsitz-Wahl
+gewonnen hat. Jede weitere Verbindung bekommt den Rundruf, oeffnet ihr
+Verhandlungsfenster — und hat nichts anzuzeigen: „Gerade liegt keine Anfrage
+vor." Dort ist die Anfrage nicht zu beantworten, und ein Zurückziehen des
+Spielers bleibt wirkungslos.
+
+Nachgewiesen am 08.09.2026 mit zwei Spielleiter-Verbindungen: Der zweite Tab
+empfing `anfrage/zustand`-Pakete, die er nicht gesendet hatte (ein Socket
+liefert nie an den Absender zurück), während `offeneAnfragen()` dort leer
+blieb. Vier Anfragen, viermal dasselbe.
+
+**Es ist kein Alltagsfall** — normal ist eine Spielleitung mit einem Konto.
+Es trifft den Assistenten oder ein zweites Fenster. Der Handelstisch hat das
+Problem nicht: Er hält den Handel als Merkmal am Benutzer, und jede
+Spielleitung liest dasselbe. Dieselbe Kur kaeme fuer `anfrage.js` und
+vermutlich `freigabe.js` in Frage.
+
+Ebenfalls offen und im selben Zug zu prüfen: die Verhandlung bis zum Ende
+(Preis nennen, Spieler nimmt an) — die konnte am 08.09.2026 nicht abgeschlossen
+werden, weil die pruefende Verbindung die Sitzung nie hielt. Und die
+Blattansicht der In-Person Tools, nachdem `characterOf` dort nach `figuren.js`
+gezogen ist.
 
 ## Vor jeder Änderung an preise.js oder kasse.js
 
