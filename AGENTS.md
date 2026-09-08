@@ -53,28 +53,40 @@ Fenster, das unten aus dem Bild lief.
 Token-Knöpfe und keine betrachtete Szene. Und die Spielleitung ist oft
 **zweimal** angemeldet, weil ein Tablet danebenliegt.
 
-## Als Nächstes: der Tausch zieht aus den In-Person Tools hierher um
+## Der Tausch ist am 08.09.2026 aus den In-Person Tools hierher gezogen
 
-**Noch nicht anfangen.** Erst muss die Fehlerliste vom 08.09.2026 abgearbeitet
-und am laufenden Spiel geprüft sein.
+`scripts/tausch.js` — der Tausch zwischen zwei Spielern, vorher
+`scripts/trade.js` in **Ninjos-InPerson-Tools**. Er und der Handelstisch sind
+dieselbe Sache aus zwei Richtungen; zwei Tauschfenster in zwei Modulen
+nebeneinander waren genau die Uneinheitlichkeit, gegen die der Tisch gebaut
+wurde.
 
-Dann: `scripts/trade.js` aus **Ninjos-InPerson-Tools** wandert in dieses Modul.
-Der Spieler-gegen-Spieler-Tausch und der Handelstisch hier sind dieselbe Sache
-aus zwei Richtungen — zwei Tauschfenster in zwei Modulen nebeneinander sind
-genau die Uneinheitlichkeit, gegen die der Tisch gebaut wurde.
+**Was dabei besser wurde.** Drüben lag der laufende Tausch in einer `Map` im
+Speicher der Spielleitung — wer neu lud, verlor ihn. Hier liegt er als Merkmal
+an **beiden** Benutzern und übersteht jedes Neuladen. Ausgeführt wird über
+`vorsitz.js` statt über `game.users.activeGM`: Der nennt einen *Benutzer*,
+keine *Verbindung*, und bei zwei angemeldeten Spielleitungen legten sonst beide
+jedes Stück an.
 
-Drei Dinge gehören dazu, und das dritte wird gern vergessen:
+**Der gefährliche Teil liegt an einer Stelle.** `uebergeben()` in `lager.js`
+bewegt Ware und Münzen für **beide** Tische. Es legt an, bevor es wegnimmt;
+ein Behälter reist samt Inhalt (der hängt über `system.container` an einer
+Kennung, die sich beim Kopieren ändert); `ownership`, `equipped` und `attuned`
+bleiben zurück. Wer dort etwas ändert, ändert es für Läden und Spieler
+zugleich.
 
-1. Den Tausch hierher holen und auf den Handelstisch legen — dieselbe
-   Anordnung, dieselben Knöpfe.
-2. Eine Schnittstelle einrichten, über die die In-Person Tools ihn aufrufen
-   können, falls dort ein Weg bestehen bleiben soll. Die Verbindung bleibt
-   **einseitig**: Dieses Modul hängt sich an das andere, nie umgekehrt
-   (siehe `inPersonKnopf` in zugaenge.js).
-3. **An der alten Stelle einen Hinweis hinterlassen**, dass die Funktion jetzt
-   in Ninjo's DnD Shops & Trade steckt. Wer sie dort sucht und wortlos nicht
-   findet, hält das Modul für kaputt — und die In-Person Tools haben Nutzer,
-   die von diesem Modul nichts wissen.
+**Die Schnittstelle ist eine Funktion.** `game.modules.get("ninjos-shops").api
+.tauschStarten` — mehr ruft drüben nicht herein. Beide Module laufen ohne das
+andere: Ist Shops nicht da, sagt der Knopf in den In-Person Tools, wo die
+Funktion steckt; sind die In-Person Tools nicht da, setzt Shops seinen eigenen
+Knopf über die Spielerliste. Ist **beides** da, gehört der Knopf ihnen — ihrer
+steht auch in der Bogenansicht, wo wir nicht hinkommen.
+
+**An der alten Stelle** ist `trade.js` mitsamt Fenster, Bewegung und Buch
+gelöscht; `trade-start.js` hält nur noch die Knöpfe und den Hinweis, und die
+Figuren-Helfer, die die Bogenansicht braucht, stehen dort jetzt in
+`figuren.js`. Von den drei Schaltern blieb einer: ob es den Weg hierher
+überhaupt gibt.
 
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
 

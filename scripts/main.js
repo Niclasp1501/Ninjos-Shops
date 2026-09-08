@@ -27,6 +27,7 @@ import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.js";
 import { tischEinrichten } from "./handelstisch.js";
+import { tauschEinrichten, tauschStarten, tauschKnopfNachziehen } from "./tausch.js";
 import { schauWiederherstellen } from "./schau.js";
 import { monitorEinstellungEinrichten } from "./monitore.js";
 import { marktbuchEinstellungEinrichten } from "./marktbuch.js";
@@ -90,6 +91,38 @@ function einstellungenEinrichten() {
    *
    * Groesser gemacht wird ein fremdes Fenster nie, nur kleiner.
    */
+  /*
+   * Der Tausch zwischen Spielern, zugezogen aus den In-Person Tools. Ab Werk
+   * an: Wer das Modul installiert, will handeln - und drueben war er es auch.
+   */
+  game.settings.register(MODULE_ID, SETTINGS.TAUSCH, {
+    name: "SHOPS.Einstellung.Tausch.Name",
+    hint: "SHOPS.Einstellung.Tausch.Hinweis",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: () => tauschKnopfNachziehen()
+  });
+
+  game.settings.register(MODULE_ID, SETTINGS.TAUSCH_MIT_GM, {
+    name: "SHOPS.Einstellung.TauschMitGm.Name",
+    hint: "SHOPS.Einstellung.TauschMitGm.Hinweis",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register(MODULE_ID, SETTINGS.TAUSCH_ANSAGE, {
+    name: "SHOPS.Einstellung.TauschAnsage.Name",
+    hint: "SHOPS.Einstellung.TauschAnsage.Hinweis",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register(MODULE_ID, "fremdeFensterKlemmen", {
     name: "SHOPS.Einstellung.FremdeFenster.Name",
     hint: "SHOPS.Einstellung.FremdeFenster.Hinweis",
@@ -178,6 +211,16 @@ Hooks.once("ready", async () => {
   buchFensterEinrichten();
   verknuepfungEinrichten();
   tischEinrichten();
+  tauschEinrichten();
+
+  /*
+   * **Die Schnittstelle nach draussen.** Der Tausch lag bis zum 08.09.2026 in
+   * den In-Person Tools; dort steht jetzt nur noch der Hinweis und ein Knopf,
+   * der hier hereinruft. Deshalb genau eine Funktion und ein fester Name -
+   * was hier steht, ist ein Versprechen an ein fremdes Modul.
+   */
+  const modul = game.modules.get(MODULE_ID);
+  if (modul) modul.api = { ...(modul.api ?? {}), tauschStarten };
   szenenBogenEinrichten();
   await leisteNachziehen();
   await verknuepfungNachtragen();

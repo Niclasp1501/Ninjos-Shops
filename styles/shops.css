@@ -4304,3 +4304,113 @@
   font-weight: 600;
   color: #2f6b34;
 }
+
+
+/* ── Der Tausch zwischen zwei Spielern ─────────────────────────────── */
+
+/*
+ * Gefragt, laufend, fertig: drei Momente desselben Gespraechs, und alle drei
+ * mittig im Tisch statt als Meldung. Foundrys Benachrichtigungen sind auf den
+ * Geraeten, um die es hier geht, ausgeblendet - „Roxy hat abgelehnt" haette
+ * dort niemand gesehen.
+ */
+.ninjos-shops .shops-tisch-warten {
+  flex: 1 1 auto;
+  min-height: 12rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+}
+.ninjos-shops .shops-tisch-warten > img {
+  width: 84px; height: 84px;
+  object-fit: cover;
+  border: 1px solid var(--shops-rand);
+  border-radius: 50%;
+}
+.ninjos-shops .shops-tisch-warten > i { font-size: 2.4rem; color: var(--shops-gold); }
+.ninjos-shops .shops-tisch-frage { font-size: 1.1rem; font-weight: 600; margin: 0; }
+.ninjos-shops .shops-tisch-wer { margin: 0; color: var(--shops-text-blass); font-size: 0.85rem; }
+.ninjos-shops .shops-tisch-antwort { display: flex; gap: 12px; }
+.ninjos-shops .shops-tisch-antwort .shops-kaufen {
+  min-width: 9rem;
+  justify-content: center;
+  min-height: var(--ninjo-tippziel, 44px);
+}
+
+/* Eine zugesagte Seite bekommt einen Rand - man sieht auf einen Blick, wer steht. */
+.ninjos-shops .shops-zugesagt-seite { border-color: var(--shops-gold); }
+.ninjos-shops .shops-zugesagt-seite > h3 > i { color: #2f6b34; margin-left: 6px; }
+
+/*
+ * Die Partnerwahl: eine grosse Zeile je Person, als Ganzes angetippt. Wer
+ * nicht kann, steht ausgegraut dabei - mit dem Grund, denn eine Liste, die
+ * die Antwort verschweigt, ist schlechter als eine, die sie zeigt.
+ */
+.ninjos-shops .shops-partnerliste {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+.ninjos-shops .shops-partner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--ninjo-tippziel, 44px);
+  padding: 8px 12px;
+  text-align: left;
+  color: var(--shops-text);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ninjos-shops .shops-partner:hover { border-color: var(--shops-gold); }
+.ninjos-shops .shops-partner > img {
+  flex: 0 0 40px;
+  width: 40px; height: 40px;
+  object-fit: cover;
+  border: 1px solid var(--shops-rand);
+  border-radius: 50%;
+}
+.ninjos-shops .shops-partner > i { flex: 0 0 auto; color: var(--shops-text-blass); }
+.ninjos-shops .shops-partner-mitte { flex: 1 1 auto; min-width: 0; }
+.ninjos-shops .shops-partner-name { display: block; font-weight: 600; }
+.ninjos-shops .shops-partner-notiz {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--shops-text-blass);
+}
+.ninjos-shops .shops-partner.shops-gesperrt {
+  cursor: default;
+  opacity: 0.55;
+  background: transparent;
+}
+.ninjos-shops .shops-partner.shops-gesperrt:hover { border-color: var(--shops-rand); }
+
+/* Der Knopf ueber der Spielerliste. */
+#shops-tausch-knopf {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 4px 8px;
+  font-family: var(--ninjo-schrift, inherit);
+  font-size: 0.8rem;
+  color: var(--ninjo-text, #f0f0e0);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--ninjo-akzent, #d4af37);
+  border-radius: 4px;
+  cursor: pointer;
+}
+#shops-tausch-knopf:hover { background: rgba(212, 175, 55, 0.25); }
+
+.shops-tauschkarte p { margin: 2px 0; }

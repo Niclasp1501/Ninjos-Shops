@@ -26,6 +26,7 @@ import { aufAnfrage } from "./anfrage.js";
 import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 import { aufTisch } from "./handelstisch.js";
+import { aufTausch } from "./tausch.js";
 import { aufSchau, schauNachfuehren } from "./schau.js";
 import { alsText } from "./preise.js";
 
@@ -41,6 +42,14 @@ async function onSocket(daten) {
     case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
     case SOCKET.VORSITZ:     return void aufVorsitz(daten);
     case SOCKET.HANDEL:      return void aufTisch(daten);
+    case SOCKET.TAUSCH: {
+      // Eine Meldung gilt genau einer Person; alles andere geht an den Tausch.
+      if (daten.tat === "meldung") {
+        if (daten.an === game.user.id) ui.notifications.warn(game.i18n.localize(daten.schluessel));
+        return;
+      }
+      return void await aufTausch(daten);
+    }
     case SOCKET.SCHAU:       return void aufSchau(daten);
 
     case SOCKET.KAUFEN: {

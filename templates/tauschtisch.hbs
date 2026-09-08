@@ -1,0 +1,171 @@
+{{!--
+  Der Tausch zwischen zwei Spielern.
+
+  Derselbe Tisch wie beim Handel mit einer Person: links, was der andere
+  hinlegt, rechts, was ich hinlege, unten die beiden Zusagen. Was fehlt, ist
+  die Waage — zwischen zwei Spielern rechnet niemand, was etwas wert ist. Auf
+  dem Tisch liegt, was daliegt.
+--}}
+<div class="shops-teil-tisch">
+
+  {{#if stand}}
+
+    {{#if stand.gefragt}}
+      {{!-- Gefragt und noch nicht beantwortet. --}}
+      <div class="shops-tisch-warten">
+        {{#if stand.er.figurBild}}<img src="{{stand.er.figurBild}}" alt="">{{/if}}
+        {{#if stand.binGefragt}}
+          <p class="shops-tisch-frage">
+            {{localize "SHOPS.Tausch.MoechteTauschen" person=stand.er.figurName}}
+          </p>
+          <p class="shops-tisch-wer">{{stand.er.benutzerName}}</p>
+          <div class="shops-tisch-antwort">
+            <button type="button" class="shops-kaufen" data-action="jaSagen">
+              <i class="fa-solid fa-check" aria-hidden="true"></i>
+              {{localize "SHOPS.Tausch.Ja"}}
+            </button>
+            <button type="button" class="shops-kaufen shops-zweit" data-action="neinSagen">
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              {{localize "SHOPS.Tausch.Nein"}}
+            </button>
+          </div>
+        {{else}}
+          <p>{{localize "SHOPS.Tausch.WartetAuf" person=stand.er.figurName}}</p>
+          <button type="button" class="shops-kaufen shops-zweit" data-action="aufgeben">
+            {{localize "SHOPS.Tausch.Aufgeben"}}
+          </button>
+        {{/if}}
+      </div>
+
+    {{else if stand.laeuft}}
+      <div class="shops-tisch-warten">
+        <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
+        <p>{{localize "SHOPS.Tausch.Laeuft"}}</p>
+      </div>
+
+    {{else}}
+
+      <header class="shops-tisch-kopf">
+        {{#if stand.er.figurBild}}<img src="{{stand.er.figurBild}}" alt="">{{/if}}
+        <div>
+          <strong>{{stand.er.figurName}}</strong>
+          <span class="shops-tisch-satz">{{stand.er.benutzerName}}</span>
+        </div>
+        {{#if stand.ich.figurName}}
+          <span class="shops-boerse">
+            <i class="fa-solid fa-user" aria-hidden="true"></i>
+            <span class="shops-boerse-label">{{localize "SHOPS.Tausch.Du"}}</span>
+            <strong>{{stand.ich.figurName}}</strong>
+          </span>
+        {{/if}}
+      </header>
+
+      <div class="shops-tisch-platte">
+
+        {{!-- Seine Seite. Nur ansehen — anfassen darf sie nur er. --}}
+        <section class="shops-tisch-seite {{#if stand.er.bereit}}shops-zugesagt-seite{{/if}}">
+          <h3>
+            {{localize "SHOPS.Tisch.SieGibt" person=stand.er.figurName}}
+            {{#if stand.er.bereit}}
+              <i class="fa-solid fa-check" aria-hidden="true"
+                 title="{{localize 'SHOPS.Tausch.HatZugesagt'}}"></i>
+            {{/if}}
+          </h3>
+          <ol class="shops-ware shops-tisch-nsc">
+            {{#each stand.er.posten}}
+              <li class="shops-zeile">
+                {{#if img}}<img src="{{img}}" alt="">
+                {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+                <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+                <span class="shops-menge">{{menge}}&times;</span>
+              </li>
+            {{/each}}
+            {{#if stand.er.hatMuenzen}}
+              <li class="shops-zeile shops-geldzeile">
+                <i class="fa-solid fa-coins" aria-hidden="true"></i>
+                <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
+                <span class="shops-preis">{{stand.er.muenzText}}</span>
+              </li>
+            {{/if}}
+            {{#if stand.er.leer}}
+              <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.SieLegtNichts"}}</li>
+            {{/if}}
+          </ol>
+        </section>
+
+        {{!-- Meine Seite. --}}
+        <section class="shops-tisch-seite {{#if stand.ich.bereit}}shops-zugesagt-seite{{/if}}">
+          <h3>
+            {{localize "SHOPS.Tisch.DuGibst"}}
+            {{#if stand.ich.bereit}}
+              <i class="fa-solid fa-check" aria-hidden="true"
+                 title="{{localize 'SHOPS.Tausch.DuHastZugesagt'}}"></i>
+            {{/if}}
+          </h3>
+          <ol class="shops-ware shops-tisch-spieler">
+            {{#each stand.ich.posten}}
+              <li class="shops-zeile">
+                {{#if img}}<img src="{{img}}" alt="">
+                {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+                <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+                <span class="shops-menge">{{menge}}&times;</span>
+              </li>
+            {{/each}}
+            {{#if stand.ich.hatMuenzen}}
+              <li class="shops-zeile shops-geldzeile">
+                <i class="fa-solid fa-coins" aria-hidden="true"></i>
+                <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
+                <span class="shops-preis">{{stand.ich.muenzText}}</span>
+              </li>
+            {{/if}}
+            {{#if stand.ich.leer}}
+              <li class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tisch.DuLegstNichts"}}</li>
+            {{/if}}
+          </ol>
+          {{!-- Dieselben zwei Knöpfe wie am Handelstisch. --}}
+          <div class="shops-tisch-werkzeuge">
+            <button type="button" class="shops-kaufen shops-zweit" data-action="wahlSachen">
+              <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+              {{localize "SHOPS.Tisch.Sachen"}}
+            </button>
+            <button type="button" class="shops-kaufen shops-zweit" data-action="wahlMuenzen">
+              <i class="fa-solid fa-coins" aria-hidden="true"></i>
+              {{localize "SHOPS.Tisch.Muenzen"}}
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <footer class="shops-tisch-fuss">
+        <button type="button" class="shops-kaufen {{#if stand.ich.bereit}}shops-zweit{{/if}}"
+                data-action="annehmen" {{#if stand.leer}}disabled{{/if}}>
+          <i class="fa-solid {{#if stand.ich.bereit}}fa-rotate-left{{else}}fa-handshake{{/if}}"
+             aria-hidden="true"></i>
+          {{#if stand.ich.bereit}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
+          {{else}}{{localize "SHOPS.Tisch.Abschliessen"}}{{/if}}
+        </button>
+        {{#if stand.ich.bereit}}
+          <span class="shops-tisch-zusage">
+            {{localize "SHOPS.Tisch.WartetAufSie" person=stand.er.figurName}}
+          </span>
+        {{else if stand.er.bereit}}
+          <span class="shops-tisch-zusage shops-zugesagt">
+            {{localize "SHOPS.Tisch.SieHatZugesagt" person=stand.er.figurName}}
+          </span>
+        {{/if}}
+        {{!-- Abgesetzt nach rechts, wie am Handelstisch: zwei Knöpfe
+              nebeneinander sind auf einem Tablet ein Vertipper auseinander. --}}
+        <button type="button" class="shops-kaufen shops-zweit shops-abseits" data-action="aufgeben">
+          <i class="fa-solid fa-hand" aria-hidden="true"></i>
+          {{localize "SHOPS.Tausch.Aufgeben"}}
+        </button>
+      </footer>
+
+      {{#if wahl}}{{> "shops-tisch-wahl" wahl=wahl}}{{/if}}
+
+    {{/if}}
+
+  {{else}}
+    <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Tausch.KeinTausch"}}</p>
+  {{/if}}
+</div>

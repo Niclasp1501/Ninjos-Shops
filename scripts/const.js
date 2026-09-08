@@ -93,7 +93,16 @@ export const SETTINGS = {
   MONITORE: "monitore",
 
   /** Kennung des Marktbuch-Journals. Wird beim ersten Kauf angelegt. */
-  MARKTBUCH: "marktbuch"
+  MARKTBUCH: "marktbuch",
+
+  /**
+   * Der Tausch zwischen zwei Spielern - zugezogen aus den In-Person Tools.
+   * Drei Schalter, wie drueben: ob es ihn gibt, ob die Spielleitung
+   * mittauschen darf, und ob jeder Tausch im Chat angesagt wird.
+   */
+  TAUSCH: "tausch",
+  TAUSCH_MIT_GM: "tauschMitGm",
+  TAUSCH_ANSAGE: "tauschAnsage"
 };
 
 /**
@@ -114,6 +123,7 @@ export const SOCKET = {
   AUSLAGE: "auslage",   // Spielleiter -> Spieler: die Auslage als Datenpaket
   VORSITZ: "vorsitz",   // Spielleitung untereinander: wer fuehrt diese Bitte aus
   HANDEL: "handel",     // Handel mit einer Person ohne Laden
+  TAUSCH: "tausch",     // Tausch zwischen zwei Spielern
   SCHAU: "schau"        // Spielleitung -> Schirme: welche Seite gerade steht
 };
 
