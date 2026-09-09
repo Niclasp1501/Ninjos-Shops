@@ -3,7 +3,20 @@
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung `<foundry-major>.<YYMM>.<patch>`.
 
-## [Unveröffentlicht]
+## 14.2609.75 — 2026-09-09
+
+### Geändert
+- **Fremde Fenster ins Bild zu rücken ist jetzt Sache von Ninjo's In-Person
+  Tools**, wenn beide Module laufen. Die Fähigkeit ist hier entstanden, weil
+  sie beim Umzug des Handels gebraucht wurde — zu Hause ist sie am Tisch: Ein
+  Fenster, das größer als das Tablet aufgeht, ist ein Tischproblem. Beide
+  Module tragen dieselbe Datei, und eine feste Reihenfolge entscheidet, wer
+  handelt: In-Person Tools zuerst, dieses Modul, wenn es allein installiert
+  ist. Ohne die Regel klemmten beide dasselbe Fenster nacheinander — dieselbe
+  Rechnung, zwei Verschiebungen, und drei Verdächtige bei der Fehlersuche.
+  Für Runden ohne In-Person Tools ändert sich nichts.
+
+## 14.2609.74 — 2026-09-08
 
 ### Hinzugefügt
 - **Tausch zwischen zwei Spielern**, aus Ninjo's In-Person Tools hierher
