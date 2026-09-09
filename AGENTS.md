@@ -97,31 +97,33 @@ Figuren-Helfer, die die Bogenansicht braucht, stehen dort jetzt in
 
 Repository: https://github.com/Niclasp1501/Ninjos-Shops
 
-## Offen: Verkaufsanfragen liegen nur in einer Verbindung
+## Eine offene Anfrage übersteht kein Neuladen — und das bleibt so
 
-**Am 09.09.2026 zu prüfen.** Die Sitzungen in `anfrage.js` stehen in einer
-`Map` im Speicher derjenigen Spielleiter-Verbindung, die die Vorsitz-Wahl
-gewonnen hat. Jede weitere Verbindung bekommt den Rundruf, oeffnet ihr
-Verhandlungsfenster — und hat nichts anzuzeigen: „Gerade liegt keine Anfrage
-vor." Dort ist die Anfrage nicht zu beantworten, und ein Zurückziehen des
-Spielers bleibt wirkungslos.
+Die Sitzungen in `anfrage.js` und die wartenden Freigaben in `freigabe.js`
+liegen in einer `Map` im Speicher der Spielleiter-Verbindung. Lädt die
+Spielleitung ihren Browser neu, sind offene Anfragen weg; der Spieler stellt
+sie einfach noch einmal. Es geht dabei nichts verloren — keine Ware, kein Geld,
+nur ein Klick.
 
-Nachgewiesen am 08.09.2026 mit zwei Spielleiter-Verbindungen: Der zweite Tab
-empfing `anfrage/zustand`-Pakete, die er nicht gesendet hatte (ein Socket
-liefert nie an den Absender zurück), während `offeneAnfragen()` dort leer
-blieb. Vier Anfragen, viermal dasselbe.
+**Das ist geprüft und so gewollt.** Am 09.09.2026 stand hier ein Vorschlag, die
+Ablage in eine Welteinstellung zu verlegen, damit sie das Neuladen übersteht
+und jede Spielleiter-Verbindung sie sieht. Der Vorschlag ist verworfen: Der
+Umbau wäre größer als der Ärger, den er behebt. Wer hier wieder darauf stößt,
+soll wissen, dass die Frage schon einmal gestellt und bewusst so beantwortet
+wurde.
 
-**Es ist kein Alltagsfall** — normal ist eine Spielleitung mit einem Konto.
-Es trifft den Assistenten oder ein zweites Fenster. Der Handelstisch hat das
-Problem nicht: Er hält den Handel als Merkmal am Benutzer, und jede
-Spielleitung liest dasselbe. Dieselbe Kur kaeme fuer `anfrage.js` und
-vermutlich `freigabe.js` in Frage.
+Dieselbe Ablage ist der Grund, warum eine **zweite** Spielleiter-Verbindung ihr
+Verhandlungsfenster leer aufmacht („Gerade liegt keine Anfrage vor.") — sie hat
+die Sitzung nicht. Am Tisch ist normalerweise eine Spielleitung mit einem Konto
+angemeldet; das trifft also den Ausnahmefall, etwa einen Assistenten.
 
-Ebenfalls offen und im selben Zug zu prüfen: die Verhandlung bis zum Ende
-(Preis nennen, Spieler nimmt an) — die konnte am 08.09.2026 nicht abgeschlossen
-werden, weil die pruefende Verbindung die Sitzung nie hielt. Und die
-Blattansicht der In-Person Tools, nachdem `characterOf` dort nach `figuren.js`
-gezogen ist.
+## Noch zu prüfen
+
+- Die Verhandlung bis zum Ende: Preis nennen, Spieler nimmt an, Ware und Geld
+  wechseln. Am 08.09.2026 nicht durchgekommen, weil die prüfende Verbindung die
+  Sitzung nie hielt.
+- Die Blattansicht der In-Person Tools, seit `characterOf` dort nach
+  `figuren.js` gezogen ist.
 
 ## Vor jeder Änderung an preise.js oder kasse.js
 
