@@ -108,6 +108,30 @@ function fremdeKlemmen() {
   catch { return true; }
 }
 
+
+/**
+ * Wer kuemmert sich um **fremde** Fenster?
+ *
+ * Diese Datei liegt in mehreren Modulen. Waeren alle zustaendig, klemmte
+ * dasselbe fremde Fenster zwei- oder dreimal hintereinander - dieselbe
+ * Rechnung, dieselbe Lage, aber jedes Mal ein `setPosition`, und wer den
+ * Fehler spaeter sucht, findet drei Schuldige.
+ *
+ * Deshalb eine feste Reihenfolge statt "wer zuerst laedt": Das **erste
+ * aktive** Modul dieser Liste macht die Arbeit, alle uebrigen kuemmern sich
+ * nur um ihre eigenen Fenster. Vorn steht der Tisch, denn dort stehen die
+ * Tablets, auf denen ein zu grosses Fenster wirklich weh tut - und wer nur
+ * eines der beiden Module installiert hat, ist trotzdem versorgt.
+ */
+const WACHT = ["ninjos-inperson-tools", "ninjos-shops"];
+
+export function ichBinDieWacht() {
+  for (const id of WACHT) {
+    if (game.modules.get(id)?.active) return id === MODUL.id;
+  }
+  return false;
+}
+
 /** Gehoert das Fenster diesem Modul? */
 function unseres(app) {
   const liste = element(app)?.classList;
@@ -356,7 +380,7 @@ export function fensterPassenEinrichten() {
      * Bild. Wer das nicht will, schaltet es ab - dann bleibt es bei den
      * eigenen Fenstern.
      */
-    if (!eigenes && !fremdeKlemmen()) return;
+    if (!eigenes && (!ichBinDieWacht() || !fremdeKlemmen())) return;
     /*
      * **Kein `requestAnimationFrame`.** Der naheliegende Weg, auf das fertige
      * Bild zu warten, ist hier der falsche: Ein Browser, dessen Fenster
