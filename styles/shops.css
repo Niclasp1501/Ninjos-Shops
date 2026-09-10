@@ -4458,3 +4458,11 @@
   line-height: 1.3;
   color: var(--shops-text-blass);
 }
+
+/* Der Satz im Abbruch-Fenster. Er soll gelesen werden, nicht ueberflogen. */
+.ninjos-shops .shops-abbruch {
+  margin: 0;
+  padding: 4px 2px;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}

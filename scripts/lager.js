@@ -207,6 +207,24 @@ export function inhaltVon(item) {
 }
 
 /**
+ * Die Muenzen **im** Behaelter.
+ *
+ * Ein Beutel hat eine eigene Boerse (`system.currency`) - sie gehoert dem
+ * Beutel, nicht dem Traeger, und reist mit ihm. Am 10.09.2026 fiel auf, dass
+ * sie nirgends stand: Auf dem Tisch sah man die Fackel im Rucksack, aber nicht
+ * die zehn Gold darin.
+ */
+export function muenzenIn(item) {
+  if (item?.type !== "container") return {};
+  const raus = {};
+  for (const [sorte, n] of Object.entries(item.system?.currency ?? {})) {
+    const anzahl = Math.floor(Number(n) || 0);
+    if (anzahl > 0) raus[sorte] = anzahl;
+  }
+  return raus;
+}
+
+/**
  * Prueft eine Seite, ohne irgendetwas anzufassen.
  *
  * **Warum das eine eigene Funktion ist.** Am 10.09.2026 am Tisch: Ein Tausch
@@ -238,6 +256,13 @@ export function pruefeSeite(traeger, posten = [], muenzen = {}) {
     const drin = new Set(inhaltVon(item).map(k => k.id));
     for (const k of p.inhalt ?? []) {
       if (!drin.has(k.id)) return { ok: false, was: `${item.name}: ${k.name}` };
+    }
+    // Und seine eigene Boerse.
+    const jetzt = muenzenIn(item);
+    for (const [sorte, anzahl] of Object.entries(p.inhaltMuenzen ?? {})) {
+      if ((jetzt[sorte] ?? 0) < anzahl) {
+        return { ok: false, was: `${item.name}: ${anzahl} ${sorte}` };
+      }
     }
   }
 

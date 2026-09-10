@@ -124,6 +124,7 @@ export const SOCKET = {
   VORSITZ: "vorsitz",   // Spielleitung untereinander: wer fuehrt diese Bitte aus
   HANDEL: "handel",     // Handel mit einer Person ohne Laden
   TAUSCH: "tausch",     // Tausch zwischen zwei Spielern
+  ABBRUCH: "abbruch",   // Spielleitung -> Beteiligte: es lag nicht mehr da
   SCHAU: "schau"        // Spielleitung -> Schirme: welche Seite gerade steht
 };
 

@@ -40,13 +40,13 @@ const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
  */
 export function pruefeKauf({ laden, item, figur, menge, angebotCp = null }) {
   if (!laden || laden.type !== LADEN_TYP) return { ok: false, grund: "SHOPS.Kauf.KeinLaden" };
-  if (!item) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch" };
+  if (!item) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch", was: name ?? "" };
   if (!figur) return { ok: false, grund: "SHOPS.Kauf.KeineFigur" };
 
   const system = laden.system;
   const merkmal = item.flags?.[MODULE_ID] ?? {};
 
-  if (merkmal[WARE.VERBORGEN] === true) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch" };
+  if (merkmal[WARE.VERBORGEN] === true) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch", was: item.name };
   if (system.kaufmodus === KAUFMODUS.GESPERRT && angebotCp === null) {
     return { ok: false, grund: "SHOPS.Kauf.Gesperrt" };
   }
@@ -56,7 +56,7 @@ export function pruefeKauf({ laden, item, figur, menge, angebotCp = null }) {
   const bestand = Number(item.system?.quantity ?? 1);
 
   // Eine Dienstleistung wechselt nicht den Besitzer und geht nie zur Neige.
-  if (!dienst && bestand < stueck) return { ok: false, grund: "SHOPS.Kauf.NichtGenugDa" };
+  if (!dienst && bestand < stueck) return { ok: false, grund: "SHOPS.Kauf.NichtGenugDa", was: item.name };
   if (system.hoechstmenge > 0 && stueck > system.hoechstmenge) {
     return { ok: false, grund: "SHOPS.Kauf.ZuViel" };
   }

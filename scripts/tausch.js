@@ -38,10 +38,11 @@
  */
 
 import { MODULE_ID, SOCKET, SETTINGS } from "./const.js";
-import { uebergeben, pruefeSeite, inhaltVon } from "./lager.js";
+import { uebergeben, pruefeSeite, inhaltVon, muenzenIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
+import { abbruchMelden } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -155,7 +156,10 @@ export function tauschStand(tausch) {
 
   const schmuecken = seite => ({
     ...seite,
-    posten: (seite.posten ?? []).map(p => ({ ...p })),
+    posten: (seite.posten ?? []).map(p => ({
+      ...p, inhaltGeldText: muenzText(p.inhaltMuenzen),
+      darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length)
+    })),
     muenzText: muenzText(seite.muenzen),
     hatMuenzen: Object.keys(muenzenSaeubern(seite.muenzen)).length > 0,
     leer: !(seite.posten ?? []).length && !Object.keys(muenzenSaeubern(seite.muenzen)).length
@@ -294,7 +298,8 @@ export async function aufTausch(daten) {
       if (menge > 0) liste.push({
         itemId: item.id, name: item.name, img: item.img || null, menge,
         // Ein Beutel reist samt Inhalt - also gehoert der zu dem, was zugesagt wird.
-        inhalt: inhaltVon(item)
+        inhalt: inhaltVon(item),
+        inhaltMuenzen: muenzenIn(item)
       });
     }
     const boerse = figur.system?.currency ?? {};
@@ -321,12 +326,6 @@ export async function aufTausch(daten) {
     if (neu.a.bereit && neu.b.bereit) return void await ausfuehren(neu);
     return void await verteilen(neu);
   }
-}
-
-/** Ein fertiger Satz an genau eine Person. */
-function meldungText(benutzerId, text) {
-  if (benutzerId === game.user.id) return;
-  game.socket.emit(SOCKET.NAME, { typ: SOCKET.TAUSCH, tat: "meldung", an: benutzerId, text });
 }
 
 /** Eine kurze Nachricht an genau eine Person. */
@@ -365,9 +364,7 @@ async function ausfuehren(tausch) {
       ...tausch, zustand: "offen",
       a: { ...tausch.a, bereit: false }, b: { ...tausch.b, bereit: false }
     });
-    const text = game.i18n.format("SHOPS.Tausch.NichtMehrDa", { was: pruefung.was });
-    ui.notifications.warn(text);
-    for (const id of [tausch.a.benutzerId, tausch.b.benutzerId]) meldungText(id, text);
+    abbruchMelden([tausch.a.benutzerId, tausch.b.benutzerId], pruefung.was);
     return;
   }
 

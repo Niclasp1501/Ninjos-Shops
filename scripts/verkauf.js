@@ -52,7 +52,7 @@ export function verkaufbareSachen(figur) {
  */
 export function pruefeVerkauf({ laden, item, figur, menge }) {
   if (!laden || laden.type !== LADEN_TYP) return { ok: false, grund: "SHOPS.Kauf.KeinLaden" };
-  if (!item) return { ok: false, grund: "SHOPS.Verkauf.WegAusDemRucksack" };
+  if (!item) return { ok: false, grund: "SHOPS.Verkauf.WegAusDemRucksack", was: "" };
   if (!figur) return { ok: false, grund: "SHOPS.Kauf.KeineFigur" };
 
   const system = laden.system;
@@ -66,7 +66,7 @@ export function pruefeVerkauf({ laden, item, figur, menge }) {
 
   const stueck = Math.max(1, Math.floor(Number(menge) || 1));
   const bestand = Number(item.system?.quantity ?? 0);
-  if (bestand < stueck) return { ok: false, grund: "SHOPS.Verkauf.SoVieleNicht" };
+  if (bestand < stueck) return { ok: false, grund: "SHOPS.Verkauf.SoVieleNicht", was: item.name };
 
   const einzelCp = ankaufCp(grundpreisCp(item.system?.price), system);
   const summeCp = einzelCp * stueck;

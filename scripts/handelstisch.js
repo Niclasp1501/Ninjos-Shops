@@ -45,12 +45,13 @@ import { MODULE_ID, SOCKET, WARE } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, ausMuenzfeld,
          PREIS_SORTEN, KUPFERWERT } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
-import { uebergeben, pruefeSeite, inhaltVon } from "./lager.js";
+import { uebergeben, pruefeSeite, inhaltVon, muenzenIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
+import { abbruchMelden, istWortbruch } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -150,7 +151,9 @@ export function tischStand(handel) {
     ...handel,
     /* Ihre Seite: die Preise sieht nur die Spielleitung - siehe die Vorlagen. */
     seiteNsc: (handel.seiteNsc ?? []).map(p => ({
-      ...p, summeText: alsText(p.wertCp * p.menge, kuerzel)
+      ...p, summeText: alsText(p.wertCp * p.menge, kuerzel),
+      inhaltGeldText: muenzText(p.inhaltMuenzen),
+      darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length)
     })),
     /* Seine Seite: was sie anrechnet, und fuer die Spielleitung die Spanne. */
     seiteSpieler: (handel.seiteSpieler ?? []).map(p => {
@@ -158,6 +161,8 @@ export function tischStand(handel) {
       return {
         ...p,
         anrechnungText: alsText(wert, kuerzel),
+        inhaltGeldText: muenzText(p.inhaltMuenzen),
+        darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length),
         grundText: alsText((p.grundCp ?? 0) * p.menge, kuerzel),
         eigenerWert: Number.isFinite(p.anrechnungCp),
         anrechnungFeld: alsMuenzfeld(wert),
@@ -350,7 +355,8 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
       itemId: item.id, name: item.name, img: item.img || null, menge,
       wertCp: seite === "nsc" ? wertHergeben(person, item) : ankaufWert(person, item),
       // Ein Beutel reist samt Inhalt - also gehoert der zu dem, was zugesagt wird.
-      inhalt: inhaltVon(item)
+      inhalt: inhaltVon(item),
+      inhaltMuenzen: muenzenIn(item)
     };
     if (seite === "spieler") {
       zeile.grundCp = grundpreisCp(item.system?.price);
@@ -443,7 +449,8 @@ async function abschliessen(benutzerId) {
     const jetzt = spieler?.getFlag(MODULE_ID, TISCH);
     if (jetzt) await spieler.setFlag(MODULE_ID, TISCH,
       { ...jetzt, bereitSpieler: false, bereitGm: false });
-    ui.notifications.warn(game.i18n.localize(ergebnis.grund));
+    if (istWortbruch(ergebnis.grund)) abbruchMelden([], ergebnis.was);
+    else ui.notifications.warn(game.i18n.localize(ergebnis.grund));
   }
   await funken([benutzerId]);
 }

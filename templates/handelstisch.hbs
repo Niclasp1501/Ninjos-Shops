@@ -38,11 +38,11 @@
               <div class="shops-name">
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
-                {{#if inhalt.length}}
+                {{#if darinEtwas}}
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
                   <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
-                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}</small>
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
                 {{/if}}
               </div>
               {{!-- Kein Preis am Stück: Was sie will, steht als eine Zahl
@@ -75,11 +75,11 @@
               <div class="shops-name">
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
-                {{#if inhalt.length}}
+                {{#if darinEtwas}}
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
                   <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
-                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}</small>
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
                 {{/if}}
               </div>
               <span class="shops-menge">{{menge}}&times;</span>

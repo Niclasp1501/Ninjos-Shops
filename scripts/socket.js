@@ -27,6 +27,7 @@ import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 import { aufTisch } from "./handelstisch.js";
 import { aufTausch } from "./tausch.js";
+import { aufAbbruch, abbruchZeigen, istWortbruch } from "./melden.js";
 import { aufSchau, schauNachfuehren } from "./schau.js";
 import { alsText } from "./preise.js";
 
@@ -42,6 +43,7 @@ async function onSocket(daten) {
     case SOCKET.ANFRAGE:     return void aufAnfrage(daten);
     case SOCKET.VORSITZ:     return void aufVorsitz(daten);
     case SOCKET.HANDEL:      return void aufTisch(daten);
+    case SOCKET.ABBRUCH:     return void aufAbbruch(daten);
     case SOCKET.TAUSCH: {
       // Eine Meldung gilt genau einer Person; alles andere geht an den Tausch.
       if (daten.tat === "meldung") {
@@ -109,6 +111,13 @@ export function aufAntwort({ an, ergebnis }) {
    * gescheitert, und er klickte gleich noch einmal.
    */
   if (ergebnis.ok) ui.notifications.info(ergebnis.text);
+  /*
+   * **Ein gebrochenes Wort bekommt ein Fenster, keine Meldung.** Wer etwas
+   * vor sich liegen sah und es beim Abschluss nicht bekommt, muss den Grund
+   * lesen koennen - eine Benachrichtigung verschwindet von selbst und ist in
+   * der Blattansicht ganz ausgeblendet. Siehe melden.js.
+   */
+  else if (istWortbruch(ergebnis.grund)) abbruchZeigen(ergebnis.was ?? "");
   else if (ergebnis.grundText) ui.notifications.warn(ergebnis.grundText);
   else {
     /*
