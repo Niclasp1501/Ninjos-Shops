@@ -131,14 +131,19 @@
     </div>
 
     <footer class="shops-tisch-fuss">
-      {{!-- Zwei Zusagen. Der Knopf zeigt, wo man steht: zusagen, warten, oder
-            die Zusage zurücknehmen. --}}
+      {{!-- **Der Knopf sagt, was das Drücken jetzt bewirkt.** Vorher stand dort
+            immer „Handel abschließen" — auch dann, wenn die andere Seite noch
+            gar nicht zugesagt hatte und gar nichts abgeschlossen wurde. Also:
+            zusagen, solange nur die eigene Zusage entsteht; abschließen erst,
+            wenn die andere schon steht und der Druck den Tausch wirklich
+            ausführt; und zurücknehmen, wenn man selbst schon zugesagt hat. --}}
       <button type="button" class="shops-kaufen {{#if stand.bereitSpieler}}shops-zweit{{/if}}"
               data-action="annehmen" {{#if stand.leer}}disabled{{/if}}>
-        <i class="fa-solid {{#if stand.bereitSpieler}}fa-rotate-left{{else}}fa-handshake{{/if}}"
+        <i class="fa-solid {{#if stand.bereitSpieler}}fa-rotate-left{{else if stand.bereitGm}}fa-check{{else}}fa-handshake{{/if}}"
            aria-hidden="true"></i>
         {{#if stand.bereitSpieler}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
-        {{else}}{{localize "SHOPS.Tisch.Abschliessen"}}{{/if}}
+        {{else if stand.bereitGm}}{{localize "SHOPS.Tisch.Abschliessen"}}
+        {{else}}{{localize "SHOPS.Tisch.Zusagen"}}{{/if}}
       </button>
       {{#if stand.bereitSpieler}}
         <span class="shops-tisch-zusage">

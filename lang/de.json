@@ -314,7 +314,7 @@
   "SHOPS.Tisch.GeldWeg": "Das Geld liegt nicht mehr da.",
   "SHOPS.Tisch.PreisUebernehmen": "Übernehmen",
   "SHOPS.Tisch.Abschliessen": "Handel abschließen",
-  "SHOPS.Tisch.Bestaetigen": "Handel bestätigen",
+  "SHOPS.Tisch.Zusagen": "Zusagen",
   "SHOPS.Tisch.ZusageZurueck": "Zusage zurücknehmen",
   "SHOPS.Tisch.WartetAufSie": "Zugesagt — {person} ist am Zug.",
   "SHOPS.Tisch.SieHatZugesagt": "{person} hat zugesagt.",

@@ -314,7 +314,7 @@
   "SHOPS.Tisch.GeldWeg": "That coin is no longer there.",
   "SHOPS.Tisch.PreisUebernehmen": "Apply",
   "SHOPS.Tisch.Abschliessen": "Close the deal",
-  "SHOPS.Tisch.Bestaetigen": "Confirm the deal",
+  "SHOPS.Tisch.Zusagen": "Agree",
   "SHOPS.Tisch.ZusageZurueck": "Take the agreement back",
   "SHOPS.Tisch.WartetAufSie": "Agreed — {person} has the say now.",
   "SHOPS.Tisch.SieHatZugesagt": "{person} has agreed.",
