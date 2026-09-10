@@ -166,7 +166,8 @@
               wenn die andere schon steht und der Druck den Tausch wirklich
               ausführt; und zurücknehmen, wenn man selbst schon zugesagt hat. --}}
         <button type="button" class="shops-kaufen {{#if stand.ich.bereit}}shops-zweit{{/if}}"
-                data-action="annehmen" {{#if stand.leer}}disabled{{/if}}>
+                data-action="annehmen"
+                {{#if stand.leer}}disabled{{else if stand.ohneSpielleitung}}disabled{{/if}}>
           <i class="fa-solid {{#if stand.ich.bereit}}fa-rotate-left{{else if stand.er.bereit}}fa-check{{else}}fa-handshake{{/if}}"
              aria-hidden="true"></i>
           {{#if stand.ich.bereit}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
@@ -181,6 +182,15 @@
           <span class="shops-tisch-zusage shops-zugesagt">
             {{localize "SHOPS.Tisch.SieHatZugesagt" person=stand.er.figurName}}
           </span>
+        {{/if}}
+        {{#if stand.ohneSpielleitung}}
+          {{!-- Ohne Spielleitung fuehrt niemand aus. Das steht im Fenster und
+              nicht als Meldung: Eine Meldung verschwindet, und in der
+              Blattansicht wird sie ganz ausgeblendet. --}}
+          <span class="shops-tisch-zusage shops-wartet">
+            <i class="fa-solid fa-user-slash" aria-hidden="true"></i>
+            {{localize "SHOPS.Tisch.OhneSpielleitung"}}
+        </span>
         {{/if}}
         {{!-- Abgesetzt nach rechts, wie am Handelstisch: zwei Knöpfe
               nebeneinander sind auf einem Tablet ein Vertipper auseinander. --}}

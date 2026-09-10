@@ -169,6 +169,13 @@ export function tauschStand(tausch) {
     ...tausch,
     ich: schmuecken(tausch[ich]),
     er: schmuecken(tausch[er]),
+    /*
+     * **Ohne Spielleitung fuehrt niemand aus.** Am 10.09.2026 gemeldet: Die
+     * Spielleitung ging waehrend eines offenen Tauschs offline, der Knopf tat
+     * nichts mehr, und niemand sagte warum. Jetzt steht es im Fenster, und
+     * der Knopf laesst sich gar nicht erst druecken.
+     */
+    ohneSpielleitung: !game.users.activeGM,
     gefragt: tausch.zustand === "gefragt",
     // Nur der Gefragte beantwortet die Frage; der Fragende wartet.
     binGefragt: tausch.zustand === "gefragt" && ich === "b",
@@ -183,6 +190,10 @@ export function tauschStand(tausch) {
 /* ── Was der Spieler schickt ───────────────────────────────────────── */
 
 function bitte(tat, mehr = {}) {
+  // Wer die Lage ueber dem Tisch benutzt, kommt an dem gesperrten Knopf vorbei.
+  if (!game.users.activeGM) {
+    return void ui.notifications.warn(game.i18n.localize("SHOPS.Tisch.OhneSpielleitung"));
+  }
   const paket = { typ: SOCKET.TAUSCH, tat, spielerId: game.user.id,
                   bitteId: bittenKennung(), ...mehr };
   game.socket.emit(SOCKET.NAME, paket);
@@ -674,6 +685,8 @@ export function tauschEinrichten() {
     if (!foundry.utils.hasProperty(aenderungen, `flags.${MODULE_ID}.${TAUSCH}`)) return;
     tauschZeichnen();
   });
+  // Kommt oder geht die Spielleitung, aendert sich, ob der Tisch benutzbar ist.
+  Hooks.on("userConnected", () => { tauschZeichnen(); knopfSetzen(); });
   Hooks.on("renderPlayers", (app, element) => knopfSetzen(element));
   knopfSetzen();
 

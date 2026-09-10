@@ -192,6 +192,8 @@ export function tischStand(handel) {
      * zweien; jede Aenderung danach setzt beide zurueck, denn die alte Zusage
      * galt einem anderen Tisch.
      */
+    // Ohne Spielleitung fuehrt niemand aus, siehe tausch.js.
+    ohneSpielleitung: !game.users.activeGM,
     bereitSpieler: handel.bereitSpieler === true,
     bereitGm: handel.bereitGm === true,
 
@@ -614,6 +616,9 @@ async function abschliessenAusfuehren(benutzerId) {
 /* ── Was der Spieler schickt ───────────────────────────────────────── */
 
 function bitte(tat, mehr = {}) {
+  if (!game.users.activeGM) {
+    return void ui.notifications.warn(game.i18n.localize("SHOPS.Tisch.OhneSpielleitung"));
+  }
   const paket = { typ: SOCKET.HANDEL, tat, spielerId: game.user.id,
                   bitteId: bittenKennung(), ...mehr };
   game.socket.emit(SOCKET.NAME, paket);
@@ -852,6 +857,7 @@ export function tischEinrichten() {
     else tischZeichnen();
   });
 
+  Hooks.on("userConnected", () => tischZeichnen());
   tischHakenGM();
   if (eigenerTisch()) tischZeigen();
 }

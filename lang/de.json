@@ -294,6 +294,7 @@
   "SHOPS.Tisch.Auflegen": "Auf den Tisch",
   "SHOPS.Tisch.Geld": "Geld",
   "SHOPS.Tisch.Darin": "darin:",
+  "SHOPS.Tisch.OhneSpielleitung": "Die Spielleitung ist gerade nicht da. Der Handel wartet, bis sie wieder online ist.",
   "SHOPS.Tisch.AbbruchTitel": "Handel abgebrochen",
   "SHOPS.Tisch.AbbruchText": "„{was}“ war zugesagt, lag beim Abschluss aber nicht mehr vor. Es wurde nichts getauscht, weder Ware noch Münzen. Was auf dem Tisch liegt, bleibt dort bis zum Abschluss.",
   "SHOPS.Tisch.AbbruchVerstanden": "Verstanden",

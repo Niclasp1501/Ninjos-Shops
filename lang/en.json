@@ -294,6 +294,7 @@
   "SHOPS.Tisch.Auflegen": "Onto the table",
   "SHOPS.Tisch.Geld": "Coin",
   "SHOPS.Tisch.Darin": "inside:",
+  "SHOPS.Tisch.OhneSpielleitung": "No gamemaster is here right now. The trade waits until one is back online.",
   "SHOPS.Tisch.AbbruchTitel": "Trade stopped",
   "SHOPS.Tisch.AbbruchText": "\"{was}\" was promised but was no longer there when the trade closed. Nothing changed hands, no goods and no coin. What lies on the table stays there until the trade is done.",
   "SHOPS.Tisch.AbbruchVerstanden": "Understood",

@@ -4466,3 +4466,8 @@
   font-size: 0.95rem;
   line-height: 1.45;
 }
+
+/* Der Hinweis, dass gerade niemand ausfuehren kann. Er ist kein Fehler,
+   sondern ein Zustand, also gedaempft und nicht rot. */
+.ninjos-shops .shops-tisch-zusage.shops-wartet { color: var(--shops-text-blass); }
+.ninjos-shops .shops-tisch-zusage.shops-wartet i { margin-right: 6px; }
