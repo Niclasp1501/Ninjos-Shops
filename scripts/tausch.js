@@ -42,7 +42,7 @@ import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
-import { abbruchMelden, erfolgMelden } from "./melden.js";
+import { abbruchMelden, erfolgMelden, hinweisMelden } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -286,12 +286,23 @@ export async function aufTausch(daten) {
     // Nicht, waehrend die Ware unterwegs ist: Zwischen den beiden Uebergaben
     // gibt es nichts mehr abzusagen.
     if (!["gefragt", "offen"].includes(tausch.zustand)) return;
-    return void await abraeumen(tausch);
+    await abraeumen(tausch);
+    // Nur der Gegenseite. Wer selbst aufgibt, hat die Frage davor beantwortet.
+    const andere = tausch.a.benutzerId === fragender.id ? tausch.b : tausch.a;
+    return void hinweisMelden([andere.benutzerId], "SHOPS.Tausch.BeendetTitel",
+      game.i18n.format("SHOPS.Tausch.BeendetText",
+        { person: foundry.utils.escapeHTML(tausch[seite].figurName ?? "") }));
   }
 
   if (daten.tat === "antworten") {
     if (seite !== "b" || tausch.zustand !== "gefragt") return;
-    if (!daten.ja) return void await abraeumen(tausch);
+    if (!daten.ja) {
+      await abraeumen(tausch);
+      // Der Fragende wartet auf eine Antwort. Ein verschwundenes Fenster ist keine.
+      return void hinweisMelden([tausch.a.benutzerId], "SHOPS.Tausch.BeendetTitel",
+        game.i18n.format("SHOPS.Tausch.AbgelehntText",
+          { person: foundry.utils.escapeHTML(tausch.b.figurName ?? "") }));
+    }
     return void await verteilen({ ...tausch, zustand: "offen" });
   }
 

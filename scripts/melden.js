@@ -118,9 +118,39 @@ export function erfolgMelden(benutzerIds = [], text) {
   erfolgZeigen(text);
 }
 
+/**
+ * Ein schlichter Hinweis, wenn ein Fenster sonst wortlos verschwaende.
+ *
+ * **Ein Fenster, das von selbst zugeht, laesst eine Frage zurueck.** Bricht
+ * die Gegenseite ab, lehnt sie ab, oder raeumt die Spielleitung den Tisch,
+ * dann ist bei allen anderen der Tisch weg und niemand hat gesagt, warum. Am
+ * 10.09.2026 als das genannt, was am meisten stoert: „Ich mag es nicht, wenn
+ * Fenster sich einfach schliessen und man weiss nicht warum."
+ *
+ * Wer selbst abgebrochen hat, bekommt keins: Er hat die Frage davor schon
+ * beantwortet und weiss Bescheid.
+ */
+export function hinweisZeigen(titel, text) {
+  fensterZeigen({
+    titel,
+    symbol: "fa-solid fa-circle-info",
+    knopf: "SHOPS.Tisch.ErfolgOk",
+    inhalt: text
+  });
+}
+
+export function hinweisMelden(benutzerIds = [], titel, text) {
+  const fremde = benutzerIds.filter(id => id && id !== game.user.id);
+  if (fremde.length) {
+    game.socket.emit(SOCKET.NAME, { typ: SOCKET.ABBRUCH, art: "hinweis", an: fremde, titel, text });
+  }
+  if (benutzerIds.includes(game.user.id)) hinweisZeigen(titel, text);
+}
+
 /** Einstiegspunkt aus socket.js. */
 export function aufAbbruch(daten) {
   if (!daten?.an?.includes(game.user.id)) return;
   if (daten.art === "erfolg") return void erfolgZeigen(daten.text);
+  if (daten.art === "hinweis") return void hinweisZeigen(daten.titel, daten.text);
   abbruchZeigen(daten.was);
 }

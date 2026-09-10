@@ -51,7 +51,7 @@ import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
-import { abbruchMelden, erfolgZeigen, istWortbruch } from "./melden.js";
+import { abbruchMelden, erfolgZeigen, hinweisMelden, istWortbruch } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -1017,7 +1017,12 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #beenden() {
+    const person = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH)?.personName ?? "";
     await tischBeenden([this.benutzerId]);
+    // Beim Spieler geht der Tisch sonst wortlos zu.
+    hinweisMelden([this.benutzerId], "SHOPS.Tisch.AbgeraeumtTitel",
+      game.i18n.format("SHOPS.Tisch.AbgeraeumtText",
+        { person: foundry.utils.escapeHTML(person) }));
     this.close();
   }
 }
