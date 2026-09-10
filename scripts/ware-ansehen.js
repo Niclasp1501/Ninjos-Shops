@@ -75,9 +75,56 @@ export function wareAnsehen(traeger, itemId) {
   const STUFEN = CONST.DOCUMENT_OWNERSHIP_LEVELS;
   daten.ownership = { default: STUFEN.OBSERVER };
 
+  /*
+   * **Ein Behaelter ohne seinen Inhalt ist eine halbe Auskunft.**
+   *
+   * Was in einem Beutel liegt, sind in dnd5e keine Unterobjekte, sondern
+   * **Nachbaritems auf demselben Akteur**, die ueber `system.container` auf
+   * ihn zeigen. Eine Kopie ohne Akteur (`parent: null`) hat diese Nachbarn
+   * nicht: Der Bogen oeffnete mit leerem Reiter „Inhalte", und weil das
+   * Gewicht des Inhalts mitzaehlt, stand dort auch die falsche Last.
+   * Am 10.09.2026 am Tisch aufgefallen, an einem Rucksack mit einer Fackel
+   * und zehn Gold darin.
+   *
+   * Also bekommt die Kopie einen fluechtigen Traeger: einen Akteur, der in
+   * keiner Datenbank liegt und nur diesen Beutel und seinen Inhalt haelt. Die
+   * Kennungen aendern sich beim Kopieren, deshalb wird `system.container`
+   * danach auf die neuen umgehaengt - dieselbe Rechnung wie beim echten
+   * Uebergeben in lager.js.
+   */
+  const istBehaelter = item.type === "container";
+  const inhalt = istBehaelter ? [...(item.system?.allContainedItems ?? [])] : [];
+
   const bauen = () => {
     try {
-      return new Item.implementation(daten, { parent: null });
+      if (!istBehaelter) return new Item.implementation(daten, { parent: null });
+
+      const huelle = { ...daten, _id: foundry.utils.randomID() };
+      const kinder = inhalt.map(k => {
+        const kind = k.toObject();
+        kind._id = foundry.utils.randomID();
+        delete kind.ownership;
+        return kind;
+      });
+
+      // Erst alle neuen Kennungen sammeln, dann umhaengen: Ein Beutel im
+      // Beutel zeigt auf eine Kennung, die spaeter in der Liste steht.
+      const neueKennung = new Map([[item.id, huelle._id]]);
+      inhalt.forEach((k, i) => neueKennung.set(k.id, kinder[i]._id));
+      kinder.forEach((kind, i) => {
+        const alterOrt = inhalt[i].system?.container;
+        kind.system = kind.system ?? {};
+        kind.system.container = neueKennung.get(alterOrt) ?? huelle._id;
+      });
+
+      const traegerDaten = {
+        name: traeger.name,
+        type: traeger.type,
+        ownership: { ...daten.ownership },
+        items: [huelle, ...kinder]
+      };
+      const schatten = new Actor.implementation(traegerDaten, { parent: null });
+      return schatten.items.get(huelle._id) ?? null;
     } catch (fehler) {
       console.error(`${MODULE_ID} | Gegenstandsbogen konnte nicht geoeffnet werden`, fehler);
       return null;
