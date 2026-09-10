@@ -207,6 +207,29 @@ export function inhaltVon(item) {
 }
 
 /**
+ * Steckt dieses Stueck in einem Behaelter aus dieser Menge? Auch tief.
+ *
+ * **Wozu.** Wer den Rucksack hinlegt, legt die Decke darin mit hin. Steht die
+ * Decke daneben noch einmal als eigene Zeile, sieht es aus, als gaebe man sie
+ * zweimal - uebergeben wird sie richtigerweise nur einmal, aber das Bild
+ * luegt. Am 10.09.2026 am Tisch aufgefallen.
+ *
+ * Gelaufen wird nach oben, nicht nach unten: `system.container` zeigt immer
+ * nur auf den naechsten Behaelter, und ein Beutel kann in einem Beutel liegen.
+ */
+export function stecktIn(item, behaelterIds, traeger) {
+  if (!behaelterIds?.size) return false;
+  let ort = item?.system?.container;
+  const gesehen = new Set();
+  while (ort && !gesehen.has(ort)) {
+    if (behaelterIds.has(ort)) return true;
+    gesehen.add(ort);
+    ort = traeger?.items?.get(ort)?.system?.container;
+  }
+  return false;
+}
+
+/**
  * Die Muenzen **im** Behaelter.
  *
  * Ein Beutel hat eine eigene Boerse (`system.currency`) - sie gehoert dem

@@ -38,7 +38,7 @@
  */
 
 import { MODULE_ID, SOCKET, SETTINGS } from "./const.js";
-import { uebergeben, pruefeSeite, inhaltVon, muenzenIn } from "./lager.js";
+import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
@@ -300,10 +300,20 @@ export async function aufTausch(daten) {
   if (daten.tat === "seite") {
     const figur = game.actors.get(tausch[seite].figurId);
     if (!figur) return;
+    /*
+     * Was in einem hingelegten Behaelter steckt, reist mit ihm. Es daneben
+     * noch einmal aufzufuehren, verspricht dasselbe Stueck zweimal.
+     */
+    const behaelter = new Set((daten.posten ?? [])
+      .map(p => figur.items.get(p.itemId))
+      .filter(i => i?.type === "container")
+      .map(i => i.id));
+
     const liste = [];
     for (const p of daten.posten ?? []) {
       const item = figur.items.get(p.itemId);
       if (!item || liste.some(z => z.itemId === item.id)) continue;
+      if (stecktIn(item, behaelter, figur)) continue;
       const vorrat = item.type === "container" ? 1 : Number(item.system?.quantity ?? 1);
       const menge = Math.min(Math.max(1, Math.floor(Number(p.menge) || 1)), vorrat);
       if (menge > 0) liste.push({

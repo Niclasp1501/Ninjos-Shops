@@ -77,13 +77,34 @@ export class Wahl {
    */
   kontext(vorrat, boerse) {
     if (this.modus === "tisch") return null;
+    /*
+     * **Was in einem gewaehlten Behaelter steckt, ist schon dabei.** Solche
+     * Zeilen werden nicht ausgegraut versteckt, sondern sagen es: Der Spieler
+     * hat den Beutel ja gerade selbst gewaehlt und soll sehen, was darin
+     * mitgeht. Anklicken ergaebe nichts, deshalb sind sie kein Schalter mehr.
+     */
+    const gewaehlteBehaelter = new Set([...this.sachen.keys()].filter(id =>
+      (vorrat ?? []).find(i => i.id === id)?.type === "container"));
+    const wo = id => (vorrat ?? []).find(i => i.id === id);
+    const reistMit = item => {
+      let ort = item.system?.container, gesehen = new Set();
+      while (ort && !gesehen.has(ort)) {
+        if (gewaehlteBehaelter.has(ort)) return wo(ort)?.name ?? "";
+        gesehen.add(ort);
+        ort = wo(ort)?.system?.container;
+      }
+      return null;
+    };
+
     const zeilen = (vorrat ?? [])
       .map(item => {
         const hoechstens = item.type === "container" ? 1 : Math.max(1, Number(item.system?.quantity ?? 1));
         const gewaehlt = this.sachen.get(item.id) ?? 0;
+        const mit = reistMit(item);
         return {
           id: item.id, name: item.name, img: item.img || null,
-          hoechstens, gewaehlt, an: gewaehlt > 0, stapel: hoechstens > 1
+          hoechstens, gewaehlt, an: gewaehlt > 0, stapel: hoechstens > 1,
+          reistMit: mit, imBeutel: !!mit
         };
       })
       .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
@@ -102,10 +123,28 @@ export class Wahl {
     };
   }
 
-  /** Der Entwurf als das, was an den Tisch geht. */
-  ergebnis() {
+  /**
+   * Der Entwurf als das, was an den Tisch geht.
+   *
+   * `vorrat` wird gebraucht, um herauszufinden, was in einem gewaehlten
+   * Behaelter steckt: Das reist mit ihm und darf nicht noch einmal einzeln
+   * mitgeschickt werden. Die Spielleitung sortiert es ohnehin aus; hier
+   * geschieht es schon, damit das Fenster nicht kurz etwas anderes zeigt.
+   */
+  ergebnis(vorrat = []) {
+    const behaelter = new Set([...this.sachen.keys()].filter(id =>
+      vorrat.find(i => i.id === id)?.type === "container"));
+    const drin = id => {
+      let ort = vorrat.find(i => i.id === id)?.system?.container, gesehen = new Set();
+      while (ort && !gesehen.has(ort)) {
+        if (behaelter.has(ort)) return true;
+        gesehen.add(ort);
+        ort = vorrat.find(i => i.id === ort)?.system?.container;
+      }
+      return false;
+    };
     const posten = [...this.sachen.entries()]
-      .filter(([, n]) => n > 0)
+      .filter(([id, n]) => n > 0 && !drin(id))
       .map(([itemId, menge]) => ({ itemId, menge }));
     return { posten, muenzen: muenzenSaeubern(this.muenzen) };
   }
@@ -156,7 +195,7 @@ export const WAHL_AKTIONEN = {
    * den beiden Lagen eine Haelfte verlieren.
    */
   wahlAufDenTisch() {
-    const { posten, muenzen } = this.wahl.ergebnis();
+    const { posten, muenzen } = this.wahl.ergebnis(this.wahlVorrat());
     this.wahlAbschicken(posten, muenzen);
     this.wahl.modus = "tisch";
     this.render();

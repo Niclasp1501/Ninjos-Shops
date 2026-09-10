@@ -306,6 +306,7 @@
   "SHOPS.Tisch.Muenzen": "Münzen dazulegen",
   "SHOPS.Tisch.Zurueck": "Zurück",
   "SHOPS.Tisch.Hast": "hast {anzahl}",
+  "SHOPS.Tisch.ReistMit": "reist in {beutel} mit",
   "SHOPS.Tisch.Alles": "alles",
   "SHOPS.Tisch.KeineSachen": "Nichts dabei, das man hinlegen könnte.",
   "SHOPS.Tisch.KeineMuenzen": "Keine Münzen dabei.",

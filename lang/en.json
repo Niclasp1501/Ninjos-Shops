@@ -306,6 +306,7 @@
   "SHOPS.Tisch.Muenzen": "Add coin",
   "SHOPS.Tisch.Zurueck": "Back",
   "SHOPS.Tisch.Hast": "have {anzahl}",
+  "SHOPS.Tisch.ReistMit": "travels inside {beutel}",
   "SHOPS.Tisch.Alles": "all",
   "SHOPS.Tisch.KeineSachen": "Nothing here that could go on the table.",
   "SHOPS.Tisch.KeineMuenzen": "No coin to put down.",

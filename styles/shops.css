@@ -4474,3 +4474,11 @@
 
 /* Der gelungene Fall bekommt dasselbe Fenster, nur nicht denselben Ton. */
 .ninjos-shops .shops-abbruch.shops-gelungen { line-height: 1.6; }
+
+/* Was in einem gewaehlten Beutel steckt: sichtbar, aber kein Schalter mehr. */
+.ninjos-shops .shops-wahl-zeile.shops-reist-mit {
+  opacity: 0.7;
+  border-style: dashed;
+}
+.ninjos-shops .shops-wahl-zeile.shops-reist-mit .shops-wahl-tipp { cursor: default; }
+.ninjos-shops .shops-wahl-zeile.shops-reist-mit .shops-wahl-marke { color: var(--shops-gold); }

@@ -45,7 +45,7 @@ import { MODULE_ID, SOCKET, WARE } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, ausMuenzfeld,
          PREIS_SORTEN, KUPFERWERT } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
-import { uebergeben, pruefeSeite, inhaltVon, muenzenIn } from "./lager.js";
+import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
@@ -344,10 +344,17 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
    */
   const vorher = new Map((handel[feld] ?? []).map(p => [p.itemId, p]));
 
+  // Was in einem hingelegten Behaelter steckt, reist mit ihm, siehe tausch.js.
+  const behaelter = new Set((posten ?? [])
+    .map(p => traeger.items.get(p.itemId))
+    .filter(i => i?.type === "container")
+    .map(i => i.id));
+
   const liste = [];
   for (const p of posten ?? []) {
     const item = traeger.items.get(p.itemId);
     if (!item || liste.some(z => z.itemId === item.id)) continue;
+    if (stecktIn(item, behaelter, traeger)) continue;
     const vorrat = item.type === "container" ? 1 : Number(item.system?.quantity ?? 1);
     const menge = Math.min(Math.max(1, Math.floor(Number(p.menge) || 1)), vorrat);
     if (menge <= 0) continue;
