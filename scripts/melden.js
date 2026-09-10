@@ -63,8 +63,36 @@ export function abbruchMelden(benutzerIds = [], was) {
   abbruchZeigen(was);
 }
 
+/**
+ * Und der gelungene Fall.
+ *
+ * **Ein Tisch verschwindet nach dem Abschluss.** Beim Laden bleibt das
+ * Fenster stehen und zeigt den neuen Bestand; am Handelstisch und beim Tausch
+ * raeumt sich alles ab, und ohne ein Wort dazu bleibt die Frage offen, ob es
+ * geklappt hat und was genau gewechselt ist. Deshalb dasselbe Fenster wie beim
+ * Abbruch, nur mit dem, was geschehen ist.
+ */
+export function erfolgZeigen(text) {
+  DialogV2.prompt({
+    window: { title: game.i18n.localize("SHOPS.Tisch.ErfolgTitel"), icon: "fa-solid fa-handshake" },
+    classes: ["ninjos-shops"],
+    content: `<p class="shops-abbruch shops-gelungen">${text}</p>`,
+    ok: { label: game.i18n.localize("SHOPS.Tisch.ErfolgOk"), icon: "fa-solid fa-check" }
+  }).catch(() => {});
+}
+
+/** Den Beteiligten zeigen, und diesem Client selbst. */
+export function erfolgMelden(benutzerIds = [], text) {
+  const fremde = benutzerIds.filter(id => id && id !== game.user.id);
+  if (fremde.length) {
+    game.socket.emit(SOCKET.NAME, { typ: SOCKET.ABBRUCH, art: "erfolg", an: fremde, text });
+  }
+  erfolgZeigen(text);
+}
+
 /** Einstiegspunkt aus socket.js. */
 export function aufAbbruch(daten) {
   if (!daten?.an?.includes(game.user.id)) return;
+  if (daten.art === "erfolg") return void erfolgZeigen(daten.text);
   abbruchZeigen(daten.was);
 }

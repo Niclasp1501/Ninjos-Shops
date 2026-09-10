@@ -610,7 +610,10 @@ async function abschliessenAusfuehren(benutzerId) {
     });
   }
 
-  return { ok: true, text: game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name }) };
+  // `tisch` sagt der Gegenstelle, dass das ein Fenster wert ist und keine
+  // Meldung: Der Tisch raeumt sich ab, es bleibt sonst nichts zu sehen.
+  return { ok: true, tisch: true,
+           text: game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name }) };
 }
 
 /* ── Was der Spieler schickt ───────────────────────────────────────── */

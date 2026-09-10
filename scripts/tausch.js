@@ -42,7 +42,7 @@ import { uebergeben, pruefeSeite, inhaltVon, muenzenIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
-import { abbruchMelden } from "./melden.js";
+import { abbruchMelden, erfolgMelden } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -387,22 +387,33 @@ async function ausfuehren(tausch) {
   await abraeumen(tausch);
 
   const fehler = berichte.map(b => b.fehler).filter(Boolean);
+  if (!fehler.length) {
+    erfolgMelden([tausch.a.benutzerId, tausch.b.benutzerId],
+      game.i18n.format("SHOPS.Tausch.ErfolgText", {
+        a: foundry.utils.escapeHTML(figurA.name), wasA: liste(tausch.a),
+        b: foundry.utils.escapeHTML(figurB.name), wasB: liste(tausch.b)
+      }));
+  }
   if (fehler.length) {
     ui.notifications.error(`${game.i18n.localize("SHOPS.Tausch.Steckengeblieben")} ${fehler.join(" | ")}`);
   }
   await ansage(tausch, figurA, figurB, fehler.length > 0);
 }
 
+/** Was eine Seite hingelegt hat, als Satzteil. */
+function liste(seite) {
+  const teile = [
+    ...(seite.posten ?? []).map(p => p.menge > 1
+      ? `${foundry.utils.escapeHTML(p.name)} &times;${p.menge}`
+      : foundry.utils.escapeHTML(p.name)),
+    muenzText(seite.muenzen)
+  ].filter(Boolean);
+  return teile.length ? teile.join(", ") : game.i18n.localize("SHOPS.Tausch.Nichts");
+}
+
 /** Eine Karte im Chat, damit der Tisch sieht, was geschehen ist. */
 async function ansage(tausch, figurA, figurB, kaputt) {
   if (!einstellung(SETTINGS.TAUSCH_ANSAGE)) return;
-  const liste = seite => {
-    const teile = [
-      ...(seite.posten ?? []).map(p => p.menge > 1 ? `${p.name} &times;${p.menge}` : p.name),
-      muenzText(seite.muenzen)
-    ].filter(Boolean);
-    return teile.length ? teile.join(", ") : game.i18n.localize("SHOPS.Tausch.Nichts");
-  };
   const zeile = (figur, seite) =>
     `<p><strong>${foundry.utils.escapeHTML(figur.name)}</strong> ${game.i18n.localize("SHOPS.Tausch.Gibt")} ${liste(seite)}</p>`;
 

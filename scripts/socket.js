@@ -27,7 +27,7 @@ import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 import { aufTisch } from "./handelstisch.js";
 import { aufTausch } from "./tausch.js";
-import { aufAbbruch, abbruchZeigen, istWortbruch } from "./melden.js";
+import { aufAbbruch, abbruchZeigen, erfolgZeigen, istWortbruch } from "./melden.js";
 import { aufSchau, schauNachfuehren } from "./schau.js";
 import { alsText } from "./preise.js";
 
@@ -110,7 +110,10 @@ export function aufAntwort({ an, ergebnis }) {
    * als Warnung zu zeigen, liesse den Spieler denken, sein Kauf sei
    * gescheitert, und er klickte gleich noch einmal.
    */
-  if (ergebnis.ok) ui.notifications.info(ergebnis.text);
+  // Ein Tisch raeumt sich nach dem Abschluss ab. Eine Meldung waere dann das
+  // Einzige, was den Erfolg bezeugt, und die ist in der Blattansicht unsichtbar.
+  if (ergebnis.ok && ergebnis.tisch) erfolgZeigen(foundry.utils.escapeHTML(ergebnis.text ?? ""));
+  else if (ergebnis.ok) ui.notifications.info(ergebnis.text);
   /*
    * **Ein gebrochenes Wort bekommt ein Fenster, keine Meldung.** Wer etwas
    * vor sich liegen sah und es beim Abschluss nicht bekommt, muss den Grund

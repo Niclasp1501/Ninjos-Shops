@@ -4471,3 +4471,6 @@
    sondern ein Zustand, also gedaempft und nicht rot. */
 .ninjos-shops .shops-tisch-zusage.shops-wartet { color: var(--shops-text-blass); }
 .ninjos-shops .shops-tisch-zusage.shops-wartet i { margin-right: 6px; }
+
+/* Der gelungene Fall bekommt dasselbe Fenster, nur nicht denselben Ton. */
+.ninjos-shops .shops-abbruch.shops-gelungen { line-height: 1.6; }
