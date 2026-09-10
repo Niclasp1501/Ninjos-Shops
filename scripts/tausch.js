@@ -41,6 +41,7 @@ import { MODULE_ID, SOCKET, SETTINGS } from "./const.js";
 import { uebergeben } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
+import { chipHinlegen, chipWegnehmen } from "./chip.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -54,6 +55,9 @@ export const TAUSCH = "tausch";
 
 /** Kennung des Fensters - eines je Client, es gibt nur einen Tausch. */
 const FENSTER = `${MODULE_ID}-tausch`;
+
+/** Der Zettel unten rechts, wenn das Fenster weggelegt ist. */
+const CHIP = `${MODULE_ID}-tauschchip`;
 
 /* ── Wer mit wem ───────────────────────────────────────────────────── */
 
@@ -432,6 +436,18 @@ export class Tauschtisch extends HandlebarsApplicationMixin(ApplicationV2) {
     tauschBereit(!s?.ich?.bereit);
   }
 
+  /**
+   * @override
+   *
+   * **Zumachen beendet den Tausch nicht.** Der Zettel unten rechts holt ihn
+   * zurueck - dasselbe wie am Handelstisch.
+   */
+  async close(options = {}) {
+    const raus = await super.close(options);
+    chipNachziehen();
+    return raus;
+  }
+
   static async #aufgeben() {
     const s = tauschStand(eigenerTausch());
     const sicher = await DialogV2.confirm({
@@ -447,6 +463,27 @@ export class Tauschtisch extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 }
 
+/**
+ * Weggelegt heisst nicht beendet.
+ *
+ * Wer das Kreuz drueckt, will das Fenster los sein - der Tausch laeuft weiter,
+ * und unten rechts liegt der Zettel, der ihn zurueckholt. Genau wie beim
+ * Handelstisch und beim Laden.
+ */
+function chipNachziehen() {
+  const tausch = eigenerTausch();
+  const offen = foundry.applications.instances.get(FENSTER)?.rendered;
+  if (!tausch || !meineSeite(tausch) || offen) return void chipWegnehmen(CHIP);
+
+  const stand = tauschStand(tausch);
+  chipHinlegen({
+    id: CHIP,
+    symbol: "fa-solid fa-right-left",
+    text: game.i18n.format("SHOPS.Tausch.Zurueckholen", { person: stand?.er?.figurName ?? "" }),
+    beiKlick: () => tauschZeigen()
+  });
+}
+
 export function tauschZeigen() {
   const app = foundry.applications.instances.get(FENSTER) ?? new Tauschtisch();
   app.render(true);
@@ -456,8 +493,15 @@ export function tauschZeigen() {
 export function tauschZeichnen() {
   const app = foundry.applications.instances.get(FENSTER);
   const tausch = eigenerTausch();
-  if (!tausch || !meineSeite(tausch)) { app?.close({ force: true }); return; }
+  if (!tausch || !meineSeite(tausch)) {
+    app?.close({ force: true });
+    chipWegnehmen(CHIP);
+    return;
+  }
   if (app?.rendered) app.render(false);
+  // Wer das Fenster weggelegt hat, bekommt es nicht ungefragt zurueck -
+  // der Zettel unten rechts wird nur aufgefrischt.
+  else if (document.getElementById(CHIP)) chipNachziehen();
   else tauschZeigen();
 }
 

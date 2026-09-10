@@ -382,6 +382,7 @@
   "SHOPS.Handel.AblehnenJa": "Ablehnen",
   "SHOPS.Handel.Abgelehnt": "{spieler} hat abgelehnt, was {person} hingehalten hat.",
   "SHOPS.Tausch.Titel": "Tausch mit {person}",
+  "SHOPS.Tausch.Zurueckholen": "Tausch mit {person}",
   "SHOPS.Tausch.Knopf": "Tauschen",
   "SHOPS.Tausch.WenFragen": "Mit wem tauschen?",
   "SHOPS.Tausch.MoechteTauschen": "{person} möchte mit dir tauschen.",

@@ -50,6 +50,7 @@ import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
+import { chipHinlegen, chipWegnehmen } from "./chip.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -778,20 +779,16 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
 const CHIP = `${MODULE_ID}-tischchip`;
 
 function chipNachziehen() {
-  document.getElementById(CHIP)?.remove();
   const handel = eigenerTisch();
   const offen = foundry.applications.instances.get(`${MODULE_ID}-tisch`)?.rendered;
-  if (!handel || offen) return;
+  if (!handel || offen) return void chipWegnehmen(CHIP);
 
-  const chip = document.createElement("button");
-  chip.id = CHIP;
-  chip.type = "button";
-  chip.className = "ninjos-shops shops-tischchip";
-  chip.innerHTML = `<i class="fa-solid fa-handshake" aria-hidden="true"></i>
-    <span>${game.i18n.format("SHOPS.Tisch.Zurueckholen",
-      { person: foundry.utils.escapeHTML(handel.personName ?? "") })}</span>`;
-  chip.addEventListener("click", () => tischZeigen());
-  document.body.append(chip);
+  chipHinlegen({
+    id: CHIP,
+    symbol: "fa-solid fa-handshake",
+    text: game.i18n.format("SHOPS.Tisch.Zurueckholen", { person: handel.personName ?? "" }),
+    beiKlick: () => tischZeigen()
+  });
 }
 
 /* ── Auf- und zumachen ─────────────────────────────────────────────── */
@@ -803,7 +800,7 @@ export function tischZeigen() {
   if (!eigenerTisch()) return null;
   fenster ??= new Handelstisch();
   fenster.render(true);
-  document.getElementById(CHIP)?.remove();
+  chipWegnehmen(CHIP);
   return fenster;
 }
 
@@ -813,7 +810,7 @@ export function tischZeichnen() {
   const app = foundry.applications.instances.get(`${MODULE_ID}-tisch`);
   if (!handel) {
     app?.close({ force: true });
-    document.getElementById(CHIP)?.remove();
+    chipWegnehmen(CHIP);
     fenster = null;
     return;
   }

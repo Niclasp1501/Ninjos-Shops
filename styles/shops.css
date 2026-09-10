@@ -4208,11 +4208,26 @@
  * gehört — und er verschwindet, sobald das Fenster wieder steht oder der
  * Handel vorbei ist. Über Foundrys Fenstern (105) und unter Dialogen.
  */
-.shops-tischchip {
+/*
+ * Die Spalte unten rechts. Es kann mehr als einen Zettel geben - ein
+ * weggelegter Handel mit einer Person und daneben ein Tausch mit einem
+ * Mitspieler -, und die sollen sich nicht am selben Fleck ueberdecken.
+ * Von unten nach oben, damit der neueste dort liegt, wo der Daumen ist.
+ */
+.shops-chips {
   position: fixed;
   right: 18px;
   bottom: 18px;
   z-index: 120;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;      /* die Luecken dazwischen bleiben durchlaessig */
+}
+.shops-chips > * { pointer-events: auto; }
+
+.shops-tischchip {
   display: inline-flex;
   align-items: center;
   gap: 8px;

@@ -382,6 +382,7 @@
   "SHOPS.Handel.AblehnenJa": "Decline",
   "SHOPS.Handel.Abgelehnt": "{spieler} declined what {person} held out.",
   "SHOPS.Tausch.Titel": "Trade with {person}",
+  "SHOPS.Tausch.Zurueckholen": "Trade with {person}",
   "SHOPS.Tausch.Knopf": "Trade",
   "SHOPS.Tausch.WenFragen": "Trade with whom?",
   "SHOPS.Tausch.MoechteTauschen": "{person} would like to trade with you.",
