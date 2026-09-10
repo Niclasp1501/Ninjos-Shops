@@ -45,7 +45,7 @@ import { MODULE_ID, SOCKET, WARE } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, ausMuenzfeld,
          PREIS_SORTEN, KUPFERWERT } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
-import { einlagern } from "./lager.js";
+import { uebergeben, pruefeSeite, inhaltVon } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
@@ -348,7 +348,9 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
     const alt = vorher.get(item.id);
     const zeile = {
       itemId: item.id, name: item.name, img: item.img || null, menge,
-      wertCp: seite === "nsc" ? wertHergeben(person, item) : ankaufWert(person, item)
+      wertCp: seite === "nsc" ? wertHergeben(person, item) : ankaufWert(person, item),
+      // Ein Beutel reist samt Inhalt - also gehoert der zu dem, was zugesagt wird.
+      inhalt: inhaltVon(item)
     };
     if (seite === "spieler") {
       zeile.grundCp = grundpreisCp(item.system?.price);
@@ -536,26 +538,30 @@ async function abschliessenAusfuehren(benutzerId) {
   spielerKasse = muenzenDazu(spielerKasse, legtPerson);
   if (personKasse) personKasse = muenzenDazu(personKasse, legtSpieler);
 
-  // Liegt alles noch da, was auf dem Tisch liegt?
+  /*
+   * Liegt alles noch da, was auf dem Tisch liegt? Seit dem 10.09.2026 zaehlt
+   * dabei auch der **Inhalt eines Behaelters**: Wer einen Beutel hinlegt und
+   * ihn vorm Abschluss ausraeumt, uebergibt etwas anderes als das, dem der
+   * andere zugestimmt hat.
+   */
   for (const [seite, traeger] of [["seiteNsc", person], ["seiteSpieler", figur]]) {
-    for (const p of handel[seite] ?? []) {
-      const item = traeger.items.get(p.itemId);
-      if (!item || Number(item.system?.quantity ?? 0) < p.menge) {
-        return { ok: false, grund: "SHOPS.Handel.NichtMehrDa" };
-      }
-    }
+    const pruefung = pruefeSeite(traeger, handel[seite] ?? [], {});
+    if (!pruefung.ok) return { ok: false, grund: "SHOPS.Handel.NichtMehrDa", was: pruefung.was };
   }
 
   try {
-    // Ware über den Tisch, in beide Richtungen.
+    /*
+     * Ware über den Tisch, in beide Richtungen - über **denselben** Weg wie
+     * der Tausch zwischen Spielern. Vorher stand hier eine eigene Schleife mit
+     * `einlagern`, die einen Behälter ohne seinen Inhalt kopierte: Ein Beutel
+     * kam leer beim Käufer an. `uebergeben` hängt den Inhalt mit um, legt an,
+     * bevor es wegnimmt, und lässt Rechte, Ausrüstung und Einstimmung zurück.
+     * Die Münzen bleiben hier draußen; die stehen unten schon fertig.
+     */
     for (const [seite, von, zu] of [["seiteNsc", person, figur], ["seiteSpieler", figur, person]]) {
-      for (const p of handel[seite] ?? []) {
-        const item = von.items.get(p.itemId);
-        await einlagern(zu, item, p.menge);
-        const rest = Number(item.system?.quantity ?? 0) - p.menge;
-        if (rest > 0) await item.update({ "system.quantity": rest });
-        else await item.delete();
-      }
+      const posten = (handel[seite] ?? []).map(p => ({ itemId: p.itemId, menge: p.menge }));
+      const bericht = await uebergeben(von, zu, posten, {});
+      if (bericht.fehler) throw new Error(bericht.fehler);
     }
 
     // Und die Muenzen - beide Boersen stehen oben schon fertig da.

@@ -38,7 +38,7 @@
  */
 
 import { MODULE_ID, SOCKET, SETTINGS } from "./const.js";
-import { uebergeben } from "./lager.js";
+import { uebergeben, pruefeSeite, inhaltVon } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
@@ -291,7 +291,11 @@ export async function aufTausch(daten) {
       if (!item || liste.some(z => z.itemId === item.id)) continue;
       const vorrat = item.type === "container" ? 1 : Number(item.system?.quantity ?? 1);
       const menge = Math.min(Math.max(1, Math.floor(Number(p.menge) || 1)), vorrat);
-      if (menge > 0) liste.push({ itemId: item.id, name: item.name, img: item.img || null, menge });
+      if (menge > 0) liste.push({
+        itemId: item.id, name: item.name, img: item.img || null, menge,
+        // Ein Beutel reist samt Inhalt - also gehoert der zu dem, was zugesagt wird.
+        inhalt: inhaltVon(item)
+      });
     }
     const boerse = figur.system?.currency ?? {};
     const muenzen = {};
@@ -319,6 +323,12 @@ export async function aufTausch(daten) {
   }
 }
 
+/** Ein fertiger Satz an genau eine Person. */
+function meldungText(benutzerId, text) {
+  if (benutzerId === game.user.id) return;
+  game.socket.emit(SOCKET.NAME, { typ: SOCKET.TAUSCH, tat: "meldung", an: benutzerId, text });
+}
+
 /** Eine kurze Nachricht an genau eine Person. */
 function meldung(benutzerId, schluessel) {
   if (benutzerId === game.user.id) return ui.notifications.warn(game.i18n.localize(schluessel));
@@ -339,6 +349,26 @@ async function ausfuehren(tausch) {
   if (!figurA || !figurB) {
     await abraeumen(tausch);
     return void ui.notifications.warn(game.i18n.localize("SHOPS.Tausch.FigurWeg"));
+  }
+
+  /*
+   * **Erst beide pruefen, dann beide bewegen.** Vorher wurde die eine Seite
+   * uebergeben und danach die andere; scheiterte die zweite, hatte einer
+   * gegeben und nichts bekommen. Genau so passiert am 10.09.2026: Die
+   * Gegenseite loeschte ihr Stueck, der Tausch lief trotzdem los.
+   */
+  for (const [seite, figur] of [["a", figurA], ["b", figurB]]) {
+    const pruefung = pruefeSeite(figur, tausch[seite].posten, tausch[seite].muenzen);
+    if (pruefung.ok) continue;
+    // Der Tisch bleibt stehen, aber ohne Zusagen - beide sollen sehen, warum.
+    await verteilen({
+      ...tausch, zustand: "offen",
+      a: { ...tausch.a, bereit: false }, b: { ...tausch.b, bereit: false }
+    });
+    const text = game.i18n.format("SHOPS.Tausch.NichtMehrDa", { was: pruefung.was });
+    ui.notifications.warn(text);
+    for (const id of [tausch.a.benutzerId, tausch.b.benutzerId]) meldungText(id, text);
+    return;
   }
 
   const berichte = [
@@ -386,6 +416,7 @@ export class Tauschtisch extends HandlebarsApplicationMixin(ApplicationV2) {
     position: { width: 760, height: "auto" },
     window: { icon: "fa-solid fa-right-left", resizable: true },
     actions: {
+      ansehen: Tauschtisch.#ansehen,
       annehmen: Tauschtisch.#annehmen,
       jaSagen: () => tauschAntworten(true),
       neinSagen: () => tauschAntworten(false),
@@ -429,6 +460,27 @@ export class Tauschtisch extends HandlebarsApplicationMixin(ApplicationV2) {
       stand,
       wahl: stand?.offen ? this.wahl.kontext(this.wahlVorrat(), this.wahlBoerse()) : null
     });
+  }
+
+  /**
+   * Ein Stueck genauer ansehen - auch das der Gegenseite.
+   *
+   * Foundry schickt jedem Client **alle** Weltakteure und filtert nur die
+   * Anzeige (siehe AGENTS.md). Die Figur des Gegenuebers laesst sich deshalb
+   * lesen, und `wareAnsehen` baut daraus eine fluechtige Kopie, die als
+   * Beobachter geoeffnet wird - dieselbe Nur-Lesen-Ansicht wie am
+   * Handelstisch.
+   */
+  static async #ansehen(ereignis, ziel) {
+    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    const seite = ziel.closest("[data-seite]")?.dataset.seite;
+    const stand = tauschStand(eigenerTausch());
+    if (!itemId || !stand) return;
+    const figurId = seite === "er" ? stand.er.figurId : stand.ich.figurId;
+    const figur = game.actors.get(figurId);
+    if (!figur) return;
+    const { wareAnsehen } = await import("./ware-ansehen.js");
+    wareAnsehen(figur, itemId);
   }
 
   static #annehmen() {

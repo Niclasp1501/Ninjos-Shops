@@ -4449,3 +4449,12 @@
 #shops-tausch-knopf:hover { background: rgba(212, 175, 55, 0.25); }
 
 .shops-tauschkarte p { margin: 2px 0; }
+
+/* Was in einem Beutel liegt. Klein unter dem Namen - es ist Auskunft, keine
+   zweite Zeile Ware. */
+.ninjos-shops .shops-inhalt {
+  display: block;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--shops-text-blass);
+}

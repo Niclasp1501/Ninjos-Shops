@@ -196,3 +196,55 @@ export async function uebergeben(von, zu, posten = [], muenzen = {}) {
 
   return bericht;
 }
+
+/* ── Vor dem Bewegen: liegt das alles noch da? ─────────────────────── */
+
+/** Was in einem Behaelter liegt, als Kennungen. Bei allem anderen nichts. */
+export function inhaltVon(item) {
+  return item?.type === "container"
+    ? [...(item.system?.allContainedItems ?? [])].map(k => ({ id: k.id, name: k.name }))
+    : [];
+}
+
+/**
+ * Prueft eine Seite, ohne irgendetwas anzufassen.
+ *
+ * **Warum das eine eigene Funktion ist.** Am 10.09.2026 am Tisch: Ein Tausch
+ * wurde abgeschlossen, obwohl die Gegenseite ihr Stueck zwischendurch
+ * geloescht hatte. Die eigene Seite wanderte, die andere scheiterte - einer
+ * hatte gegeben und nichts bekommen. Der Handelstisch prueft seit jeher vorher,
+ * der Tausch zwischen Spielern tat es nicht.
+ *
+ * Geprueft wird auch der **Inhalt eines Behaelters**. Wer einen Beutel hinlegt
+ * und ihn vor dem Abschluss ausraeumt, uebergibt etwas anderes als das, was
+ * der andere gesehen und dem er zugestimmt hat.
+ *
+ * @returns {{ok: true}|{ok: false, was: string}}
+ */
+export function pruefeSeite(traeger, posten = [], muenzen = {}) {
+  if (!traeger) return { ok: false, was: "?" };
+
+  for (const p of posten) {
+    const item = traeger.items.get(p.itemId);
+    if (!item) return { ok: false, was: p.name ?? "?" };
+
+    if (item.type !== "container") {
+      const vorrat = Number(item.system?.quantity ?? 0);
+      if (vorrat < Math.max(1, Number(p.menge) || 1)) return { ok: false, was: item.name };
+      continue;
+    }
+
+    // Der Beutel selbst reicht nicht - es zaehlt, was drin ist.
+    const drin = new Set(inhaltVon(item).map(k => k.id));
+    for (const k of p.inhalt ?? []) {
+      if (!drin.has(k.id)) return { ok: false, was: `${item.name}: ${k.name}` };
+    }
+  }
+
+  for (const [sorte, anzahl] of Object.entries(muenzen ?? {})) {
+    const hat = Math.floor(Number(traeger.system?.currency?.[sorte] ?? 0));
+    if (hat < anzahl) return { ok: false, was: `${anzahl} ${sorte}` };
+  }
+
+  return { ok: true };
+}

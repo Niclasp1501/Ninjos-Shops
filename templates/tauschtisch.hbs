@@ -63,7 +63,8 @@
       <div class="shops-tisch-platte">
 
         {{!-- Seine Seite. Nur ansehen — anfassen darf sie nur er. --}}
-        <section class="shops-tisch-seite {{#if stand.er.bereit}}shops-zugesagt-seite{{/if}}">
+        <section class="shops-tisch-seite {{#if stand.er.bereit}}shops-zugesagt-seite{{/if}}"
+                 data-seite="er">
           <h3>
             {{localize "SHOPS.Tisch.SieGibt" person=stand.er.figurName}}
             {{#if stand.er.bereit}}
@@ -73,10 +74,20 @@
           </h3>
           <ol class="shops-ware shops-tisch-nsc">
             {{#each stand.er.posten}}
-              <li class="shops-zeile">
-                {{#if img}}<img src="{{img}}" alt="">
+              <li class="shops-zeile" data-item-id="{{itemId}}">
+                {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
+                                title="{{localize 'SHOPS.Ansehen.Knopf'}}">
                 {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
-                <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+                <div class="shops-name">
+                  <span class="shops-warenname" data-action="ansehen"
+                        title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+                {{#if inhalt.length}}
+                  {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
+                        also muss man es sehen. --}}
+                  <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}</small>
+                {{/if}}
+                </div>
                 <span class="shops-menge">{{menge}}&times;</span>
               </li>
             {{/each}}
@@ -94,7 +105,8 @@
         </section>
 
         {{!-- Meine Seite. --}}
-        <section class="shops-tisch-seite {{#if stand.ich.bereit}}shops-zugesagt-seite{{/if}}">
+        <section class="shops-tisch-seite {{#if stand.ich.bereit}}shops-zugesagt-seite{{/if}}"
+                 data-seite="ich">
           <h3>
             {{localize "SHOPS.Tisch.DuGibst"}}
             {{#if stand.ich.bereit}}
@@ -104,10 +116,20 @@
           </h3>
           <ol class="shops-ware shops-tisch-spieler">
             {{#each stand.ich.posten}}
-              <li class="shops-zeile">
-                {{#if img}}<img src="{{img}}" alt="">
+              <li class="shops-zeile" data-item-id="{{itemId}}">
+                {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
+                                title="{{localize 'SHOPS.Ansehen.Knopf'}}">
                 {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
-                <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+                <div class="shops-name">
+                  <span class="shops-warenname" data-action="ansehen"
+                        title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+                {{#if inhalt.length}}
+                  {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
+                        also muss man es sehen. --}}
+                  <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}</small>
+                {{/if}}
+                </div>
                 <span class="shops-menge">{{menge}}&times;</span>
               </li>
             {{/each}}

@@ -45,7 +45,11 @@ async function onSocket(daten) {
     case SOCKET.TAUSCH: {
       // Eine Meldung gilt genau einer Person; alles andere geht an den Tausch.
       if (daten.tat === "meldung") {
-        if (daten.an === game.user.id) ui.notifications.warn(game.i18n.localize(daten.schluessel));
+        // Entweder ein Sprachschluessel oder ein fertiger Satz - je nachdem,
+        // ob die Meldung Werte traegt, die erst beim Ausfuehren feststehen.
+        if (daten.an === game.user.id) {
+          ui.notifications.warn(daten.text ?? game.i18n.localize(daten.schluessel));
+        }
         return;
       }
       return void await aufTausch(daten);

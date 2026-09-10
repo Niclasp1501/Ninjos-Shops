@@ -38,6 +38,12 @@
               <div class="shops-name">
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+                {{#if inhalt.length}}
+                  {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
+                        also muss man es sehen. --}}
+                  <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}</small>
+                {{/if}}
               </div>
               {{!-- Kein Preis am Stück: Was sie will, steht als eine Zahl
                     unten. Neun Grundpreise daneben sind eine Rechnung, die
@@ -69,6 +75,12 @@
               <div class="shops-name">
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+                {{#if inhalt.length}}
+                  {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
+                        also muss man es sehen. --}}
+                  <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}</small>
+                {{/if}}
               </div>
               <span class="shops-menge">{{menge}}&times;</span>
               <span class="shops-preis">{{anrechnungText}}</span>
