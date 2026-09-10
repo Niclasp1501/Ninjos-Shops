@@ -16,7 +16,7 @@
  * Versehen, entscheidet der Tisch und nicht das Modul.
  */
 
-import { SOCKET } from "./const.js";
+import { MODULE_ID, SOCKET } from "./const.js";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -38,15 +38,42 @@ const WORTBRUCH = new Set([
 
 export function istWortbruch(grund) { return WORTBRUCH.has(grund); }
 
+/**
+ * Das Fenster bauen, und wenn das nicht geht, wenigstens etwas sagen.
+ *
+ * **Der Fangarm war zu weit.** Bis zum 10.09.2026 stand hier nur
+ * `.catch(() => {})`, damit ein weggeklicktes Fenster keinen Fehler wirft.
+ * Damit verschwand aber auch jeder echte Fehler: Kam das Fenster nicht, sah
+ * niemand etwas, und in der Konsole stand auch nichts. Jetzt wird
+ * unterschieden - Wegklicken ist still, alles andere landet im Log und faellt
+ * auf eine Meldung zurueck, damit die Auskunft nicht ganz verloren geht.
+ */
+function fensterZeigen({ titel, symbol, inhalt, knopf, klasse }) {
+  try {
+    DialogV2.prompt({
+      window: { title: game.i18n.localize(titel), icon: symbol },
+      classes: ["ninjos-shops"],
+      content: `<p class="shops-abbruch ${klasse ?? ""}">${inhalt}</p>`,
+      ok: { label: game.i18n.localize(knopf), icon: "fa-solid fa-check" }
+    }).catch(fehler => {
+      // Wegklicken und Escape werfen hier ebenfalls. Das ist kein Fehler.
+      if (fehler) console.debug(`${MODULE_ID} | Fenster weggeklickt`, fehler);
+    });
+  } catch (fehler) {
+    console.error(`${MODULE_ID} | Fenster liess sich nicht bauen`, fehler);
+    ui.notifications.warn(inhalt.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+  }
+}
+
 /** Das Fenster auf diesem Client. */
 export function abbruchZeigen(was) {
-  DialogV2.prompt({
-    window: { title: game.i18n.localize("SHOPS.Tisch.AbbruchTitel"), icon: "fa-solid fa-hand" },
-    classes: ["ninjos-shops"],
-    content: `<p class="shops-abbruch">${game.i18n.format("SHOPS.Tisch.AbbruchText",
-      { was: foundry.utils.escapeHTML(was ?? "") })}</p>`,
-    ok: { label: game.i18n.localize("SHOPS.Tisch.AbbruchVerstanden"), icon: "fa-solid fa-check" }
-  }).catch(() => {});
+  fensterZeigen({
+    titel: "SHOPS.Tisch.AbbruchTitel",
+    symbol: "fa-solid fa-hand",
+    knopf: "SHOPS.Tisch.AbbruchVerstanden",
+    inhalt: game.i18n.format("SHOPS.Tisch.AbbruchText",
+      { was: foundry.utils.escapeHTML(was ?? "") })
+  });
 }
 
 /**
@@ -73,12 +100,13 @@ export function abbruchMelden(benutzerIds = [], was) {
  * Abbruch, nur mit dem, was geschehen ist.
  */
 export function erfolgZeigen(text) {
-  DialogV2.prompt({
-    window: { title: game.i18n.localize("SHOPS.Tisch.ErfolgTitel"), icon: "fa-solid fa-handshake" },
-    classes: ["ninjos-shops"],
-    content: `<p class="shops-abbruch shops-gelungen">${text}</p>`,
-    ok: { label: game.i18n.localize("SHOPS.Tisch.ErfolgOk"), icon: "fa-solid fa-check" }
-  }).catch(() => {});
+  fensterZeigen({
+    titel: "SHOPS.Tisch.ErfolgTitel",
+    symbol: "fa-solid fa-handshake",
+    knopf: "SHOPS.Tisch.ErfolgOk",
+    klasse: "shops-gelungen",
+    inhalt: text
+  });
 }
 
 /** Den Beteiligten zeigen, und diesem Client selbst. */

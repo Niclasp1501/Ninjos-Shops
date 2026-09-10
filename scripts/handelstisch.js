@@ -51,7 +51,7 @@ import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
-import { abbruchMelden, istWortbruch } from "./melden.js";
+import { abbruchMelden, erfolgZeigen, istWortbruch } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -446,10 +446,16 @@ async function abschliessen(benutzerId) {
    * wuesste nicht, ob abgeschlossen oder abgebrochen wurde.
    */
   if (ergebnis?.ok) {
+    /*
+     * **Auch die Spielleitung bekommt das Fenster.** Ihr Tisch macht sich
+     * gleich darauf zu; eine Meldung waere das Einzige, was den Abschluss
+     * bezeugt, und genau die wurde am 10.09.2026 vermisst. Der Spieler
+     * bekommt seines ueber die Antwort, siehe socket.js.
+     */
     const stand = tischStand(vorher);
-    ui.notifications.info(game.i18n.format("SHOPS.Tisch.GMGelungen", {
-      spieler: spieler?.name ?? "?",
-      person: vorher?.personName ?? "?",
+    erfolgZeigen(game.i18n.format("SHOPS.Tisch.GMGelungen", {
+      spieler: foundry.utils.escapeHTML(spieler?.name ?? "?"),
+      person: foundry.utils.escapeHTML(vorher?.personName ?? "?"),
       geld: stand ? stand.differenzText : ""
     }));
     foundry.applications.instances.get(`${MODULE_ID}-tisch-gm-${benutzerId}`)?.close();

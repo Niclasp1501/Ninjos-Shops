@@ -1301,7 +1301,6 @@
 
 .shops-inperson-knopf { width: 100%; margin-top: 6px; }
 
-.ninjos-shops .shops-kaufdialog p { margin: 0 0 6px; }
 
 /* ── Knöpfe unserer Dialoge ────────────────────────────────────────── */
 
@@ -1364,7 +1363,53 @@
   font-family: var(--shops-schrift);
 }
 
-.ninjos-shops .dialog-content p { margin: 0 0 8px; }
+/*
+ * **Der Satz ist der Inhalt des Dialogs, nicht seine Beschriftung.**
+ *
+ * Am 10.09.2026 gemeldet: Der Text klebte klein oben links, darunter stand
+ * leerer Grund, und dann kamen zwei grosse Knoepfe. Das sah aus wie ein
+ * Formular, dem der Inhalt fehlt. Foundrys Dialog gibt dem Rumpf naemlich
+ * weder Rand noch Schriftgroesse; ohne Zutun steht dort Fliesstext in der
+ * Groesse einer Beschriftung.
+ *
+ * Also: Luft ringsum, eine Groesse, die man liest statt entziffert, und eine
+ * Zeilenlaenge, die nicht ueber die ganze Fensterbreite laeuft.
+ */
+.ninjos-shops .dialog .window-content,
+.ninjos-shops .dialog-content {
+  padding: 18px 20px;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.ninjos-shops .dialog-content p,
+.ninjos-shops .dialog .window-content > p {
+  margin: 0 0 10px;
+  max-width: 62ch;
+}
+.ninjos-shops .dialog-content p:last-child,
+.ninjos-shops .dialog .window-content > p:last-child { margin-bottom: 0; }
+
+/*
+ * Die erste Zeile eines Abbruch- oder Erfolgsfensters traegt die Aussage.
+ * Sie darf etwas groesser sein als der Rest, damit man sie im Vorbeigehen
+ * erfasst, ohne dass das Fenster laut wird.
+ */
+.ninjos-shops .shops-abbruch {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 58ch;
+}
+.ninjos-shops .shops-abbruch strong { color: var(--shops-text); }
+
+/* Der Kaufdialog stellt eine Frage und rechnet vor. Beides braucht Luft. */
+.ninjos-shops .shops-kaufdialog {
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 58ch;
+}
+.ninjos-shops .shops-kaufdialog p { margin: 0 0 8px; }
+.ninjos-shops .shops-kaufdialog p:last-child { margin-bottom: 0; }
 
 /* ── Der Weg zurück: verkaufen ─────────────────────────────────────── */
 
