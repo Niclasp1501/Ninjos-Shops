@@ -27,14 +27,22 @@
       {{#if wahl.hatZeilen}}
         {{#each wahl.zeilen}}
           <div class="shops-wahl-zeile {{#if an}}shops-an{{/if}}">
-            <div class="shops-wahl-tipp" data-action="wahlUmschalten" data-item-id="{{id}}">
+            {{!-- Ein echter Knopf, und der Haken gehört hinein: Er saß daneben,
+                  und ein Tipp genau darauf tat nichts — obwohl er das Einzige
+                  ist, was aussieht, als könnte man ihn drücken. --}}
+            <button type="button" class="shops-wahl-tipp" data-action="wahlUmschalten"
+                    data-item-id="{{id}}" aria-pressed="{{#if an}}true{{else}}false{{/if}}">
               {{#if img}}<img src="{{img}}" alt="">
               {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
               <span class="shops-wahl-name">
                 {{name}}
                 {{#if stapel}}<em>{{localize "SHOPS.Tisch.Hast" anzahl=hoechstens}}</em>{{/if}}
               </span>
-            </div>
+              {{#unless stapel}}
+                <i class="fa-solid {{#if an}}fa-circle-check{{else}}fa-circle{{/if}} shops-wahl-marke"
+                   aria-hidden="true"></i>
+              {{/unless}}
+            </button>
             {{#if stapel}}
               <div class="shops-schritt">
                 <button type="button" class="shops-klein" data-action="wahlNichts" data-item-id="{{id}}">0</button>
@@ -47,8 +55,6 @@
                   {{localize "SHOPS.Tisch.Alles"}}
                 </button>
               </div>
-            {{else}}
-              <i class="fa-solid {{#if an}}fa-circle-check{{else}}fa-circle{{/if}} shops-wahl-marke" aria-hidden="true"></i>
             {{/if}}
           </div>
         {{/each}}

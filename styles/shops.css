@@ -4064,7 +4064,13 @@
   border-color: var(--shops-gold);
   background: rgba(212, 175, 55, 0.12);
 }
-/* Die ganze Zeile ist der Schalter - kein kleines Kaestchen, das man treffen muss. */
+/*
+ * Die ganze Zeile ist der Schalter - kein kleines Kaestchen, das man treffen
+ * muss. Seit dem 10.09.2026 ist es ein echter `button`: Vorher war es ein
+ * `div`, mit der Tastatur nicht erreichbar, und der Haken lag *daneben* statt
+ * darin - ausgerechnet die Stelle, die am meisten nach „hier druecken"
+ * aussieht, tat nichts.
+ */
 .ninjos-shops .shops-wahl-tipp {
   flex: 1 1 auto;
   min-width: 0;
@@ -4073,6 +4079,20 @@
   gap: 10px;
   min-height: var(--ninjo-tippziel, 44px);
   cursor: pointer;
+  /* Der Knopf soll aussehen wie die Zeile, nicht wie ein Knopf. */
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+.ninjos-shops .shops-wahl-tipp:hover { background: none; }
+.ninjos-shops .shops-wahl-tipp:focus-visible {
+  outline: 2px solid var(--shops-gold);
+  outline-offset: 2px;
 }
 .ninjos-shops .shops-wahl-tipp img,
 .ninjos-shops .shops-wahl-tipp .shops-kein-bild {
