@@ -1089,6 +1089,11 @@ zeigt auf `/modules`. **Vor der ersten Veröffentlichung** gehört der Eintrag i
   und `:63`).
 
   Hinweis aus der Übersetzungs-Session vom 06.09.2026, dort nachgeprüft.
+- **Der Changelog ist englisch**, wie die Commits. Foundry und GitHub zeigen
+  allen denselben Text, eine Fassung je Sprache gibt es nicht. Bis zum
+  11.09.2026 war er deutsch und wurde dann übersetzt. Achtung beim Release:
+  Der Workflow nimmt mit `body_path: CHANGELOG.md` die **ganze** Datei als
+  Release-Text, nicht nur die neue Version.
 
 
 ## Oberfläche: die acht Regeln
