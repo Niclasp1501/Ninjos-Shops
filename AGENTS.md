@@ -1091,9 +1091,14 @@ zeigt auf `/modules`. **Vor der ersten Veröffentlichung** gehört der Eintrag i
   Hinweis aus der Übersetzungs-Session vom 06.09.2026, dort nachgeprüft.
 - **Der Changelog ist englisch**, wie die Commits. Foundry und GitHub zeigen
   allen denselben Text, eine Fassung je Sprache gibt es nicht. Bis zum
-  11.09.2026 war er deutsch und wurde dann übersetzt. Achtung beim Release:
-  Der Workflow nimmt mit `body_path: CHANGELOG.md` die **ganze** Datei als
-  Release-Text, nicht nur die neue Version.
+  11.09.2026 war er deutsch und wurde dann übersetzt.
+- **Der Release-Text ist nur der Abschnitt der neuen Version.** Heute nimmt der
+  Workflow mit `body_path: CHANGELOG.md` die **ganze** Datei, 39 KB, und jedes
+  Release wird länger als das vorige. Beim nächsten Release umstellen: das
+  `release_notes.py` von oben übernehmen und `body_path: release-notes.md`
+  setzen. **Vorher das Muster anpassen:** Es sucht `## [<version>]`, dieser
+  Changelog schreibt `## 14.2609.75 - 2026-09-09` ohne Klammern. Erschienene
+  Releases bleiben, wie sie sind.
 
 
 ## Oberfläche: die acht Regeln
