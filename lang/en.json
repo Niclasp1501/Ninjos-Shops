@@ -320,6 +320,8 @@
   "SHOPS.Tisch.Verlangt": "Wants",
   "SHOPS.Tisch.Hingelegt": "Offered",
   "SHOPS.Tisch.Fehlt": "{geld} short",
+  "SHOPS.Tisch.NochOffen": "{geld} still missing. The trade cannot close until then.",
+  "SHOPS.Tisch.NochZuViel": "{geld} too much on the table. The trade cannot close until then.",
   "SHOPS.Tisch.ZuViel": "{geld} too much",
   "SHOPS.Tisch.SieVerlangt": "She asks for",
   "SHOPS.Tisch.WasWert": "What it is worth to her",

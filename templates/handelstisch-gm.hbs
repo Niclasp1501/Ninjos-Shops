@@ -174,7 +174,10 @@
             wenn die andere schon steht und der Druck den Tausch wirklich
             ausführt; und zurücknehmen, wenn man selbst schon zugesagt hat. --}}
       <button type="button" class="shops-kaufen {{#if stand.bereitGm}}shops-zweit{{/if}}"
-              data-action="bestaetigen" {{#if stand.leer}}disabled{{/if}}>
+              data-action="bestaetigen"
+              {{#if stand.leer}}disabled
+              {{else if stand.bereitGm}}
+              {{else}}{{#unless stand.ausgeglichen}}disabled{{/unless}}{{/if}}>
         <i class="fa-solid {{#if stand.bereitGm}}fa-rotate-left{{else if stand.bereitSpieler}}fa-check{{else}}fa-handshake{{/if}}"
            aria-hidden="true"></i>
         {{#if stand.bereitGm}}{{localize "SHOPS.Tisch.ZusageZurueck"}}

@@ -151,7 +151,10 @@
             ausführt; und zurücknehmen, wenn man selbst schon zugesagt hat. --}}
       <button type="button" class="shops-kaufen {{#if stand.bereitSpieler}}shops-zweit{{/if}}"
               data-action="annehmen"
-              {{#if stand.leer}}disabled{{else if stand.ohneSpielleitung}}disabled{{/if}}>
+              {{#if stand.leer}}disabled
+              {{else if stand.ohneSpielleitung}}disabled
+              {{else if stand.bereitSpieler}}
+              {{else}}{{#unless stand.ausgeglichen}}disabled{{/unless}}{{/if}}>
         <i class="fa-solid {{#if stand.bereitSpieler}}fa-rotate-left{{else if stand.bereitGm}}fa-check{{else}}fa-handshake{{/if}}"
            aria-hidden="true"></i>
         {{#if stand.bereitSpieler}}{{localize "SHOPS.Tisch.ZusageZurueck"}}

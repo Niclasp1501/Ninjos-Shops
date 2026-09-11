@@ -424,6 +424,12 @@ export async function anrechnenSetzen(benutzerId, itemId, betragCp) {
   await funken([benutzerId]);
 }
 
+/** Ein fertiger Satz an genau eine Person. */
+function meldung(benutzerId, text) {
+  if (benutzerId === game.user.id) return;
+  game.socket.emit(SOCKET.NAME, { typ: SOCKET.HANDEL, tat: "meldung", an: benutzerId, text });
+}
+
 /**
  * Beide haben zugesagt - jetzt wird getauscht.
  *
@@ -481,6 +487,28 @@ export async function bereitSetzen(benutzerId, wer, wert = true) {
   const benutzer = game.users.get(benutzerId);
   const handel = benutzer?.getFlag(MODULE_ID, TISCH);
   if (!handel) return;
+
+  /*
+   * **Was nicht aufgeht, wird nicht abgeschlossen.**
+   *
+   * Am 12.09.2026 am Tisch gemeldet: Es fehlte Geld, und der Handel ging
+   * trotzdem durch. Unter der Regel „es wandert, was auf dem Tisch liegt"
+   * bekam die Person dann einfach weniger, ohne dass jemand es wollte.
+   *
+   * Die Spielleitung verliert dadurch nichts: Ein Nachlass oder ein Geschenk
+   * ist ein Griff ins Feld „Sie verlangt". Was sie dort einträgt, gilt, und
+   * dann geht die Waage auf. Gesperrt ist nur das unbeabsichtigte Abschliessen
+   * einer Rechnung, die nicht stimmt.
+   */
+  const stand = tischStand(handel);
+  if (wert && !stand.ausgeglichen) {
+    const text = game.i18n.format(
+      stand.fehlt ? "SHOPS.Tisch.NochOffen" : "SHOPS.Tisch.NochZuViel",
+      { geld: stand.offenText });
+    ui.notifications.warn(text);
+    if (wer !== "gm") meldung(benutzerId, text);
+    return;
+  }
 
   const feld = wer === "gm" ? "bereitGm" : "bereitSpieler";
   await benutzer.setFlag(MODULE_ID, TISCH, { ...handel, [feld]: !!wert });
@@ -660,6 +688,10 @@ async function funken(an) {
 
 /** Einstiegspunkt aus socket.js. */
 export async function aufTisch(daten) {
+  if (daten.tat === "meldung") {
+    if (daten.an === game.user.id) ui.notifications.warn(daten.text);
+    return;
+  }
   if (daten.tat === "stand") {
     tischZeichnen();
     /*

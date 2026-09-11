@@ -320,6 +320,8 @@
   "SHOPS.Tisch.Verlangt": "Verlangt",
   "SHOPS.Tisch.Hingelegt": "Hingelegt",
   "SHOPS.Tisch.Fehlt": "Es fehlen {geld}",
+  "SHOPS.Tisch.NochOffen": "Es fehlen noch {geld}. Solange geht der Handel nicht durch.",
+  "SHOPS.Tisch.NochZuViel": "Es liegen {geld} zu viel da. Solange geht der Handel nicht durch.",
   "SHOPS.Tisch.ZuViel": "{geld} zu viel",
   "SHOPS.Tisch.SieVerlangt": "Sie verlangt",
   "SHOPS.Tisch.WasWert": "Was es ihr wert ist",
