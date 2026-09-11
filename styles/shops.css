@@ -4527,3 +4527,37 @@
 }
 .ninjos-shops .shops-wahl-zeile.shops-reist-mit .shops-wahl-tipp { cursor: default; }
 .ninjos-shops .shops-wahl-zeile.shops-reist-mit .shops-wahl-marke { color: var(--shops-gold); }
+
+/*
+ * Das Preisfeld aus drei Muenzsorten.
+ *
+ * Vorher stand hier eine Zahl mit einem Auswahlmenue daneben, und damit liess
+ * sich nur ein Preis eingeben, der glatt in einer Sorte aufgeht. Drei schmale
+ * Felder nebeneinander, jedes mit seinem Kuerzel darunter: Man sieht auf einen
+ * Blick, was man eintippt, und „1 GM 2 KM" geht endlich.
+ */
+.ninjos-shops .shops-muenzfelder {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+.ninjos-shops .shops-muenzfelder label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+}
+.ninjos-shops .shops-muenzfelder input {
+  width: 3.6rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ninjos-shops .shops-muenzfelder label > span {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--shops-text-blass);
+}
+
+/* In der engen Zeile des Ladenbogens duerfen sie schmaler sein. */
+.ninjos-shops .shops-festpreis .shops-muenzfelder input { width: 3rem; }

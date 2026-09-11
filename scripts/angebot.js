@@ -19,7 +19,7 @@
  */
 
 import { MODULE_ID, SOCKET, OFFENES_ANGEBOT, WARE, LADEN_TYP } from "./const.js";
-import { grundpreisCp, preisCp, alsText, alsMuenzfeld, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 
@@ -43,7 +43,7 @@ export async function angebotDialog(laden, item) {
     Number.isFinite(item.flags?.[MODULE_ID]?.[WARE.FESTPREIS])
       ? item.flags[MODULE_ID][WARE.FESTPREIS] : null
   );
-  const feld = alsMuenzfeld(regulaerCp);
+  const felder = alsMuenzfelder(regulaerCp);
 
   const sehen = new Set(zuschauer(laden.uuid).map(u => u.id));
   const leute = game.users.filter(u => !u.isGM && u.active);
@@ -59,8 +59,6 @@ export async function angebotDialog(laden, item) {
       ${sehen.has(u.id) ? `<em class="shops-sieht">${game.i18n.localize("SHOPS.Angebot.SiehtDenLaden")}</em>` : ""}
     </label>`).join("");
 
-  const muenzen = Object.keys(KUPFERWERT).map(s =>
-    `<option value="${s}" ${s === feld.denomination ? "selected" : ""}>${kuerzel(s)}</option>`).join("");
 
   const inhalt = `
     <div class="shops-angebot-dialog">
@@ -77,8 +75,14 @@ export async function angebotDialog(laden, item) {
         <label>
           <span>${game.i18n.localize("SHOPS.Angebot.Preis")}</span>
           <span class="shops-preisfeld">
-            <input type="number" name="preis" value="${feld.value}" min="0" step="1">
-            <select name="sorte">${muenzen}</select>
+            <span class="shops-muenzfelder">
+              <label><input type="number" name="gp" value="${felder.gp}" min="0" step="1"
+                            aria-label="${kuerzel("gp")}"><span>${kuerzel("gp")}</span></label>
+              <label><input type="number" name="sp" value="${felder.sp}" min="0" step="1"
+                            aria-label="${kuerzel("sp")}"><span>${kuerzel("sp")}</span></label>
+              <label><input type="number" name="cp" value="${felder.cp}" min="0" step="1"
+                            aria-label="${kuerzel("cp")}"><span>${kuerzel("cp")}</span></label>
+            </span>
           </span>
         </label>
       </div>
@@ -108,9 +112,11 @@ export async function angebotDialog(laden, item) {
           return {
             an: [...w.querySelectorAll('input[name="user"]:checked')].map(i => i.value),
             menge: Math.max(1, Number(w.querySelector('[name="menge"]').value) || 1),
-            preisCp: grundpreisCp({
-              value: Number(w.querySelector('[name="preis"]').value) || 0,
-              denomination: w.querySelector('[name="sorte"]').value
+            // Drei Felder, damit auch „1 GM 2 KM" eingebbar ist.
+            preisCp: ausMuenzfeldern({
+              gp: w.querySelector('[name="gp"]')?.value,
+              sp: w.querySelector('[name="sp"]')?.value,
+              cp: w.querySelector('[name="cp"]')?.value
             }),
             text: w.querySelector('[name="text"]').value.trim()
           };

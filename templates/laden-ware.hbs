@@ -72,15 +72,9 @@
                 treten zurueck, bis die Karte gemeint ist. Vorher trug jede
                 Zeile sechs Bedienelemente gleichzeitig. --}}
           <div class="shops-werkzeuge">
-          <div class="shops-festpreis" title="{{localize 'SHOPS.Bogen.FestpreisHinweis'}}">
-            <input type="number" data-ware-feld="festpreis" min="0" step="1"
-                   value="{{#if hatFestpreis}}{{festWert}}{{/if}}"
-                   placeholder="—" {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-            <select data-ware-feld="festsorte" {{#unless @root.bearbeitbar}}disabled{{/unless}}>
-              {{#each @root.muenzen}}
-                <option value="{{sorte}}" {{#if (eq sorte ../festSorte)}}selected{{/if}}>{{kuerzel}}</option>
-              {{/each}}
-            </select>
+          <div class="shops-festpreis" data-ware-feld="festpreis"
+               title="{{localize 'SHOPS.Bogen.FestpreisHinweis'}}">
+            {{> "shops-muenzfelder" felder=festFelder gesperrt=@root.gesperrt}}
           </div>
 
           {{!-- Ein Knopf statt fünf. Fünf blasse Symbole nebeneinander

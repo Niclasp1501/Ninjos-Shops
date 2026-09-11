@@ -14,7 +14,8 @@
  * (Entscheidung 3 im Konzept).
  */
 
-import { MODULE_ID, WARE, KAUFMODUS, SOCKET } from "./const.js";
+import { chipHinlegen, chipWegnehmen } from "./chip.js";
+import { MODULE_ID, WARE, KAUFMODUS, SOCKET, OFFENER_LADEN } from "./const.js";
 import { grundpreisCp, preisCp, alsText, KUPFERWERT } from "./preise.js";
 import { vermoegenCp } from "./kasse.js";
 import { eigenesAngebot } from "./angebot.js";
@@ -429,8 +430,41 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     // `force` setzt nur das Modul selbst: die Spielleitung macht zu, oder ein
     // anderer Laden nimmt den Platz ein. Das ist keine Entscheidung des Spielers.
     if (!options.force) wegklickenMerken(this.ladenUuid);
-    return super.close(options);
+    const raus = await super.close(options);
+    ladenChipNachziehen();
+    return raus;
   }
+}
+
+/* ── Der Zettel, der den Laden zurueckholt ─────────────────────────── */
+
+const CHIP = `${MODULE_ID}-ladenchip`;
+
+/**
+ * **Wegklicken ist nicht Verlassen.**
+ *
+ * Am 12.09.2026 am Tisch gemeldet: Ein Spieler machte das Ladenfenster zu und
+ * kam nicht mehr hinein, obwohl die Spielleitung ihn nie hinausgeworfen hatte.
+ * Der Handelstisch und der Tausch hatten ihren Zettel unten rechts seit
+ * laengerem, der Laden nicht.
+ *
+ * Massgeblich ist das Merkmal `OFFENER_LADEN` am Benutzer: Solange es steht,
+ * ist der Laden fuer diesen Spieler offen, egal ob sein Fenster gerade zu ist.
+ * Nimmt die Spielleitung es weg, verschwindet auch der Zettel.
+ */
+export function ladenChipNachziehen() {
+  const uuid = game.user.getFlag(MODULE_ID, OFFENER_LADEN);
+  if (!uuid || offen?.rendered) return void chipWegnehmen(CHIP);
+
+  const laden = fromUuidSync?.(uuid) ?? null;
+  if (!laden) return void chipWegnehmen(CHIP);
+
+  chipHinlegen({
+    id: CHIP,
+    symbol: "fa-solid fa-shop",
+    text: game.i18n.format("SHOPS.Vorzeigen.Zurueckholen", { laden: laden.name ?? "" }),
+    beiKlick: () => spielerFensterOeffnen(laden)
+  });
 }
 
 /* ── Weggeklickt: eine Notiz auf diesem Geraet ─────────────────────── */
@@ -466,6 +500,7 @@ export function wurdeWeggeklickt(ladenUuid) {
  */
 export function spielerFensterOeffnen(laden) {
   wegklickenVergessen();
+  chipWegnehmen(CHIP);
   if (offen) {
     if (offen.ladenUuid === laden.uuid) {
       offen.ladenSetzen(laden);

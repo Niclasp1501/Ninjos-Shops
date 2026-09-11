@@ -129,15 +129,8 @@
           <div class="shops-anfrage-felder">
             <label>
               <span>{{localize "SHOPS.Anfrage.DeinPreis"}}</span>
-              <span class="shops-preisfeld">
-                {{!-- Zahl **und** Münzsorte. Nur Gold hieß: sechs Silber tippt
-                      man als „0,6", drei Kupfer gar nicht. --}}
-                <input type="number" data-preis min="0" step="1" placeholder="0">
-                <select data-sorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
-                  {{#each ../muenzsorten}}
-                    <option value="{{sorte}}">{{kuerzel}}</option>
-                  {{/each}}
-                </select>
+              <span class="shops-preisfeld" data-preis>
+                {{> "shops-muenzfelder"}}
               </span>
             </label>
             <label>

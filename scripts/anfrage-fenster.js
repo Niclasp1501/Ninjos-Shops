@@ -189,19 +189,14 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
 
   /** Einen der drei Vorschlagswerte ins Feld schreiben. */
   static async #uebernehmen(ereignis, ziel) {
-    const kasten = ziel.closest("[data-anfrage-id]");
-    const feld = kasten?.querySelector("[data-preis]");
-    const sorte = kasten?.querySelector("[data-sorte]");
-    if (!feld) return;
+    const kasten = ziel.closest("[data-anfrage-id]")?.querySelector("[data-preis]");
+    if (!kasten) return;
     /*
-     * Die drei Vorschlagswerte stehen in Kupfer. Frueher landete diese Zahl
-     * roh im Goldfeld - aus 50 Kupfer wurden 50 Gold. Jetzt wird sie in die
-     * groesste glatt aufgehende Sorte zerlegt, wie beim Festpreis.
+     * Die drei Vorschlagswerte stehen in Kupfer. Sie werden auf Gold, Silber
+     * und Kupfer verteilt, damit auch krumme Betraege im Feld stehen koennen.
      */
-    const { alsMuenzfeld } = await import("./preise.js");
-    const feldwert = alsMuenzfeld(Number(ziel.dataset.wert) || 0);
-    feld.value = feldwert.value;
-    if (sorte) sorte.value = feldwert.denomination;
+    const { schreibeMuenzfelder } = await import("./muenzfeld.js");
+    schreibeMuenzfelder(kasten, Number(ziel.dataset.wert) || 0);
   }
 
   static async #bieten(ereignis, ziel) {
@@ -209,11 +204,9 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
     const id = kasten?.dataset.anfrageId;
     const satz = kasten?.querySelector("[data-satz]")?.value ?? "";
     if (!id) return;
-    // Zahl und Muenzsorte - das Modul rechnet in Kupfer.
-    const { ausMuenzfeld } = await import("./preise.js");
-    preisVorschlagen(id, ausMuenzfeld(
-      kasten.querySelector("[data-preis]")?.value,
-      kasten.querySelector("[data-sorte]")?.value ?? "gp"), satz);
+    // Drei Felder, gerechnet wird in Kupfer.
+    const { leseMuenzfelder } = await import("./muenzfeld.js");
+    preisVorschlagen(id, leseMuenzfelder(kasten.querySelector("[data-preis]")).cp, satz);
     this.render(false);
   }
 

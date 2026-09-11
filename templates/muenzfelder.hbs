@@ -1,0 +1,24 @@
+{{!--
+  Ein Preis in Gold, Silber und Kupfer.
+
+  Drei Felder statt einer Zahl mit Sorte daneben: Ein Preis wie „1 GM 2 KM"
+  liess sich vorher nicht eintippen, obwohl er überall so angezeigt wird.
+  Platin fehlt mit Absicht, Preise werden in diesen drei Sorten genannt.
+--}}
+<span class="shops-muenzfelder">
+  <label>
+    <input type="number" data-muenze="gp" min="0" step="1" value="{{felder.gp}}"
+           placeholder="0" aria-label="{{localize 'SHOPS.Muenze.gp'}}" {{#if gesperrt}}disabled{{/if}}>
+    <span>{{localize "SHOPS.Muenze.gp"}}</span>
+  </label>
+  <label>
+    <input type="number" data-muenze="sp" min="0" step="1" value="{{felder.sp}}"
+           placeholder="0" aria-label="{{localize 'SHOPS.Muenze.sp'}}" {{#if gesperrt}}disabled{{/if}}>
+    <span>{{localize "SHOPS.Muenze.sp"}}</span>
+  </label>
+  <label>
+    <input type="number" data-muenze="cp" min="0" step="1" value="{{felder.cp}}"
+           placeholder="0" aria-label="{{localize 'SHOPS.Muenze.cp'}}" {{#if gesperrt}}disabled{{/if}}>
+    <span>{{localize "SHOPS.Muenze.cp"}}</span>
+  </label>
+</span>

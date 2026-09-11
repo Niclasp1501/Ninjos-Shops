@@ -17,8 +17,9 @@
  * niemand zu (KONZEPT-shops.md, Abschnitt 4). Das entscheidet sich in der Welt.
  */
 
+import { leseMuenzfelder } from "./muenzfeld.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
-import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfelder, KUPFERWERT } from "./preise.js";
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
 import { angebotDialog, angebotSenden, angebotZuruecknehmen } from "./angebot.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
@@ -111,6 +112,8 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     return Object.assign(ctx, {
       laden,
       bearbeitbar: this.isEditable,
+      // Die Teilvorlage fragt nach dem Gegenteil, damit sie keinen Helfer braucht.
+      gesperrt: !this.isEditable,
       istGM: game.user.isGM,
       haendler: laden.haendlerUuid ? fromUuidSync(laden.haendlerUuid) : null,
       begruessung: await foundry.applications.ux.TextEditor.implementation.enrichHTML(
@@ -160,7 +163,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         const merkmal = item.flags?.[MODULE_ID] ?? {};
         const grundCp = grundpreisCp(item.system?.price);
         const festCp = Number.isFinite(merkmal[WARE.FESTPREIS]) ? merkmal[WARE.FESTPREIS] : null;
-        const feld = alsMuenzfeld(festCp ?? 0);
+        const festFelder = festCp === null ? {} : alsMuenzfelder(festCp);
 
         return {
           id: item.id,
@@ -171,8 +174,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
           preisText: alsText(preisCp(grundCp, laden, festCp), kuerzel),
           ankaufText: laden.ankauf > 0 ? alsText(ankaufCp(grundCp, laden), kuerzel) : null,
           hatFestpreis: festCp !== null,
-          festWert: feld.value,
-          festSorte: feld.denomination,
+          festFelder,
           hinweis: merkmal[WARE.HINWEIS] ?? "",
           verborgen: merkmal[WARE.VERBORGEN] === true,
           dienst: merkmal[WARE.DIENST] === true,
@@ -250,12 +252,11 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
        * gratis. Das ist ein Unterschied, und er ist gewollt: "kein Festpreis"
        * heisst Aufschlag auf den Grundpreis, "0" heisst geschenkt.
        */
-      case "festpreis":
-      case "festsorte": {
-        const zahlFeld = zeile.querySelector('[data-ware-feld="festpreis"]');
-        const sorteFeld = zeile.querySelector('[data-ware-feld="festsorte"]');
-        if (zahlFeld.value.trim() === "") return item.unsetFlag(MODULE_ID, WARE.FESTPREIS);
-        const cp = grundpreisCp({ value: Number(zahlFeld.value), denomination: sorteFeld.value });
+      case "festpreis": {
+        // Drei Felder statt Zahl und Sorte, damit „1 GM 2 KM" eingebbar ist.
+        const kasten = zeile.querySelector('[data-ware-feld="festpreis"]');
+        const { cp, leer } = leseMuenzfelder(kasten);
+        if (leer) return item.unsetFlag(MODULE_ID, WARE.FESTPREIS);
         return item.setFlag(MODULE_ID, WARE.FESTPREIS, cp);
       }
     }

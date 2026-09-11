@@ -103,14 +103,8 @@
                     {{text}}
                   </button>
                 {{/each}}
-                <span class="shops-preisfeld">
-                  <input type="number" data-anrechnung min="0" step="1" value="{{anrechnungFeld.value}}"
-                         aria-label="{{localize 'SHOPS.Tisch.WasWert'}}">
-                  <select data-anrechnungsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
-                    {{#each ../muenzsorten}}
-                      <option value="{{sorte}}" {{#if (eq sorte ../anrechnungFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
-                    {{/each}}
-                  </select>
+                <span class="shops-preisfeld" data-anrechnung>
+                  {{> "shops-muenzfelder" felder=anrechnungFelder}}
                 </span>
                 <button type="button" class="shops-klein" data-action="anrechnen">
                   {{localize "SHOPS.Tisch.Anrechnen"}}
@@ -158,14 +152,8 @@
     <div class="shops-tisch-preisfeld">
       <label>
         <span>{{localize "SHOPS.Tisch.SieVerlangt"}}</span>
-        <span class="shops-preisfeld">
-          <input type="number" data-forderung min="0" step="1" value="{{stand.forderungFeld.value}}"
-                 aria-label="{{localize 'SHOPS.Tisch.SieVerlangt'}}">
-          <select data-forderungsorte aria-label="{{localize 'SHOPS.Muenze.Sorte'}}">
-            {{#each muenzsorten}}
-              <option value="{{sorte}}" {{#if (eq sorte ../stand.forderungFeld.denomination)}}selected{{/if}}>{{kuerzel}}</option>
-            {{/each}}
-          </select>
+        <span class="shops-preisfeld" data-forderung>
+          {{> "shops-muenzfelder" felder=stand.forderungFelder}}
         </span>
       </label>
       <button type="button" class="shops-kaufen shops-zweit" data-action="forderungUebernehmen">

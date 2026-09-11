@@ -53,6 +53,7 @@
   "SHOPS.Feld.BegruessungPlatzhalter": "One or two sentences shown at the top of the players' window.",
   "SHOPS.Vorzeigen.AllenZeigen": "Show to all",
   "SHOPS.Vorzeigen.NiemandDa": "Nobody is logged in to show it to.",
+  "SHOPS.Vorzeigen.Zurueckholen": "Shop: {laden}",
   "SHOPS.Spieler.AuslageLeer": "Nothing is on the shelves right now.",
   "SHOPS.Spieler.KeineFigur": "No character assigned — the purse appears once you have one.",
   "SHOPS.Vorzeigen.AuswahlTitel": "Show shop",

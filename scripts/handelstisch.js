@@ -42,9 +42,10 @@
  */
 
 import { MODULE_ID, SOCKET, WARE } from "./const.js";
-import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfeld, ausMuenzfeld,
+import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfelder,
          PREIS_SORTEN, KUPFERWERT } from "./preise.js";
 import { bezahle, schreibeGut, vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
+import { leseMuenzfelder } from "./muenzfeld.js";
 import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { laedenVon } from "./verknuepfung.js";
@@ -165,7 +166,7 @@ export function tischStand(handel) {
         darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length),
         grundText: alsText((p.grundCp ?? 0) * p.menge, kuerzel),
         eigenerWert: Number.isFinite(p.anrechnungCp),
-        anrechnungFeld: alsMuenzfeld(wert),
+        anrechnungFelder: alsMuenzfelder(wert),
         spanne: spanneVon(p)
       };
     }),
@@ -178,7 +179,7 @@ export function tischStand(handel) {
     gefordertText: alsText(gefordertCp, kuerzel),
     gebrachtText: alsText(rechtsCp, kuerzel),
     verlangtText: alsText(linksCp, kuerzel),
-    forderungFeld: alsMuenzfeld(gefordertCp),
+    forderungFelder: alsMuenzfelder(gefordertCp),
     ueberschrieben: Number.isFinite(handel.forderungCp) && handel.forderungCp !== vorschlagCp,
 
     offenCp,
@@ -979,10 +980,9 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static #forderungUebernehmen() {
-    const feld = this.element.querySelector("[data-forderung]");
-    const sorte = this.element.querySelector("[data-forderungsorte]");
-    if (!feld) return;
-    forderungSetzen(this.benutzerId, ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
+    const kasten = this.element.querySelector("[data-forderung]");
+    if (!kasten) return;
+    forderungSetzen(this.benutzerId, leseMuenzfelder(kasten).cp);
   }
 
   static #forderungFrei() { forderungSetzen(this.benutzerId, null); }
@@ -990,11 +990,9 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
   /** Was ihr sein Stueck wert ist - aus dem Feld in seiner Zeile. */
   static #anrechnen(ereignis, ziel) {
     const zeile = ziel.closest("[data-item-id]");
-    const feld = zeile?.querySelector("[data-anrechnung]");
-    const sorte = zeile?.querySelector("[data-anrechnungsorte]");
-    if (!feld) return;
-    anrechnenSetzen(this.benutzerId, zeile.dataset.itemId,
-                    ausMuenzfeld(feld.value, sorte?.value ?? "gp"));
+    const kasten = zeile?.querySelector("[data-anrechnung]");
+    if (!kasten) return;
+    anrechnenSetzen(this.benutzerId, zeile.dataset.itemId, leseMuenzfelder(kasten).cp);
   }
 
   /** Einer der drei Vorschlaege - ein Griff statt einer Zahl. */

@@ -15,7 +15,7 @@
  * Spielleiter haelt die Wahrheit" laesst sich nicht nachtraeglich einziehen.
  */
 
-import { MODULE_ID, SETTINGS } from "./const.js";
+import { MODULE_ID, SETTINGS, OFFENER_LADEN } from "./const.js";
 import { ladenTypEinrichten, ladenBilderEinrichten } from "./laden-model.js";
 import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
@@ -26,6 +26,7 @@ import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
 import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.js";
+import { ladenChipNachziehen } from "./spieler-fenster.js";
 import { tischEinrichten } from "./handelstisch.js";
 import { tauschEinrichten, tauschStarten, tauschKnopfNachziehen } from "./tausch.js";
 import { schauWiederherstellen } from "./schau.js";
@@ -210,6 +211,23 @@ Hooks.once("ready", async () => {
   anfrageFensterEinrichten();
   buchFensterEinrichten();
   verknuepfungEinrichten();
+  // Das Preisfeld aus drei Muenzsorten. Wird in mehreren Fenstern gebraucht.
+  foundry.applications.handlebars.loadTemplates({
+    "shops-muenzfelder": `modules/${MODULE_ID}/templates/muenzfelder.hbs`
+  });
+
+  /*
+   * Der Zettel unten rechts fuer einen weggeklickten Laden. Er haengt am
+   * Merkmal `OFFENER_LADEN`: Setzt die Spielleitung es, oder nimmt sie es
+   * weg, folgt der Zettel.
+   */
+  Hooks.on("updateUser", (benutzer, aenderungen) => {
+    if (benutzer.id !== game.user.id) return;
+    if (!foundry.utils.hasProperty(aenderungen, `flags.${MODULE_ID}.${OFFENER_LADEN}`)) return;
+    ladenChipNachziehen();
+  });
+  ladenChipNachziehen();
+
   tischEinrichten();
   tauschEinrichten();
 

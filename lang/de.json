@@ -53,6 +53,7 @@
   "SHOPS.Feld.BegruessungPlatzhalter": "Ein bis zwei Sätze, die oben im Fenster der Spieler stehen.",
   "SHOPS.Vorzeigen.AllenZeigen": "Allen zeigen",
   "SHOPS.Vorzeigen.NiemandDa": "Niemand ist angemeldet, dem man ihn zeigen könnte.",
+  "SHOPS.Vorzeigen.Zurueckholen": "Laden: {laden}",
   "SHOPS.Spieler.AuslageLeer": "In diesem Laden liegt gerade nichts aus.",
   "SHOPS.Spieler.KeineFigur": "Keine Figur zugewiesen — die Börse erscheint, sobald du eine hast.",
   "SHOPS.Vorzeigen.AuswahlTitel": "Laden vorzeigen",

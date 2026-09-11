@@ -176,6 +176,41 @@ export function wechselgeldText(zurueck, kuerzel = s => s) {
  * @param {number} cp
  * @returns {{value: number, denomination: string}}
  */
+/**
+ * Ein Betrag als **drei** Felder: Gold, Silber, Kupfer.
+ *
+ * **Warum nicht Zahl plus Sorte.** Bis zum 12.09.2026 wurde ein Preis als eine
+ * Zahl mit einer Muenzsorte daneben eingegeben. Damit war jeder Preis
+ * darstellbar, der glatt in *einer* Sorte aufgeht, und sonst keiner: „1 GM und
+ * 2 KM" liess sich nicht eintippen, weder am Festpreis im Laden noch bei einer
+ * Verkaufsanfrage noch am Handelstisch. Angezeigt wurde ohnehin immer in allen
+ * drei Sorten, eingeben ging nur eine. Am Tisch gemeldet.
+ *
+ * Platin fehlt mit Absicht: Preise werden in Gold, Silber und Kupfer genannt
+ * (siehe `PREIS_SORTEN`), sonst hiessen zwoelf Gold ploetzlich „1 PM 2 GM".
+ */
+export function alsMuenzfelder(cp) {
+  const rest = Math.max(0, Math.round(Number(cp) || 0));
+  return {
+    gp: Math.floor(rest / KUPFERWERT.gp),
+    sp: Math.floor((rest % KUPFERWERT.gp) / KUPFERWERT.sp),
+    cp: rest % KUPFERWERT.sp
+  };
+}
+
+/** Und zurueck. Leere Felder zaehlen als null, nichts wird negativ. */
+export function ausMuenzfeldern(felder) {
+  return PREIS_SORTEN.reduce((summe, sorte) => {
+    const n = Math.max(0, Math.floor(Number(felder?.[sorte]) || 0));
+    return summe + n * KUPFERWERT[sorte];
+  }, 0);
+}
+
+/** Sind alle drei Felder leer? Dann ist „kein Preis" gemeint, nicht „null". */
+export function muenzfelderLeer(felder) {
+  return PREIS_SORTEN.every(sorte => String(felder?.[sorte] ?? "").trim() === "");
+}
+
 export function alsMuenzfeld(cp, { vorzeichen = false } = {}) {
   const roh = Math.round(Number(cp) || 0);
   const betrag = vorzeichen ? Math.abs(roh) : Math.max(0, roh);
