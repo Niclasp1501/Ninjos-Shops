@@ -3,6 +3,62 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## 14.2609.88 - 2026-09-11
+
+Almost everything in this release came from one evening of real trading at
+the table. Each entry below was reported there first.
+
+### Fixed
+- **A trade could hand one side over and not the other.** Goods went on the
+  table, the other player deleted theirs, the trade was accepted and paid for,
+  and what had been on the table never arrived. The trade between players
+  moved the first side and then the second, so when the second failed the
+  first was already gone. Both sides are now checked before anything moves,
+  by the same function on both tables.
+- **A bag's contents were never checked, and on the NPC table never even
+  moved.** Laying down a backpack and emptying it before closing handed over
+  something other than what the other side agreed to. What is inside a bag,
+  its own coins included, is now recorded when it goes on the table, shown
+  under its name, and compared when the trade closes. The trading table also
+  used a copy routine that left the contents behind, so a bag bought from an
+  NPC arrived empty. Both tables now share the same handover.
+- **A bag and what is in it could be promised twice.** Picking the blanket
+  and then the backpack it lies in put both on the table. Only one blanket
+  was ever handed over, but the table said otherwise. Anything inside a bag
+  that is also on the table is now dropped from the list, and in the picking
+  layer it says it travels inside that bag instead.
+- **Opening a bag showed it empty.** The item sheet for a bag had no contents
+  and the wrong weight, because its contents are neighbouring items on the
+  same actor and the preview copy had none. A container now opens on a
+  throwaway carrier that holds it and everything inside.
+- **The tick in the picking layer did nothing.** It sat next to the tappable
+  area rather than inside it. The whole row is a real button now, reachable
+  from the keyboard.
+- **The button promised the last step while doing the first.** It read
+  "close trade" from the start, although pressing it only recorded your own
+  agreement. It now follows the state: agree, close trade once the other side
+  has agreed, or take your agreement back.
+- **Dialog text sat small in the corner.** Foundry gives a dialog body no
+  padding and no font size. Dialogs now have room, a reading size and a line
+  length that stops before the edge.
+
+### Added
+- **A window for every ending.** A trade that closes, fails because something
+  vanished, or is ended by someone else now says so in a window both sides
+  confirm. A notification was the wrong place: it fades by itself, and the
+  sheet view of In-Person Tools hides notifications entirely, so on the
+  tablets at the table it reached nobody. Something not being there any more
+  gets its own wording, kept apart from ordinary refusals such as not having
+  enough money.
+- **A way back for a parked trade.** Closing the trade window with the X no
+  longer loses sight of it: a chip in the bottom right corner brings it back,
+  as it already did for the trading table. Several chips stack.
+- **A notice when no gamemaster is online.** The trade cannot go through
+  without one, which is right, but nothing used to say so. The table shows it
+  and the agree button waits.
+- **Items in the trade window can be opened**, the other side's included,
+  read only.
+
 ## 14.2609.75 - 2026-09-09
 
 ### Changed
