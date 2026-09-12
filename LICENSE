@@ -5,6 +5,9 @@ This software is NOT open source. It is distributed free of charge through the
 Foundry Virtual Tabletop package listing and this project's GitHub releases,
 but the author retains all rights not granted below.
 
+A German version of these terms follows at the end of this file. In case of
+a discrepancy, the German version applies.
+
 
 WHAT YOU MAY DO
 
@@ -95,3 +98,113 @@ THE NINJO LOGO
   brand mark: all rights reserved, not covered by any licence, and not free to
   reuse, modify or redistribute. It contains no third-party logos, marks or
   stock material.
+
+
+====================================================================
+DEUTSCHE FASSUNG
+
+Die englische Fassung oben und diese deutsche Fassung haben denselben Inhalt.
+Bei Abweichungen gilt die deutsche Fassung.
+
+Ninjo's Shops & Trade
+Copyright (c) 2026 Ninjo. Alle Rechte vorbehalten.
+
+Diese Software ist NICHT Open Source. Sie wird kostenlos über den Paketkatalog
+von Foundry Virtual Tabletop und über die GitHub-Releases dieses Projekts
+verbreitet. Alle Rechte, die unten nicht eingeräumt werden, behält der
+Urheber.
+
+WAS ERLAUBT IST
+
+  * Das Modul in eigenen Welten von Foundry Virtual Tabletop installieren und
+    benutzen, privat wie gewerblich. Bezahlte Runden damit zu leiten ist
+    ausdrücklich erlaubt.
+  * Sicherungskopien behalten.
+  * Es für den eigenen Spieltisch anpassen.
+  * Ein eigenes, getrenntes Modul schreiben, das mit diesem zusammenarbeitet,
+    etwa über dessen Hooks oder API, solange es keinen Code und keine Dateien
+    dieses Moduls enthält.
+
+WAS OHNE SCHRIFTLICHE ERLAUBNIS DES URHEBERS NICHT ERLAUBT IST
+
+  * Es weitergeben, ganz oder in Teilen, verändert oder unverändert. Verweise
+    stattdessen auf den Paketkatalog oder auf die Releases-Seite.
+  * Seinen Code oder wesentliche Teile davon in ein anderes Projekt
+    übernehmen.
+  * Es unter einem anderen Namen veröffentlichen oder in ein anderes Paket
+    einbauen.
+  * Es verkaufen oder Teil von etwas Verkauftem sein lassen.
+  * Urheber- und Lizenzhinweise entfernen oder ändern.
+
+
+FORKS AUF GITHUB
+
+Die Nutzungsbedingungen von GitHub erlauben jedem, ein öffentliches
+Repository auf GitHub zu forken. Ein Fork räumt keine Rechte ein, die über
+diese Lizenz hinausgehen. Er darf benutzt werden, um einen Beitrag für dieses
+Projekt vorzubereiten oder das Modul für den eigenen Tisch anzupassen, und
+sonst für nichts.
+
+
+BEITRÄGE
+
+Fehlermeldungen und Pull Requests sind willkommen. Wer einen Beitrag
+einreicht, stimmt zu, dass der Urheber ihn unter diesen Bedingungen nutzen
+darf und unter allen weiteren Bedingungen, die der Urheber später für dieses
+Projekt wählt, auch unter freieren oder kommerziellen.
+
+
+ZUSATZMODULE UND KÜNFTIGE VERSIONEN
+
+Der Urheber darf Zusatzmodule für dieses Modul zu eigenen Bedingungen
+anbieten, auch gegen Bezahlung. Künftige Versionen dieses Moduls dürfen unter
+anderen Bedingungen erscheinen; für jede Version gilt die Lizenz, die mit ihr
+ausgeliefert wird.
+
+
+ENDE DER RECHTE
+
+Wer gegen diese Bedingungen verstößt, verliert die hier eingeräumten Rechte
+automatisch.
+
+
+KEINE GEWÄHRLEISTUNG, BESCHRÄNKTE HAFTUNG
+
+Die Software wird kostenlos und wie besehen überlassen, ohne Gewähr dafür,
+dass sie fehlerfrei oder für einen bestimmten Zweck geeignet ist. Der Urheber
+haftet unbeschränkt für Vorsatz und grobe Fahrlässigkeit, für Schäden aus der
+Verletzung des Lebens, des Körpers oder der Gesundheit sowie überall dort, wo
+das Gesetz die Haftung zwingend vorschreibt, insbesondere nach dem
+Produkthaftungsgesetz. Eine weitergehende Haftung ist ausgeschlossen.
+
+
+ANWENDBARES RECHT
+
+Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des
+UN-Kaufrechts. Für Verbraucher bleiben die zwingenden Verbraucherschutzregeln
+ihres Wohnsitzlandes unberührt. Sollte eine Bestimmung dieser Bedingungen
+unwirksam sein, bleiben die übrigen wirksam.
+
+
+FREMDES MATERIAL
+
+  assets/laden.svg enthält das Symbol "scale-balanced" aus Font Awesome Free
+  (https://fontawesome.com), genutzt unter CC BY 4.0
+  (https://creativecommons.org/licenses/by/4.0/).
+
+  Änderungen: Der Pfad wurde in eine eigenständige SVG-Datei übernommen, fill
+  auf currentColor gesetzt und ein erklärender Kommentar ergänzt. Für diese
+  Datei gilt die Lizenz des Symbols; die Bedingungen oben berühren sie nicht.
+
+  Alles Übrige, worauf das Modul zurückgreift, also die über CSS-Klassen
+  benutzten Font-Awesome-Zeichen und die Gegenstandsbilder, stellt Foundry
+  Virtual Tabletop oder das Spielsystem zur Laufzeit bereit; es wird hier
+  nicht mitverbreitet.
+
+
+DAS NINJO-LOGO
+
+  assets/ninjo.png ist eine eigens für den Urheber angefertigte Zeichnung von
+  Roxy, genutzt mit Roxys Erlaubnis. Es ist das Markenzeichen des Urhebers:
+  alle Rechte vorbehalten, von keiner Lizenz erfasst und nicht frei nutzbar,
+  veränderbar oder weiterzugeben.
