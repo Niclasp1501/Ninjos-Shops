@@ -68,3 +68,6 @@ jobs:
         with:
           package-token: ${{ secrets.PACKAGE_TOKEN }}
           manifest-url: https://github.com/Niclasp1501/Ninjos-Shops/releases/download/${{ github.ref_name }}/module.json
+          # Der Katalog verlinkt je Version genau einen Hinweis. Ohne ihn steht
+          # dort nichts, obwohl der Release-Text daneben liegt.
+          notes-url: https://github.com/Niclasp1501/Ninjos-Shops/releases/tag/${{ github.ref_name }}
