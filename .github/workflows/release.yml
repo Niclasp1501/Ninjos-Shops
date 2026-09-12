@@ -41,6 +41,14 @@ jobs:
             module.json LICENSE README.md CHANGELOG.md \
             scripts styles templates lang assets
 
+      # Der Release-Text ist der Abschnitt dieser Version, nicht die ganze
+      # Datei. Vorher lagen 40 KB Changelog in jedem Release.
+      - name: Release-Text herausschneiden
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          VERSION="${VERSION#v}" python3 .github/scripts/release_notes.py
+
       - name: Release anlegen
         uses: softprops/action-gh-release@v2
         with:
@@ -49,7 +57,7 @@ jobs:
             module.zip
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          body_path: CHANGELOG.md
+          body_path: release-notes.md
           draft: false
           prerelease: false
 
