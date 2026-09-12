@@ -84,7 +84,7 @@ async function ausLaedenWaehlen(laeden, titel) {
     const dialog = new foundry.applications.api.DialogV2({
       window: { title: titel },
       classes: ["ninjos-shops"],
-      content: `<div class="shops-wahl">${zeilen}</div>`,
+      content: `<div class="shops-ladenliste">${zeilen}</div>`,
       buttons: [{ action: "abbrechen", label: game.i18n.localize("SHOPS.Abbrechen") }],
       submit: () => fertig(null),
       render: (ereignis, element) => {

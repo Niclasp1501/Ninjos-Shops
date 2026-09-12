@@ -12,6 +12,7 @@
  */
 
 import { MODULE_ID } from "./const.js";
+import { chipHinlegen, chipWegnehmen } from "./chip.js";
 import { verkaufbareSachen } from "./verkauf.js";
 import {
   ZUSTAND, anfrageStellen, aufVorschlagAntworten, anfrageZurueckziehen,
@@ -134,6 +135,49 @@ export class AnfragePacken extends HandlebarsApplicationMixin(ApplicationV2) {
     anfrageWegraeumen();
     this.close();
   }
+
+  async close(options) {
+    const weg = await super.close(options);
+    packenChipNachziehen();
+    return weg;
+  }
+}
+
+/* ── Der Zettel unten rechts ───────────────────────────────────────── */
+
+const CHIP = `${MODULE_ID}-anfragechip`;
+
+/**
+ * Eine weggelegte Verkaufsanfrage zurueckholen.
+ *
+ * Die Sitzung traegt beide Kennungen bei sich, also laesst sich das Fenster
+ * aus ihr wieder aufbauen - auch dann, wenn es in dieser Sitzung noch nie
+ * offen war, etwa nach einem Neuladen.
+ */
+async function packenZurueckholen(meine) {
+  const gegenueber = await fromUuid(meine.gegenueberUuid);
+  const figur = await fromUuid(meine.figurUuid);
+  if (!gegenueber || !figur) return;
+  chipWegnehmen(CHIP);
+  packenOeffnen(gegenueber, figur);
+}
+
+/**
+ * Der Zettel liegt, solange eine eigene Anfrage laeuft und ihr Fenster zu ist.
+ *
+ * Wie beim Laden, beim Handelstisch und beim Tausch: Zumachen ist nicht
+ * beenden. Siehe chip.js.
+ */
+export function packenChipNachziehen() {
+  const meine = eigeneAnfrage();
+  if (!meine || meine.vorbei || packen?.rendered) return void chipWegnehmen(CHIP);
+
+  chipHinlegen({
+    id: CHIP,
+    symbol: "fa-solid fa-hand-holding",
+    text: game.i18n.format("SHOPS.Anfrage.Zurueckholen", { laden: meine.gegenueberName ?? "" }),
+    beiKlick: () => packenZurueckholen(meine)
+  });
 }
 
 /* ── Verhandeln: das Fenster der Spielleitung ──────────────────────── */
@@ -322,6 +366,15 @@ export function anfrageFensterEinrichten() {
 
   anfrageBeobachten((meine, sitzung) => {
     packen?.render(false);
+
+    /*
+     * **Ein Vorschlag will beantwortet werden.** Das Fenster nur neu zu
+     * zeichnen half dem nicht, der es nach dem Abschicken weggelegt hatte:
+     * `render(false)` macht ein zugemachtes Fenster nicht auf. Die
+     * Spielleitung wartete auf eine Antwort, die beim Spieler nie ankam.
+     */
+    if (meine?.zustand === ZUSTAND.VORSCHLAG && !packen?.rendered) packenZurueckholen(meine);
+    else packenChipNachziehen();
 
     if (!game.user.isGM) return;
     if (sitzung?.zustand === ZUSTAND.GEPACKT) verhandelnOeffnen(sitzung);

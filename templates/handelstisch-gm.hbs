@@ -189,6 +189,13 @@
       {{else if stand.bereitSpieler}}
         <span class="shops-tisch-zusage shops-zugesagt">{{localize "SHOPS.Tisch.ErHatZugesagt" spieler=spielerName}}</span>
       {{/if}}
+      {{#if stand.zusageWegGm}}
+        {{!-- Eine Zusage, die wegfaellt, faellt nicht stillschweigend weg. --}}
+        <span class="shops-tisch-zusage shops-wartet">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+          {{localize "SHOPS.Tisch.ZusageWeg"}}
+        </span>
+      {{/if}}
       <button type="button" class="shops-kaufen shops-zweit shops-abseits" data-action="beenden">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         {{localize "SHOPS.Tisch.Zuruecknehmen"}}

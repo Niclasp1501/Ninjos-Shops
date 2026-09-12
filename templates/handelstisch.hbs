@@ -170,6 +170,13 @@
           {{localize "SHOPS.Tisch.SieHatZugesagt" person=stand.personName}}
         </span>
       {{/if}}
+      {{#if stand.zusageWegSpieler}}
+        {{!-- Eine Zusage, die wegfaellt, faellt nicht stillschweigend weg. --}}
+        <span class="shops-tisch-zusage shops-wartet">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+          {{localize "SHOPS.Tisch.ZusageWeg"}}
+        </span>
+      {{/if}}
       {{#if stand.ohneSpielleitung}}
         {{!-- Ohne Spielleitung fuehrt niemand aus. Das steht im Fenster und
               nicht als Meldung: Eine Meldung verschwindet, und in der

@@ -143,6 +143,17 @@ function meineSeite(tausch, benutzerId = game.user.id) {
 const leereSeite = () => ({ posten: [], muenzen: {}, bereit: false });
 
 /**
+ * Eine Seite, deren Zusage wegen einer Aenderung wegfaellt.
+ *
+ * `zusageWeg` ist nur die Spur davon: Sie sorgt dafuer, dass im Fenster steht,
+ * warum das eigene Ja verschwunden ist. Das naechste Ja loescht sie wieder.
+ */
+const ohneZusage = seite => ({
+  bereit: false,
+  zusageWeg: seite.bereit === true || seite.zusageWeg === true
+});
+
+/**
  * Der Tausch, fertig fuer die Anzeige - aus Sicht dieses Clients.
  *
  * „Meine" und „seine" Seite haengen davon ab, wer hinsieht: Dasselbe Merkmal
@@ -344,16 +355,16 @@ export async function aufTausch(daten) {
     return void await verteilen({
       ...tausch,
       [seite]: { ...tausch[seite], posten: liste, muenzen },
-      a: { ...tausch.a, bereit: false, ...(seite === "a" ? { posten: liste, muenzen } : {}) },
-      b: { ...tausch.b, bereit: false, ...(seite === "b" ? { posten: liste, muenzen } : {}) }
+      a: { ...tausch.a, ...ohneZusage(tausch.a), ...(seite === "a" ? { posten: liste, muenzen } : {}) },
+      b: { ...tausch.b, ...ohneZusage(tausch.b), ...(seite === "b" ? { posten: liste, muenzen } : {}) }
     });
   }
 
   if (daten.tat === "bereit") {
     const neu = {
       ...tausch,
-      a: { ...tausch.a, bereit: seite === "a" ? daten.wert : tausch.a.bereit },
-      b: { ...tausch.b, bereit: seite === "b" ? daten.wert : tausch.b.bereit }
+      a: { ...tausch.a, ...(seite === "a" ? { bereit: daten.wert, zusageWeg: false } : {}) },
+      b: { ...tausch.b, ...(seite === "b" ? { bereit: daten.wert, zusageWeg: false } : {}) }
     };
     if (neu.a.bereit && neu.b.bereit) return void await ausfuehren(neu);
     return void await verteilen(neu);

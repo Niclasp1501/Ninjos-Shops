@@ -3,6 +3,46 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## 14.2609.91 - 2026-09-12
+
+A second evening of trading at the table, and the same rule as last time: every
+entry below was reported there first.
+
+### Fixed
+- **A price could only be given in one denomination.** "1 gp" worked, "2 cp"
+  worked, "1 gp and 2 cp" could not be typed at all. It hit every place a price
+  is entered: the fixed price on a shop item, the gamemaster's price for a sale
+  request, the asking price and the trade in value on the trading table, and the
+  special offer. There are three fields now, gold, silver and copper. An empty
+  field is still not a zero: no fixed price means the markup applies, an explicit
+  zero means a gift.
+- **A trade could be closed while money was missing.** Under the rule that only
+  what lies on the table changes hands, the other side simply got less, and
+  nobody had wanted that. An agreement is now refused unless the scales come out
+  even, and the button says what is missing. Nothing is lost to the gamemaster by
+  that: a discount or a gift is one entry in the asking price field, and then the
+  scales come out even again.
+- **An agreement stayed valid after the table changed.** Every deliberate change
+  already dropped both agreements, but the sync that follows the real inventory
+  did not. Losing an item from the table after saying yes left a yes that had
+  been given for more goods, and with a fixed asking price the trade went through
+  at the old price. The window now also says why an agreement disappeared,
+  instead of letting it vanish without a word.
+- **A sale request's offer never reached a player who had put the window away.**
+  The gamemaster named a price, the player saw nothing, and there was no way back
+  to the request. The offer now brings the window back, and a closed request
+  waits bottom right like a shop or a trade.
+- **A closed shop could not be reopened from the bottom right.** The trading
+  table and the player to player trade had that note since the beginning, the
+  shop did not, so closing its window locked a player out of a shop that was
+  still open for them.
+- **Two windows looked like Foundry instead of like the module**, and the shop
+  picker laid its list over its own dialog. The list shared a class name with the
+  picking layer that covers the trading table on purpose.
+- **One text carried two meanings.** The small button that takes coin back off
+  the table read "That coin is no longer there", because a second entry under the
+  same name had quietly replaced it.
+
 ## 14.2609.88 - 2026-09-11
 
 Almost everything in this release came from one evening of real trading at

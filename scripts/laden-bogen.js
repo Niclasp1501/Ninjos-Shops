@@ -281,6 +281,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
 
     const sicher = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize("SHOPS.Bogen.WareLoeschenTitel") },
+      classes: ["ninjos-shops"],
       content: `<p>${game.i18n.format("SHOPS.Bogen.WareLoeschenFrage", { name: item.name })}</p>`,
       yes: { label: game.i18n.localize("SHOPS.Bogen.WareLoeschenJa"), icon: "fa-solid fa-trash" },
       no: { label: game.i18n.localize("SHOPS.Abbrechen") },

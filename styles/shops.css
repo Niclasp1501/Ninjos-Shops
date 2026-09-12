@@ -812,7 +812,7 @@
 }
 
 /* Die Spielerliste im Vorzeigen-Dialog */
-.shops-wahl .shops-wahl-zeile {
+.shops-vorzeigen-wahl .shops-wahl-zeile {
   display: flex;
   align-items: center;
   gap: 8px;

@@ -251,10 +251,11 @@ export async function benutzerWaehlen(laden) {
    * der Dialog ging zu, und nichts geschah. Aufgefallen beim ersten Klick in
    * der Welt.
    */
-  const html = `<div class="shops-wahl"><p>${game.i18n.localize("SHOPS.Vorzeigen.AuswahlHinweis")}</p>${zeilen}</div>`;
+  const html = `<div class="shops-vorzeigen-wahl"><p>${game.i18n.localize("SHOPS.Vorzeigen.AuswahlHinweis")}</p>${zeilen}</div>`;
 
   const antwort = await foundry.applications.api.DialogV2.wait({
     window: { title: game.i18n.localize("SHOPS.Vorzeigen.AuswahlTitel") },
+    classes: ["ninjos-shops"],
     content: html,
     buttons: [
       {
@@ -263,8 +264,8 @@ export async function benutzerWaehlen(laden) {
         icon: "fa-solid fa-eye",
         default: true,
         callback: (_ereignis, _knopf, dialog) => ({
-          an: [...dialog.element.querySelectorAll('.shops-wahl input[name="user"]:checked')].map(i => i.value),
-          gross: [...dialog.element.querySelectorAll('.shops-wahl input[name="gross"]:checked')].map(i => i.value)
+          an: [...dialog.element.querySelectorAll('.shops-vorzeigen-wahl input[name="user"]:checked')].map(i => i.value),
+          gross: [...dialog.element.querySelectorAll('.shops-vorzeigen-wahl input[name="gross"]:checked')].map(i => i.value)
         })
       },
       {

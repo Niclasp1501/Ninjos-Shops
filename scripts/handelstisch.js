@@ -197,6 +197,8 @@ export function tischStand(handel) {
     ohneSpielleitung: !game.users.activeGM,
     bereitSpieler: handel.bereitSpieler === true,
     bereitGm: handel.bereitGm === true,
+    zusageWegSpieler: handel.zusageWegSpieler === true,
+    zusageWegGm: handel.zusageWegGm === true,
 
     leer: !((handel.seiteNsc ?? []).length || (handel.seiteSpieler ?? []).length
             || geldNsc || geldSpieler)
@@ -225,6 +227,24 @@ function spanneVon(posten) {
 /** Der eigene offene Handel. */
 export function eigenerTisch() {
   return game.user.getFlag(MODULE_ID, TISCH) ?? null;
+}
+
+/**
+ * Die Zusagen fallen weg, weil sich etwas geaendert hat.
+ *
+ * Jede Aenderung macht aus dem Handel einen anderen: ein Stueck mehr, ein
+ * anderer Preis, eine Muenze weniger. Ein Ja, das dem alten Tisch galt, gilt
+ * dem neuen nicht. `zusageWeg` ist die Spur davon: Sie sorgt dafuer, dass im
+ * Fenster steht, warum die eigene Zusage verschwunden ist, statt dass sie
+ * still wegfaellt. Die naechste Zusage loescht sie wieder.
+ */
+function ohneZusagen(handel) {
+  return {
+    bereitSpieler: false,
+    bereitGm: false,
+    zusageWegSpieler: handel.bereitSpieler === true || handel.zusageWegSpieler === true,
+    zusageWegGm: handel.bereitGm === true || handel.zusageWegGm === true
+  };
 }
 
 /* ── Was die Spielleitung tut ──────────────────────────────────────── */
@@ -269,7 +289,7 @@ export async function wegnehmen(benutzerId, seite, itemId) {
   const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
   const liste = (handel[feld] ?? []).filter(p => p.itemId !== itemId);
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, [feld]: liste, preisCp: null, bereitSpieler: false, bereitGm: false });
+    { ...handel, [feld]: liste, preisCp: null, ...ohneZusagen(handel) });
   await funken([benutzerId]);
 }
 
@@ -294,7 +314,7 @@ export async function geldSetzen(benutzerId, seite, muenzen) {
   const gedeckelt = muenzenDeckeln(muenzen, traeger?.system?.currency);
   await benutzer.setFlag(MODULE_ID, TISCH, {
     ...handel, ...muenzFelder(seite, gedeckelt),
-    preisCp: null, bereitSpieler: false, bereitGm: false
+    preisCp: null, ...ohneZusagen(handel)
   });
   await funken([benutzerId]);
 }
@@ -380,7 +400,7 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
 
   const gedeckelt = muenzenDeckeln(muenzen, traeger.system?.currency);
   const neu = { ...handel, [feld]: liste, ...muenzFelder(seite, gedeckelt),
-                bereitSpieler: false, bereitGm: false };
+                ...ohneZusagen(handel) };
   // Ihre Ware hat sich geaendert - dann gilt auch ihre alte Forderung nicht mehr.
   if (seite === "nsc") neu.forderungCp = null;
   await benutzer.setFlag(MODULE_ID, TISCH, neu);
@@ -400,7 +420,7 @@ export async function forderungSetzen(benutzerId, betragCp) {
   if (!handel) return;
   const wert = betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0));
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, forderungCp: wert, bereitSpieler: false, bereitGm: false });
+    { ...handel, forderungCp: wert, ...ohneZusagen(handel) });
   await funken([benutzerId]);
 }
 
@@ -420,7 +440,7 @@ export async function anrechnenSetzen(benutzerId, itemId, betragCp) {
     ...p, anrechnungCp: betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0))
   });
   await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, seiteSpieler: liste, bereitSpieler: false, bereitGm: false });
+    { ...handel, seiteSpieler: liste, ...ohneZusagen(handel) });
   await funken([benutzerId]);
 }
 
@@ -511,7 +531,9 @@ export async function bereitSetzen(benutzerId, wer, wert = true) {
   }
 
   const feld = wer === "gm" ? "bereitGm" : "bereitSpieler";
-  await benutzer.setFlag(MODULE_ID, TISCH, { ...handel, [feld]: !!wert });
+  const spurFeld = wer === "gm" ? "zusageWegGm" : "zusageWegSpieler";
+  await benutzer.setFlag(MODULE_ID, TISCH,
+    { ...handel, [feld]: !!wert, [spurFeld]: false });
 
   const jetzt = benutzer.getFlag(MODULE_ID, TISCH);
   if (jetzt?.bereitGm && jetzt?.bereitSpieler) return void await abschliessen(benutzerId);
@@ -578,13 +600,13 @@ async function abschliessenAusfuehren(benutzerId) {
 
   // Nichts anfassen, bevor feststeht, dass alles noch da ist.
   let spielerKasse = muenzenAbziehen(figur.system?.currency ?? {}, legtSpieler);
-  if (!spielerKasse) return { ok: false, grund: "SHOPS.Tisch.GeldWeg" };
+  if (!spielerKasse) return { ok: false, grund: "SHOPS.Tisch.GeldFehlt" };
   if (Object.keys(legtPerson).length && !personHatKasse) {
-    return { ok: false, grund: "SHOPS.Tisch.GeldWeg" };
+    return { ok: false, grund: "SHOPS.Tisch.GeldFehlt" };
   }
   let personKasse = personHatKasse
     ? muenzenAbziehen(person.system.currency, legtPerson) : null;
-  if (personHatKasse && !personKasse) return { ok: false, grund: "SHOPS.Tisch.GeldWeg" };
+  if (personHatKasse && !personKasse) return { ok: false, grund: "SHOPS.Tisch.GeldFehlt" };
 
   spielerKasse = muenzenDazu(spielerKasse, legtPerson);
   if (personKasse) personKasse = muenzenDazu(personKasse, legtSpieler);
@@ -1219,7 +1241,15 @@ export async function tischAbgleichen(traeger) {
     const kennung = liste => liste.map(p => `${p.itemId}:${p.menge}`).join("|");
     if (kennung(handel[feld] ?? []) === kennung(neu)) continue;
 
-    await benutzer.setFlag(MODULE_ID, TISCH, { ...handel, [feld]: neu, preisCp: null });
+    /*
+     * **Auch das ist eine Aenderung.** Bis zum 12.09.2026 zog der Abgleich die
+     * Liste nach und liess die Zusagen stehen. Wer zugesagt hatte und danach
+     * ein Stueck vom Tisch verlor, stand mit einem Ja da, das fuer mehr Ware
+     * gegolten hatte; bei gesetzter Forderung ging der Handel zum alten Preis
+     * durch, obwohl weniger dalag.
+     */
+    await benutzer.setFlag(MODULE_ID, TISCH,
+      { ...handel, [feld]: neu, preisCp: null, ...ohneZusagen(handel) });
     await funken([benutzer.id]);
   }
 }

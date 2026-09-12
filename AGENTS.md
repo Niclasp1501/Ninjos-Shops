@@ -124,6 +124,17 @@ angemeldet; das trifft also den Ausnahmefall, etwa einen Assistenten.
   Sitzung nie hielt.
 - Die Blattansicht der In-Person Tools, seit `characterOf` dort nach
   `figuren.js` gezogen ist.
+- **Die Verkaufsanfrage lebt nur im Arbeitsspeicher.** Die Sitzungen stehen in
+  einer `Map` im Client der Spielleitung, die Kopie des Spielers in einer
+  Variablen seines Clients. Lädt einer von beiden neu, ist sie für ihn weg: Der
+  Spieler sieht weder Fenster noch Zettel, die Spielleitung hat womöglich noch
+  eine Zeile stehen, die niemand mehr beantworten kann. Handelstisch und Tausch
+  haben dasselbe Problem nicht, weil ihr Zustand als Merkmal am Benutzer liegt.
+  Am 12.09.2026 bewusst nicht mitgemacht, weil der gemeldete Fehler ein anderer
+  war; wer die Anfrage anfasst, verlegt sie am besten gleich auf ein Merkmal.
+- **41 ältere Texte je Sprache tragen noch einen Gedankenstrich**, das ganze
+  Willkommensfenster darunter. Regel 4a der Workspace-CLAUDE.md; ein eigener
+  Durchgang, keine Beifahrt bei der nächsten Änderung.
 
 ## Vor jeder Änderung an preise.js oder kasse.js
 
