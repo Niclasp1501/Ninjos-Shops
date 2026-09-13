@@ -125,14 +125,38 @@ angemeldet; das trifft also den Ausnahmefall, etwa einen Assistenten.
 
 ## Noch zu prüfen
 
-- Die Verhandlung bis zum Ende: Preis nennen, Spieler nimmt an, Ware und Geld
-  wechseln. Am 08.09.2026 nicht durchgekommen, weil die prüfende Verbindung die
-  Sitzung nie hielt.
+Stand 13.09.2026, mit Ninjo so abgestimmt. Wer hier etwas erledigt, streicht es.
+
+**Testen, geht nur mit Ninjo als Spielleitung am Tisch**
+
+- Die Verkaufsanfrage bis zum Ende: Preis nennen, Spieler nimmt an, Ware und
+  Geld wechseln. Am 08.09.2026 nicht durchgekommen, weil die prüfende Verbindung
+  die Sitzung nie hielt. Am 12.09.2026 nur die Spielerseite geprüft (Fenster
+  geht beim Angebot auf, Zettel unten rechts holt es zurück).
+- Was 14.2609.91 gebracht hat: Die Zusage fällt nach einer Änderung weg und
+  die Zeile dazu erscheint; die drei Dialoge im Hausdesign (Laden vorzeigen,
+  Ware löschen, Ladenwahl), die nur bei der Spielleitung aufgehen.
 - Die Blattansicht der In-Person Tools, seit `characterOf` dort nach
   `figuren.js` gezogen ist.
+
+**Zu bauen oder aufzuräumen**
+
 - **41 ältere Texte je Sprache tragen noch einen Gedankenstrich**, das ganze
   Willkommensfenster darunter. Regel 4a der Workspace-CLAUDE.md; ein eigener
   Durchgang, keine Beifahrt bei der nächsten Änderung.
+- Suche und Sortierung in der Warenliste des Ladens.
+- `title=`-Tooltips gibt es auf Touch nicht; wo eine Erklärung nötig ist,
+  gehört sie in den sichtbaren Text.
+- In-Person Tools geben `isMonitorUser` nicht über ihre API heraus (eine Zeile
+  drüben). Keine Eile, die Brücke liest die Einstellungen direkt; siehe
+  „Die Brücke fragt, drüben antwortet noch niemand".
+
+**Entscheidungen, die bei Ninjo liegen**
+
+- Ware mit Wert 0: Untergrenze von 1 Kupfer, oder darf sie umsonst sein?
+- Der Ankaufswert am Tisch: Ninjo wollte ihn auch per Zufall erzeugen können.
+  Heute gibt es drei feste Knöpfe (Untergrenze, üblich, Obergrenze). Kommt ein
+  Würfelknopf dazu?
 
 ## Vor jeder Änderung an preise.js oder kasse.js
 
