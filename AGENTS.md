@@ -112,6 +112,12 @@ Umbau wäre größer als der Ärger, den er behebt. Wer hier wieder darauf stö�
 soll wissen, dass die Frage schon einmal gestellt und bewusst so beantwortet
 wurde.
 
+Seit 14.2609.91 gilt dasselbe für den Zettel unten rechts, der eine weggelegte
+Anfrage zurückholt: Nach einem Neuladen des Spielers liegt er nicht mehr da.
+Das ist keine neue Lücke, sondern dieselbe Entscheidung. Am 12.09.2026 stand
+deshalb kurz ein Vorschlag unter „Noch zu prüfen", die Anfrage auf ein Merkmal
+zu verlegen; er widersprach diesem Abschnitt und ist wieder raus.
+
 Dieselbe Ablage ist der Grund, warum eine **zweite** Spielleiter-Verbindung ihr
 Verhandlungsfenster leer aufmacht („Gerade liegt keine Anfrage vor.") — sie hat
 die Sitzung nicht. Am Tisch ist normalerweise eine Spielleitung mit einem Konto
@@ -124,14 +130,6 @@ angemeldet; das trifft also den Ausnahmefall, etwa einen Assistenten.
   Sitzung nie hielt.
 - Die Blattansicht der In-Person Tools, seit `characterOf` dort nach
   `figuren.js` gezogen ist.
-- **Die Verkaufsanfrage lebt nur im Arbeitsspeicher.** Die Sitzungen stehen in
-  einer `Map` im Client der Spielleitung, die Kopie des Spielers in einer
-  Variablen seines Clients. Lädt einer von beiden neu, ist sie für ihn weg: Der
-  Spieler sieht weder Fenster noch Zettel, die Spielleitung hat womöglich noch
-  eine Zeile stehen, die niemand mehr beantworten kann. Handelstisch und Tausch
-  haben dasselbe Problem nicht, weil ihr Zustand als Merkmal am Benutzer liegt.
-  Am 12.09.2026 bewusst nicht mitgemacht, weil der gemeldete Fehler ein anderer
-  war; wer die Anfrage anfasst, verlegt sie am besten gleich auf ein Merkmal.
 - **41 ältere Texte je Sprache tragen noch einen Gedankenstrich**, das ganze
   Willkommensfenster darunter. Regel 4a der Workspace-CLAUDE.md; ein eigener
   Durchgang, keine Beifahrt bei der nächsten Änderung.
@@ -1163,6 +1161,6 @@ wäre. Aus zehn Sonderregeln wurde dadurch ein Token-Block.
 festen Werten; beide Helligkeiten folgen den Rollen. Eine neue Farbe dort heißt,
 dass eine Rolle fehlt — dann gehört sie in die Marke, nicht in `shops.css`.
 
-**Offen:** vier `aria`-Attribute auf 14 Vorlagen — bei einem Fenster, das
-Spieler am Tablet bedienen, die größte Lücke. Und `title=`-Tooltips gibt es
-auf Touch nicht; wo eine Erklärung nötig ist, gehört sie in den sichtbaren Text.
+**Offen:** `title=`-Tooltips gibt es auf Touch nicht; wo eine Erklärung nötig
+ist, gehört sie in den sichtbaren Text. Die `aria`-Lücke, die hier bis zum
+13.09.2026 stand (vier Attribute auf 14 Vorlagen), ist zu: 136 auf 16.
