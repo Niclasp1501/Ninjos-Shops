@@ -1141,14 +1141,16 @@ Abschnitt „Regelgrundsätze für die Oberfläche der Foundry-Module", und gelt
 für jedes Modul: Fenster passen ins Bild · die Marke steht in einer Datei · die
 Schrift liefert Foundry · kein sichtbarer Text ohne Sprachschlüssel · die
 Rückmeldung steht dort, wo der Mensch hinschaut · jeder Knopf hat einen Namen ·
-Unwiderrufliches fragt vorher · neue Fenster sind ApplicationV2.
+Unwiderrufliches fragt vorher · neue Fenster sind ApplicationV2 · Knöpfe im
+Akteursverzeichnis stehen in einer gemeinsamen Leiste.
 
-Zwei Dateien werden dafür **kopiert, nicht geteilt** — wie `willkommen.js`:
+Drei Dateien werden dafür **kopiert, nicht geteilt**, wie `willkommen.js`:
 
 | Datei | Angepasst wird |
 |---|---|
 | `styles/ninjo-marke.css` | nichts, sie ist überall identisch |
 | `scripts/fensterpassen.js` | nur der `MODUL`-Block ganz oben |
+| `scripts/verzeichnisknopf.js` | nichts; was je Modul anders ist, kommt beim Aufruf herein (in `zugaenge.js`) |
 
 Verbessert man eine davon, gehört sie in alle Module nachgezogen.
 

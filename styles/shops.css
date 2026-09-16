@@ -1253,20 +1253,15 @@
 .ninjos-shops .shops-ladenwahl span { flex: 1; font-weight: 600; }
 .ninjos-shops .shops-ladenwahl em { font-size: 0.75rem; color: var(--shops-rot); }
 
-/* ── Knöpfe im Verzeichnis und in der In-Person-Leiste ─────────────── */
+/* ── Knopf in der In-Person-Leiste ─────────────────────────────────── */
 
 /*
- * Diese beiden haengen ausserhalb unserer Fenster - im Akteursverzeichnis und
- * in der Leiste eines fremden Moduls. Sie koennen sich die Farbwerte deshalb
- * nicht erben und tragen sie selbst, mit Rueckfallwert.
+ * Er haengt in der Leiste eines fremden Moduls. Er kann sich die Farbwerte
+ * deshalb nicht erben und traegt sie selbst, mit Rueckfallwert.
+ *
+ * Der Knopf im Akteursverzeichnis steht nicht mehr hier: Ihn zeichnet
+ * `scripts/verzeichnisknopf.js`, in jedem Ninjo-Modul gleich.
  */
-.ninjos-shops.shops-verzeichnisleiste {
-  display: flex;
-  gap: 5px;
-  margin-top: 5px;
-}
-
-.shops-verzeichnisleiste .shops-verzeichnis-knopf,
 .shops-inperson-knopf {
   display: inline-flex;
   align-items: center;
@@ -1283,21 +1278,6 @@
   border-radius: 2px;
   cursor: pointer;
 }
-
-/*
- * Im Akteursverzeichnis leise. Der Knopf steht dort neben denen anderer
- * Module; ein voller roter Balken zieht die ganze Aufmerksamkeit auf ein
- * Modul, das dieses Fenster gar nicht besitzt.
- */
-.shops-verzeichnisleiste .shops-verzeichnis-knopf {
-  color: #2b2318;
-  background-color: #f4f1ea;
-  border: 1px solid #dcd6cc;
-  border-bottom-color: #cdbf9f;
-  font-weight: 600;
-}
-.shops-verzeichnisleiste .shops-verzeichnis-knopf i { color: var(--shops-rot, #8b0000); }
-.shops-verzeichnisleiste .shops-verzeichnis-knopf:hover { border-color: var(--shops-rot, #8b0000); }
 
 .shops-inperson-knopf { width: 100%; margin-top: 6px; }
 

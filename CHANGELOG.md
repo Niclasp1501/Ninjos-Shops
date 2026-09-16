@@ -3,6 +3,17 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## Unreleased
+
+### Changed
+- **The button in the actor directory looks like its neighbours.** Ninjo's
+  Shops, FANG and NDRS each put a button there, and each had designed it on its
+  own: the market ledger was a light parchment button that stood out on the
+  dark sidebar, next to a red bar and a button in Foundry's style. They now
+  share one row below Foundry's own buttons, in Foundry's button style, equally
+  wide and always in the same order. The setting's hint no longer says the
+  button sits at the foot of the directory.
+
 ## 14.2609.91 - 2026-09-12
 
 A second evening of trading at the table, and the same rule as last time: every

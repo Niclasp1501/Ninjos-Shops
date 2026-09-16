@@ -14,6 +14,7 @@ import {
   spielerFensterOeffnen, spielerFensterIstOffen, spielerFensterSchliessen
 } from "./spieler-fenster.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
+import { verzeichnisKnopfEinrichten } from "./verzeichnisknopf.js";
 
 /** Alle Laeden der Welt, alphabetisch. */
 export function alleLaeden() {
@@ -118,48 +119,33 @@ async function ladenAnlegen() {
 /* ── Knopf im Akteursverzeichnis ───────────────────────────────────── */
 
 /**
- * Foundry haengt eigene Knoepfe in die Fusszeile der Seitenleiste. Wir setzen
- * unseren daneben statt in die Kopfzeile: Dort steht "Akteur erstellen", und
- * ein zweiter Knopf gleicher Groesse daneben laesst niemanden mehr erkennen,
- * welcher der gewoehnliche ist.
+ * Welcher Knopf ins Akteursverzeichnis kommt, oder dass keiner kommt.
+ *
+ * Gezeichnet wird er von `verzeichnisknopf.js`, in jedem Ninjo-Modul gleich:
+ * eine gemeinsame Leiste unter "Akteur erstellen", Foundrys eigener Knopfstil,
+ * eine kurze Beschriftung. Bis 14.2609.91 zeichnete Shops ihn selbst, als
+ * hellen Pergamentknopf, und stand damit neben FANG und NDRS wie ein fremdes
+ * Modul.
  */
-function verzeichnisKnopf(app, element) {
-  if (!game.user.isGM) return;
+function verzeichnisKnopf() {
+  if (!game.user.isGM) return null;
 
   /*
-   * **Ein Knopf, nie zwei.** Die Fusszeile gehoert dem Akteursverzeichnis und
-   * nicht diesem Modul; dort stehen auch die Knoepfe anderer Module. Zwei
-   * volle Zeilen von hier draengten sie aus dem Bild.
+   * **Ein Knopf, nie zwei.** Die Leiste gehoert nicht diesem Modul; dort
+   * stehen auch die Knoepfe der anderen Ninjo-Module. Zwei von hier draengten
+   * sie zusammen.
    *
    * Alte Welten haben moeglicherweise noch „beide" gespeichert. Ein
    * unbekannter Wert faellt deshalb auf das Buch zurueck, statt beides zu
-   * zeigen - die Einstellung schreibt sich in `leisteNachziehen` einmal
-   * sauber.
+   * zeigen. Die Einstellung schreibt sich in `leisteNachziehen` einmal sauber.
    */
   const gespeichert = game.settings.get(MODULE_ID, SETTINGS.VERZEICHNISLEISTE);
-  if (gespeichert === "keine") return;
-  const wahl = gespeichert === "neu" ? "neu" : "buch";
+  if (gespeichert === "keine") return null;
 
-  const wurzel = element instanceof HTMLElement ? element : element?.[0];
-  const fuss = wurzel?.querySelector(".directory-footer, .header-actions");
-  const ziel = fuss ?? wurzel?.querySelector(".directory-header");
-  if (!ziel || ziel.querySelector(`.${MODULE_ID}-verzeichnis`)) return;
-
-  const leiste = document.createElement("div");
-  leiste.className = `${MODULE_ID}-verzeichnis ninjos-shops shops-verzeichnisleiste`;
-
-  const beschriftung = game.i18n.localize(
-    wahl === "neu" ? "SHOPS.Zugang.NeuerLaden" : "SHOPS.Marktbuch.Knopf");
-
-  leiste.innerHTML = `
-    <button type="button" class="shops-verzeichnis-knopf" data-tat="${wahl}"
-            title="${beschriftung}">
-      <i class="fa-solid ${wahl === "neu" ? "fa-scale-balanced" : "fa-book"}"></i>
-      ${beschriftung}
-    </button>`;
-  leiste.querySelector('[data-tat="neu"]')?.addEventListener("click", ladenAnlegen);
-  leiste.querySelector('[data-tat="buch"]')?.addEventListener("click", marktbuchOeffnen);
-  ziel.append(leiste);
+  return gespeichert === "neu"
+    ? { symbol: "fa-solid fa-scale-balanced", text: "SHOPS.Zugang.NeuerLaden", aktion: ladenAnlegen }
+    : { symbol: "fa-solid fa-book", text: "SHOPS.Marktbuch.Knopf", tipp: "SHOPS.Marktbuch.Name",
+        aktion: marktbuchOeffnen };
 }
 
 /**
@@ -270,7 +256,7 @@ function szenenWerkzeug(steuerungen) {
  */
 export function zugaengeHaken() {
   Hooks.on("getSceneControlButtons", szenenWerkzeug);
-  Hooks.on("renderActorDirectory", verzeichnisKnopf);
+  verzeichnisKnopfEinrichten(MODULE_ID, verzeichnisKnopf);
   Hooks.on("renderActorDirectory", verzeichnisBilder);
   Hooks.on("renderApplicationV2", inPersonKnopf);
 }
