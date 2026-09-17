@@ -144,7 +144,7 @@ function verzeichnisKnopf() {
 
   return gespeichert === "neu"
     ? { symbol: "fa-solid fa-scale-balanced", text: "SHOPS.Zugang.NeuerLaden", aktion: ladenAnlegen }
-    : { symbol: "fa-solid fa-book", text: "SHOPS.Marktbuch.Knopf", tipp: "SHOPS.Marktbuch.Name",
+    : { symbol: "fa-solid fa-shop", text: "SHOPS.Marktbuch.Knopf", tipp: "SHOPS.Marktbuch.Name",
         aktion: marktbuchOeffnen };
 }
 

@@ -3,7 +3,7 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
-## Unreleased
+## 14.2609.92 - 2026-09-17
 
 ### Changed
 - **The button in the actor directory looks like its neighbours.** Ninjo's
@@ -13,6 +13,10 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   share one row below Foundry's own buttons, in Foundry's button style, equally
   wide and always in the same order. The setting's hint no longer says the
   button sits at the foot of the directory.
+- **A shop front instead of a book.** The button opens the market ledger, so a
+  book was the literal choice, but in a row of module buttons what matters is
+  which module it belongs to, not which window opens. FANG shows its graph,
+  NDRS its sheet, and this one now shows a shop.
 
 ## 14.2609.91 - 2026-09-12
 
