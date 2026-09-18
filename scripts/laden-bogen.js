@@ -19,7 +19,7 @@
 
 import { festpreisDialog } from "./festpreis.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
-import { grundpreisCp, preisCp, ankaufCp, alsText, preisText, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, ankaufCp, alsText, preisText, EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
 import { angebotDialog, angebotSenden, angebotZuruecknehmen } from "./angebot.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
@@ -130,7 +130,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       // Spieler.
       kasse: laden.eigeneKasse && game.user.isGM
         ? (() => {
-            const muenzen = ["pp", "gp", "ep", "sp", "cp"]
+            const muenzen = EINGABE_SORTEN
               .map(sorte => ({ kuerzel: kuerzel(sorte), wert: Number(laden.kasse?.[sorte] ?? 0) }))
               .filter(m => m.wert > 0);
             return { muenzen, leer: !muenzen.length };

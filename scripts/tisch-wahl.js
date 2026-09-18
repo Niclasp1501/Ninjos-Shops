@@ -31,8 +31,13 @@
  * mitbringen muss, steht bei `WAHL_AKTIONEN`.
  */
 
-/** Die fuenf Sorten, so wie dnd5e sie zaehlt - von der schwersten abwaerts. */
-export const MUENZEN = ["pp", "gp", "ep", "sp", "cp"];
+import { EINGABE_SORTEN } from "./preise.js";
+
+/**
+ * Die fuenf Sorten, so wie dnd5e sie zaehlt - von der schwersten abwaerts.
+ * Dieselbe Liste wie bei der Eingabe von Preisen; sie steht in preise.js.
+ */
+export const MUENZEN = EINGABE_SORTEN;
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 
