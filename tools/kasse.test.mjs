@@ -9,7 +9,7 @@
  * traegt ihn ein, bevor er ihn behebt.
  */
 
-import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
+import { preisText, eingegebeneMuenzen, muenzfelderVon, grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
 import { bezahle, vermoegenCp, schreibeGut, muenzenAbziehen, muenzenDazu, zahleAus, kasseNachKauf } from "../scripts/kasse.js";
 
 let gelaufen = 0, gefallen = 0;
@@ -245,6 +245,17 @@ pruefe("zu wenig in der Kasse: null",
 pruefe("passend gezahlt: genau die Muenzen des Kaeufers",
   kasseNachKauf({ gp: 1 }, bezahle({ sp: 30 }, 250)),
   { cp: 0, sp: 25, ep: 0, gp: 1, pp: 0 });
+
+/* ── Eingegebene Muenzen bleiben stehen ────────────────────────────── */
+
+// Am 18.09.2026 gemeldet: 5 EM wurden als 2 GM 5 SM angezeigt.
+pruefe("5 ep bleiben 5 ep", preisText(250, { ep: 5 }), "5 ep");
+pruefe("gemischt in der Reihenfolge der Muenzen", preisText(1250, { sp: 5, pp: 1, gp: 2 }), "1 pp 2 gp 5 sp");
+pruefe("passen die Muenzen nicht mehr, gilt der Betrag", preisText(300, { ep: 5 }), "3 gp");
+pruefe("ohne Muenzen wie immer", preisText(250, null), "2 gp 5 sp");
+pruefe("Nullen zaehlen nicht", preisText(250, { pp: 0, gp: 0, ep: 5, sp: 0, cp: 0 }), "5 ep");
+pruefe("Felder lesen ohne Leeres", eingegebeneMuenzen({ pp: "", gp: "0", ep: "5", sp: "", cp: "" }), { ep: 5 });
+pruefe("und zurueck in die Felder", muenzfelderVon({ ep: 5, gp: 0 }), { pp: "", gp: "", ep: 5, sp: "", cp: "" });
 
 /* ── Ergebnis ──────────────────────────────────────────────────────── */
 

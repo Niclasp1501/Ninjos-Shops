@@ -15,13 +15,13 @@
  * lesen.
  */
 
-import { EINGABE_SORTEN, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
+import { EINGABE_SORTEN, alsMuenzfelder, ausMuenzfeldern, eingegebeneMuenzen } from "./preise.js";
 
 /**
  * Die drei Felder unter `wurzel` lesen.
  *
  * @param {HTMLElement} wurzel
- * @returns {{cp: number, leer: boolean}}
+ * @returns {{cp: number, leer: boolean, muenzen: object}}  `muenzen` so, wie eingetippt
  */
 export function leseMuenzfelder(wurzel) {
   const felder = {};
@@ -32,7 +32,7 @@ export function leseMuenzfelder(wurzel) {
     if (roh !== "") leer = false;
     felder[sorte] = roh;
   }
-  return { cp: ausMuenzfeldern(felder), leer };
+  return { cp: ausMuenzfeldern(felder), leer, muenzen: eingegebeneMuenzen(felder) };
 }
 
 /** Einen Betrag in die drei Felder schreiben. */

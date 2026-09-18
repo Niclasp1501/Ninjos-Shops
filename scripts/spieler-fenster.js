@@ -16,7 +16,7 @@
 
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
 import { MODULE_ID, WARE, KAUFMODUS, SOCKET, OFFENER_LADEN } from "./const.js";
-import { grundpreisCp, preisCp, alsText, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, preisText, KUPFERWERT } from "./preise.js";
 import { vermoegenCp } from "./kasse.js";
 import { eigenesAngebot } from "./angebot.js";
 import { verkaufslisteAufbereiten } from "./verkauf.js";
@@ -175,7 +175,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
           name: item.name,
           img: item.img,
           menge,
-          preisText: alsText(preis, kuerzel),
+          preisText: preisText(preis, festCp === null ? null : merkmal[WARE.FESTPREIS_MUENZEN], kuerzel),
           hinweis: merkmal[WARE.HINWEIS] ?? "",
           /*
            * Eben noch unter der Theke, jetzt in der Auslage. Eine Stunde lang

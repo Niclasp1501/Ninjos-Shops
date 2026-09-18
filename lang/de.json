@@ -352,7 +352,7 @@
   "SHOPS.Tisch.WarnungOhnePreis": "Für {namen} ist noch kein Preis genannt. Das zählt wie nichts.",
   "SHOPS.Tisch.WarnungFehlt": "Der Tausch geht nicht auf: Auf deiner Seite fehlen {geld} gegenüber {wer}.",
   "SHOPS.Tisch.WarnungZuViel": "Der Tausch geht nicht auf: Auf deiner Seite liegen {geld} mehr als bei {wer}.",
-  "SHOPS.Tisch.WarnungFolge": "Sagen beide zu, geht genau das über den Tisch, was dort liegt. Niemand legt etwas nach, und niemand bekommt etwas heraus.",
+  "SHOPS.Tisch.WarnungFolge": "Wenn ihr beide zusagt, wird genau das getauscht, was jetzt auf dem Tisch liegt. Der Unterschied wird nicht ausgeglichen.",
   "SHOPS.Tisch.WarnungJa": "Trotzdem zusagen",
   "SHOPS.Tisch.Abschliessen": "Handel abschließen",
   "SHOPS.Tisch.Zusagen": "Zusagen",

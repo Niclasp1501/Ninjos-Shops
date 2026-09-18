@@ -352,7 +352,7 @@
   "SHOPS.Tisch.WarnungOhnePreis": "No price has been named for {namen}. It counts as nothing.",
   "SHOPS.Tisch.WarnungFehlt": "The trade does not balance: your side is {geld} short of {wer}.",
   "SHOPS.Tisch.WarnungZuViel": "The trade does not balance: your side holds {geld} more than {wer}.",
-  "SHOPS.Tisch.WarnungFolge": "Once both agree, exactly what lies on the table changes hands. Nobody adds anything and nobody gets change.",
+  "SHOPS.Tisch.WarnungFolge": "If you both agree, exactly what is on the table now changes hands. The difference is not made up.",
   "SHOPS.Tisch.WarnungJa": "Agree anyway",
   "SHOPS.Tisch.Abschliessen": "Close the deal",
   "SHOPS.Tisch.Zusagen": "Agree",

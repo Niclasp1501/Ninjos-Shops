@@ -46,7 +46,8 @@
  */
 
 import { MODULE_ID, SOCKET, WARE, SETTINGS } from "./const.js";
-import { grundpreisCp, alsText, alsMuenzfelder, EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, alsText, alsMuenzfelder, muenzfelderVon, preisText, eingegebeneMuenzen,
+         EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
 import { vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
 import { leseMuenzfelder } from "./muenzfeld.js";
 import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
@@ -106,7 +107,8 @@ export function tischStand(handel) {
   const zeile = p => ({
     ...p,
     hatPreis: hatPreis(p),
-    preisText: alsText(preisVon(p), kuerzel),
+    // In den Muenzen, in denen er genannt wurde: 5 EM bleiben 5 EM.
+    preisText: preisText(preisVon(p), p.preisMuenzen, kuerzel),
     grundText: p.grundCp ? alsText(p.grundCp * p.menge, kuerzel) : "",
     inhaltGeldText: muenzText(p.inhaltMuenzen),
     darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length)
@@ -310,6 +312,7 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
       // Nur Auskunft. Gerechnet wird mit dem, was der Besitzer nennt.
       grundCp: grundpreisCp(item.system?.price),
       preisCp: alt && alt.menge === menge && hatPreis(alt) ? alt.preisCp : null,
+      preisMuenzen: alt && alt.menge === menge && hatPreis(alt) ? (alt.preisMuenzen ?? null) : null,
       // Ein Beutel reist samt Inhalt - also gehoert der zu dem, was zugesagt wird.
       inhalt: inhaltVon(item),
       inhaltMuenzen: muenzenIn(item)
@@ -328,14 +331,23 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
  * eigenen Sachen: der Spieler ueber seine Bitte, die Spielleitung fuer die
  * Person. Wie jede Aenderung nimmt das beide Zusagen zurueck.
  */
-export async function preisSetzen(benutzerId, seite, itemId, betragCp) {
+export async function preisSetzen(benutzerId, seite, itemId, betragCp, muenzen = null) {
   if (!game.user.isGM) return;
   const benutzer = game.users.get(benutzerId);
   const handel = benutzer?.getFlag(MODULE_ID, TISCH);
   if (!handel) return;
   const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
-  const wert = betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0));
-  const liste = (handel[feld] ?? []).map(p => p.itemId !== itemId ? p : { ...p, preisCp: wert });
+  /*
+   * Kommen Muenzen mit, gilt ihr Wert. Der Betrag daneben ist dann nur eine
+   * Abschrift, und eine Abschrift vom Client wird nicht geglaubt.
+   */
+  const saubere = muenzen ? eingegebeneMuenzen(muenzen) : null;
+  const ausMuenzen = saubere ? Object.entries(saubere).reduce((s, [m, n]) => s + KUPFERWERT[m] * n, 0) : null;
+  const wert = betragCp === null ? null
+    : ausMuenzen !== null && Object.keys(saubere).length ? ausMuenzen
+    : Math.max(0, Math.round(Number(betragCp) || 0));
+  const liste = (handel[feld] ?? []).map(p => p.itemId !== itemId ? p
+    : { ...p, preisCp: wert, preisMuenzen: saubere && Object.keys(saubere).length ? saubere : null });
   await benutzer.setFlag(MODULE_ID, TISCH, { ...handel, [feld]: liste, ...ohneZusagen(handel) });
   await funken([benutzerId]);
 }
@@ -347,10 +359,11 @@ export async function preisSetzen(benutzerId, seite, itemId, betragCp) {
  * je Posten liessen auf dem Tablet vom Namen nichts uebrig, und genannt wird
  * ein Preis selten, gelesen aber bei jedem Blick auf den Tisch.
  *
- * @returns {Promise<?number>} Kupfer, oder `null` bei Abbruch
+ * @returns {Promise<?{cp: number, muenzen: ?object}>} `null` bei Abbruch
  */
 export async function preisFragen(posten) {
-  const felder = hatPreis(posten) ? alsMuenzfelder(posten.preisCp) : {};
+  const felder = !hatPreis(posten) ? {}
+    : posten.preisMuenzen ? muenzfelderVon(posten.preisMuenzen) : alsMuenzfelder(posten.preisCp);
   const grundCp = (posten.grundCp ?? 0) * (posten.menge ?? 1);
   const inhalt = `
     <div class="shops-festpreis-dialog">
@@ -371,11 +384,14 @@ export async function preisFragen(posten) {
   const knoepfe = [{
     action: "nennen", default: true, icon: "fa-solid fa-tag",
     label: game.i18n.localize("SHOPS.Tisch.PreisNennen"),
-    callback: (_e, _k, dialog) => leseMuenzfelder(dialog.element).cp
+    callback: (_e, _k, dialog) => {
+      const { cp, muenzen } = leseMuenzfelder(dialog.element);
+      return { cp, muenzen };
+    }
   }];
   if (grundCp) {
     knoepfe.push({ action: "liste", icon: "fa-solid fa-book",
-      label: game.i18n.localize("SHOPS.Tisch.ListenpreisNehmen"), callback: () => grundCp });
+      label: game.i18n.localize("SHOPS.Tisch.ListenpreisNehmen"), callback: () => ({ cp: grundCp, muenzen: null }) });
   }
   knoepfe.push({ action: "abbrechen", label: game.i18n.localize("SHOPS.Abbrechen"),
                  icon: "fa-solid fa-xmark", callback: () => null });
@@ -389,7 +405,7 @@ export async function preisFragen(posten) {
     // Wegklicken und Escape aendern nichts.
     rejectClose: false
   });
-  return Number.isFinite(antwort) ? antwort : null;
+  return Number.isFinite(antwort?.cp) ? antwort : null;
 }
 
 /** Ein fertiger Satz an genau eine Person. */
@@ -674,7 +690,7 @@ export const tischWiderrufen = () => bitte("widerrufen");
 export const tischGeld      = muenzen => bitte("geld", { muenzen });
 export const tischSeite     = (posten, muenzen) => bitte("seite", { posten, muenzen });
 export const tischAufgeben  = () => bitte("aufgeben");
-export const tischPreis     = (itemId, cp) => bitte("preis", { itemId, cp });
+export const tischPreis     = (itemId, cp, muenzen) => bitte("preis", { itemId, cp, muenzen });
 
 /* ── Empfang ───────────────────────────────────────────────────────── */
 
@@ -721,7 +737,7 @@ export async function aufTisch(daten) {
     case "wegnehmen": return void await wegnehmen(daten.spielerId, "spieler", daten.itemId);
     case "geld":      return void await geldSetzen(daten.spielerId, "spieler", daten.muenzen);
     case "seite":     return void await seiteSetzen(daten.spielerId, "spieler", daten.posten, daten.muenzen);
-    case "preis":     return void await preisSetzen(daten.spielerId, "spieler", daten.itemId, daten.cp);
+    case "preis":     return void await preisSetzen(daten.spielerId, "spieler", daten.itemId, daten.cp, daten.muenzen);
     case "aufgeben": {
       const handel = game.users.get(daten.spielerId)?.getFlag(MODULE_ID, TISCH);
       await tischBeenden([daten.spielerId]);
@@ -819,8 +835,8 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
     const posten = eigenerTisch()?.seiteSpieler?.find(p => p.itemId === itemId);
     if (!posten) return;
-    const cp = await preisFragen(posten);
-    if (cp !== null) tischPreis(itemId, cp);
+    const preis = await preisFragen(posten);
+    if (preis) tischPreis(itemId, preis.cp, preis.muenzen);
   }
 
   static async #annehmen() {
@@ -1029,8 +1045,8 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     const handel = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH);
     const posten = handel?.seiteNsc?.find(p => p.itemId === itemId);
     if (!posten) return;
-    const cp = await preisFragen(posten);
-    if (cp !== null) preisSetzen(this.benutzerId, "nsc", itemId, cp);
+    const preis = await preisFragen(posten);
+    if (preis) preisSetzen(this.benutzerId, "nsc", itemId, preis.cp, preis.muenzen);
   }
 
   static #geldWeg() { geldSetzen(this.benutzerId, "nsc", {}); }

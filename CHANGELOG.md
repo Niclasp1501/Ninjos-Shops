@@ -18,6 +18,11 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   in chat. Getting back in still needs the gamemaster to show the shop again.
 
 ### Changed
+- **Prices keep the coins they were entered in.** A price was stored as a
+  copper value and broken down again for display, so 5 ep typed in came back
+  as 2 gp 5 sp, in the row and in the fields when opened again. Fixed prices
+  in a shop and prices named at the trade table now show and reopen exactly as
+  entered; the copper value still does the arithmetic.
 - **At the trade table with an NPC, everyone names their own price.** Every
   item laid down used to be valued automatically from its list price, and the
   gamemaster could only override the total afterwards, so the player had no

@@ -24,7 +24,7 @@
  */
 
 import { MODULE_ID, SETTINGS, SOCKET, LADEN_TYP, WARE, OFFENER_LADEN } from "./const.js";
-import { grundpreisCp, preisCp, alsText } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, preisText } from "./preise.js";
 import { waereZustaendig } from "./vorsitz.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -56,7 +56,8 @@ export function schauWaren(laden) {
         hinweis: merkmal[WARE.HINWEIS] ?? "",
         dienst: merkmal[WARE.DIENST] === true,
         bestand: Number(item.system?.quantity ?? 1),
-        preisText: alsText(preisCp(grundpreisCp(item.system?.price), laden.system, fest), kuerzel)
+        preisText: preisText(preisCp(grundpreisCp(item.system?.price), laden.system, fest),
+                             fest === null ? null : merkmal[WARE.FESTPREIS_MUENZEN], kuerzel)
       };
     });
 }

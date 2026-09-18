@@ -13,7 +13,7 @@
  */
 
 import { MODULE_ID, WARE } from "./const.js";
-import { grundpreisCp, preisCp, alsText, alsMuenzfelder, EINGABE_SORTEN } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, alsMuenzfelder, muenzfelderVon, EINGABE_SORTEN } from "./preise.js";
 import { leseMuenzfelder } from "./muenzfeld.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -23,7 +23,10 @@ export async function festpreisDialog(laden, item) {
   const grundCp = grundpreisCp(item.system?.price);
   const festCp = Number.isFinite(item.flags?.[MODULE_ID]?.[WARE.FESTPREIS])
     ? item.flags[MODULE_ID][WARE.FESTPREIS] : null;
-  const felder = festCp === null ? {} : alsMuenzfelder(festCp);
+  // Die Felder so, wie sie eingegeben wurden; aeltere Festpreise haben nur den Betrag.
+  const eingegeben = item.flags?.[MODULE_ID]?.[WARE.FESTPREIS_MUENZEN];
+  const felder = festCp === null ? {}
+    : eingegeben ? muenzfelderVon(eingegeben) : alsMuenzfelder(festCp);
 
   const inhalt = `
     <div class="shops-festpreis-dialog">
@@ -68,6 +71,18 @@ export async function festpreisDialog(laden, item) {
   });
 
   if (!antwort || antwort === "abbrechen") return;
-  if (antwort === "entfernen" || antwort.leer) return void item.unsetFlag(MODULE_ID, WARE.FESTPREIS);
-  await item.setFlag(MODULE_ID, WARE.FESTPREIS, antwort.cp);
+  if (antwort === "entfernen" || antwort.leer) {
+    await item.unsetFlag(MODULE_ID, WARE.FESTPREIS_MUENZEN);
+    return void item.unsetFlag(MODULE_ID, WARE.FESTPREIS);
+  }
+  /*
+   * Alle fuenf Sorten ablegen, auch die mit null. Ein Merkmal wird beim
+   * Speichern zusammengefuehrt, nicht ersetzt: Aus „5 EM" und danach „2 GM"
+   * wuerde sonst „2 GM 5 EM".
+   */
+  await item.update({
+    [`flags.${MODULE_ID}.${WARE.FESTPREIS}`]: antwort.cp,
+    [`flags.${MODULE_ID}.${WARE.FESTPREIS_MUENZEN}`]:
+      Object.fromEntries(EINGABE_SORTEN.map(s => [s, antwort.muenzen?.[s] ?? 0]))
+  });
 }

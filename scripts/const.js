@@ -155,6 +155,8 @@ export const OFFENES_ANGEBOT = "angebot";
 export const WARE = {
   /** Festpreis in Kupfer; fehlt = Aufschlag auf den Grundpreis. */
   FESTPREIS: "festpreis",
+  /** Dieselbe Zahl in den Muenzen, in denen sie eingegeben wurde. Nur Anzeige. */
+  FESTPREIS_MUENZEN: "festpreisMuenzen",
   /** Ein Satz des Haendlers unter dem Namen. */
   HINWEIS: "hinweis",
   /** Unter der Theke - Spieler sehen es nicht. */

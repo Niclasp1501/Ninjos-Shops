@@ -214,6 +214,44 @@ export function alsMuenzfelder(cp) {
   };
 }
 
+/**
+ * Die Muenzen, wie sie eingegeben wurden: nur Sorten mit mehr als null.
+ *
+ * **Warum es das braucht.** Bis zum 18.09.2026 wurde ein eingegebener Preis
+ * nur als Kupferwert gespeichert und fuer die Anzeige neu zerlegt. Wer „5 EM"
+ * eintippte, las danach „2 GM 5 SM", und beim naechsten Oeffnen standen auch
+ * die Felder so da. Am Tisch gemeldet. Der Kupferwert bleibt, womit gerechnet
+ * wird; die Muenzen daneben sind, was man sieht.
+ */
+export function eingegebeneMuenzen(felder) {
+  const raus = {};
+  for (const sorte of EINGABE_SORTEN) {
+    const n = Math.max(0, Math.floor(Number(felder?.[sorte]) || 0));
+    if (n > 0) raus[sorte] = n;
+  }
+  return raus;
+}
+
+/** Gespeicherte Muenzen zurueck in die Felder; eine Null bleibt leer. */
+export function muenzfelderVon(muenzen) {
+  return Object.fromEntries(EINGABE_SORTEN.map(s => [s, muenzen?.[s] > 0 ? muenzen[s] : ""]));
+}
+
+/**
+ * Ein Preis als Text, in den Muenzen, in denen er genannt wurde.
+ *
+ * Nur wenn die Muenzen noch genau den Betrag ergeben. Sonst gilt der Betrag,
+ * und der wird wie ueberall zerlegt: Eine alte Angabe neben einem neuen Wert
+ * waere eine falsche Auskunft.
+ */
+export function preisText(cp, muenzen, kuerzel = s => s) {
+  const teile = EINGABE_SORTEN.filter(s => muenzen?.[s] > 0);
+  if (teile.length && ausMuenzfeldern(muenzen) === Math.round(Number(cp) || 0)) {
+    return teile.map(s => `${muenzen[s]} ${kuerzel(s)}`).join(" ");
+  }
+  return alsText(cp, kuerzel);
+}
+
 /** Und zurueck. Leere Felder zaehlen als null, nichts wird negativ. */
 export function ausMuenzfeldern(felder) {
   return EINGABE_SORTEN.reduce((summe, sorte) => {

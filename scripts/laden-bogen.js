@@ -19,7 +19,7 @@
 
 import { festpreisDialog } from "./festpreis.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
-import { grundpreisCp, preisCp, ankaufCp, alsText, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, ankaufCp, alsText, preisText, KUPFERWERT } from "./preise.js";
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
 import { angebotDialog, angebotSenden, angebotZuruecknehmen } from "./angebot.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
@@ -182,7 +182,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
           img: item.img,
           menge: item.system?.quantity ?? 1,
           grundText: alsText(grundCp, kuerzel),
-          preisText: alsText(preisCp(grundCp, laden, festCp), kuerzel),
+          preisText: preisText(preisCp(grundCp, laden, festCp), festCp === null ? null : merkmal[WARE.FESTPREIS_MUENZEN], kuerzel),
           ankaufText: laden.ankauf > 0 ? alsText(ankaufCp(grundCp, laden), kuerzel) : null,
           hatFestpreis: festCp !== null,
           hinweis: merkmal[WARE.HINWEIS] ?? "",
