@@ -735,11 +735,62 @@ async function abschliessenAusfuehren(benutzerId) {
 
   // `tisch` sagt der Gegenstelle, dass das ein Fenster wert ist und keine
   // Meldung: Der Tisch raeumt sich ab, es bleibt sonst nichts zu sehen.
+  await handelMelden(stand, person, figur);
+
   const satz = game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name });
   return { ok: true, tisch: true,
            text: stand.wechselAnSpieler
              ? `${satz} ${game.i18n.format("SHOPS.Kauf.Wechselgeld", { geld: stand.wechselText })}`
              : satz };
+}
+
+/**
+ * Der abgeschlossene Handel im Chat, gefluestert an die Spielleitung.
+ *
+ * **Warum.** Bis zum 18.09.2026 stand ein Handel mit einer Person nur im
+ * Marktbuch, und dort als eine Zeile mit dem Geld, das unterm Strich die Seite
+ * gewechselt hat. Was genau ueber den Tisch ging, zu welchem Preis und mit
+ * welchem Wechselgeld, sah die Spielleitung nirgends, am Tisch gemeldet. Der
+ * Tausch zwischen Spielern hat seine Karte schon lange (tausch.js).
+ *
+ * Gefluestert, nicht offen: Preise, die ein NSC genannt hat, sind Sache
+ * zwischen ihm und dem Spieler.
+ */
+async function handelMelden(stand, person, figur) {
+  const esc = foundry.utils.escapeHTML;
+  const posten = p => {
+    const name = p.menge > 1 ? `${esc(p.name)} &times;${p.menge}` : esc(p.name);
+    return p.hatPreis ? `${name} (${esc(p.preisText)})` : name;
+  };
+  const seite = (liste, geldText, geld) => {
+    const teile = [...(liste ?? []).map(posten), geld ? esc(geldText) : ""].filter(Boolean);
+    return teile.length ? teile.join(", ") : game.i18n.localize("SHOPS.Tausch.Nichts");
+  };
+  const zeile = (wer, was) =>
+    `<p><strong>${esc(wer)}</strong> ${game.i18n.localize("SHOPS.Tausch.Gibt")} ${was}</p>`;
+
+  const zeilen = [
+    zeile(person.name, seite(stand.seiteNsc, stand.geldNscText, stand.geldNsc)),
+    zeile(figur.name, seite(stand.seiteSpieler, stand.geldSpielerText, stand.geldSpieler))
+  ];
+  if (stand.wechselCp) {
+    zeilen.push(`<p>${game.i18n.format("SHOPS.Tisch.WechselAn", {
+      wer: esc(stand.wechselAnSpieler ? figur.name : person.name), geld: stand.wechselText })}</p>`);
+  }
+  if (!stand.ausgeglichen) {
+    zeilen.push(`<p><em>${game.i18n.format("SHOPS.Tisch.ChatUngleich", { geld: stand.offenText })}</em></p>`);
+  }
+
+  try {
+    await ChatMessage.create({
+      speaker: { alias: game.i18n.format("SHOPS.Tisch.ChatTitel", { person: person.name }) },
+      whisper: ChatMessage.getWhisperRecipients("GM").map(u => u.id),
+      content: `<div class="ninjos-shops shops-tauschkarte">${zeilen.join("")}</div>`
+    });
+  } catch (fehler) {
+    // Der Handel ist schon gelaufen; eine fehlende Karte darf ihn nicht umwerfen.
+    console.error(`${MODULE_ID} | Handelskarte liess sich nicht schreiben`, fehler);
+  }
 }
 
 /* ── Was der Spieler schickt ───────────────────────────────────────── */

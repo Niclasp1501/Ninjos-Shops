@@ -6,6 +6,10 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## Unreleased
 
 ### Added
+- **A closed trade with an NPC is whispered to the gamemaster in chat.** It
+  only showed up in the market book as one line with the net amount. The chat
+  card now lists what each side handed over with the named prices, any change
+  and, if the trade was agreed while uneven, the difference.
 - **Change at the trade table with an NPC.** Whoever overpays with coins now
   gets the difference back, like in a shop: one platinum piece for a 5 gp item
   returns 5 gp, and the balance reads even instead of "too much". Change is

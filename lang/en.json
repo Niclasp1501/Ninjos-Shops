@@ -348,6 +348,8 @@
   "SHOPS.Tisch.ListenpreisNehmen": "Use list price",
   "SHOPS.Tisch.OhnePreis": "no price yet",
   "SHOPS.Tisch.PreiseFehlen": "No price yet for: {namen}",
+  "SHOPS.Tisch.ChatTitel": "Trade with {person}",
+  "SHOPS.Tisch.ChatUngleich": "Not even, agreed anyway: {geld} difference.",
   "SHOPS.Tisch.WechselDu": "You get {geld} back.",
   "SHOPS.Tisch.WechselAn": "{wer} gets {geld} back.",
   "SHOPS.Tisch.Passend": "Exact change only",

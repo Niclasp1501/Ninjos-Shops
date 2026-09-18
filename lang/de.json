@@ -348,6 +348,8 @@
   "SHOPS.Tisch.ListenpreisNehmen": "Listenpreis nehmen",
   "SHOPS.Tisch.OhnePreis": "noch kein Preis",
   "SHOPS.Tisch.PreiseFehlen": "Noch kein Preis für: {namen}",
+  "SHOPS.Tisch.ChatTitel": "Handel mit {person}",
+  "SHOPS.Tisch.ChatUngleich": "Nicht ausgeglichen und trotzdem zugesagt: {geld} Unterschied.",
   "SHOPS.Tisch.WechselDu": "Du bekommst {geld} zurück.",
   "SHOPS.Tisch.WechselAn": "{wer} bekommt {geld} zurück.",
   "SHOPS.Tisch.Passend": "Passend zahlen",
