@@ -31,13 +31,16 @@
         <h3>{{localize "SHOPS.Tisch.SieGibt" person=stand.personName}}</h3>
         <ol class="shops-ware shops-tisch-nsc">
           {{#each stand.seiteNsc}}
+            {{!-- Anklickbar nur, wenn die Spielleitung es erlaubt. Das
+                  Detailfenster verriete, was ein Haendler lieber erst beim
+                  Benutzen herauskommen laesst. --}}
             <li class="shops-zeile" data-item-id="{{itemId}}">
-              {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
-                              title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+              {{#if img}}<img src="{{img}}" alt=""{{#if @root.nscAnsehen}} data-action="ansehen"
+                              title="{{localize 'SHOPS.Ansehen.Knopf'}}"{{/if}}>
               {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
               <div class="shops-name">
-                <span class="shops-warenname" data-action="ansehen"
-                      title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+                <span class="shops-warenname"{{#if @root.nscAnsehen}} data-action="ansehen"
+                      title="{{localize 'SHOPS.Ansehen.Knopf'}}"{{/if}}>{{name}}</span>
                 {{#if darinEtwas}}
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
@@ -75,6 +78,7 @@
               <div class="shops-name">
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
+                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
                 {{#if darinEtwas}}
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}

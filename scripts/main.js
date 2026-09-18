@@ -124,6 +124,15 @@ function einstellungenEinrichten() {
     default: true
   });
 
+  game.settings.register(MODULE_ID, SETTINGS.TISCH_ANSEHEN, {
+    name: "SHOPS.Einstellung.TischAnsehen.Name",
+    hint: "SHOPS.Einstellung.TischAnsehen.Hinweis",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   game.settings.register(MODULE_ID, "fremdeFensterKlemmen", {
     name: "SHOPS.Einstellung.FremdeFenster.Name",
     hint: "SHOPS.Einstellung.FremdeFenster.Hinweis",

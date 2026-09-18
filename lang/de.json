@@ -453,6 +453,8 @@
   "SHOPS.Einstellung.Tausch.Hinweis": "Ein Knopf über der Spielerliste, mit dem zwei Leute Sachen und Münzen tauschen.",
   "SHOPS.Einstellung.TauschMitGm.Name": "Auch mit der Spielleitung",
   "SHOPS.Einstellung.TauschMitGm.Hinweis": "Setzt die Spielleitung mit auf die Partnerliste.",
+  "SHOPS.Einstellung.TischAnsehen.Name": "Handelstisch: Sachen des NSC ansehen",
+  "SHOPS.Einstellung.TischAnsehen.Hinweis": "Spieler dürfen am Handelstisch mit einem NSC dessen Gegenstände antippen und im Detailfenster lesen. Aus heißt: Sie sehen nur Bild, Name und Preis.",
   "SHOPS.Einstellung.TauschAnsage.Name": "Tausch im Chat ansagen",
   "SHOPS.Einstellung.TauschAnsage.Hinweis": "Nach jedem Tausch eine Karte, die zeigt, was die Seite gewechselt hat."
 }

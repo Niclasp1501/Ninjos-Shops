@@ -6,6 +6,10 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## Unreleased
 
 ### Added
+- **Setting: players may inspect the NPC's items at the trade table.** Off by
+  default. A merchant's goods can be unidentified or hide properties that
+  should only come out in use, and the detail window gave them away. With the
+  setting off, players see picture, name and price, and tapping does nothing.
 - **Players can leave a shop themselves.** The cross only closes the window,
   and a note in the corner brings the shop back, so a player who had finished
   shopping carried that note through the whole evening until the gamemaster
@@ -20,8 +24,8 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   way to say what they wanted. Now whoever puts something on the table names
   what they want for it, and can change that at any time with a tap on the
   price. The other side answers by adding items or coins, or by asking for a
-  different price. The list price is shown only as a hint in the price window,
-  with a button to use it. An explicit 0 means a gift. Shops and the player to
+  different price. The list price is shown as a hint at the top of the price
+  window and under the player's own items, with a button to use it. An explicit 0 means a gift. Shops and the player to
   player swap are unchanged.
 - **Agreeing to an uneven trade asks first instead of being blocked.** Since
   12.09.2026 the agree button stayed disabled until the balance was even,

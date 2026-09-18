@@ -69,6 +69,14 @@ export const SETTINGS = {
   SPIELER_DUERFEN_OEFFNEN: "spielerDuerfenOeffnen",
 
   /**
+   * Ob Spieler am Handelstisch die Sachen des NSC im Detailfenster ansehen
+   * duerfen. Ab Werk aus: Was ein Haendler hinlegt, kann unidentifiziert sein
+   * oder Eigenschaften haben, die erst beim Benutzen herauskommen sollen, und
+   * das Detailfenster verriete sie. Am 18.09.2026 so gewuenscht.
+   */
+  TISCH_ANSEHEN: "tischAnsehen",
+
+  /**
    * Welche Knoepfe im Akteursverzeichnis stehen: `beide`, `neu`, `buch`,
    * `keine`. Nicht jeder Tisch will eine fremde Leiste in seinem Verzeichnis.
    */

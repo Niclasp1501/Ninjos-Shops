@@ -45,7 +45,7 @@
  * bittet. Der Listenpreis steht nur als Auskunft daneben.
  */
 
-import { MODULE_ID, SOCKET, WARE } from "./const.js";
+import { MODULE_ID, SOCKET, WARE, SETTINGS } from "./const.js";
 import { grundpreisCp, alsText, alsMuenzfelder, EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
 import { vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
 import { leseMuenzfelder } from "./muenzfeld.js";
@@ -357,6 +357,8 @@ export async function preisFragen(posten) {
       <p class="shops-blockhinweis">${game.i18n.format("SHOPS.Tisch.PreisFrage", {
         menge: posten.menge ?? 1, name: foundry.utils.escapeHTML(posten.name ?? "")
       })}</p>
+      ${grundCp ? `<p class="shops-listenpreis">${game.i18n.format("SHOPS.Tisch.Listenpreis",
+        { preis: `<strong>${alsText(grundCp, kuerzel)}</strong>` })}</p>` : ""}
       <span class="shops-preisfeld">
         <span class="shops-muenzfelder">
           ${EINGABE_SORTEN.map(s => `<label><input type="number" data-muenze="${s}"
@@ -364,8 +366,6 @@ export async function preisFragen(posten) {
                         aria-label="${kuerzel(s)}"><span>${kuerzel(s)}</span></label>`).join("")}
         </span>
       </span>
-      ${grundCp ? `<p class="shops-blockhinweis">${game.i18n.format("SHOPS.Tisch.Listenpreis",
-        { preis: alsText(grundCp, kuerzel) })}</p>` : ""}
     </div>`;
 
   const knoepfe = [{
@@ -788,6 +788,8 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
 
     return Object.assign(ctx, {
       stand,
+      // Die Sachen des NSC ansehen? Ab Werk nein, siehe SETTINGS.TISCH_ANSEHEN.
+      nscAnsehen: game.user.isGM || game.settings.get(MODULE_ID, SETTINGS.TISCH_ANSEHEN),
       figurName: figur?.name ?? null,
       boerse: figur ? alsText(vermoegenCp(figur.system?.currency ?? {}), kuerzel) : null,
       wahl: this.wahl.kontext(this.wahlVorrat(), this.wahlBoerse())
@@ -799,6 +801,8 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     const seite = ziel.closest("[data-seite]")?.dataset.seite;
     const handel = eigenerTisch();
     if (!itemId || !handel) return;
+    // Nicht nur die Vorlage laesst den Klick weg; auch hier gilt die Einstellung.
+    if (seite === "nsc" && !game.user.isGM && !game.settings.get(MODULE_ID, SETTINGS.TISCH_ANSEHEN)) return;
     const traeger = seite === "nsc" ? await fromUuid(handel.personUuid) : game.user.character;
     if (!traeger) return;
     const { wareAnsehen } = await import("./ware-ansehen.js");

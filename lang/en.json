@@ -453,6 +453,8 @@
   "SHOPS.Einstellung.Tausch.Hinweis": "A button above the player list for two people to swap goods and coin.",
   "SHOPS.Einstellung.TauschMitGm.Name": "Include the gamemaster",
   "SHOPS.Einstellung.TauschMitGm.Hinweis": "Puts the gamemaster on the partner list.",
+  "SHOPS.Einstellung.TischAnsehen.Name": "Trade table: inspect the NPC's items",
+  "SHOPS.Einstellung.TischAnsehen.Hinweis": "Players at the trade table with an NPC may tap the NPC's items and read them in the detail window. Off means they only see picture, name and price.",
   "SHOPS.Einstellung.TauschAnsage.Name": "Announce trades in chat",
   "SHOPS.Einstellung.TauschAnsage.Hinweis": "A card after each trade showing what changed hands."
 }

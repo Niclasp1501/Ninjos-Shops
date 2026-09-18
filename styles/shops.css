@@ -4675,3 +4675,12 @@
   font-weight: 400;
   color: var(--shops-text-blass);
 }
+
+/* Der Listenpreis beim Nennen: oben und gut lesbar, als Auskunft, nicht als Vorgabe. */
+.ninjos-shops .shops-listenpreis {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  background: var(--ninjo-flaeche);
+  border-left: 3px solid var(--shops-gold);
+  border-radius: 3px;
+}
