@@ -60,6 +60,32 @@ export async function einlagern(ziel, vorlage, stueck) {
   return "neu";
 }
 
+/**
+ * Darf dieses Stueck mit Bestand 0 im Laden stehen bleiben?
+ *
+ * **Der Anlass.** Am 18.09.2026 kauften die Spieler alle Heiltraenke eines
+ * Ladens. Beim letzten Stueck loeschte der Kauf die Ware, und mit ihr alles,
+ * was die Spielleitung daran eingestellt hatte: den Haken „kauft er an", den
+ * Festpreis, „unter der Theke", den Hinweis. Danach nahm der Laden keinen
+ * Heiltrank mehr an, denn `nimmtLadenAn` sucht genau diese Ware mit genau
+ * diesem Haken. Ausverkauft ist kein Grund, eine Ware zu vergessen; ein
+ * Verkauf an den Laden fuellt die leere Zeile wieder auf (`einlagern`
+ * stapelt nach Name und Typ).
+ *
+ * **Gefragt wird das Feld selbst, nicht die Art.** Normale Ware erlaubt in
+ * dnd5e 5.3 eine Menge von 0 (`min: 0`). Behaelter nicht (`min: 1, max: 1`),
+ * und manche Felder verlangen `positive: true`. Setzte der Kauf dort 0,
+ * lehnte Foundry die Aenderung ab, und zwar nachdem das Geld schon
+ * abgebucht ist. Solche Stuecke werden weiter geloescht, wie bisher.
+ */
+export function darfLeerStehen(item) {
+  const feld = item?.system?.schema?.fields?.quantity;
+  if (!feld) return false;
+  if (feld.positive) return false;
+  const min = Number(feld.min);
+  return !(Number.isFinite(min) && min >= 1);
+}
+
 /* ── Eine ganze Seite uebergeben ───────────────────────────────────── */
 
 /**

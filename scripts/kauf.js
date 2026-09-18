@@ -23,7 +23,7 @@
 
 import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.js";
 import { grundpreisCp, preisCp, alsText, wechselgeldText } from "./preise.js";
-import { einlagern } from "./lager.js";
+import { einlagern, darfLeerStehen } from "./lager.js";
 import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
 import { schreibeVorgang, schreibeErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
@@ -146,7 +146,11 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
     // 3. Dann den Bestand mindern. Dienstleistungen gehen nie zur Neige.
     if (!dienst) {
       const rest = bestand - stueck;
+      // Ausverkauft heisst nicht vergessen: Die Ware bleibt mit 0 stehen,
+      // samt allem, was die Spielleitung an ihr eingestellt hat. Siehe
+      // `darfLeerStehen` in lager.js.
       if (rest > 0) await item.update({ "system.quantity": rest });
+      else if (darfLeerStehen(item)) await item.update({ "system.quantity": 0 });
       else await item.delete();
     }
 

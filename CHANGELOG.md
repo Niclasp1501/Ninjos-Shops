@@ -22,6 +22,13 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   gold does not turn into "1 pp 2 gp" when the field is opened again.
 
 ### Fixed
+- **A sold-out item stays in the shop.** Buying the last one deleted the item,
+  and with it everything the gamemaster had set on it: "buys back", the fixed
+  price, under the counter, the note. The shop then refused to buy that item
+  back, because it only takes what it carries with "buys back" ticked. It now
+  stays with a stock of 0, shows as sold out, and fills up again when a player
+  sells one to the shop. Containers are still removed, since dnd5e does not
+  allow them a quantity of 0.
 - **The request window at the counter is readable again.** The three guide
   values are buttons with two lines, and Foundry gives every button a fixed
   height of 2em, so the amount sat on the lower edge. The coin fields of the
