@@ -30,6 +30,9 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   in chat. Getting back in still needs the gamemaster to show the shop again.
 
 ### Changed
+- **No swap button for a gamemaster without a character.** A swap moves items
+  between two characters, so the button above the gamemaster's player list
+  led nowhere. It shows for a gamemaster only when a character is assigned.
 - **Prices keep the coins they were entered in.** A price was stored as a
   copper value and broken down again for display, so 5 ep typed in came back
   as 2 gp 5 sp, in the row and in the fields when opened again. Fixed prices

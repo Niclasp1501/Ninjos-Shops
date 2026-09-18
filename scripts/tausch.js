@@ -706,6 +706,8 @@ function knopfSetzen(element) {
    */
   if (!einstellung(SETTINGS.TAUSCH)) return;
   if (game.modules.get("ninjos-inperson-tools")?.active) return;
+  // Eine Spielleitung ohne eigene Figur hat nichts, was sie hinlegen koennte.
+  if (game.user.isGM && !game.user.character) return;
 
   const knopf = document.createElement("button");
   knopf.id = KNOPF;
