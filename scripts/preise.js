@@ -123,6 +123,20 @@ export function zerlege(cp, sorten = WECHSELGELD_SORTEN) {
 export const PREIS_SORTEN = ["gp", "sp", "cp"];
 
 /**
+ * Welche Muenzen man **eintippen** kann: alle fuenf.
+ *
+ * Angezeigt wird ein Preis weiter in Gold, Silber und Kupfer (`PREIS_SORTEN`),
+ * so wie das Spielerhandbuch Preise nennt. Eingeben ging bis zum 18.09.2026
+ * aber auch nur in diesen drei, und das war die falsche Grenze: Wer einen
+ * Preis von 50 PM oder 3 EM vor sich hat, soll ihn so eintippen, wie er ihn
+ * liest, statt erst umzurechnen. Am Tisch gemeldet.
+ *
+ * Beim Zurueckschreiben in die Felder bleiben Platin und Elektrum leer, sonst
+ * stuenden aus zwoelf Gold beim naechsten Oeffnen ploetzlich „1 PM 2 GM" da.
+ */
+export const EINGABE_SORTEN = ["pp", "gp", "ep", "sp", "cp"];
+
+/**
  * Preis als lesbare Zeile: "2 gp 5 sp".
  *
  * Bewusst mehrteilig statt "2,5 gp". Am Tisch wird in Muenzen bezahlt, und wer
@@ -192,7 +206,9 @@ export function wechselgeldText(zurueck, kuerzel = s => s) {
 export function alsMuenzfelder(cp) {
   const rest = Math.max(0, Math.round(Number(cp) || 0));
   return {
+    pp: "",
     gp: Math.floor(rest / KUPFERWERT.gp),
+    ep: "",
     sp: Math.floor((rest % KUPFERWERT.gp) / KUPFERWERT.sp),
     cp: rest % KUPFERWERT.sp
   };
@@ -200,15 +216,15 @@ export function alsMuenzfelder(cp) {
 
 /** Und zurueck. Leere Felder zaehlen als null, nichts wird negativ. */
 export function ausMuenzfeldern(felder) {
-  return PREIS_SORTEN.reduce((summe, sorte) => {
+  return EINGABE_SORTEN.reduce((summe, sorte) => {
     const n = Math.max(0, Math.floor(Number(felder?.[sorte]) || 0));
     return summe + n * KUPFERWERT[sorte];
   }, 0);
 }
 
-/** Sind alle drei Felder leer? Dann ist „kein Preis" gemeint, nicht „null". */
+/** Sind alle Felder leer? Dann ist „kein Preis" gemeint, nicht „null". */
 export function muenzfelderLeer(felder) {
-  return PREIS_SORTEN.every(sorte => String(felder?.[sorte] ?? "").trim() === "");
+  return EINGABE_SORTEN.every(sorte => String(felder?.[sorte] ?? "").trim() === "");
 }
 
 export function alsMuenzfeld(cp, { vorzeichen = false } = {}) {

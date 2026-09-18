@@ -5,7 +5,28 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 
 ## Unreleased
 
+### Added
+- **Players can leave a shop themselves.** The cross only closes the window,
+  and a note in the corner brings the shop back, so a player who had finished
+  shopping carried that note through the whole evening until the gamemaster
+  remembered to close the shop. A "Leave the shop" button at the bottom of the
+  window now asks once and then steps out; the gamemaster gets a whispered line
+  in chat. Getting back in still needs the gamemaster to show the shop again.
+
+### Changed
+- **All five coins can be typed into a price.** Prices could only be entered
+  in gold, silver and copper, so 50 pp or 3 ep had to be converted first. The
+  price fields now offer platinum and electrum as well. Prices are still shown
+  in gold, silver and copper, the way the Player's Handbook lists them, and a
+  stored price comes back into the gold, silver and copper fields, so twelve
+  gold does not turn into "1 pp 2 gp" when the field is opened again.
+
 ### Fixed
+- **The request window at the counter is readable again.** The three guide
+  values are buttons with two lines, and Foundry gives every button a fixed
+  height of 2em, so the amount sat on the lower edge. The coin fields of the
+  offer were squashed flat, because a shared rule gave them `flex: 1` inside a
+  vertical stack, where that means "as low as possible" rather than "wide".
 - **The player window's column headings sit over their columns again.** The
   quantity field came into the rows later and the heading row was never told:
   it also measured the picture at 34 instead of 56 pixels and used smaller

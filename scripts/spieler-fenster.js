@@ -59,6 +59,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       verkaufen: SpielerFenster.#verkaufen,
       anfrageStellen: SpielerFenster.#anfrage,
       ladenbuch: SpielerFenster.#ladenbuch,
+      ladenVerlassen: SpielerFenster.#verlassen,
       angebotAnnehmen: SpielerFenster.#angebotAnnehmen,
       blickWechseln: SpielerFenster.#blickWechseln
     }
@@ -126,6 +127,9 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       figurName: figur?.name ?? null,
       gesperrt: system.kaufmodus === KAUFMODUS.GESPERRT,
       freigabe: system.kaufmodus === KAUFMODUS.FREIGABE,
+      // Verlassen gibt es nur, wenn die Spielleitung den Laden gezeigt hat.
+      // Wer ihn selbst geoeffnet hat, schliesst ihn einfach.
+      darfVerlassen: !!game.user.getFlag(MODULE_ID, OFFENER_LADEN),
       keinSpielleiter: !game.users.activeGM,
       /*
        * Die eigene Habe steht nur da, wenn der Laden ueberhaupt ankauft -
@@ -320,6 +324,46 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
     const { packenOeffnen } = await import("./anfrage-fenster.js");
     packenOeffnen(this.#laden, figur);
+  }
+
+  /**
+   * Den Laden endgueltig verlassen.
+   *
+   * **Das Kreuz ist nicht Verlassen.** Seit dem 12.09.2026 schliesst es nur das
+   * Fenster, und unten rechts bleibt ein Zettel, der zurueckfuehrt, weil ein
+   * Spieler nach dem Wegklicken nicht mehr hineinkam. Dadurch gab es aber
+   * keinen Weg mehr hinaus: Wer fertig eingekauft hatte, trug den Zettel den
+   * ganzen Abend mit sich, bis die Spielleitung daran dachte, den Laden zu
+   * schliessen. Am 18.09.2026 am Tisch gemeldet.
+   *
+   * Maßgeblich ist das Merkmal `OFFENER_LADEN` am eigenen Benutzer. Foundry
+   * laesst einen Spieler sein eigenes Konto aendern, nur Name, Rolle und
+   * Berechtigungen nicht, also nimmt er es selbst weg. Zurueck kommt er nur,
+   * wenn die Spielleitung den Laden erneut zeigt; deshalb wird vorher gefragt.
+   */
+  static async #verlassen() {
+    const laden = this.#laden;
+    const ja = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("SHOPS.Verlassen.Frage") },
+      content: `<p>${game.i18n.format("SHOPS.Verlassen.Erklaerung", {
+        laden: foundry.utils.escapeHTML(laden?.name ?? "") })}</p>`,
+      yes: { label: game.i18n.localize("SHOPS.Verlassen.Knopf"), icon: "fa-solid fa-door-open" },
+      no: { label: game.i18n.localize("SHOPS.Verlassen.Bleiben") },
+      rejectClose: false
+    });
+    if (!ja) return;
+
+    await game.user.unsetFlag(MODULE_ID, OFFENER_LADEN);
+    // Die Spielleitung sieht es, ohne dass ihr ein Fenster aufgeht: Sie sitzt
+    // am Schreibtisch, dort ist der Chat offen.
+    ChatMessage.create({
+      content: game.i18n.format("SHOPS.Verlassen.Meldung", {
+        spieler: foundry.utils.escapeHTML(game.user.name),
+        laden: foundry.utils.escapeHTML(laden?.name ?? "") }),
+      whisper: ChatMessage.getWhisperRecipients("GM"),
+      speaker: { alias: game.user.name }
+    });
+    this.close();
   }
 
   /** Das eigene Buch bei diesem Laden. */

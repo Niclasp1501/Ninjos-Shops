@@ -4589,3 +4589,48 @@
 .ninjos-shops .shops-stueckzahl-platz {
   flex: 0 0 3.4rem;
 }
+
+/* ── Anfrage am Tresen: Richtwerte und Angebotsfeld ─────────────────
+   Die drei Richtwerte (Untergrenze, üblich, Obergrenze) sind Knöpfe mit zwei
+   Zeilen, Beschriftung über Betrag. Foundry gibt jedem Knopf eine feste Höhe
+   von 2em, also klebte der Betrag am unteren Rand. */
+.ninjos-shops .shops-spielraum-werte button {
+  height: auto;
+  min-height: var(--button-size, 2em);
+  line-height: 1.25;
+}
+
+/* Die Münzfelder im Angebot waren platt: `.shops-preisfeld input` hat
+   `flex: 1`, und im senkrechten Stapel aus Feld und Münzmarke heißt das nicht
+   „breit", sondern „so niedrig wie möglich". */
+.ninjos-shops .shops-preisfeld .shops-muenzfelder input {
+  flex: 0 0 auto;
+  height: var(--input-height, 2rem);
+}
+
+/* Fünf Sorten statt drei: etwas schmaler, damit die Zeile nicht umbricht. */
+.ninjos-shops .shops-muenzfelder input {
+  width: 3.1rem;
+}
+
+.ninjos-shops .shops-festpreis .shops-muenzfelder input {
+  width: 2.5rem;
+}
+
+/* ── Laden verlassen ────────────────────────────────────────────────
+   Unten, ruhig, und nicht rot: Hinausgehen ist kein Fehler, nur endgültig.
+   Die Nachfrage davor trägt das Gewicht. */
+.ninjos-shops .shops-verlassen-zeile {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 14px 12px;
+}
+
+.ninjos-shops .shops-verlassen {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  min-height: var(--ninjo-tippziel, 44px);
+  padding: 0 16px;
+}

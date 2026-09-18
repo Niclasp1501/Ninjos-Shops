@@ -15,7 +15,7 @@
  * lesen.
  */
 
-import { PREIS_SORTEN, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
+import { EINGABE_SORTEN, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
 
 /**
  * Die drei Felder unter `wurzel` lesen.
@@ -26,7 +26,7 @@ import { PREIS_SORTEN, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
 export function leseMuenzfelder(wurzel) {
   const felder = {};
   let leer = true;
-  for (const sorte of PREIS_SORTEN) {
+  for (const sorte of EINGABE_SORTEN) {
     const feld = wurzel?.querySelector(`[data-muenze="${sorte}"]`);
     const roh = String(feld?.value ?? "").trim();
     if (roh !== "") leer = false;
@@ -38,7 +38,7 @@ export function leseMuenzfelder(wurzel) {
 /** Einen Betrag in die drei Felder schreiben. */
 export function schreibeMuenzfelder(wurzel, cp) {
   const felder = alsMuenzfelder(cp);
-  for (const sorte of PREIS_SORTEN) {
+  for (const sorte of EINGABE_SORTEN) {
     const feld = wurzel?.querySelector(`[data-muenze="${sorte}"]`);
     if (feld) feld.value = felder[sorte];
   }

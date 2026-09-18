@@ -1,15 +1,26 @@
 {{!--
-  Ein Preis in Gold, Silber und Kupfer.
+  Ein Preis in allen fuenf Muenzsorten.
 
-  Drei Felder statt einer Zahl mit Sorte daneben: Ein Preis wie „1 GM 2 KM"
-  liess sich vorher nicht eintippen, obwohl er überall so angezeigt wird.
-  Platin fehlt mit Absicht, Preise werden in diesen drei Sorten genannt.
+  Mehrere Felder statt einer Zahl mit Sorte daneben: Ein Preis wie „1 GM 2 KM"
+  liess sich vorher nicht eintippen, obwohl er ueberall so angezeigt wird.
+  Platin und Elektrum sind seit dem 18.09.2026 dabei; angezeigt wird ein Preis
+  weiter in Gold, Silber und Kupfer (siehe EINGABE_SORTEN in preise.js).
 --}}
 <span class="shops-muenzfelder">
+  <label>
+    <input type="number" data-muenze="pp" min="0" step="1" value="{{felder.pp}}"
+           placeholder="0" aria-label="{{localize 'SHOPS.Muenze.pp'}}" {{#if gesperrt}}disabled{{/if}}>
+    <span>{{localize "SHOPS.Muenze.pp"}}</span>
+  </label>
   <label>
     <input type="number" data-muenze="gp" min="0" step="1" value="{{felder.gp}}"
            placeholder="0" aria-label="{{localize 'SHOPS.Muenze.gp'}}" {{#if gesperrt}}disabled{{/if}}>
     <span>{{localize "SHOPS.Muenze.gp"}}</span>
+  </label>
+  <label>
+    <input type="number" data-muenze="ep" min="0" step="1" value="{{felder.ep}}"
+           placeholder="0" aria-label="{{localize 'SHOPS.Muenze.ep'}}" {{#if gesperrt}}disabled{{/if}}>
+    <span>{{localize "SHOPS.Muenze.ep"}}</span>
   </label>
   <label>
     <input type="number" data-muenze="sp" min="0" step="1" value="{{felder.sp}}"

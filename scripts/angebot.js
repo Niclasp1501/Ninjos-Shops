@@ -76,12 +76,9 @@ export async function angebotDialog(laden, item) {
           <span>${game.i18n.localize("SHOPS.Angebot.Preis")}</span>
           <span class="shops-preisfeld">
             <span class="shops-muenzfelder">
-              <label><input type="number" name="gp" value="${felder.gp}" min="0" step="1"
-                            aria-label="${kuerzel("gp")}"><span>${kuerzel("gp")}</span></label>
-              <label><input type="number" name="sp" value="${felder.sp}" min="0" step="1"
-                            aria-label="${kuerzel("sp")}"><span>${kuerzel("sp")}</span></label>
-              <label><input type="number" name="cp" value="${felder.cp}" min="0" step="1"
-                            aria-label="${kuerzel("cp")}"><span>${kuerzel("cp")}</span></label>
+              ${["pp", "gp", "ep", "sp", "cp"].map(s => `<label><input type="number" name="${s}"
+                            value="${felder[s]}" min="0" step="1" placeholder="0"
+                            aria-label="${kuerzel(s)}"><span>${kuerzel(s)}</span></label>`).join("")}
             </span>
           </span>
         </label>
@@ -112,12 +109,10 @@ export async function angebotDialog(laden, item) {
           return {
             an: [...w.querySelectorAll('input[name="user"]:checked')].map(i => i.value),
             menge: Math.max(1, Number(w.querySelector('[name="menge"]').value) || 1),
-            // Drei Felder, damit auch „1 GM 2 KM" eingebbar ist.
-            preisCp: ausMuenzfeldern({
-              gp: w.querySelector('[name="gp"]')?.value,
-              sp: w.querySelector('[name="sp"]')?.value,
-              cp: w.querySelector('[name="cp"]')?.value
-            }),
+            // Alle fuenf Sorten, damit auch „1 GM 2 KM" oder „3 PM" eingebbar ist.
+            preisCp: ausMuenzfeldern(Object.fromEntries(
+              ["pp", "gp", "ep", "sp", "cp"].map(s => [s, w.querySelector(`[name="${s}"]`)?.value])
+            )),
             text: w.querySelector('[name="text"]').value.trim()
           };
         }
