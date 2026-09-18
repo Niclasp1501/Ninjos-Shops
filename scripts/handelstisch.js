@@ -457,33 +457,14 @@ export async function bereitSetzen(benutzerId, wer, wert = true) {
   if (!handel) return;
 
   /*
-   * **Was nicht aufgeht, wird nicht abgeschlossen.**
-   *
-   * Am 12.09.2026 am Tisch gemeldet: Es fehlte Geld, und der Handel ging
-   * trotzdem durch. Unter der Regel „es wandert, was auf dem Tisch liegt"
-   * bekam die Person dann einfach weniger, ohne dass jemand es wollte.
-   *
-   * Die Spielleitung verliert dadurch nichts: Ein Nachlass oder ein Geschenk
-   * ist ein Griff ins Feld „Sie verlangt". Was sie dort einträgt, gilt, und
-   * dann geht die Waage auf. Gesperrt ist nur das unbeabsichtigte Abschliessen
-   * einer Rechnung, die nicht stimmt.
+   * **Was nicht aufgeht, darf trotzdem zugesagt werden, aber nicht aus
+   * Versehen.** Vom 12.09. bis 18.09.2026 war die Zusage gesperrt, solange die
+   * Waage nicht aufging: Ein Handel war durchgegangen, bei dem Geld fehlte,
+   * ohne dass es jemand wollte. Am Tisch hiess das aber auch, dass ein
+   * Spieler, der bewusst mehr gibt oder einen fehlenden Preis nicht nennen
+   * mag, gar nicht zusagen konnte. Seitdem fragt der Knopf vorher nach, siehe
+   * `zusageMitWarnung`. Hier wird nichts mehr gesperrt.
    */
-  const stand = tischStand(handel);
-  if (wert && !stand.allePreise) {
-    const text = game.i18n.format("SHOPS.Tisch.PreisFehlt", { namen: stand.ohnePreisNamen });
-    ui.notifications.warn(text);
-    if (wer !== "gm") meldung(benutzerId, text);
-    return;
-  }
-  if (wert && !stand.ausgeglichen) {
-    const text = game.i18n.format(
-      stand.fehlt ? "SHOPS.Tisch.NochOffen" : "SHOPS.Tisch.NochZuViel",
-      { geld: stand.offenText });
-    ui.notifications.warn(text);
-    if (wer !== "gm") meldung(benutzerId, text);
-    return;
-  }
-
   const feld = wer === "gm" ? "bereitGm" : "bereitSpieler";
   const spurFeld = wer === "gm" ? "zusageWegGm" : "zusageWegSpieler";
   await benutzer.setFlag(MODULE_ID, TISCH,
@@ -497,6 +478,47 @@ export async function bereitSetzen(benutzerId, wer, wert = true) {
     ? benutzer.name
     : (handel.personName ?? game.i18n.localize("SHOPS.Tisch.DieAndereSeite"));
   ui.notifications.info(game.i18n.format("SHOPS.Tisch.WartetAuf", { wer: wartetAuf }));
+}
+
+/**
+ * Vor einer Zusage warnen, wenn der Tausch nicht aufgeht.
+ *
+ * Nur wenn etwas nicht stimmt: Ein Preis fehlt, oder die Waage steht nicht
+ * gleich. Dann ein Fenster mit dem Grund und einem Knopf, der das Verb traegt.
+ * Wegklicken und Escape heissen nein.
+ *
+ * @param {object} stand  aus `tischStand`
+ * @param {string} gegenueber  wer auf der anderen Seite steht, fuer den Satz
+ * @param {{spielleitung?: boolean}} wie  aus Sicht der Spielleitung, die fuer die Person spricht
+ * @returns {Promise<boolean>} ob zugesagt werden soll
+ */
+export async function zusageMitWarnung(stand, gegenueber, { spielleitung = false } = {}) {
+  if (!stand || (stand.ausgeglichen && stand.allePreise)) return true;
+
+  const saetze = [];
+  if (!stand.allePreise) {
+    saetze.push(game.i18n.format("SHOPS.Tisch.WarnungOhnePreis",
+      { namen: foundry.utils.escapeHTML(stand.ohnePreisNamen) }));
+  }
+  if (!stand.ausgeglichen) {
+    // Die Waage rechnet aus Sicht des Spielers. Die Spielleitung spricht fuer
+    // die Person, fuer sie ist dieselbe Differenz die andere Richtung.
+    const meineFehlt = spielleitung ? stand.zuViel : stand.fehlt;
+    saetze.push(game.i18n.format(meineFehlt ? "SHOPS.Tisch.WarnungFehlt" : "SHOPS.Tisch.WarnungZuViel",
+      { geld: stand.offenText, wer: foundry.utils.escapeHTML(gegenueber ?? "") }));
+  }
+  saetze.push(game.i18n.localize("SHOPS.Tisch.WarnungFolge"));
+
+  return DialogV2.confirm({
+    window: { title: game.i18n.localize("SHOPS.Tisch.WarnungTitel"), icon: "fa-solid fa-scale-unbalanced" },
+    classes: ["ninjos-shops"],
+    content: `<div class="shops-kaufdialog">${saetze.map(t => `<p>${t}</p>`).join("")}</div>`,
+    yes: { label: game.i18n.localize("SHOPS.Tisch.WarnungJa"), icon: "fa-solid fa-handshake" },
+    no: { label: game.i18n.localize("SHOPS.Abbrechen") },
+    // Danebenklicken und Escape brechen ab, nie bestaetigen sie.
+    defaultYes: false,
+    rejectClose: false
+  });
 }
 
 /** Den Tisch abräumen - für einen Spieler oder für alle. */
@@ -797,10 +819,11 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     if (cp !== null) tischPreis(itemId, cp);
   }
 
-  static #annehmen() {
+  static async #annehmen() {
     // Schon zugesagt? Dann nimmt der Knopf die Zusage zurueck.
-    if (eigenerTisch()?.bereitSpieler) tischWiderrufen();
-    else tischAnnehmen();
+    const handel = eigenerTisch();
+    if (handel?.bereitSpieler) return void tischWiderrufen();
+    if (await zusageMitWarnung(tischStand(handel), handel?.personName)) tischAnnehmen();
   }
 
   static async #aufgeben() {
@@ -1009,9 +1032,13 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
   static #geldWeg() { geldSetzen(this.benutzerId, "nsc", {}); }
 
   /** Die Zusage der Spielleitung - und der Abschluss, wenn beide stehen. */
-  static #bestaetigen() {
-    const handel = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH);
-    bereitSetzen(this.benutzerId, "gm", !handel?.bereitGm);
+  static async #bestaetigen() {
+    const benutzer = game.users.get(this.benutzerId);
+    const handel = benutzer?.getFlag(MODULE_ID, TISCH);
+    if (handel?.bereitGm) return void bereitSetzen(this.benutzerId, "gm", false);
+    if (await zusageMitWarnung(tischStand(handel), benutzer?.name, { spielleitung: true })) {
+      bereitSetzen(this.benutzerId, "gm", true);
+    }
   }
 
   static async #beenden() {

@@ -21,9 +21,14 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   what they want for it, and can change that at any time with a tap on the
   price. The other side answers by adding items or coins, or by asking for a
   different price. The list price is shown only as a hint in the price window,
-  with a button to use it. Nobody can agree while an item still has no price;
-  an explicit 0 means a gift. Shops and the player to player swap are
-  unchanged.
+  with a button to use it. An explicit 0 means a gift. Shops and the player to
+  player swap are unchanged.
+- **Agreeing to an uneven trade asks first instead of being blocked.** Since
+  12.09.2026 the agree button stayed disabled until the balance was even,
+  which also stopped a player who meant to give more, or to leave a price
+  open. Both sides can now agree at any time; if an item has no price or the
+  balance is off, a window says by how much and that exactly what lies on the
+  table will change hands.
 - **Money arrives in the coins the price is quoted in.** Selling an item for
   25 gp to a shop paid out "2 pp 5 gp", because every credit was broken down
   into the largest coin. With a shop till it was outright wrong, since the shop

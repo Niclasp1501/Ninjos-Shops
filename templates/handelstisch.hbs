@@ -160,9 +160,7 @@
               data-action="annehmen"
               {{#if stand.leer}}disabled
               {{else if stand.ohneSpielleitung}}disabled
-              {{else if stand.bereitSpieler}}
-              {{else if stand.allePreise}}{{#unless stand.ausgeglichen}}disabled{{/unless}}
-              {{else}}disabled{{/if}}>
+              {{/if}}>
         <i class="fa-solid {{#if stand.bereitSpieler}}fa-rotate-left{{else if stand.bereitGm}}fa-check{{else}}fa-handshake{{/if}}"
            aria-hidden="true"></i>
         {{#if stand.bereitSpieler}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
@@ -179,8 +177,8 @@
         </span>
       {{/if}}
       {{#unless stand.allePreise}}
-        {{!-- Ein Posten ohne Preis ist eine offene Frage. Solange eine offen
-              ist, kann niemand zusagen, und hier steht, woran es liegt. --}}
+        {{!-- Ein Posten ohne Preis ist eine offene Frage. Zusagen geht
+              trotzdem, aber erst nach einer Warnung. --}}
         <span class="shops-tisch-zusage shops-wartet">
           <i class="fa-solid fa-tag" aria-hidden="true"></i>
           {{localize "SHOPS.Tisch.PreiseFehlen" namen=stand.ohnePreisNamen}}
