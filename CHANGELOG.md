@@ -3,6 +3,23 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## Unreleased
+
+### Fixed
+- **The player window's column headings sit over their columns again.** The
+  quantity field came into the rows later and the heading row was never told:
+  it also measured the picture at 34 instead of 56 pixels and used smaller
+  gaps. Because everything right of the name has a fixed width, stock and
+  price in every row ended up about ninety pixels left of their heading.
+  Rows that cannot be bought now keep the quantity field's place free, so
+  they line up with the ones that can.
+- **The markers behind an item's name stay visible.** Under the counter,
+  service, buys back and freshly brought out sat inside the same truncated
+  field as the name, so a long name cut them off with its ellipsis. Since the
+  three coin fields for the fixed price joined the row, that hit nearly every
+  name, and "under the counter" could no longer be seen on the sheet. Only
+  the text is shortened now.
+
 ## 14.2609.92 - 2026-09-17
 
 ### Changed

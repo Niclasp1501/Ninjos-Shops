@@ -111,6 +111,10 @@
           <span class="shops-spalte-name">{{localize "SHOPS.Bogen.SpalteWare"}}</span>
           <span class="shops-spalte-menge">{{localize "SHOPS.Bogen.SpalteBestand"}}</span>
           <span class="shops-spalte-preis">{{localize "SHOPS.Bogen.SpaltePreis"}}</span>
+          {{!-- Die Spalte des Mengenfelds. Es kam nach dem Kopf dazu, und der
+                wurde nie nachgezogen: Bestand und Preis standen danach rund
+                neunzig Pixel links von ihrer Überschrift. --}}
+          <span class="shops-spalte-stueck"></span>
           <span class="shops-spalte-kauf"></span>
         </li>
 
@@ -124,7 +128,7 @@
             <div class="shops-name">
               <span class="shops-warenname" data-action="wareAnsehen"
                     title="{{localize 'SHOPS.Ansehen.Knopf'}}">
-                {{name}}
+                <span class="shops-warentext">{{name}}</span>
                 {{#if dienst}}
                   <i class="fa-solid fa-handshake" title="{{localize 'SHOPS.Bogen.Dienst'}}" aria-hidden="true"></i>
                 {{/if}}
@@ -149,16 +153,19 @@
             {{!-- Der Knopf sagt, warum er nicht geht. Ein Knopf, der ohne
                   Begruendung aus ist, laesst jeden zweimal klicken. --}}
             {{#if @root.gesperrt}}
+              <span class="shops-stueckzahl-platz" aria-hidden="true"></span>
               <button type="button" class="shops-kaufen" disabled
                       title="{{localize 'SHOPS.Kauf.Gesperrt'}}">
                 <i class="fa-solid fa-lock" aria-hidden="true"></i>
                 <span>{{localize "SHOPS.Spieler.NurAnsehen"}}</span>
               </button>
             {{else if ausverkauft}}
+              <span class="shops-stueckzahl-platz" aria-hidden="true"></span>
               <button type="button" class="shops-kaufen" disabled>
                 <span>{{localize "SHOPS.Spieler.Ausverkauft"}}</span>
               </button>
             {{else if @root.keinSpielleiter}}
+              <span class="shops-stueckzahl-platz" aria-hidden="true"></span>
               <button type="button" class="shops-kaufen" disabled
                       title="{{localize 'SHOPS.Kauf.KeinSpielleiter'}}">
                 <span>{{localize "SHOPS.Spieler.NiemandDa"}}</span>

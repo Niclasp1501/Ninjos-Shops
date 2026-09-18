@@ -4541,3 +4541,51 @@
 
 /* In der engen Zeile des Ladenbogens duerfen sie schmaler sein. */
 .ninjos-shops .shops-festpreis .shops-muenzfelder input { width: 3rem; }
+
+/* ── Name und Zeichen ────────────────────────────────────────────────
+   Die Zeichen hinter dem Namen (unter der Theke, Dienst, Ankauf, frisch
+   hervorgeholt) standen im selben gekürzten Feld wie der Text. Wurde ein
+   langer Name mit „…" gekürzt, fielen sie mit ab, denn sie stehen danach.
+   Seit die drei Münzfelder für den Festpreis in der Zeile stehen, trifft das
+   fast jeden Namen, und „unter der Theke" war im Bogen nicht mehr zu sehen.
+   Jetzt wird nur der Text gekürzt, die Zeichen behalten ihren Platz. */
+.ninjos-shops .shops-warenname:has(> .shops-warentext) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.ninjos-shops .shops-warentext {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ninjos-shops .shops-warenname:has(> .shops-warentext) > :not(.shops-warentext) {
+  flex: 0 0 auto;
+}
+
+/* ── Spaltenkopf im Spielerfenster ──────────────────────────────────
+   Der Kopf mass mit anderen Maßen als seine Karten: 34 statt 56 Pixel für
+   das Bild, 8 statt 12 Pixel Abstand, 20 statt 12 Pixel Rand, und keine
+   Spalte für das Mengenfeld. Weil alles rechts vom Namen eine feste Breite
+   hat, richten sich beide von rechts aus, und jede fehlende Breite schob
+   Bestand und Preis in den Karten nach links. Hier dieselben Maße wie in
+   `.shops-spieler-ware > li.shops-zeile`. */
+.ninjos-shops .shops-spieler-spalten {
+  gap: 12px;
+  padding: 0 12px 5px;
+}
+
+.ninjos-shops .shops-spieler-spalten .shops-spalte-bild {
+  flex: 0 0 56px;
+}
+
+.ninjos-shops .shops-spalte-stueck,
+.ninjos-shops .shops-stueckzahl-platz {
+  flex: 0 0 3.4rem;
+}
