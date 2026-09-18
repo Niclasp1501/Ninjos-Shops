@@ -45,10 +45,10 @@
                     {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
                 {{/if}}
               </div>
-              {{!-- Kein Preis am Stück: Was sie will, steht als eine Zahl
-                    unten. Neun Grundpreise daneben sind eine Rechnung, die
-                    niemand aufgemacht hat. --}}
+              {{!-- Was sie dafür haben will, so wie die Spielleitung es
+                    genannt hat. Kein gerechneter Preis. --}}
               <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{#if hatPreis}}{{preisText}}{{else}}<em class="shops-ohne-preis">{{localize "SHOPS.Tisch.OhnePreis"}}</em>{{/if}}</span>
             </li>
           {{/each}}
           {{#if stand.geldNsc}}
@@ -83,7 +83,14 @@
                 {{/if}}
               </div>
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{anrechnungText}}</span>
+              {{!-- Was ich dafür haben will. Ein Tipp ändert es jederzeit. --}}
+              <button type="button" class="shops-tisch-preis {{#unless hatPreis}}shops-offen{{/unless}}"
+                      data-action="preisNennen"
+                      title="{{localize 'SHOPS.Tisch.PreisAendern'}}"
+                      aria-label="{{localize 'SHOPS.Tisch.PreisAendern'}}: {{name}}">
+                {{#if hatPreis}}{{preisText}}
+                {{else}}<i class="fa-solid fa-tag" aria-hidden="true"></i> {{localize "SHOPS.Tisch.PreisNennen"}}{{/if}}
+              </button>
               <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
                       aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
                       title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
@@ -129,11 +136,11 @@
     <div class="shops-tisch-waage {{#if stand.fehlt}}shops-zahlt{{/if}}
                 {{#if stand.zuViel}}shops-bekommt{{/if}}">
       <span class="shops-tisch-summe">
-        <small>{{localize "SHOPS.Tisch.Verlangt"}}</small> {{stand.verlangtText}}
+        <small>{{stand.personName}}</small> {{stand.linksText}}
       </span>
       <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
       <span class="shops-tisch-summe">
-        <small>{{localize "SHOPS.Tisch.Hingelegt"}}</small> {{stand.gebrachtText}}
+        <small>{{localize "SHOPS.Tisch.Du"}}</small> {{stand.rechtsText}}
       </span>
       <strong class="shops-tisch-differenz">
         {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
@@ -154,7 +161,8 @@
               {{#if stand.leer}}disabled
               {{else if stand.ohneSpielleitung}}disabled
               {{else if stand.bereitSpieler}}
-              {{else}}{{#unless stand.ausgeglichen}}disabled{{/unless}}{{/if}}>
+              {{else if stand.allePreise}}{{#unless stand.ausgeglichen}}disabled{{/unless}}
+              {{else}}disabled{{/if}}>
         <i class="fa-solid {{#if stand.bereitSpieler}}fa-rotate-left{{else if stand.bereitGm}}fa-check{{else}}fa-handshake{{/if}}"
            aria-hidden="true"></i>
         {{#if stand.bereitSpieler}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
@@ -170,6 +178,14 @@
           {{localize "SHOPS.Tisch.SieHatZugesagt" person=stand.personName}}
         </span>
       {{/if}}
+      {{#unless stand.allePreise}}
+        {{!-- Ein Posten ohne Preis ist eine offene Frage. Solange eine offen
+              ist, kann niemand zusagen, und hier steht, woran es liegt. --}}
+        <span class="shops-tisch-zusage shops-wartet">
+          <i class="fa-solid fa-tag" aria-hidden="true"></i>
+          {{localize "SHOPS.Tisch.PreiseFehlen" namen=stand.ohnePreisNamen}}
+        </span>
+      {{/unless}}
       {{#if stand.zusageWegSpieler}}
         {{!-- Eine Zusage, die wegfaellt, faellt nicht stillschweigend weg. --}}
         <span class="shops-tisch-zusage shops-wartet">

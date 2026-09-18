@@ -14,6 +14,16 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   in chat. Getting back in still needs the gamemaster to show the shop again.
 
 ### Changed
+- **At the trade table with an NPC, everyone names their own price.** Every
+  item laid down used to be valued automatically from its list price, and the
+  gamemaster could only override the total afterwards, so the player had no
+  way to say what they wanted. Now whoever puts something on the table names
+  what they want for it, and can change that at any time with a tap on the
+  price. The other side answers by adding items or coins, or by asking for a
+  different price. The list price is shown only as a hint in the price window,
+  with a button to use it. Nobody can agree while an item still has no price;
+  an explicit 0 means a gift. Shops and the player to player swap are
+  unchanged.
 - **Money arrives in the coins the price is quoted in.** Selling an item for
   25 gp to a shop paid out "2 pp 5 gp", because every credit was broken down
   into the largest coin. With a shop till it was outright wrong, since the shop

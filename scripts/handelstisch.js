@@ -34,25 +34,27 @@
  * „leg das auf meine Seite", „nimm das wieder weg", „ich nehme an". Gerechnet
  * wird bei der Spielleitung, und die Werte stehen fertig im Merkmal.
  *
- * **Beide Seiten tragen ihren Wert mit sich.** Was die Person hinlegt, zählt
- * mit dem Verkaufspreis (Aufschlag ihres Ladens, falls sie einen führt); was
- * der Spieler hinlegt, mit dem, was sie dafür gäbe. Die Differenz steht unten
- * und ist der Preis - **es sei denn, die Spielleitung überschreibt ihn.** Sie
- * hat immer das letzte Wort; das Modul rechnet nur vor.
+ * **Wer etwas hinlegt, sagt, was er dafür haben will.** Bis zum 18.09.2026
+ * rechnete das Modul jedes Stück selbst mit dem Preis des Gegenstands, und die
+ * Spielleitung konnte nur nachträglich überschreiben. Am Tisch gemeldet: Beim
+ * Handeln geht es gerade darum auszuloten, was man haben möchte; ein Preis,
+ * den niemand genannt hat, nimmt dem Gespräch den Anfang. Jetzt nennt der
+ * Spieler den Preis für seine Sachen, die Spielleitung den für die der
+ * Person, und beide können ihn jederzeit ändern. Die andere Seite antwortet,
+ * indem sie selbst etwas hinlegt, Münzen dazulegt oder um einen anderen Preis
+ * bittet. Der Listenpreis steht nur als Auskunft daneben.
  */
 
 import { MODULE_ID, SOCKET, WARE } from "./const.js";
-import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfelder,
-         PREIS_SORTEN, KUPFERWERT } from "./preise.js";
-import { bezahle, schreibeGut, vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
+import { grundpreisCp, alsText, alsMuenzfelder, EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
+import { vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
 import { leseMuenzfelder } from "./muenzfeld.js";
 import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
-import { laedenVon } from "./verknuepfung.js";
 import { verkaufbareSachen } from "./verkauf.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
-import { abbruchMelden, erfolgZeigen, hinweisMelden, istWortbruch } from "./melden.js";
+import { abbruchMelden, erfolgZeigen, hinweisMelden, hinweisZeigen, istWortbruch } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -60,49 +62,10 @@ const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 /** Merkmal am Benutzer: der offene Handel. Einer je Spieler. */
 export const TISCH = "handel";
 
-/**
- * Was eine Person für gebrauchte Ware gibt, als Faktor auf den Grundpreis.
- * Dieselbe Zahl wie in anfrage.js und aus demselben Grund: Eine Person hat
- * keine Ankaufspolitik, und die Hälfte ist die Zahl, die am Tisch fällt.
- */
-const PERSON_ANKAUF = 0.5;
-
-/* ── Rechnen ───────────────────────────────────────────────────────── */
-
-/** Was die Person für dieses Stück haben will. */
-function wertHergeben(person, item) {
-  const laeden = laedenVon(person);
-  const laden = laeden.length === 1 ? laeden[0] : null;
-  const fest = item.flags?.[MODULE_ID]?.[WARE.FESTPREIS];
-  return preisCp(grundpreisCp(item.system?.price), laden?.system,
-                 Number.isFinite(fest) ? fest : null);
-}
-
-/**
- * Die Ankaufspolitik hinter dieser Person.
- *
- * Fuehrt sie einen Laden, gilt dessen eingestellter Ankaufswert - dieselbe
- * Zahl, mit der das Ladenfenster und die Verkaufsanfragen rechnen. Eine Person
- * ohne Laden hat keine Politik; dann die Haelfte, wie in anfrage.js.
- */
-function politikVon(person) {
-  const laeden = laedenVon(person);
-  const laden = laeden.length === 1 ? laeden[0] : null;
-  return laden?.system ?? { ankauf: PERSON_ANKAUF, spielraum: 0.25 };
-}
-
-/** Was die Person für dieses Stück von sich aus gäbe - ihr Ankaufswert. */
-function ankaufWert(person, item) {
-  return ankaufCp(grundpreisCp(item.system?.price), politikVon(person));
-}
-
-/** Wie weit sie sich davon wegbewegt, wenn sie gut oder schlecht gelaunt ist. */
-function spielraumVon(person) {
-  const wert = Number(politikVon(person).spielraum);
-  return Number.isFinite(wert) ? wert : 0.25;
-}
-
-const summe = seite => (seite ?? []).reduce((s, p) => s + p.wertCp * p.menge, 0);
+/** Was fuer einen Posten verlangt wird. Ohne genannten Preis: noch nichts. */
+const hatPreis = p => Number.isFinite(p?.preisCp);
+const preisVon = p => hatPreis(p) ? p.preisCp : 0;
+const summe = seite => (seite ?? []).reduce((s, p) => s + preisVon(p), 0);
 
 /**
  * Was eine Seite insgesamt hinlegt - Ware **und** Geld.
@@ -118,17 +81,9 @@ const seitenwert = (seite, geldCp) => summe(seite) + Math.max(0, Math.round(geld
 /**
  * Der Handel, fertig für die Anzeige.
  *
- * **Zwei Zahlen, nicht neun.** Bis zum 08.09.2026 stand hinter jedem Stueck
- * sein gerechneter Preis, und unten die Differenz. Das las sich wie eine
- * Rechnung, war aber keine: Der Spieler sah Grundpreise, die niemand von ihm
- * verlangt hatte, und die Summe darunter kam scheinbar aus dem Nichts.
- *
- * Jetzt gibt es genau zwei Betraege. **Was sie verlangt** - eine Zahl, die
- * die Spielleitung setzt (vorgeschlagen wird die Summe ihrer Preise). Und
- * **was er bringt**: was sie ihm fuer seine Ware anrechnet, plus die Muenzen,
- * die er hingelegt hat. Was dazwischen fehlt, steht daneben.
- *
- * Ihre eigenen Muenzen zaehlen zu ihrer Seite - sie gibt sie ja heraus.
+ * Zwei Summen: was auf ihrer Seite liegt und was auf seiner, jeweils mit den
+ * Preisen, die ihr Besitzer genannt hat, und den Muenzen dazu. Was dazwischen
+ * fehlt, steht daneben.
  */
 export function tischStand(handel) {
   if (!handel) return null;
@@ -136,57 +91,46 @@ export function tischStand(handel) {
   const geldNsc = Math.max(0, Math.round(handel.geldNsc || 0));
   const geldSpieler = Math.max(0, Math.round(handel.geldSpieler || 0));
 
-  /* Was sie fuer ihre Ware will. Ohne Vorgabe: die Summe ihrer Preise. */
-  const vorschlagCp = summe(handel.seiteNsc);
-  const gefordertCp = Number.isFinite(handel.forderungCp) ? handel.forderungCp : vorschlagCp;
-
-  /* Was sie ihm fuer ein Stueck anrechnet - ohne Vorgabe ihr Ankaufswert. */
-  const angerechnet = p => Number.isFinite(p.anrechnungCp) ? p.anrechnungCp : p.wertCp * p.menge;
-  const gebrachtCp = (handel.seiteSpieler ?? []).reduce((s, p) => s + angerechnet(p), 0);
-
-  const linksCp = gefordertCp + geldNsc;
-  const rechtsCp = gebrachtCp + geldSpieler;
+  const linksCp = summe(handel.seiteNsc) + geldNsc;
+  const rechtsCp = summe(handel.seiteSpieler) + geldSpieler;
   const offenCp = linksCp - rechtsCp;
+
+  /*
+   * Ein Posten ohne Preis ist eine offene Frage, keine Null. Zugesagt werden
+   * kann erst, wenn fuer alles etwas genannt ist; eine ausdrueckliche 0 heisst
+   * geschenkt und zaehlt als genannt.
+   */
+  const ohnePreis = [...(handel.seiteNsc ?? []), ...(handel.seiteSpieler ?? [])]
+    .filter(p => !hatPreis(p));
+
+  const zeile = p => ({
+    ...p,
+    hatPreis: hatPreis(p),
+    preisText: alsText(preisVon(p), kuerzel),
+    grundText: p.grundCp ? alsText(p.grundCp * p.menge, kuerzel) : "",
+    inhaltGeldText: muenzText(p.inhaltMuenzen),
+    darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length)
+  });
 
   return {
     ...handel,
-    /* Ihre Seite: die Preise sieht nur die Spielleitung - siehe die Vorlagen. */
-    seiteNsc: (handel.seiteNsc ?? []).map(p => ({
-      ...p, summeText: alsText(p.wertCp * p.menge, kuerzel),
-      inhaltGeldText: muenzText(p.inhaltMuenzen),
-      darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length)
-    })),
-    /* Seine Seite: was sie anrechnet, und fuer die Spielleitung die Spanne. */
-    seiteSpieler: (handel.seiteSpieler ?? []).map(p => {
-      const wert = angerechnet(p);
-      return {
-        ...p,
-        anrechnungText: alsText(wert, kuerzel),
-        inhaltGeldText: muenzText(p.inhaltMuenzen),
-        darinEtwas: !!((p.inhalt ?? []).length || Object.keys(p.inhaltMuenzen ?? {}).length),
-        grundText: alsText((p.grundCp ?? 0) * p.menge, kuerzel),
-        eigenerWert: Number.isFinite(p.anrechnungCp),
-        anrechnungFelder: alsMuenzfelder(wert),
-        spanne: spanneVon(p)
-      };
-    }),
+    seiteNsc: (handel.seiteNsc ?? []).map(zeile),
+    seiteSpieler: (handel.seiteSpieler ?? []).map(zeile),
 
     geldNsc, geldSpieler,
     geldNscText: muenzText(handel.muenzenNsc) || alsText(geldNsc, kuerzel),
     geldSpielerText: muenzText(handel.muenzenSpieler) || alsText(geldSpieler, kuerzel),
 
-    gefordertCp,
-    gefordertText: alsText(gefordertCp, kuerzel),
-    gebrachtText: alsText(rechtsCp, kuerzel),
-    verlangtText: alsText(linksCp, kuerzel),
-    forderungFelder: alsMuenzfelder(gefordertCp),
-    ueberschrieben: Number.isFinite(handel.forderungCp) && handel.forderungCp !== vorschlagCp,
+    linksText: alsText(linksCp, kuerzel),
+    rechtsText: alsText(rechtsCp, kuerzel),
 
     offenCp,
     offenText: alsText(Math.abs(offenCp), kuerzel),
     fehlt: offenCp > 0,
     zuViel: offenCp < 0,
     ausgeglichen: offenCp === 0,
+    allePreise: ohnePreis.length === 0,
+    ohnePreisNamen: ohnePreis.map(p => p.name).join(", "),
 
     /*
      * **Zwei Zusagen, nicht eine.** Ein Tausch ist eine Abrede zwischen
@@ -203,25 +147,6 @@ export function tischStand(handel) {
     leer: !((handel.seiteNsc ?? []).length || (handel.seiteSpieler ?? []).length
             || geldNsc || geldSpieler)
   };
-}
-
-/**
- * Die drei Zahlen, mit denen die Spielleitung einen Anrechnungswert setzt.
- *
- * Dieselbe Spanne wie bei den Verkaufsanfragen (anfrage.js) und aus demselben
- * Grund: Wer den Haendler verstimmt hat, bekommt die linke Zahl, wer gut mit
- * ihm steht, die rechte. Entschieden wird am Tisch.
- */
-function spanneVon(posten) {
-  const ueblich = posten.wertCp * posten.menge;
-  if (!ueblich) return null;
-  const spielraum = Number.isFinite(posten.spielraum) ? posten.spielraum : 0.25;
-  const werte = [
-    Math.max(0, Math.floor(ueblich * (1 - spielraum))),
-    ueblich,
-    Math.ceil(ueblich * (1 + spielraum))
-  ];
-  return werte.map(cp => ({ cp, text: alsText(cp, kuerzel) }));
 }
 
 /** Der eigene offene Handel. */
@@ -359,9 +284,8 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
 
   const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
   /*
-   * Was die Spielleitung fuer ein Stueck eingetragen hat, bleibt stehen -
-   * solange dasselbe Stueck in derselben Menge daliegt. Wer die Menge aendert,
-   * handelt einen anderen Posten aus.
+   * Ein genannter Preis bleibt stehen, solange dasselbe Stueck in derselben
+   * Menge daliegt. Wer die Menge aendert, handelt einen anderen Posten aus.
    */
   const vorher = new Map((handel[feld] ?? []).map(p => [p.itemId, p]));
 
@@ -381,67 +305,91 @@ export async function seiteSetzen(benutzerId, seite, posten, muenzen) {
     if (menge <= 0) continue;
 
     const alt = vorher.get(item.id);
-    const zeile = {
+    liste.push({
       itemId: item.id, name: item.name, img: item.img || null, menge,
-      wertCp: seite === "nsc" ? wertHergeben(person, item) : ankaufWert(person, item),
+      // Nur Auskunft. Gerechnet wird mit dem, was der Besitzer nennt.
+      grundCp: grundpreisCp(item.system?.price),
+      preisCp: alt && alt.menge === menge && hatPreis(alt) ? alt.preisCp : null,
       // Ein Beutel reist samt Inhalt - also gehoert der zu dem, was zugesagt wird.
       inhalt: inhaltVon(item),
       inhaltMuenzen: muenzenIn(item)
-    };
-    if (seite === "spieler") {
-      zeile.grundCp = grundpreisCp(item.system?.price);
-      zeile.spielraum = spielraumVon(person);
-      if (alt && alt.menge === menge && Number.isFinite(alt.anrechnungCp)) {
-        zeile.anrechnungCp = alt.anrechnungCp;
-      }
-    }
-    liste.push(zeile);
+    });
   }
 
   const gedeckelt = muenzenDeckeln(muenzen, traeger.system?.currency);
   const neu = { ...handel, [feld]: liste, ...muenzFelder(seite, gedeckelt),
                 ...ohneZusagen(handel) };
-  // Ihre Ware hat sich geaendert - dann gilt auch ihre alte Forderung nicht mehr.
-  if (seite === "nsc") neu.forderungCp = null;
   await benutzer.setFlag(MODULE_ID, TISCH, neu);
   await funken([benutzerId]);
 }
 
 /**
- * Was sie fuer ihre Seite verlangt. `null` gibt die Rechnung wieder frei.
- *
- * Das Modul rechnet vor, die Spielleitung entscheidet: Ein Freundschaftspreis,
- * ein Aufschlag fuer den Unsympathen, ein glatter Betrag.
+ * Den Preis fuer einen Posten nennen oder aendern. Jede Seite fuer ihre
+ * eigenen Sachen: der Spieler ueber seine Bitte, die Spielleitung fuer die
+ * Person. Wie jede Aenderung nimmt das beide Zusagen zurueck.
  */
-export async function forderungSetzen(benutzerId, betragCp) {
+export async function preisSetzen(benutzerId, seite, itemId, betragCp) {
   if (!game.user.isGM) return;
   const benutzer = game.users.get(benutzerId);
   const handel = benutzer?.getFlag(MODULE_ID, TISCH);
   if (!handel) return;
+  const feld = seite === "nsc" ? "seiteNsc" : "seiteSpieler";
   const wert = betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0));
-  await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, forderungCp: wert, ...ohneZusagen(handel) });
+  const liste = (handel[feld] ?? []).map(p => p.itemId !== itemId ? p : { ...p, preisCp: wert });
+  await benutzer.setFlag(MODULE_ID, TISCH, { ...handel, [feld]: liste, ...ohneZusagen(handel) });
   await funken([benutzerId]);
 }
 
 /**
- * Was sie ihm fuer ein Stueck anrechnet. `null` nimmt wieder ihren Ankaufswert.
+ * Nach einem Preis fragen: fuenf Muenzfelder, der Listenpreis als Auskunft.
  *
- * Das ist die Antwort auf „was ist dir das wert" - und der Grund, warum auf
- * seiner Seite ueberhaupt eine Zahl steht. Ohne sie waere sein Krummsaebel
- * einfach ein Bild auf dem Tisch.
+ * Ein eigenes kleines Fenster statt Feldern in der Zeile. Fuenf Muenzfelder
+ * je Posten liessen auf dem Tablet vom Namen nichts uebrig, und genannt wird
+ * ein Preis selten, gelesen aber bei jedem Blick auf den Tisch.
+ *
+ * @returns {Promise<?number>} Kupfer, oder `null` bei Abbruch
  */
-export async function anrechnenSetzen(benutzerId, itemId, betragCp) {
-  if (!game.user.isGM) return;
-  const benutzer = game.users.get(benutzerId);
-  const handel = benutzer?.getFlag(MODULE_ID, TISCH);
-  if (!handel) return;
-  const liste = (handel.seiteSpieler ?? []).map(p => p.itemId !== itemId ? p : {
-    ...p, anrechnungCp: betragCp === null ? null : Math.max(0, Math.round(Number(betragCp) || 0))
+export async function preisFragen(posten) {
+  const felder = hatPreis(posten) ? alsMuenzfelder(posten.preisCp) : {};
+  const grundCp = (posten.grundCp ?? 0) * (posten.menge ?? 1);
+  const inhalt = `
+    <div class="shops-festpreis-dialog">
+      <p class="shops-blockhinweis">${game.i18n.format("SHOPS.Tisch.PreisFrage", {
+        menge: posten.menge ?? 1, name: foundry.utils.escapeHTML(posten.name ?? "")
+      })}</p>
+      <span class="shops-preisfeld">
+        <span class="shops-muenzfelder">
+          ${EINGABE_SORTEN.map(s => `<label><input type="number" data-muenze="${s}"
+                        value="${felder[s] ?? ""}" min="0" step="1" placeholder="0"
+                        aria-label="${kuerzel(s)}"><span>${kuerzel(s)}</span></label>`).join("")}
+        </span>
+      </span>
+      ${grundCp ? `<p class="shops-blockhinweis">${game.i18n.format("SHOPS.Tisch.Listenpreis",
+        { preis: alsText(grundCp, kuerzel) })}</p>` : ""}
+    </div>`;
+
+  const knoepfe = [{
+    action: "nennen", default: true, icon: "fa-solid fa-tag",
+    label: game.i18n.localize("SHOPS.Tisch.PreisNennen"),
+    callback: (_e, _k, dialog) => leseMuenzfelder(dialog.element).cp
+  }];
+  if (grundCp) {
+    knoepfe.push({ action: "liste", icon: "fa-solid fa-book",
+      label: game.i18n.localize("SHOPS.Tisch.ListenpreisNehmen"), callback: () => grundCp });
+  }
+  knoepfe.push({ action: "abbrechen", label: game.i18n.localize("SHOPS.Abbrechen"),
+                 icon: "fa-solid fa-xmark", callback: () => null });
+
+  const antwort = await DialogV2.wait({
+    window: { title: game.i18n.localize("SHOPS.Tisch.PreisTitel"), icon: "fa-solid fa-tag" },
+    classes: ["ninjos-shops"],
+    position: { width: 420 },
+    content: inhalt,
+    buttons: knoepfe,
+    // Wegklicken und Escape aendern nichts.
+    rejectClose: false
   });
-  await benutzer.setFlag(MODULE_ID, TISCH,
-    { ...handel, seiteSpieler: liste, ...ohneZusagen(handel) });
-  await funken([benutzerId]);
+  return Number.isFinite(antwort) ? antwort : null;
 }
 
 /** Ein fertiger Satz an genau eine Person. */
@@ -483,7 +431,7 @@ async function abschliessen(benutzerId) {
     erfolgZeigen(game.i18n.format("SHOPS.Tisch.GMGelungen", {
       spieler: foundry.utils.escapeHTML(spieler?.name ?? "?"),
       person: foundry.utils.escapeHTML(vorher?.personName ?? "?"),
-      geld: stand ? stand.differenzText : ""
+      geld: stand ? stand.linksText : ""
     }));
     foundry.applications.instances.get(`${MODULE_ID}-tisch-gm-${benutzerId}`)?.close();
   } else if (ergebnis?.grund) {
@@ -521,6 +469,12 @@ export async function bereitSetzen(benutzerId, wer, wert = true) {
    * einer Rechnung, die nicht stimmt.
    */
   const stand = tischStand(handel);
+  if (wert && !stand.allePreise) {
+    const text = game.i18n.format("SHOPS.Tisch.PreisFehlt", { namen: stand.ohnePreisNamen });
+    ui.notifications.warn(text);
+    if (wer !== "gm") meldung(benutzerId, text);
+    return;
+  }
   if (wert && !stand.ausgeglichen) {
     const text = game.i18n.format(
       stand.fehlt ? "SHOPS.Tisch.NochOffen" : "SHOPS.Tisch.NochZuViel",
@@ -698,6 +652,7 @@ export const tischWiderrufen = () => bitte("widerrufen");
 export const tischGeld      = muenzen => bitte("geld", { muenzen });
 export const tischSeite     = (posten, muenzen) => bitte("seite", { posten, muenzen });
 export const tischAufgeben  = () => bitte("aufgeben");
+export const tischPreis     = (itemId, cp) => bitte("preis", { itemId, cp });
 
 /* ── Empfang ───────────────────────────────────────────────────────── */
 
@@ -711,7 +666,9 @@ async function funken(an) {
 /** Einstiegspunkt aus socket.js. */
 export async function aufTisch(daten) {
   if (daten.tat === "meldung") {
-    if (daten.an === game.user.id) ui.notifications.warn(daten.text);
+    if (daten.an === game.user.id) {
+      hinweisZeigen("SHOPS.Kauf.NichtGeklappt", foundry.utils.escapeHTML(daten.text ?? ""));
+    }
     return;
   }
   if (daten.tat === "stand") {
@@ -742,6 +699,7 @@ export async function aufTisch(daten) {
     case "wegnehmen": return void await wegnehmen(daten.spielerId, "spieler", daten.itemId);
     case "geld":      return void await geldSetzen(daten.spielerId, "spieler", daten.muenzen);
     case "seite":     return void await seiteSetzen(daten.spielerId, "spieler", daten.posten, daten.muenzen);
+    case "preis":     return void await preisSetzen(daten.spielerId, "spieler", daten.itemId, daten.cp);
     case "aufgeben": {
       const handel = game.users.get(daten.spielerId)?.getFlag(MODULE_ID, TISCH);
       await tischBeenden([daten.spielerId]);
@@ -769,6 +727,7 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
     actions: {
       ansehen: Handelstisch.#ansehen,
       wegnehmen: Handelstisch.#wegnehmen,
+      preisNennen: Handelstisch.#preisNennen,
       annehmen: Handelstisch.#annehmen,
       geldWeg: () => tischGeld({}),
       aufgeben: Handelstisch.#aufgeben,
@@ -827,6 +786,15 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
   static #wegnehmen(ereignis, ziel) {
     const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
     if (itemId) tischWegnehmen(itemId);
+  }
+
+  /** Was ich fuer mein Stueck haben will. Geht jederzeit wieder. */
+  static async #preisNennen(ereignis, ziel) {
+    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    const posten = eigenerTisch()?.seiteSpieler?.find(p => p.itemId === itemId);
+    if (!posten) return;
+    const cp = await preisFragen(posten);
+    if (cp !== null) tischPreis(itemId, cp);
   }
 
   static #annehmen() {
@@ -952,11 +920,7 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     actions: {
       ansehen: HandelstischGM.#ansehen,
       wegnehmen: HandelstischGM.#wegnehmen,
-      forderungUebernehmen: HandelstischGM.#forderungUebernehmen,
-      forderungFrei: HandelstischGM.#forderungFrei,
-      anrechnen: HandelstischGM.#anrechnen,
-      anrechnenSchnell: HandelstischGM.#anrechnenSchnell,
-      anrechnenFrei: HandelstischGM.#anrechnenFrei,
+      preisNennen: HandelstischGM.#preisNennen,
       bestaetigen: HandelstischGM.#bestaetigen,
       geldWeg: HandelstischGM.#geldWeg,
       beenden: HandelstischGM.#beenden,
@@ -1009,7 +973,6 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
 
     return Object.assign(ctx, {
       stand,
-      muenzsorten: PREIS_SORTEN.map(sorte => ({ sorte, kuerzel: kuerzel(sorte) })),
       spielerName: benutzer?.name ?? "?",
       figurName: benutzer?.character?.name ?? null,
       boerse: benutzer?.character
@@ -1033,31 +996,14 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
     if (zeile) wegnehmen(this.benutzerId, seite, zeile.dataset.itemId);
   }
 
-  static #forderungUebernehmen() {
-    const kasten = this.element.querySelector("[data-forderung]");
-    if (!kasten) return;
-    forderungSetzen(this.benutzerId, leseMuenzfelder(kasten).cp);
-  }
-
-  static #forderungFrei() { forderungSetzen(this.benutzerId, null); }
-
-  /** Was ihr sein Stueck wert ist - aus dem Feld in seiner Zeile. */
-  static #anrechnen(ereignis, ziel) {
-    const zeile = ziel.closest("[data-item-id]");
-    const kasten = zeile?.querySelector("[data-anrechnung]");
-    if (!kasten) return;
-    anrechnenSetzen(this.benutzerId, zeile.dataset.itemId, leseMuenzfelder(kasten).cp);
-  }
-
-  /** Einer der drei Vorschlaege - ein Griff statt einer Zahl. */
-  static #anrechnenSchnell(ereignis, ziel) {
-    const zeile = ziel.closest("[data-item-id]");
-    if (zeile) anrechnenSetzen(this.benutzerId, zeile.dataset.itemId, Number(ziel.dataset.wert) || 0);
-  }
-
-  static #anrechnenFrei(ereignis, ziel) {
-    const zeile = ziel.closest("[data-item-id]");
-    if (zeile) anrechnenSetzen(this.benutzerId, zeile.dataset.itemId, null);
+  /** Was die Person fuer ihr Stueck haben will. Geht jederzeit wieder. */
+  static async #preisNennen(ereignis, ziel) {
+    const itemId = ziel.closest("[data-item-id]")?.dataset.itemId;
+    const handel = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH);
+    const posten = handel?.seiteNsc?.find(p => p.itemId === itemId);
+    if (!posten) return;
+    const cp = await preisFragen(posten);
+    if (cp !== null) preisSetzen(this.benutzerId, "nsc", itemId, cp);
   }
 
   static #geldWeg() { geldSetzen(this.benutzerId, "nsc", {}); }

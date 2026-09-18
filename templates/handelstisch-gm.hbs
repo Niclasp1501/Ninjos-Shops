@@ -34,9 +34,20 @@
               {{#if img}}<img src="{{img}}" alt="" data-action="ansehen"
                               title="{{localize 'SHOPS.Ansehen.Knopf'}}">
               {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
-              <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
+              <div class="shops-name">
+                <span class="shops-warenname">{{name}}</span>
+                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
+              </div>
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{summeText}}</span>
+              {{!-- Was sie dafür haben will. Genannt wird es hier, und ein
+                    Tipp ändert es jederzeit. --}}
+              <button type="button" class="shops-tisch-preis {{#unless hatPreis}}shops-offen{{/unless}}"
+                      data-action="preisNennen"
+                      title="{{localize 'SHOPS.Tisch.PreisAendern'}}"
+                      aria-label="{{localize 'SHOPS.Tisch.PreisAendern'}}: {{name}}">
+                {{#if hatPreis}}{{preisText}}
+                {{else}}<i class="fa-solid fa-tag" aria-hidden="true"></i> {{localize "SHOPS.Tisch.PreisNennen"}}{{/if}}
+              </button>
               <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
                       aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
                       title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
@@ -78,43 +89,22 @@
         <h3>{{localize "SHOPS.Tisch.ErGibt" spieler=spielerName}}</h3>
         <ol class="shops-ware shops-tisch-spieler">
           {{#each stand.seiteSpieler}}
-            {{!-- Hier steht die Frage, die nur sie beantworten kann: Was ist
-                  ihr das wert? Der Grundpreis daneben ist die Auskunft dazu,
-                  die drei Zahlen darunter sind ihre Spanne. --}}
-            <li class="shops-zeile shops-zeile-breit" data-item-id="{{itemId}}">
-              <div class="shops-zeile-oben">
-                {{#if img}}<img src="{{img}}" alt="">
-                {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
-                <div class="shops-name">
-                  <span class="shops-warenname">{{name}}</span>
-                  {{#if grundCp}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
-                </div>
-                <span class="shops-menge">{{menge}}&times;</span>
-                <span class="shops-preis {{#if eigenerWert}}shops-fest{{/if}}">{{anrechnungText}}</span>
-                <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
-                        aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
-                        title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
-                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                </button>
+            {{!-- Was er dafür haben will. Den Preis nennt er selbst; wer
+                  anderer Meinung ist, legt etwas dazu oder sagt es ihm. --}}
+            <li class="shops-zeile" data-item-id="{{itemId}}">
+              {{#if img}}<img src="{{img}}" alt="">
+              {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
+              <div class="shops-name">
+                <span class="shops-warenname">{{name}}</span>
+                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
               </div>
-              <div class="shops-zeile-unten">
-                {{#each spanne}}
-                  <button type="button" class="shops-klein" data-action="anrechnenSchnell" data-wert="{{cp}}">
-                    {{text}}
-                  </button>
-                {{/each}}
-                <span class="shops-preisfeld" data-anrechnung>
-                  {{> "shops-muenzfelder" felder=anrechnungFelder}}
-                </span>
-                <button type="button" class="shops-klein" data-action="anrechnen">
-                  {{localize "SHOPS.Tisch.Anrechnen"}}
-                </button>
-                {{#if eigenerWert}}
-                  <button type="button" class="shops-klein" data-action="anrechnenFrei">
-                    {{localize "SHOPS.Tisch.WiederRechnen"}}
-                  </button>
-                {{/if}}
-              </div>
+              <span class="shops-menge">{{menge}}&times;</span>
+              <span class="shops-preis">{{#if hatPreis}}{{preisText}}{{else}}<em class="shops-ohne-preis">{{localize "SHOPS.Tisch.OhnePreis"}}</em>{{/if}}</span>
+              <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
+                      aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
+                      title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
             </li>
           {{/each}}
           {{#if stand.geldSpieler}}
@@ -134,36 +124,17 @@
     <div class="shops-tisch-waage {{#if stand.fehlt}}shops-zahlt{{/if}}
                 {{#if stand.zuViel}}shops-bekommt{{/if}}">
       <span class="shops-tisch-summe">
-        <small>{{localize "SHOPS.Tisch.Verlangt"}}</small> {{stand.verlangtText}}
+        <small>{{stand.personName}}</small> {{stand.linksText}}
       </span>
       <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
       <span class="shops-tisch-summe">
-        <small>{{localize "SHOPS.Tisch.Hingelegt"}}</small> {{stand.gebrachtText}}
+        <small>{{spielerName}}</small> {{stand.rechtsText}}
       </span>
       <strong class="shops-tisch-differenz">
         {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
         {{else if stand.fehlt}}{{localize "SHOPS.Tisch.Fehlt" geld=stand.offenText}}
         {{else}}{{localize "SHOPS.Tisch.ZuViel" geld=stand.offenText}}{{/if}}
       </strong>
-    </div>
-
-    {{!-- Was sie für ihre Seite haben will. Vorgeschlagen ist die Summe ihrer
-          Preise; was hier steht, gilt. --}}
-    <div class="shops-tisch-preisfeld">
-      <label>
-        <span>{{localize "SHOPS.Tisch.SieVerlangt"}}</span>
-        <span class="shops-preisfeld" data-forderung>
-          {{> "shops-muenzfelder" felder=stand.forderungFelder}}
-        </span>
-      </label>
-      <button type="button" class="shops-kaufen shops-zweit" data-action="forderungUebernehmen">
-        {{localize "SHOPS.Tisch.PreisUebernehmen"}}
-      </button>
-      {{#if stand.ueberschrieben}}
-        <button type="button" class="shops-kaufen shops-zweit" data-action="forderungFrei">
-          {{localize "SHOPS.Tisch.WiederRechnen"}}
-        </button>
-      {{/if}}
     </div>
 
     <footer class="shops-tisch-fuss">
@@ -177,7 +148,8 @@
               data-action="bestaetigen"
               {{#if stand.leer}}disabled
               {{else if stand.bereitGm}}
-              {{else}}{{#unless stand.ausgeglichen}}disabled{{/unless}}{{/if}}>
+              {{else if stand.allePreise}}{{#unless stand.ausgeglichen}}disabled{{/unless}}
+              {{else}}disabled{{/if}}>
         <i class="fa-solid {{#if stand.bereitGm}}fa-rotate-left{{else if stand.bereitSpieler}}fa-check{{else}}fa-handshake{{/if}}"
            aria-hidden="true"></i>
         {{#if stand.bereitGm}}{{localize "SHOPS.Tisch.ZusageZurueck"}}
@@ -189,6 +161,14 @@
       {{else if stand.bereitSpieler}}
         <span class="shops-tisch-zusage shops-zugesagt">{{localize "SHOPS.Tisch.ErHatZugesagt" spieler=spielerName}}</span>
       {{/if}}
+      {{#unless stand.allePreise}}
+        {{!-- Ein Posten ohne Preis ist eine offene Frage. Solange eine offen
+              ist, kann niemand zusagen, und hier steht, woran es liegt. --}}
+        <span class="shops-tisch-zusage shops-wartet">
+          <i class="fa-solid fa-tag" aria-hidden="true"></i>
+          {{localize "SHOPS.Tisch.PreiseFehlen" namen=stand.ohnePreisNamen}}
+        </span>
+      {{/unless}}
       {{#if stand.zusageWegGm}}
         {{!-- Eine Zusage, die wegfaellt, faellt nicht stillschweigend weg. --}}
         <span class="shops-tisch-zusage shops-wartet">

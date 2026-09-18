@@ -4641,3 +4641,37 @@
 .ninjos-shops .shops-ladenkasse {
   margin-top: 0;
 }
+
+/* ── Handelstisch: jeder nennt seinen Preis (18.09.2026) ─────────────── */
+
+/*
+ * Der Preis eines eigenen Postens ist ein Knopf: Er zeigt, was man verlangt,
+ * und ein Tipp darauf aendert es. Ohne Preis steht dort die Aufforderung,
+ * golden umrandet, weil vorher niemand zusagen kann.
+ */
+.ninjos-shops .shops-tisch-preis {
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  min-height: 32px;
+  padding: 2px 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--ninjo-text);
+  background: var(--ninjo-flaeche);
+  border: 1px solid var(--shops-rand);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.ninjos-shops .shops-tisch-preis:hover { border-color: var(--shops-gold); }
+.ninjos-shops .shops-tisch-preis.shops-offen {
+  font-weight: 500;
+  color: var(--ninjo-akzent-text);
+  border-color: var(--ninjo-akzent);
+  border-style: dashed;
+}
+.ninjos-shops .shops-ohne-preis {
+  font-weight: 400;
+  color: var(--shops-text-blass);
+}
