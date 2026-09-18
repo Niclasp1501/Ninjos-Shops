@@ -35,7 +35,7 @@
 
 import { MODULE_ID, SOCKET, LADEN_TYP } from "./const.js";
 import { darfIchAusfuehren, waereZustaendig, bittenKennung } from "./vorsitz.js";
-import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
+import { grundpreisCp, ankaufCp, alsText, preisText } from "./preise.js";
 import { fuehreAnkaufAus } from "./verkauf.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
@@ -151,12 +151,12 @@ export function anfrageZurueckziehen(id) {
  * gilt, gilt hier auch. Wer etwas geschenkt bekommen soll, bekommt es
  * geschenkt - dafuer braucht es keinen Handel.
  */
-export function preisVorschlagen(id, preisCp, satz = "") {
+export function preisVorschlagen(id, preisCp, satz = "", muenzen = null) {
   if (!istZustaendig()) return;
   if (!(Math.round(preisCp) > 0)) {
     return void ui.notifications.warn(game.i18n.localize("SHOPS.Anfrage.NullIstKeinPreis"));
   }
-  beiSpielleitung({ tat: "vorschlagen", id, preisCp, satz, von: game.user.id });
+  beiSpielleitung({ tat: "vorschlagen", id, preisCp, satz, muenzen, von: game.user.id });
 }
 
 /** Eine Anfrage rundheraus ablehnen. */
@@ -180,6 +180,8 @@ async function beiSpielleitung(paket) {
     case "vorschlagen":
       sitzung.zustand = ZUSTAND.VORSCHLAG;
       sitzung.angebotCp = Math.max(0, Math.round(paket.preisCp) || 0);
+      // Nur Anzeige. Passen die Muenzen nicht zum Betrag, zeigt preisText den Betrag.
+      sitzung.angebotMuenzen = paket.muenzen ?? null;
       sitzung.satz = String(paket.satz ?? "").slice(0, 200);
       break;
 
@@ -345,6 +347,7 @@ export function aufAnfrage(paket) {
 }
 
 /** Lesbare Zahlen fuer die Anzeige. */
-export function alsGeld(cp) {
-  return alsText(cp ?? 0, kuerzel);
+export function alsGeld(cp, muenzen = null) {
+  // Mit Muenzen so, wie die Spielleitung sie eingetippt hat.
+  return preisText(cp ?? 0, muenzen, kuerzel);
 }

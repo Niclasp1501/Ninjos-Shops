@@ -9,6 +9,7 @@
  * Spielleitung ihre Wege dorthin, wo sie ohnehin hinschaut.
  */
 
+import { hinweisZeigen } from "./melden.js";
 import { MODULE_ID, SETTINGS, LADEN_TYP, OFFENER_LADEN } from "./const.js";
 import {
   spielerFensterOeffnen, spielerFensterIstOffen, spielerFensterSchliessen
@@ -286,7 +287,9 @@ export function zugaengeEinrichten() {
     if (!laden || laden.uuid === vorgezeigt) return;
     if (laden.system.giltHier?.() !== false) return;
     spielerFensterSchliessen();
-    ui.notifications.info(game.i18n.format("SHOPS.Zugang.NichtMehrHier", { laden: laden.name }));
+    // Ein Fenster, das von selbst zugeht, sagt warum. Siehe melden.js.
+    hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.format("SHOPS.Zugang.NichtMehrHier",
+      { laden: foundry.utils.escapeHTML(laden.name) }));
   };
 
   /*

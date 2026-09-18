@@ -11,6 +11,7 @@
  * lesen.
  */
 
+import { hinweisZeigen } from "./melden.js";
 import { MODULE_ID } from "./const.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
 import { verkaufbareSachen } from "./verkauf.js";
@@ -76,7 +77,7 @@ export class AnfragePacken extends HandlebarsApplicationMixin(ApplicationV2) {
       vorbei: meine?.vorbei ?? false,
       abgelehnt: meine?.zustand === ZUSTAND.ABGELEHNT,
       angenommen: meine?.zustand === ZUSTAND.ANGENOMMEN,
-      preisText: meine?.angebotCp != null ? alsGeld(meine.angebotCp) : null,
+      preisText: meine?.angebotCp != null ? alsGeld(meine.angebotCp, meine.angebotMuenzen) : null,
       // Solange nichts laeuft, wird gepackt.
       sachen: meine ? [] : verkaufbareSachen(this.#figur).map(item => ({
         id: item.id,
@@ -109,7 +110,9 @@ export class AnfragePacken extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static #abschicken() {
-    if (!this.#korb.size) return ui.notifications.warn(game.i18n.localize("SHOPS.Anfrage.KorbLeer"));
+    if (!this.#korb.size) {
+      return void hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Anfrage.KorbLeer"));
+    }
     anfrageStellen(this.#gegenueber, this.#figur,
       [...this.#korb].map(([itemId, menge]) => ({ itemId, menge })));
     this.#korb.clear();
@@ -223,7 +226,7 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
         ueblichText: alsGeld(s.ueblichCp),
         untenText: alsGeld(s.untenCp),
         obenText: alsGeld(s.obenCp),
-        angebotText: s.angebotCp != null ? alsGeld(s.angebotCp) : null,
+        angebotText: s.angebotCp != null ? alsGeld(s.angebotCp, s.angebotMuenzen) : null,
         // Kein Preis am Stueck heisst: kein Spielraum zum Anzeigen.
         ohneWert: !(s.untenCp || s.ueblichCp || s.obenCp),
         posten: s.posten.map(p => ({ ...p, wertText: alsGeld(p.ueblichCp) }))
@@ -250,7 +253,8 @@ export class AnfrageVerhandeln extends HandlebarsApplicationMixin(ApplicationV2)
     if (!id) return;
     // Drei Felder, gerechnet wird in Kupfer.
     const { leseMuenzfelder } = await import("./muenzfeld.js");
-    preisVorschlagen(id, leseMuenzfelder(kasten.querySelector("[data-preis]")).cp, satz);
+    const { cp, muenzen } = leseMuenzfelder(kasten.querySelector("[data-preis]"));
+    preisVorschlagen(id, cp, satz, muenzen);
     this.render(false);
   }
 

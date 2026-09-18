@@ -19,7 +19,8 @@
  */
 
 import { MODULE_ID, SOCKET, OFFENES_ANGEBOT, WARE, LADEN_TYP } from "./const.js";
-import { grundpreisCp, preisCp, alsText, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
+import { grundpreisCp, preisCp, alsText, alsMuenzfelder, ausMuenzfeldern, eingegebeneMuenzen,
+         preisText, muenzenMal, EINGABE_SORTEN } from "./preise.js";
 
 const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 
@@ -76,7 +77,7 @@ export async function angebotDialog(laden, item) {
           <span>${game.i18n.localize("SHOPS.Angebot.Preis")}</span>
           <span class="shops-preisfeld">
             <span class="shops-muenzfelder">
-              ${["pp", "gp", "ep", "sp", "cp"].map(s => `<label><input type="number" name="${s}"
+              ${EINGABE_SORTEN.map(s => `<label><input type="number" name="${s}"
                             value="${felder[s]}" min="0" step="1" placeholder="0"
                             aria-label="${kuerzel(s)}"><span>${kuerzel(s)}</span></label>`).join("")}
             </span>
@@ -106,13 +107,15 @@ export async function angebotDialog(laden, item) {
         default: true,
         callback: (_e, _k, dialog) => {
           const w = dialog.element;
+          const felder = Object.fromEntries(
+            EINGABE_SORTEN.map(s => [s, w.querySelector(`[name="${s}"]`)?.value]));
           return {
             an: [...w.querySelectorAll('input[name="user"]:checked')].map(i => i.value),
             menge: Math.max(1, Number(w.querySelector('[name="menge"]').value) || 1),
             // Alle fuenf Sorten, damit auch „1 GM 2 KM" oder „3 PM" eingebbar ist.
-            preisCp: ausMuenzfeldern(Object.fromEntries(
-              ["pp", "gp", "ep", "sp", "cp"].map(s => [s, w.querySelector(`[name="${s}"]`)?.value])
-            )),
+            preisCp: ausMuenzfeldern(felder),
+            // Wie eingetippt, damit 5 EM beim Spieler als 5 EM ankommen.
+            preisMuenzen: eingegebeneMuenzen(felder),
             text: w.querySelector('[name="text"]').value.trim()
           };
         }
@@ -137,7 +140,7 @@ export async function angebotDialog(laden, item) {
  * einen offenen Laden je Spieler gibt: Zwei gleichzeitige Angebote verdoppeln
  * jede Frage danach, welches gemeint war.
  */
-export async function angebotSenden(laden, item, { an, menge, preisCp: preis, text }) {
+export async function angebotSenden(laden, item, { an, menge, preisCp: preis, preisMuenzen = null, text }) {
   if (!game.user.isGM) return;
   if (laden?.type !== LADEN_TYP || !item) return;
 
@@ -146,6 +149,7 @@ export async function angebotSenden(laden, item, { an, menge, preisCp: preis, te
     itemId: item.id,
     menge: Math.max(1, Math.floor(menge)),
     preisCp: Math.max(0, Math.round(preis)),
+    preisMuenzen,
     text: String(text ?? "").slice(0, 200),
     von: game.user.name
   };
@@ -160,7 +164,8 @@ export async function angebotSenden(laden, item, { an, menge, preisCp: preis, te
   if (an.includes(game.user.id)) aufAngebot(paket);
 
   ui.notifications.info(game.i18n.format("SHOPS.Angebot.Verschickt", {
-    anzahl: an.length, name: item.name, preis: alsText(angebot.preisCp * angebot.menge, kuerzel)
+    anzahl: an.length, name: item.name,
+    preis: preisText(angebot.preisCp * angebot.menge, muenzenMal(preisMuenzen, angebot.menge), kuerzel)
   }));
 }
 
@@ -188,7 +193,8 @@ export function eigenesAngebot(ladenUuid) {
   if (!angebot || angebot.ladenUuid !== ladenUuid) return null;
   return {
     ...angebot,
-    summeText: alsText(angebot.preisCp * angebot.menge, kuerzel),
-    einzelText: alsText(angebot.preisCp, kuerzel)
+    summeText: preisText(angebot.preisCp * angebot.menge,
+                         muenzenMal(angebot.preisMuenzen, angebot.menge), kuerzel),
+    einzelText: preisText(angebot.preisCp, angebot.preisMuenzen, kuerzel)
   };
 }

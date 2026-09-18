@@ -42,7 +42,10 @@ import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
-import { abbruchMelden, erfolgMelden, hinweisMelden } from "./melden.js";
+import { abbruchMelden, erfolgMelden, hinweisMelden, hinweisZeigen } from "./melden.js";
+
+/** Ein Grund fuer den Spieler, als Fenster: Toasts sieht man in der Blattansicht nicht. */
+const grund = schluessel => hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize(schluessel));
 
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -203,7 +206,7 @@ export function tauschStand(tausch) {
 function bitte(tat, mehr = {}) {
   // Wer die Lage ueber dem Tisch benutzt, kommt an dem gesperrten Knopf vorbei.
   if (!game.users.activeGM) {
-    return void ui.notifications.warn(game.i18n.localize("SHOPS.Tisch.OhneSpielleitung"));
+    return void grund("SHOPS.Tisch.OhneSpielleitung");
   }
   const paket = { typ: SOCKET.TAUSCH, tat, spielerId: game.user.id,
                   bitteId: bittenKennung(), ...mehr };
@@ -373,7 +376,7 @@ export async function aufTausch(daten) {
 
 /** Eine kurze Nachricht an genau eine Person. */
 function meldung(benutzerId, schluessel) {
-  if (benutzerId === game.user.id) return ui.notifications.warn(game.i18n.localize(schluessel));
+  if (benutzerId === game.user.id) return grund(schluessel);
   game.socket.emit(SOCKET.NAME, { typ: SOCKET.TAUSCH, tat: "meldung", an: benutzerId, schluessel });
 }
 
@@ -622,19 +625,17 @@ export async function tauschStarten() {
 
   const figur = figurVon(game.user);
   if (!figur) {
-    return void ui.notifications.warn(game.i18n.localize(
-      warumNicht(game.user) === "mehrere"
-        ? "SHOPS.Tausch.MehrereFiguren" : "SHOPS.Tausch.KeineFigur"));
+    return void grund(warumNicht(game.user) === "mehrere"
+      ? "SHOPS.Tausch.MehrereFiguren" : "SHOPS.Tausch.KeineFigur");
   }
   if (!spielleitungDa()) {
-    return void ui.notifications.warn(game.i18n.localize("SHOPS.Tausch.KeineSpielleitung"));
+    return void grund("SHOPS.Tausch.KeineSpielleitung");
   }
 
   const leute = moeglichePartner();
   const koennen = leute.filter(l => l.figurId);
   if (!koennen.length) {
-    return void ui.notifications.warn(game.i18n.localize(
-      leute.length ? "SHOPS.Tausch.NiemandBereit" : "SHOPS.Tausch.NiemandDa"));
+    return void grund(leute.length ? "SHOPS.Tausch.NiemandBereit" : "SHOPS.Tausch.NiemandDa");
   }
 
   const zeilen = koennen.map(l => `

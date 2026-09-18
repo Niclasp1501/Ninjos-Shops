@@ -232,6 +232,13 @@ export function eingegebeneMuenzen(felder) {
   return raus;
 }
 
+/** Dieselben Muenzen n-mal: der Einzelpreis fuer eine ganze Menge. */
+export function muenzenMal(muenzen, n) {
+  if (!muenzen) return null;
+  const faktor = Math.max(0, Math.floor(Number(n) || 0));
+  return Object.fromEntries(Object.entries(muenzen).map(([s, m]) => [s, (Number(m) || 0) * faktor]));
+}
+
 /** Gespeicherte Muenzen zurueck in die Felder; eine Null bleibt leer. */
 export function muenzfelderVon(muenzen) {
   return Object.fromEntries(EINGABE_SORTEN.map(s => [s, muenzen?.[s] > 0 ? muenzen[s] : ""]));

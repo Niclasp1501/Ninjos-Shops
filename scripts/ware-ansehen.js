@@ -32,6 +32,7 @@
  * entfernt. Sie gehoeren dem Laden und haetten im Bogen nichts zu suchen.
  */
 
+import { hinweisZeigen } from "./melden.js";
 import { MODULE_ID } from "./const.js";
 
 /**
@@ -133,13 +134,13 @@ export function wareAnsehen(traeger, itemId) {
 
   let kopie = bauen();
   if (!kopie) {
-    ui.notifications.warn(game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
+    hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
     return null;
   }
 
   const Bogen = kopie._getSheetClass?.() ?? kopie.sheet?.constructor;
   if (!Bogen) {
-    ui.notifications.warn(game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
+    hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Ansehen.GehtNicht"));
     return null;
   }
 

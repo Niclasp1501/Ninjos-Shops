@@ -30,6 +30,16 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   in chat. Getting back in still needs the gamemaster to show the shop again.
 
 ### Changed
+- **Special offers and sell request prices keep their coins too.** The same
+  conversion as for fixed prices happened there: an offer of 5 ep reached the
+  player as 2 gp 5 sp. Both now show what the gamemaster typed.
+- **The remaining notifications for players are windows.** Starting a swap
+  without a character, without a gamemaster or without anyone to swap with,
+  an empty sell request, an item that cannot be inspected and a shop that
+  closes because it is no longer on the current map all used to be toasts,
+  which the sheet view hides. They now open a window with the reason.
+- **No more dashes in the texts.** 39 texts per language still used them;
+  each now uses the punctuation it actually means.
 - **No swap button for a gamemaster without a character.** A swap moves items
   between two characters, so the button above the gamemaster's player list
   led nowhere. It shows for a gamemaster only when a character is assigned.

@@ -797,7 +797,7 @@ async function handelMelden(stand, person, figur) {
 
 function bitte(tat, mehr = {}) {
   if (!game.users.activeGM) {
-    return void ui.notifications.warn(game.i18n.localize("SHOPS.Tisch.OhneSpielleitung"));
+    return void hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Tisch.OhneSpielleitung"));
   }
   const paket = { typ: SOCKET.HANDEL, tat, spielerId: game.user.id,
                   bitteId: bittenKennung(), ...mehr };
