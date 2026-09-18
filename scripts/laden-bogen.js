@@ -17,9 +17,9 @@
  * niemand zu (KONZEPT-shops.md, Abschnitt 4). Das entscheidet sich in der Welt.
  */
 
-import { leseMuenzfelder } from "./muenzfeld.js";
+import { festpreisDialog } from "./festpreis.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
-import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfelder, KUPFERWERT } from "./preise.js";
+import { grundpreisCp, preisCp, ankaufCp, alsText, KUPFERWERT } from "./preise.js";
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
 import { angebotDialog, angebotSenden, angebotZuruecknehmen } from "./angebot.js";
 import { marktbuchOeffnen } from "./marktbuch.js";
@@ -175,7 +175,6 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         const merkmal = item.flags?.[MODULE_ID] ?? {};
         const grundCp = grundpreisCp(item.system?.price);
         const festCp = Number.isFinite(merkmal[WARE.FESTPREIS]) ? merkmal[WARE.FESTPREIS] : null;
-        const festFelder = festCp === null ? {} : alsMuenzfelder(festCp);
 
         return {
           id: item.id,
@@ -186,7 +185,6 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
           preisText: alsText(preisCp(grundCp, laden, festCp), kuerzel),
           ankaufText: laden.ankauf > 0 ? alsText(ankaufCp(grundCp, laden), kuerzel) : null,
           hatFestpreis: festCp !== null,
-          festFelder,
           hinweis: merkmal[WARE.HINWEIS] ?? "",
           verborgen: merkmal[WARE.VERBORGEN] === true,
           dienst: merkmal[WARE.DIENST] === true,
@@ -255,22 +253,6 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       case "hinweis":
         return item.setFlag(MODULE_ID, WARE.HINWEIS, feld.value.trim());
 
-      /*
-       * Zahl und Muenzsorte gehoeren zusammen, stehen aber in zwei Feldern.
-       * Gespeichert wird immer der Kupferwert - eine Zahl, kein Paar, das
-       * auseinanderlaufen kann.
-       *
-       * Ein leeres Feld loescht den Festpreis (`null`), eine 0 setzt ihn auf
-       * gratis. Das ist ein Unterschied, und er ist gewollt: "kein Festpreis"
-       * heisst Aufschlag auf den Grundpreis, "0" heisst geschenkt.
-       */
-      case "festpreis": {
-        // Drei Felder statt Zahl und Sorte, damit „1 GM 2 KM" eingebbar ist.
-        const kasten = zeile.querySelector('[data-ware-feld="festpreis"]');
-        const { cp, leer } = leseMuenzfelder(kasten);
-        if (leer) return item.unsetFlag(MODULE_ID, WARE.FESTPREIS);
-        return item.setFlag(MODULE_ID, WARE.FESTPREIS, cp);
-      }
     }
   }
 
@@ -341,6 +323,8 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       { tat: "ankauf", symbol: "fa-arrow-rotate-left", text: "SHOPS.Menue.Ankauf",
         an: merkmal[WARE.ANKAUF] === true },
       { trenner: true },
+      { tat: "festpreis", symbol: "fa-tag", text: "SHOPS.Menue.Festpreis",
+        an: Number.isFinite(merkmal[WARE.FESTPREIS]) },
       { tat: "anbieten", symbol: "fa-hand-holding", text: "SHOPS.Menue.Anbieten" },
       { tat: "oeffnen", symbol: "fa-up-right-from-square", text: "SHOPS.Menue.Oeffnen" },
       { trenner: true },
@@ -401,6 +385,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         return void item.setFlag(MODULE_ID, tat, an);
       }
       if (tat === "oeffnen") return void item.sheet?.render(true);
+      if (tat === "festpreis") return void festpreisDialog(this.document, item);
       if (tat === "anbieten") {
         const wahl = await angebotDialog(this.document, item);
         if (wahl) await angebotSenden(this.document, item, wahl);

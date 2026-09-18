@@ -22,7 +22,7 @@
 import { MODULE_ID, WARE, LADEN_TYP } from "./const.js";
 import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
 import { einlagern } from "./lager.js";
-import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
+import { bezahle, muenzenDazu, schreibeGut, vermoegenCp, zahleAus } from "./kasse.js";
 import { schreibeVerkaufVorgang, schreibeVerkaufErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
 
@@ -86,10 +86,12 @@ export function pruefeVerkauf({ laden, item, figur, menge }) {
    */
   let ladenZahlt = null;
   if (system.eigeneKasse) {
-    ladenZahlt = bezahle(system.kasse, summeCp);
+    ladenZahlt = zahleAus(system.kasse, summeCp, { passend: !!system.passendZahlen });
     if (!ladenZahlt) {
+      const pleite = vermoegenCp(system.kasse) < summeCp;
       return {
-        ok: false, grund: "SHOPS.Verkauf.LadenPleite",
+        ok: false,
+        grund: pleite ? "SHOPS.Verkauf.LadenPleite" : "SHOPS.Verkauf.KeinKleingeld",
         hatCp: vermoegenCp(system.kasse)
       };
     }
@@ -129,7 +131,11 @@ export async function fuehreVerkaufAus({ ladenUuid, itemId, figurUuid, menge = 1
     await einlagern(laden, item, stueck);
 
     // Geld an die Figur.
-    await figur.update({ "system.currency": schreibeGut(figur.system?.currency ?? {}, summeCp) });
+    // Mit eigener Kasse genau die Muenzen, die dort herausgehen.
+    const boerse = figur.system?.currency ?? {};
+    await figur.update({ "system.currency": ladenZahlt
+      ? muenzenDazu(boerse, ladenZahlt.muenzen)
+      : schreibeGut(boerse, summeCp) });
 
     // Und aus der Ladenkasse heraus, falls er eine fuehrt.
     if (ladenZahlt) await laden.update({ "system.kasse": ladenZahlt.bestand });
@@ -234,8 +240,12 @@ export async function fuehreAnkaufAus(sitzung) {
   /* Kann der Laden das ueberhaupt zahlen? Eine Person wird nicht gefragt. */
   let ladenZahlt = null;
   if (istLaden && gegenueber.system.eigeneKasse) {
-    ladenZahlt = bezahle(gegenueber.system.kasse, summeCp);
-    if (!ladenZahlt) return { ok: false, grund: "SHOPS.Verkauf.LadenPleite" };
+    const kasse = gegenueber.system.kasse;
+    ladenZahlt = zahleAus(kasse, summeCp, { passend: !!gegenueber.system.passendZahlen });
+    if (!ladenZahlt) {
+      return { ok: false, grund: vermoegenCp(kasse) < summeCp
+        ? "SHOPS.Verkauf.LadenPleite" : "SHOPS.Verkauf.KeinKleingeld" };
+    }
   }
 
   const namen = [];
@@ -255,7 +265,10 @@ export async function fuehreAnkaufAus(sitzung) {
       else await item.delete();
     }
 
-    await figur.update({ "system.currency": schreibeGut(figur.system?.currency ?? {}, summeCp) });
+    const boerse = figur.system?.currency ?? {};
+    await figur.update({ "system.currency": ladenZahlt
+      ? muenzenDazu(boerse, ladenZahlt.muenzen)
+      : schreibeGut(boerse, summeCp) });
     if (ladenZahlt) await gegenueber.update({ "system.kasse": ladenZahlt.bestand });
 
     // Der Beutel der Person, falls sie einen hat. Reicht er nicht, bleibt er

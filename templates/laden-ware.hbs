@@ -25,7 +25,6 @@
               dort in einer gemeinsamen Gruppe mit eigenem Abstand. Zwei lose
               Spalten daneben ergaben acht Pixel Versatz. --}}
         <span class="shops-werkzeuge">
-          <span class="shops-spalte-fest">{{localize "SHOPS.Bogen.SpalteFestpreis"}}</span>
           <span class="shops-spalte-schalter"></span>
         </span>
       </li>
@@ -64,19 +63,11 @@
             {{/if}}
           </div>
 
-          {{!--
-            Leeres Feld = kein Festpreis, also Aufschlag auf den Grundpreis.
-            Eine 0 = geschenkt. Das ist ein Unterschied, und er ist gewollt.
-          --}}
-          {{!-- Festpreis und Schalter sind Werkzeuge, keine Auskunft: Sie
-                treten zurueck, bis die Karte gemeint ist. Vorher trug jede
-                Zeile sechs Bedienelemente gleichzeitig. --}}
+          {{!-- Der Festpreis steht seit dem 18.09.2026 im Menue. Fuenf
+                Muenzfelder in jeder Zeile liessen vom Namen nur „A…" uebrig,
+                und gebraucht werden sie selten. Ob einer gilt, zeigt der
+                gepunktete Preis links daneben. --}}
           <div class="shops-werkzeuge">
-          <div class="shops-festpreis" data-ware-feld="festpreis"
-               title="{{localize 'SHOPS.Bogen.FestpreisHinweis'}}">
-            {{> "shops-muenzfelder" felder=festFelder gesperrt=@root.gesperrt}}
-          </div>
-
           {{!-- Ein Knopf statt fünf. Fünf blasse Symbole nebeneinander
                 lesen sich als grauer Schleier, nicht als fünf Schalter -
                 und vier davon braucht man selten. --}}

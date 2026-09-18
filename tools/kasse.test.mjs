@@ -10,7 +10,7 @@
  */
 
 import { grundpreisCp, preisCp, ankaufCp, zerlege, alsText, alsMuenzfeld, ausMuenzfeld, wechselgeldText, KUPFERWERT } from "../scripts/preise.js";
-import { bezahle, vermoegenCp, schreibeGut, muenzenAbziehen, muenzenDazu } from "../scripts/kasse.js";
+import { bezahle, vermoegenCp, schreibeGut, muenzenAbziehen, muenzenDazu, zahleAus, kasseNachKauf } from "../scripts/kasse.js";
 
 let gelaufen = 0, gefallen = 0;
 
@@ -203,6 +203,48 @@ pruefe("drueben kommen dieselben Muenzen an",
 pruefe("hin und zurueck ist der Ausgangsbestand",
   muenzenDazu(muenzenAbziehen({ pp: 1, gp: 7, ep: 0, sp: 3, cp: 9 }, { gp: 5, cp: 4 }), { gp: 5, cp: 4 }),
   { cp: 9, sp: 3, ep: 0, gp: 7, pp: 1 });
+
+/* ── Auszahlen aus der Ladenkasse ──────────────────────────────────── */
+
+// Am 18.09.2026 gemeldet: Der Spieler bekam 25 Gold, aus der Kasse gingen andere Muenzen.
+pruefe("25 gp gehen als 25 gp aus der Kasse",
+  zahleAus({ pp: 0, gp: 30, ep: 0, sp: 50, cp: 0 }, 2500),
+  { bestand: { cp: 0, sp: 50, ep: 0, gp: 5, pp: 0 }, muenzen: { gp: 25 } });
+pruefe("ohne Gold zahlt die Kasse mit dem, was da ist",
+  zahleAus({ pp: 0, gp: 0, ep: 0, sp: 300, cp: 0 }, 2500),
+  { bestand: { cp: 0, sp: 50, ep: 0, gp: 0, pp: 0 }, muenzen: { sp: 250 } });
+pruefe("Platin wird ohne Wechseln mitgenommen",
+  zahleAus({ pp: 2, gp: 5, ep: 0, sp: 0, cp: 0 }, 2500),
+  { bestand: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 }, muenzen: { pp: 2, gp: 5 } });
+pruefe("passend: nur ein Platinstueck fuer 5 gp geht nicht",
+  zahleAus({ pp: 1, gp: 0, ep: 0, sp: 0, cp: 0 }, 500, { passend: true }), null);
+pruefe("ohne passend wird gewechselt, der Spieler bekommt 5 gp",
+  zahleAus({ pp: 1, gp: 0, ep: 0, sp: 0, cp: 0 }, 500)?.muenzen, { gp: 5 });
+pruefe("und die Kasse behaelt den Rest in Gold",
+  zahleAus({ pp: 1, gp: 0, ep: 0, sp: 0, cp: 0 }, 500)?.bestand, { cp: 0, sp: 0, ep: 0, gp: 5, pp: 0 });
+pruefe("zu wenig in der Kasse: null",
+  zahleAus({ gp: 2 }, 500), null);
+{
+  const kasse = { pp: 0, gp: 3, ep: 0, sp: 7, cp: 4 };
+  const aus = zahleAus(kasse, 347);
+  pruefe("was hinausgeht, fehlt genau so in der Kasse",
+    vermoegenCp(kasse) - vermoegenCp(aus.bestand), vermoegenCp(aus.muenzen));
+}
+
+/* ── Einnahmen in die Ladenkasse ───────────────────────────────────── */
+
+{
+  const kaeufer = { pp: 1, gp: 0, ep: 0, sp: 0, cp: 0 };
+  const gezahlt = bezahle(kaeufer, 200);
+  pruefe("Platin kommt hinein, Wechselgeld geht hinaus",
+    kasseNachKauf({ pp: 0, gp: 10, ep: 0, sp: 0, cp: 0 }, gezahlt),
+    { cp: 0, sp: 0, ep: 0, gp: 2, pp: 1 });
+  pruefe("fehlt der Kasse Gold, wechselt sie das Platinstueck selbst",
+    vermoegenCp(kasseNachKauf({}, gezahlt)), 200);
+}
+pruefe("passend gezahlt: genau die Muenzen des Kaeufers",
+  kasseNachKauf({ gp: 1 }, bezahle({ sp: 30 }, 250)),
+  { cp: 0, sp: 25, ep: 0, gp: 1, pp: 0 });
 
 /* ── Ergebnis ──────────────────────────────────────────────────────── */
 

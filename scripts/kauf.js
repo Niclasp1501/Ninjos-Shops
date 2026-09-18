@@ -24,7 +24,7 @@
 import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.js";
 import { grundpreisCp, preisCp, alsText, wechselgeldText } from "./preise.js";
 import { einlagern, darfLeerStehen } from "./lager.js";
-import { bezahle, schreibeGut, vermoegenCp } from "./kasse.js";
+import { bezahle, kasseNachKauf, vermoegenCp } from "./kasse.js";
 import { schreibeVorgang, schreibeErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
 
@@ -156,7 +156,7 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
 
     // 4. Und die Kasse des Ladens fuellen, falls er eine hat.
     if (laden.system.eigeneKasse) {
-      await laden.update({ "system.kasse": schreibeGut(laden.system.kasse, summeCp) });
+      await laden.update({ "system.kasse": kasseNachKauf(laden.system.kasse, gezahlt) });
     }
 
     // 5. Ein angenommenes Angebot ist verbraucht.

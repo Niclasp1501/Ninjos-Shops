@@ -158,3 +158,62 @@ export function muenzenDazu(bestand, muenzen) {
  * hat Schritt 1 ausgeschlossen. Also bleibt mindestens eine Sorte uebrig, und
  * fuer die gilt `KUPFERWERT[s] > rest`. Genau danach sucht `passend`.
  */
+
+/**
+ * Aus einer Kasse auszahlen, und zwar **genau die Muenzen, die beim Empfaenger
+ * ankommen**.
+ *
+ * Bis zum 18.09.2026 bekam der Spieler den Betrag in Preismuenzen
+ * gutgeschrieben, waehrend die Kasse ueber {@link bezahle} belastet wurde, das
+ * vom Kleingeld aufwaerts zahlt und Wechselgeld zuruecklegt. Der Wert stimmte,
+ * die Muenzen nicht: Der Spieler hielt 25 Gold in der Hand, und aus der Kasse
+ * waren Silberlinge verschwunden. Am Tisch gemeldet.
+ *
+ * Der Ablauf:
+ *
+ * 1. **Wie der Preis dasteht** (Gold, Silber, Kupfer), wenn die Kasse das hat.
+ * 2. **Sonst mit dem, was da ist**, groesste Muenze zuerst, ohne zu wechseln.
+ * 3. **Geht beides nicht**, muss eine Muenze gewechselt werden. Bei
+ *    `passend` heisst das nein (`null`), sonst zahlt die Kasse ueber
+ *    {@link bezahle} und der Empfaenger bekommt den Betrag in Preismuenzen.
+ *
+ * @returns {?{bestand: object, muenzen: object}} `null`, wenn es nicht geht
+ */
+export function zahleAus(bestand, betragCp, { passend = false } = {}) {
+  const betrag = Math.max(0, Math.round(Number(betragCp) || 0));
+  if (vermoegenCp(bestand) < betrag) return null;
+
+  const wiePreis = zerlege(betrag, PREIS_SORTEN);
+  const ohneWechsel = muenzenAbziehen(bestand, wiePreis);
+  if (ohneWechsel) return { bestand: ohneWechsel, muenzen: wiePreis };
+
+  const muenzen = {};
+  let rest = betrag;
+  for (const s of [...SORTEN_AUFSTEIGEND].reverse()) {
+    const nehmen = Math.min(Math.max(0, Math.floor(Number(bestand?.[s]) || 0)),
+                            Math.floor(rest / KUPFERWERT[s]));
+    if (nehmen > 0) { muenzen[s] = nehmen; rest -= nehmen * KUPFERWERT[s]; }
+  }
+  if (rest === 0) return { bestand: muenzenAbziehen(bestand, muenzen), muenzen };
+
+  if (passend) return null;
+  const gewechselt = bezahle(bestand, betrag);
+  return gewechselt ? { bestand: gewechselt.bestand, muenzen: wiePreis } : null;
+}
+
+/**
+ * Was ein Kauf in der Ladenkasse bewegt: Die Muenzen des Kaeufers kommen
+ * hinein, das Wechselgeld geht hinaus. Dieselben Muenzen, die der Kaeufer
+ * hergibt und zurueckbekommt, nicht der Betrag in anderer Stueckelung.
+ *
+ * Fehlt der Kasse eine Muenze des Wechselgelds, wird innerhalb der Kasse
+ * gewechselt. Das geht immer, weil sie gerade mindestens so viel bekommen hat.
+ */
+export function kasseNachKauf(bestand, gezahlt) {
+  const mitGeld = muenzenDazu(bestand, gezahlt?.gezahlt);
+  const zurueck = gezahlt?.zurueck ?? {};
+  const ohneWechsel = muenzenAbziehen(mitGeld, zurueck);
+  if (ohneWechsel) return ohneWechsel;
+  const zurueckCp = vermoegenCp(zurueck);
+  return bezahle(mitGeld, zurueckCp)?.bestand ?? mitGeld;
+}

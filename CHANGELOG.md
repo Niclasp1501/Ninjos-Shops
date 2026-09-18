@@ -17,9 +17,25 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 - **Money arrives in the coins the price is quoted in.** Selling an item for
   25 gp to a shop paid out "2 pp 5 gp", because every credit was broken down
   into the largest coin. With a shop till it was outright wrong, since the shop
-  handed over platinum it might not have had. Proceeds of a sale and the money
-  going into a till now arrive in gold, silver and copper. Change when buying
-  is unaffected.
+  handed over platinum it might not have had. Proceeds of a sale now arrive in
+  gold, silver and copper. Change when buying is unaffected.
+- **A shop till moves exactly the coins that change hands.** A player selling
+  for 25 gp received 25 gold, but the till paid with whatever it held smallest
+  first, so its silver went down instead of its gold. The till now pays out
+  the same coins the player receives, preferring the way the price is quoted,
+  and takes in the buyer's actual coins minus the change. With "Exact change
+  only" a shop that would have to break a coin to pay refuses the sale and
+  says why.
+- **Trade results come as a window, not a notification.** The outcome of a
+  purchase or sale, including the change handed back, used to be a toast that
+  vanished after a few seconds and never showed in the sheet view. It now opens
+  a small window that stays until it is closed, and so do the reasons a trade
+  did not go through.
+- **The fixed price moved into the item menu.** Five coin fields in every row
+  of the shop sheet left no room for the item's name. "Fixed price" in the
+  row's menu now opens a window with the base price, the shop's price and the
+  coin fields, plus a button to remove the fixed price. A dotted price in the
+  row still shows when one applies.
 - **The shop till shows on the shop sheet.** It was only visible in the shop's
   settings, so while trading nobody could see whether the shop could still pay.
   With its own till on, the sheet now shows it below the header, laid out like

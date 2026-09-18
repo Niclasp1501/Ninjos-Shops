@@ -20,6 +20,7 @@ import { grundpreisCp, preisCp, alsText, KUPFERWERT } from "./preise.js";
 import { vermoegenCp } from "./kasse.js";
 import { eigenesAngebot } from "./angebot.js";
 import { verkaufslisteAufbereiten } from "./verkauf.js";
+import { hinweisZeigen } from "./melden.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -266,7 +267,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     const itemId = zeile?.dataset.itemId;
     const item = figur?.items.get(itemId);
     if (!item) return;
-    if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
+    if (!game.users.activeGM) return hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
 
     const menge = Math.max(1, Math.floor(
       Number(zeile.querySelector("[data-menge]")?.value) || 1));
@@ -320,8 +321,8 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   static async #anfrage() {
     const figur = eigeneFigur();
-    if (!figur) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeineFigur"));
-    if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
+    if (!figur) return hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Kauf.KeineFigur"));
+    if (!game.users.activeGM) return hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
     const { packenOeffnen } = await import("./anfrage-fenster.js");
     packenOeffnen(this.#laden, figur);
   }
@@ -390,8 +391,8 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   async #bitteSenden(item, menge, angebot) {
     const figur = eigeneFigur();
-    if (!figur) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeineFigur"));
-    if (!game.users.activeGM) return ui.notifications.warn(game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
+    if (!figur) return hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Kauf.KeineFigur"));
+    if (!game.users.activeGM) return hinweisZeigen("SHOPS.Kauf.NichtGeklappt", game.i18n.localize("SHOPS.Kauf.KeinSpielleiter"));
 
     const system = this.#laden.system;
     const merkmal = item.flags?.[MODULE_ID] ?? {};

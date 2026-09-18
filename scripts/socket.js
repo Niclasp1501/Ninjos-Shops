@@ -27,7 +27,7 @@ import { darfIchAusfuehren, aufVorsitz } from "./vorsitz.js";
 import { brauchtFreigabe, freigabeAufnehmen } from "./freigabe.js";
 import { aufTisch } from "./handelstisch.js";
 import { aufTausch } from "./tausch.js";
-import { aufAbbruch, abbruchZeigen, erfolgZeigen, istWortbruch } from "./melden.js";
+import { aufAbbruch, abbruchZeigen, erfolgZeigen, hinweisZeigen, istWortbruch } from "./melden.js";
 import { aufSchau, schauNachfuehren } from "./schau.js";
 import { alsText } from "./preise.js";
 
@@ -50,7 +50,8 @@ async function onSocket(daten) {
         // Entweder ein Sprachschluessel oder ein fertiger Satz - je nachdem,
         // ob die Meldung Werte traegt, die erst beim Ausfuehren feststehen.
         if (daten.an === game.user.id) {
-          ui.notifications.warn(daten.text ?? game.i18n.localize(daten.schluessel));
+          hinweisZeigen("SHOPS.Kauf.NichtGeklappt",
+            foundry.utils.escapeHTML(daten.text ?? game.i18n.localize(daten.schluessel)));
         }
         return;
       }
@@ -112,8 +113,14 @@ export function aufAntwort({ an, ergebnis }) {
    */
   // Ein Tisch raeumt sich nach dem Abschluss ab. Eine Meldung waere dann das
   // Einzige, was den Erfolg bezeugt, und die ist in der Blattansicht unsichtbar.
-  if (ergebnis.ok && ergebnis.tisch) erfolgZeigen(foundry.utils.escapeHTML(ergebnis.text ?? ""));
-  else if (ergebnis.ok) ui.notifications.info(ergebnis.text);
+  /*
+   * **Auch der Laden antwortet mit einem Fenster.** Bis zum 18.09.2026 kam
+   * das Ergebnis eines Kaufs samt Wechselgeld als Toast: am Tablet schnell
+   * wieder weg, in der Blattansicht gar nicht zu sehen. Am Tisch gemeldet,
+   * „wir wollen richtige Fenster, keine Toasts".
+   */
+  const scheitern = text => hinweisZeigen("SHOPS.Kauf.NichtGeklappt", foundry.utils.escapeHTML(text));
+  if (ergebnis.ok) erfolgZeigen(foundry.utils.escapeHTML(ergebnis.text ?? ""));
   /*
    * **Ein gebrochenes Wort bekommt ein Fenster, keine Meldung.** Wer etwas
    * vor sich liegen sah und es beim Abschluss nicht bekommt, muss den Grund
@@ -121,7 +128,7 @@ export function aufAntwort({ an, ergebnis }) {
    * der Blattansicht ganz ausgeblendet. Siehe melden.js.
    */
   else if (istWortbruch(ergebnis.grund)) abbruchZeigen(ergebnis.was ?? "");
-  else if (ergebnis.grundText) ui.notifications.warn(ergebnis.grundText);
+  else if (ergebnis.grundText) scheitern(ergebnis.grundText);
   else {
     /*
      * **Wieviel fehlt, stand immer schon in der Antwort** - `fehltCp` wird an
@@ -132,7 +139,7 @@ export function aufAntwort({ an, ergebnis }) {
      */
     const grund = game.i18n.localize(ergebnis.grund ?? "SHOPS.Kauf.Abgebrochen");
     const fehlt = Number(ergebnis.fehltCp);
-    ui.notifications.warn(
+    scheitern(
       Number.isFinite(fehlt) && fehlt > 0
         ? `${grund} ${game.i18n.format("SHOPS.Kauf.EsFehlt", {
             geld: alsText(fehlt, s => game.i18n.localize(`SHOPS.Muenze.${s}`)) })}`
