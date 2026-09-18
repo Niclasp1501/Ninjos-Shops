@@ -4703,3 +4703,14 @@
   margin: 6px 0;
 }
 .ninjos-shops .shops-tisch-passend-hinweis { margin: 6px 0 0; }
+
+/*
+ * Die Lage zum Aussuchen ist so hoch wie der Tisch darunter. Lag dort wenig,
+ * war das Fenster niedrig, und seit Platin und Elektrum dazukamen, passten die
+ * fuenf Muenzzeilen nicht mehr hinein: ein Rollbalken fuer fuenf Zeilen. Am
+ * 18.09.2026 am Tisch gemeldet. Solange sie offen ist, waechst das Fenster
+ * deshalb auf das, was Kopf, fuenf Zeilen und Fuss brauchen. Ist der
+ * Bildschirm kleiner, klemmt fensterpassen.js das Fenster, und dann scrollt
+ * die Liste, wie sie soll.
+ */
+.ninjos-shops .shops-teil-tisch:has(> .shops-wahl) { min-height: 27rem; }
