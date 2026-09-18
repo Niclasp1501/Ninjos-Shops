@@ -107,6 +107,14 @@ pruefe("Gutschrift ohne Elektrum",
   schreibeGut({ cp: 1 }, 250),
   { cp: 1, sp: 5, ep: 0, gp: 2, pp: 0 });
 
+// Am 18.09.2026 gemeldet: 25 GM kamen als „2 PM 5 GM" an.
+pruefe("Gutschrift in Gold, nicht in Platin",
+  schreibeGut({}, 2500),
+  { cp: 0, sp: 0, ep: 0, gp: 25, pp: 0 });
+pruefe("vorhandenes Platin bleibt, dazu kommt Gold",
+  schreibeGut({ pp: 2 }, 1250),
+  { cp: 0, sp: 5, ep: 0, gp: 12, pp: 2 });
+
 /* ── Der Satz, den der Spieler nach dem Kauf liest ─────────────────── */
 
 // Genau der Fall aus dem Kopf dieser Datei: 1 pp kauft einen Dolch fuer 2 gp.

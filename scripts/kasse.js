@@ -19,7 +19,7 @@
  * Kein Foundry-Zugriff. Zahlen rein, Zahlen raus.
  */
 
-import { KUPFERWERT, SORTEN_AUFSTEIGEND, WECHSELGELD_SORTEN, zerlege } from "./preise.js";
+import { KUPFERWERT, SORTEN_AUFSTEIGEND, WECHSELGELD_SORTEN, PREIS_SORTEN, zerlege } from "./preise.js";
 
 /**
  * Was jemand insgesamt hat, in Kupfer.
@@ -95,14 +95,23 @@ export function bezahle(bestand, betragCp) {
 }
 
 /**
- * Geld gutschreiben - fuer den Ankauf, wenn ein Laden ihn erlaubt.
+ * Geld gutschreiben: der Erloes eines Verkaufs an den Laden, oder der
+ * Kaufpreis, der in die Ladenkasse geht.
  *
- * Ohne Elektrum, aus demselben Grund wie beim Wechselgeld.
+ * **In den Muenzen, in denen der Preis genannt wird.** Bis zum 18.09.2026
+ * wurde hier gierig in die groesste Muenze zerlegt. Wer einen Gegenstand fuer
+ * 25 GM an den Laden verkaufte, bekam „2 PM 5 GM", obwohl der Preis in Gold
+ * dastand. Bei eigener Ladenkasse war es sogar falsch: Der Laden gab Platin
+ * heraus, das er womoeglich gar nicht hatte. Am Tisch gemeldet.
+ *
+ * Jetzt geht der Betrag in Gold, Silber und Kupfer hinein, wie der Preis
+ * angezeigt wird (`PREIS_SORTEN`). Das Wechselgeld beim Kauf bleibt davon
+ * unberuehrt; dort zaehlt, was auf dem Tisch liegt.
  */
 export function schreibeGut(bestand, betragCp) {
   const neu = {};
   for (const s of SORTEN_AUFSTEIGEND) neu[s] = Math.max(0, Number(bestand?.[s]) || 0);
-  for (const [s, n] of Object.entries(zerlege(betragCp, WECHSELGELD_SORTEN))) neu[s] += n;
+  for (const [s, n] of Object.entries(zerlege(betragCp, PREIS_SORTEN))) neu[s] += n;
   return neu;
 }
 

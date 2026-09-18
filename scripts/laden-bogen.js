@@ -124,6 +124,18 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       muenzen: Object.keys(KUPFERWERT).map(sorte => ({
         sorte, kuerzel: kuerzel(sorte), wert: laden.kasse?.[sorte] ?? 0
       })),
+      // Die Ladenkasse, sichtbar beim Oeffnen. Sie stand nur im
+      // Einstellungsfenster, also sah man beim Verkaufen nicht, ob der Laden
+      // ueberhaupt noch zahlen kann. Gross nach klein, wie die Boerse der
+      // Spieler.
+      kasse: laden.eigeneKasse && game.user.isGM
+        ? (() => {
+            const muenzen = ["pp", "gp", "ep", "sp", "cp"]
+              .map(sorte => ({ kuerzel: kuerzel(sorte), wert: Number(laden.kasse?.[sorte] ?? 0) }))
+              .filter(m => m.wert > 0);
+            return { muenzen, leer: !muenzen.length };
+          })()
+        : null,
       ware: this.#wareAufbereiten(laden),
       zuschauer: werSieht(this.document.uuid).map(u => {
         const angebot = u.getFlag(MODULE_ID, OFFENES_ANGEBOT);

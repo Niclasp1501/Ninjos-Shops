@@ -55,4 +55,22 @@
       </button>
     {{/if}}
   </header>
+
+  {{!-- Die Ladenkasse. Aufgebaut wie die Börse im Spielerfenster, damit sie
+        sich auf einen Blick als Geld liest. Nur bei eigener Kasse, und nur
+        für die Spielleitung. --}}
+  {{#if kasse}}
+    <aside class="shops-boerse shops-ladenkasse" title="{{localize 'SHOPS.Bogen.KasseHinweis'}}">
+      <span class="shops-boerse-label">
+        <i class="fa-solid fa-cash-register" aria-hidden="true"></i>
+        {{localize "SHOPS.Bogen.Kasse"}}
+      </span>
+      <span class="shops-boerse-muenzen">
+        {{#each kasse.muenzen}}
+          <span class="shops-boerse-muenze">{{wert}}&nbsp;{{kuerzel}}</span>
+        {{/each}}
+        {{#if kasse.leer}}<span class="shops-leer">{{localize "SHOPS.Bogen.KasseLeer"}}</span>{{/if}}
+      </span>
+    </aside>
+  {{/if}}
 </div>

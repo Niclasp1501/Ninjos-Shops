@@ -4634,3 +4634,10 @@
   min-height: var(--ninjo-tippziel, 44px);
   padding: 0 16px;
 }
+
+/* ── Ladenkasse im Bogen ────────────────────────────────────────────
+   Dieselbe Leiste wie die Börse im Spielerfenster; nur der Abstand zum
+   Kopfbild darüber muss hier gesetzt werden. */
+.ninjos-shops .shops-ladenkasse {
+  margin-top: 0;
+}

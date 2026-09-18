@@ -14,6 +14,16 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   in chat. Getting back in still needs the gamemaster to show the shop again.
 
 ### Changed
+- **Money arrives in the coins the price is quoted in.** Selling an item for
+  25 gp to a shop paid out "2 pp 5 gp", because every credit was broken down
+  into the largest coin. With a shop till it was outright wrong, since the shop
+  handed over platinum it might not have had. Proceeds of a sale and the money
+  going into a till now arrive in gold, silver and copper. Change when buying
+  is unaffected.
+- **The shop till shows on the shop sheet.** It was only visible in the shop's
+  settings, so while trading nobody could see whether the shop could still pay.
+  With its own till on, the sheet now shows it below the header, laid out like
+  a player's purse.
 - **All five coins can be typed into a price.** Prices could only be entered
   in gold, silver and copper, so 50 pp or 3 ep had to be converted first. The
   price fields now offer platinum and electrum as well. Prices are still shown
