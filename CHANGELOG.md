@@ -6,6 +6,14 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## Unreleased
 
 ### Added
+- **Change at the trade table with an NPC.** Whoever overpays with coins now
+  gets the difference back, like in a shop: one platinum piece for a 5 gp item
+  returns 5 gp, and the balance reads even instead of "too much". Change is
+  capped at the coins that side put down, since extra goods are a matter of
+  negotiation. The gamemaster can switch a single trade to "Exact change
+  only"; it starts on when the NPC runs exactly one shop that pays exact
+  change. If a purse cannot make the change, nothing is exchanged and the
+  window says why.
 - **Setting: players may inspect the NPC's items at the trade table.** Off by
   default. A merchant's goods can be unidentified or hide properties that
   should only come out in use, and the detail window gave them away. With the

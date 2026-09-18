@@ -4684,3 +4684,22 @@
   border-left: 3px solid var(--shops-gold);
   border-radius: 3px;
 }
+
+/* Wechselgeld am Handelstisch: Teil des Tauschs, darum ruhig und golden. */
+.ninjos-shops .shops-tisch-wechsel {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--ninjo-akzent-text);
+}
+.ninjos-shops .shops-tisch-waage { flex-wrap: wrap; }
+.ninjos-shops .shops-tisch-passend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 6px 0;
+}
+.ninjos-shops .shops-tisch-passend-hinweis { margin: 6px 0 0; }

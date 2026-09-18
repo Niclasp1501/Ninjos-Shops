@@ -151,7 +151,22 @@
         {{else if stand.fehlt}}{{localize "SHOPS.Tisch.Fehlt" geld=stand.offenText}}
         {{else}}{{localize "SHOPS.Tisch.ZuViel" geld=stand.offenText}}{{/if}}
       </strong>
+      {{#if stand.wechselCp}}
+        {{!-- Wechselgeld ist kein Fehler auf der Waage, sondern Teil des
+              Tauschs. Deshalb steht es daneben und nicht als „zu viel". --}}
+        <span class="shops-tisch-wechsel">
+          <i class="fa-solid fa-coins" aria-hidden="true"></i>
+          {{#if stand.wechselAnSpieler}}{{localize "SHOPS.Tisch.WechselDu" geld=stand.wechselText}}
+          {{else}}{{localize "SHOPS.Tisch.WechselAn" wer=stand.personName geld=stand.wechselText}}{{/if}}
+        </span>
+      {{/if}}
     </div>
+    {{#if stand.passend}}
+      <p class="shops-blockhinweis shops-tisch-passend-hinweis">
+        <i class="fa-solid fa-hand-holding-dollar" aria-hidden="true"></i>
+        {{localize "SHOPS.Tisch.PassendHinweis" person=stand.personName}}
+      </p>
+    {{/if}}
 
     <footer class="shops-tisch-fuss">
       {{!-- **Der Knopf sagt, was das Drücken jetzt bewirkt.** Vorher stand dort

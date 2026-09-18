@@ -48,7 +48,8 @@
 import { MODULE_ID, SOCKET, WARE, SETTINGS } from "./const.js";
 import { grundpreisCp, alsText, alsMuenzfelder, muenzfelderVon, preisText, eingegebeneMuenzen,
          EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
-import { vermoegenCp, muenzenAbziehen, muenzenDazu } from "./kasse.js";
+import { vermoegenCp, muenzenAbziehen, muenzenDazu, zahleAus } from "./kasse.js";
+import { laedenVon } from "./verknuepfung.js";
 import { leseMuenzfelder } from "./muenzfeld.js";
 import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
@@ -94,7 +95,28 @@ export function tischStand(handel) {
 
   const linksCp = summe(handel.seiteNsc) + geldNsc;
   const rechtsCp = summe(handel.seiteSpieler) + geldSpieler;
-  const offenCp = linksCp - rechtsCp;
+  const differenzCp = linksCp - rechtsCp;
+
+  /*
+   * **Wer mit Muenzen ueberzahlt, bekommt heraus.** Seit dem 18.09.2026, wie
+   * im Laden: Wer ein Platinstueck fuer etwas zu fuenf Gold hinlegt, bekommt
+   * fuenf Gold zurueck, statt dass die Waage „zu viel" sagt. Herausgegeben
+   * wird hoechstens, was diese Seite an Muenzen hingelegt hat; was sie an Ware
+   * mehr gibt, ist Verhandlungssache und kein Wechselgeld.
+   *
+   * Mit „passend zahlen" gibt es kein Wechselgeld, fuer diesen einen Handel.
+   * Die Spielleitung stellt das am Tisch um; vorbelegt wird es vom Laden der
+   * Person, falls sie genau einen fuehrt.
+   */
+  const passend = handel.passend === true;
+  let wechselAn = null;
+  let wechselCp = 0;
+  if (!passend && differenzCp < 0 && geldSpieler > 0) {
+    wechselAn = "spieler"; wechselCp = Math.min(-differenzCp, geldSpieler);
+  } else if (!passend && differenzCp > 0 && geldNsc > 0) {
+    wechselAn = "nsc"; wechselCp = Math.min(differenzCp, geldNsc);
+  }
+  const offenCp = differenzCp < 0 ? differenzCp + wechselCp : differenzCp - wechselCp;
 
   /*
    * Ein Posten ohne Preis ist eine offene Frage, keine Null. Zugesagt werden
@@ -122,6 +144,12 @@ export function tischStand(handel) {
     geldNsc, geldSpieler,
     geldNscText: muenzText(handel.muenzenNsc) || alsText(geldNsc, kuerzel),
     geldSpielerText: muenzText(handel.muenzenSpieler) || alsText(geldSpieler, kuerzel),
+
+    passend,
+    wechselAn,
+    wechselAnSpieler: wechselAn === "spieler",
+    wechselCp,
+    wechselText: alsText(wechselCp, kuerzel),
 
     linksText: alsText(linksCp, kuerzel),
     rechtsText: alsText(rechtsCp, kuerzel),
@@ -176,6 +204,22 @@ function ohneZusagen(handel) {
 
 /* ── Was die Spielleitung tut ──────────────────────────────────────── */
 
+/** Zahlt die Person nur passend? Vorbelegt von ihrem Laden, falls es genau einer ist. */
+function passendVorbelegt(person) {
+  const laeden = laedenVon(person);
+  return laeden.length === 1 && laeden[0].system?.passendZahlen === true;
+}
+
+/** Wechselgeld fuer diesen einen Handel an oder aus. */
+export async function passendSetzen(benutzerId, wert) {
+  if (!game.user.isGM) return;
+  const benutzer = game.users.get(benutzerId);
+  const handel = benutzer?.getFlag(MODULE_ID, TISCH);
+  if (!handel) return;
+  await benutzer.setFlag(MODULE_ID, TISCH, { ...handel, passend: !!wert, ...ohneZusagen(handel) });
+  await funken([benutzerId]);
+}
+
 /** Einen Tisch aufmachen - oder den bestehenden um Empfänger erweitern. */
 export async function tischOeffnen(person, benutzerIds, satz = "") {
   if (!game.user.isGM || !person) return;
@@ -197,6 +241,7 @@ export async function tischOeffnen(person, benutzerIds, satz = "") {
       seiteNsc: [], seiteSpieler: [],
       geldNsc: 0, geldSpieler: 0,
       preisCp: null,
+      passend: passendVorbelegt(person),
       bereitSpieler: false,
       bereitGm: false,
       von: game.user.name
@@ -604,6 +649,26 @@ async function abschliessenAusfuehren(benutzerId) {
   if (personKasse) personKasse = muenzenDazu(personKasse, legtSpieler);
 
   /*
+   * Das Wechselgeld kommt aus dem Beutel der anderen Seite, nachdem die
+   * hingelegten Muenzen schon darin liegen. Wer ein Platinstueck bekommen hat,
+   * kann es also selbst wechseln. Reicht es trotzdem nicht, wird nichts
+   * getauscht, und der Grund steht im Fenster.
+   */
+  const stand = tischStand(handel);
+  if (stand.wechselAn === "spieler") {
+    if (!personKasse) return { ok: false, grund: "SHOPS.Tisch.KeinWechselgeld" };
+    const raus = zahleAus(personKasse, stand.wechselCp);
+    if (!raus) return { ok: false, grund: "SHOPS.Tisch.KeinWechselgeld" };
+    personKasse = raus.bestand;
+    spielerKasse = muenzenDazu(spielerKasse, raus.muenzen);
+  } else if (stand.wechselAn === "nsc") {
+    const raus = zahleAus(spielerKasse, stand.wechselCp);
+    if (!raus) return { ok: false, grund: "SHOPS.Tisch.KeinWechselgeld" };
+    spielerKasse = raus.bestand;
+    if (personKasse) personKasse = muenzenDazu(personKasse, raus.muenzen);
+  }
+
+  /*
    * Liegt alles noch da, was auf dem Tisch liegt? Seit dem 10.09.2026 zaehlt
    * dabei auch der **Inhalt eines Behaelters**: Wer einen Beutel hinlegt und
    * ihn vorm Abschluss ausraeumt, uebergibt etwas anderes als das, dem der
@@ -657,7 +722,9 @@ async function abschliessenAusfuehren(benutzerId) {
    * die hingelegten Muenzen also mitgerechnet. „Dolch fuer 40 KM" waere in
    * dem Beispiel oben eine glatte Falschauskunft gewesen.
    */
-  const nettoCp = muenzenCp(legtSpieler) - muenzenCp(legtPerson);
+  const wechsel = stand.wechselAn === "spieler" ? -stand.wechselCp
+    : stand.wechselAn === "nsc" ? stand.wechselCp : 0;
+  const nettoCp = muenzenCp(legtSpieler) - muenzenCp(legtPerson) + wechsel;
   if (was.length) {
     const schreiben = nettoCp < 0 ? schreibeHandelVerkauf : schreibeHandel;
     await schreiben({
@@ -668,8 +735,11 @@ async function abschliessenAusfuehren(benutzerId) {
 
   // `tisch` sagt der Gegenstelle, dass das ein Fenster wert ist und keine
   // Meldung: Der Tisch raeumt sich ab, es bleibt sonst nichts zu sehen.
+  const satz = game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name });
   return { ok: true, tisch: true,
-           text: game.i18n.format("SHOPS.Tisch.Gelungen", { person: person.name }) };
+           text: stand.wechselAnSpieler
+             ? `${satz} ${game.i18n.format("SHOPS.Kauf.Wechselgeld", { geld: stand.wechselText })}`
+             : satz };
 }
 
 /* ── Was der Spieler schickt ───────────────────────────────────────── */
@@ -964,6 +1034,7 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
       ansehen: HandelstischGM.#ansehen,
       wegnehmen: HandelstischGM.#wegnehmen,
       preisNennen: HandelstischGM.#preisNennen,
+      passendUmschalten: HandelstischGM.#passendUmschalten,
       bestaetigen: HandelstischGM.#bestaetigen,
       geldWeg: HandelstischGM.#geldWeg,
       beenden: HandelstischGM.#beenden,
@@ -1050,6 +1121,11 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static #geldWeg() { geldSetzen(this.benutzerId, "nsc", {}); }
+
+  static #passendUmschalten() {
+    const handel = game.users.get(this.benutzerId)?.getFlag(MODULE_ID, TISCH);
+    passendSetzen(this.benutzerId, !(handel?.passend === true));
+  }
 
   /** Die Zusage der Spielleitung - und der Abschluss, wenn beide stehen. */
   static async #bestaetigen() {
