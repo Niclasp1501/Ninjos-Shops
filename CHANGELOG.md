@@ -3,7 +3,7 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
-## Unreleased
+## 14.2609.93 - 2026-09-19
 
 ### Added
 - **A closed trade with an NPC is whispered to the gamemaster in chat.** It

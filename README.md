@@ -5,9 +5,9 @@ ist ein eigenes Dokument mit echten Gegenständen im Inventar; wer ihn zu sehen
 bekommt, entscheidet die Spielleitung — an alle, an einzelne Spieler, oder an
 niemanden, weil er an eine Szene gebunden ist.
 
-Und **Handel mit Leuten, die keinen Laden führen**: Aus jedem NSC-Bogen legt die
-Spielleitung ausgewählte Stücke zu ausgewählten Preisen hin, in beide
-Richtungen. Dazu der **Tausch zwischen zwei Spielern**, seit September 2026 aus
+Und **Handel mit Leuten, die keinen Laden führen**: Aus jedem NSC-Bogen deckt
+die Spielleitung einen Handelstisch, an dem beide Seiten hinlegen, was sie
+hergeben, und selbst sagen, was sie dafür haben wollen. Dazu der **Tausch zwischen zwei Spielern**, seit September 2026 aus
 Ninjo's In-Person Tools hierher gezogen — dieselbe Sache aus zwei Richtungen,
 auf demselben Tisch. Deshalb steht „Trade" im Namen: Es ist kein Anhängsel des
 Ladengeschäfts, sondern ein eigener Weg.
@@ -86,20 +86,30 @@ eigenen schicken.
 ### Handel mit einer Person ohne Laden
 
 Für den Fremden am Feuer, den Bauern mit zwei Fackeln. Ein Knopf in der
-Titelleiste **jedes** Personenbogens: anhaken, was vorgelegt wird, Menge und
-Preis setzen, Empfänger wählen. Der Spieler sieht genau das — und nichts
-anderes von diesem Bogen. Ausgelöst wird das immer von der Spielleitung.
+Titelleiste **jedes** Personenbogens öffnet einen Handelstisch: links, was die
+Person hinlegt, rechts, was der Spieler hinlegt, unten die Waage.
 
-Ein Angebot darf an mehrere gehen; man hält am Tisch ja auch ein Schwert in
-die Runde. Entscheidend ist dann der Bestand und nicht das Angebot: Wer zuerst
-zugreift, bekommt es, und bei allen anderen verschwindet es aus dem Fenster.
+**Wer etwas hinlegt, nennt seinen Preis.** Kein Stück wird automatisch
+bewertet. Der Spieler sagt, was er für seine Sachen haben will, die
+Spielleitung sagt es für die der Person. Der Listenpreis steht beim Nennen als
+Auskunft daneben, mit einem Knopf, der ihn übernimmt. Ein Tipp auf einen
+genannten Preis ändert ihn jederzeit. Die andere Seite antwortet, indem sie
+selbst etwas hinlegt, Münzen dazulegt oder am Tisch um einen anderen Preis
+bittet. Preise bleiben in den Münzen, in denen sie genannt wurden: 5 EM bleiben
+5 EM.
 
-Der Spieler kann ablehnen — dann erfahren Sie es, statt auf eine Antwort zu
-warten, die längst gefallen ist. Und wenn Sie „Sie nimmt auch etwas an"
-angehakt haben, packt er über **„Ich hätte da auch etwas"** seinerseits
-zusammen, und Sie nennen einen Preis. Das ist dasselbe Fenster wie am
-Ladentresen; nur stehen die drei Vorschlagszahlen dort nicht für eine
-Ankaufspolitik, sondern für die halbe Grundsumme — was gilt, tippen Sie.
+**Wer mit Münzen überzahlt, bekommt heraus**, wie im Laden. Pro Handel lässt
+sich **Passend zahlen** einschalten, dann gibt es kein Wechselgeld; vorbelegt
+wird das vom Laden der Person, falls sie genau einen führt.
+
+**Zusagen geht immer.** Geht der Tausch nicht auf oder fehlt ein Preis, fragt
+ein Fenster vorher nach und sagt, um wie viel. Jede Änderung hebt beide Zusagen
+auf; getauscht wird erst, wenn beide stehen. Danach bekommt die Spielleitung
+den Handel geflüstert in den Chat, mit Preisen und Wechselgeld.
+
+Ob Spieler die Sachen der Person im Detailfenster ansehen dürfen, steht in den
+Moduleinstellungen und ist ab Werk aus: Was ein Händler hinlegt, kann
+unidentifiziert sein.
 
 ### Tausch zwischen zwei Spielern
 
@@ -219,15 +229,15 @@ Dann **Preis nennen** oder **Abweisen**.
 ### Mit jemandem handeln, der keinen Laden hat
 
 1. Den Bogen der Person öffnen.
-2. Oben in der Titelleiste auf das **Händedruck-Symbol**.
-3. Empfänger anhaken, dann die Stücke, die vorgelegt werden sollen — mit Menge
-   und Preis in Gold.
-4. **Hinlegen**.
+2. Oben in der Titelleiste auf das **Händedruck-Symbol**, den Spieler wählen.
+3. Über **Sachen aussuchen** und **Münzen dazulegen** hinlegen, was die Person
+   hergibt.
+4. Bei jedem Stück auf **Preis nennen**. Der Spieler tut dasselbe für seine
+   Seite.
+5. Beide sagen zu. Stimmt die Waage nicht, fragt ein Fenster vorher nach.
 
-Der Spieler bekommt ein Fenster mit dem Gesicht der Person, Ihrem Satz und
-einem Knopf je Stück. Das Geld wandert in die Börse der Person, falls sie
-eine hat; leer werden kann sie nicht — dafür ist ein Laden mit eigener Kasse
-da.
+Ist der Tisch zugemacht, holt ihn derselbe Knopf am Bogen zurück; beim
+Spieler steht dafür unten rechts ein Knopf.
 
 ### Mit einem anderen Spieler tauschen
 
@@ -276,7 +286,9 @@ Spieler sieht darin nur seine eigenen Zeilen.
 ## Für Entwickler
 
 ```bash
-node tools/kasse.test.mjs          # 43 Tests, ohne laufende Welt
+node tools/kasse.test.mjs          # Kasse und Preise, ohne laufende Welt
+node tools/lager.test.mjs          # Bestand und Stapeln
+node tools/sprache.test.mjs        # Sprachdateien: gleiche Schlüssel, keine Gedankenstriche
 pwsh tools/deploy-shops.ps1 -Target testv14
 pwsh tools/deploy-shops.ps1 -Target prod
 ```
@@ -302,7 +314,9 @@ per purchase, an optional till that can run dry. Three purchase modes: locked,
 approval, direct. Selling works two ways — directly for flagged goods, or as a
 request where the GM sees a private price range and names a price. Shops can be
 bound to scenes, linked to the merchant who runs them, and there is a trade
-window for people who have no shop at all. Two ledgers: one per shop, filtered
+table for people who have no shop at all: each side names its own price for
+what it puts down, overpaying in coins returns change unless the trade is set
+to exact change, and the GM gets a whispered summary once it closes. Two ledgers: one per shop, filtered
 to whoever opens it, and one across all shops for the GM.
 
 **Players trade with each other** on the same table — moved here from Ninjo's
