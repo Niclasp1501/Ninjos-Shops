@@ -32,6 +32,14 @@ jobs:
             exit 1
           fi
 
+      # Kasse, Lager und Sprachdateien. Ein Fehler hier haelt das Release auf,
+      # bevor es bei jemandem ankommt.
+      - name: Pruefen
+        run: |
+          node tools/kasse.test.mjs
+          node tools/lager.test.mjs
+          node tools/sprache.test.mjs
+
       # Was im Zip landet, ist genau das, was die Auslieferung auch auf den
       # eigenen Server schiebt (tools/deploy-shops.ps1). Konzept, Agentennotizen
       # und Werkzeuge gehören in das Repository, nicht in die Installation.
