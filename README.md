@@ -86,8 +86,8 @@ eigenen schicken.
 ### Handel mit einer Person ohne Laden
 
 Für den Fremden am Feuer, den Bauern mit zwei Fackeln. Ein Knopf in der
-Titelleiste **jedes** Personenbogens öffnet einen Handelstisch: links, was die
-Person hinlegt, rechts, was der Spieler hinlegt, unten die Waage.
+Titelleiste **jedes** Personenbogens öffnet einen Handelstisch. Jeder sieht
+seine eigene Seite links und die des anderen rechts, darunter die Waage.
 
 **Wer etwas hinlegt, nennt seinen Preis.** Kein Stück wird automatisch
 bewertet. Der Spieler sagt, was er für seine Sachen haben will, die
@@ -115,8 +115,8 @@ unidentifiziert sein.
 
 Ein Knopf über der Spielerliste — und in der Leiste der Blattansicht, wenn
 Ninjo's In-Person Tools dabei sind. Man sucht sich jemanden aus, der andere
-sagt ja, und dann liegt derselbe Tisch vor beiden: links, was er hinlegt,
-rechts, was ich hinlege. Ausgesucht wird in einer Lage darüber — antippen,
+sagt ja, und dann liegt derselbe Tisch vor beiden: links, was ich hinlege,
+rechts, was der andere hinlegt. Ausgesucht wird in einer Lage darüber — antippen,
 Menge mit Stufenknöpfen, Münzen je Sorte, kein Tippen und kein Auswahlmenü.
 
 **Es zählt nur, was auf dem Tisch liegt.** Hier rechnet niemand aus, was ein

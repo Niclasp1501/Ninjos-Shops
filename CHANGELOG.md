@@ -3,6 +3,15 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## Unreleased
+
+### Changed
+- **Your own side is on the left.** At the trade table the player saw the
+  NPC's side on the left, and in a swap the other player's side came first.
+  Everyone now finds what they put down on the left and the other side on the
+  right, in both windows and on the balance below. The gamemaster's table
+  already worked that way.
+
 ## 14.2609.93 - 2026-09-19
 
 ### Added
