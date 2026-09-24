@@ -5,6 +5,12 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 
 ## Unreleased
 
+### Added
+- **The welcome window mentions Patreon.** Below the link to Ninjo's Forge,
+  one line now says that the modules are free and stay free, and that you can
+  support the work on Patreon and get premium add-ons. Only GMs see the
+  window, and "Don't show again" still hides it for good.
+
 ### Changed
 - **Your own side is on the left.** At the trade table the player saw the
   NPC's side on the left, and in a swap the other player's side came first.
