@@ -67,7 +67,7 @@
       </span>
       <span class="shops-boerse-muenzen">
         {{#each kasse.muenzen}}
-          <span class="shops-boerse-muenze">{{wert}}&nbsp;{{kuerzel}}</span>
+          {{shopsGeld wert kuerzel}}
         {{/each}}
         {{#if kasse.leer}}<span class="shops-leer">{{localize "SHOPS.Bogen.KasseLeer"}}</span>{{/if}}
       </span>

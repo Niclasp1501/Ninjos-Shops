@@ -57,9 +57,9 @@
 
           <div class="shops-preise">
             <span class="shops-preis {{#if hatFestpreis}}shops-fest{{/if}}"
-                  title="{{localize 'SHOPS.Bogen.Grundpreis'}}: {{grundText}}">{{preisText}}</span>
+                  title="{{localize 'SHOPS.Bogen.Grundpreis'}}: {{grundText}}">{{shopsGeld preisText}}</span>
             {{#if ankaufText}}
-              <span class="shops-ankauf" title="{{localize 'SHOPS.Bogen.Ankauf'}}">{{ankaufText}}</span>
+              <span class="shops-ankauf" title="{{localize 'SHOPS.Bogen.Ankauf'}}">{{shopsGeld ankaufText}}</span>
             {{/if}}
           </div>
 

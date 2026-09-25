@@ -4714,3 +4714,412 @@
  * die Liste, wie sie soll.
  */
 .ninjos-shops .shops-teil-tisch:has(> .shops-wahl) { min-height: 27rem; }
+
+/* ══ Dinge aus der Spielwelt (25.09.2026) ═════════════════════════════
+ *
+ * Bis hierher sah fast jedes Fenster wie eine Tabelle aus: Zeilen, Spalten,
+ * Zahlen. Richtig, aber es las sich wie Buchhaltung und nicht wie ein Markt.
+ * Dieser Block denkt jedes Fenster über ein Ding, das am Tisch jeder kennt:
+ * Münzen statt Kürzel, ein Preisschild am Stück, ein Wachssiegel für die
+ * Zusage, eine Waage, die sich neigt, eine Quittung für das Ergebnis.
+ *
+ * Nur die helle Fassung. Die dunkle bleibt vorerst der Schauansicht auf dem
+ * Monitor vorbehalten.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Münzen ─────────────────────────────────────────────────────────── */
+
+/*
+ * Jede Sorte in ihrem Metall, das Kürzel darauf. Die Farbe ist nie das
+ * einzige Merkmal: Wer Gold und Elektrum nicht unterscheidet, liest „EM".
+ */
+.ninjos-shops .shops-geld {
+  display: inline-flex;
+  align-items: center;
+  gap: .24em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.ninjos-shops .shops-geld + .shops-geld { margin-left: .38em; }
+.ninjos-shops .shops-geld-zahl { font-weight: 700; }
+.ninjos-shops .shops-geld-muenze {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.9em;
+  height: 1.38em;
+  padding: 0 .32em;
+  font-size: .66em;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--muenz-schrift);
+  background: radial-gradient(circle at 35% 28%, var(--muenz-licht), var(--muenz-farbe) 72%);
+  border: 1px solid var(--muenz-rand);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 55%), inset 0 -1px 0 rgb(0 0 0 / 16%);
+}
+.ninjos-shops .shops-geld[data-sorte="pp"] { --muenz-licht: #ffffff; --muenz-farbe: #c9d0da; --muenz-rand: #98a1ae; --muenz-schrift: #343b46; }
+.ninjos-shops .shops-geld[data-sorte="gp"] { --muenz-licht: #fff3c4; --muenz-farbe: #d9b03f; --muenz-rand: #a88418; --muenz-schrift: #473200; }
+.ninjos-shops .shops-geld[data-sorte="ep"] { --muenz-licht: #fbf7da; --muenz-farbe: #cdc27e; --muenz-rand: #9c9152; --muenz-schrift: #423d17; }
+.ninjos-shops .shops-geld[data-sorte="sp"] { --muenz-licht: #ffffff; --muenz-farbe: #c6c6c1; --muenz-rand: #93938d; --muenz-schrift: #37372f; }
+.ninjos-shops .shops-geld[data-sorte="cp"] { --muenz-licht: #f6cfb0; --muenz-farbe: #c27a4b; --muenz-rand: #8f4f28; --muenz-schrift: #331505; }
+
+/* Der Preis ist die Zahl in Tinte; das Gold trägt jetzt die Münze. */
+.ninjos-shops .shops-preis .shops-geld-zahl,
+.ninjos-shops .shops-ankauf .shops-geld-zahl { color: var(--shops-text); }
+
+/* Die Börse und die Ladenkasse: die Münzen selbst, ohne Kapsel darum. */
+.ninjos-shops .shops-boerse-muenzen { align-items: center; gap: 4px 12px; }
+.ninjos-shops .shops-boerse-muenzen .shops-geld { font-size: 1rem; }
+.ninjos-shops .shops-boerse-muenzen .shops-geld + .shops-geld { margin-left: 0; }
+
+/* ── Die Quittung ──────────────────────────────────────────────────── */
+
+/*
+ * Ein Zettel mit gezackter Unterkante, wie abgerissen. Die Zacken macht eine
+ * Maske; der Schatten sitzt deshalb am Rahmen darum, sonst schnitte die Maske
+ * ihn mit ab.
+ */
+.shops-quittung-fenster .dialog-content { filter: drop-shadow(0 2px 4px rgb(60 40 10 / 22%)); }
+.ninjos-shops .shops-quittung {
+  position: relative;
+  margin: 4px 4px 6px;
+  padding: 14px 18px 30px;
+  background-color: var(--shops-karte);
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+  border-top: 3px solid var(--shops-gold);
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 14px 100%;
+          mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 14px 100%;
+}
+.ninjos-shops .shops-quittung-kopf {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .24em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ninjo-akzent-text);
+  border-bottom: 1px dashed #cdbf9f;
+}
+.ninjos-shops .shops-quittung .shops-abbruch { padding-right: 36px; }
+.ninjos-shops .shops-quittung-siegel { position: absolute; right: 12px; bottom: 14px; }
+
+/* ── Das Wachssiegel ───────────────────────────────────────────────── */
+
+/*
+ * Wer zugesagt hat, drückt sein Siegel auf seine Hälfte. Vorher stand das
+ * nur als Satz im Fuß und ein Häkchen in der Überschrift, beides leicht zu
+ * übersehen. Unregelmäßig rund wie gegossenes Wachs.
+ */
+.ninjos-shops .shops-siegel {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  color: #f3d77e;
+  background: radial-gradient(circle at 38% 32%, #c43b2f 0%, #8b0000 58%, #5e0000 100%);
+  border-radius: 52% 48% 50% 46% / 48% 53% 47% 52%;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 40%), inset 0 0 0 3px rgb(0 0 0 / 14%), inset 0 0 0 5px rgb(255 255 255 / 7%);
+  transform: rotate(-12deg);
+  animation: shops-stempeln .32s cubic-bezier(.2, .9, .3, 1.3) both;
+}
+@keyframes shops-stempeln {
+  from { transform: rotate(-12deg) scale(1.7); opacity: 0; }
+  to   { transform: rotate(-12deg) scale(1);   opacity: 1; }
+}
+.ninjos-shops .shops-tisch-seite { position: relative; }
+.ninjos-shops .shops-tisch-seite > .shops-siegel { position: absolute; top: 1px; right: 10px; z-index: 2; }
+/* Das alte Häkchen in der Überschrift sagt dasselbe wie das Siegel. */
+.ninjos-shops .shops-zugesagt-seite > h3 > i.fa-check { display: none; }
+
+/* ── Der Tisch ─────────────────────────────────────────────────────── */
+
+/*
+ * Beide Seiten liegen auf einer Fläche, statt in zwei Kästen mit einer
+ * Haarlinie dazwischen. Warmes Holz, hell genug für das helle Thema, mit
+ * einer Maserung aus zwei Verläufen statt aus einem Bild.
+ */
+.ninjos-shops .shops-tisch-platte {
+  gap: 12px;
+  padding: 12px;
+  background-color: #cdb189;
+  background-image:
+    repeating-linear-gradient(177deg, rgb(110 70 25 / 7%) 0 1px, transparent 1px 8px),
+    linear-gradient(180deg, #d9c29c, #c4a476);
+}
+.ninjos-shops .shops-tisch-platte > .shops-tisch-seite {
+  border: 1px solid #b89e76;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgb(60 35 10 / 25%);
+}
+.ninjos-shops .shops-tisch-platte > .shops-zugesagt-seite {
+  border-color: var(--shops-gold);
+  box-shadow: 0 0 0 2px rgb(212 175 55 / 55%), 0 2px 5px rgb(60 35 10 / 25%);
+}
+.ninjos-shops .shops-tisch-platte > .shops-tisch-seite > h3 { border-radius: 6px 6px 0 0; }
+
+/* ── Preisschilder ─────────────────────────────────────────────────── */
+
+/*
+ * Jedes Stück auf dem Tisch trägt ein Schild, mit Loch und leicht schief,
+ * wie angebunden. Ohne Preis hängt ein leeres, gestricheltes Schild da:
+ * genau der Zustand „Preis nennen", nur sichtbar statt beschrieben.
+ */
+.ninjos-shops .shops-tisch-nsc .shops-schild,
+.ninjos-shops .shops-tisch-spieler .shops-schild {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 5.6rem;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3em;
+  padding: 3px 10px 3px 20px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--shops-text);
+  background: #fbf2d8;
+  border: 1px solid #cdb888;
+  border-radius: 3px 7px 7px 3px;
+  box-shadow: 0 1px 2px rgb(60 40 10 / 18%);
+  transform: rotate(-1.5deg);
+}
+.ninjos-shops .shops-tisch-nsc .shops-schild::before,
+.ninjos-shops .shops-tisch-spieler .shops-schild::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: var(--shops-bg);
+  box-shadow: inset 0 0 0 1px #b8a275;
+}
+.ninjos-shops .shops-tisch-nsc button.shops-schild:hover,
+.ninjos-shops .shops-tisch-spieler button.shops-schild:hover {
+  border-color: var(--shops-gold);
+  transform: rotate(0deg);
+}
+.ninjos-shops .shops-tisch-nsc .shops-schild.shops-offen,
+.ninjos-shops .shops-tisch-spieler .shops-schild.shops-offen {
+  font-weight: 500;
+  color: var(--ninjo-akzent-text);
+  background: transparent;
+  border: 1px dashed var(--ninjo-akzent);
+  box-shadow: none;
+  transform: none;
+}
+
+/* ── Die Waage ─────────────────────────────────────────────────────── */
+
+/*
+ * Ein Balken auf einem Fuß, zwei Schalen daran. Der Balken neigt sich um
+ * `--neigung` zur schwereren Seite; die Schalen drehen sich zurück und
+ * hängen gerade. Geht es auf, glimmt der Balken.
+ */
+.ninjos-shops .shops-waagbalken {
+  position: relative;
+  flex: 0 0 76px;
+  width: 76px;
+  height: 40px;
+}
+.ninjos-shops .shops-waag-arm {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 9px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #e3c86f, #a8821e);
+  transform: rotate(var(--neigung, 0deg));
+  transition: transform .8s cubic-bezier(.3, 1.35, .5, 1);
+}
+.ninjos-shops .shops-waag-arm::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: #a8821e;
+}
+.ninjos-shops .shops-waag-schale {
+  position: absolute;
+  top: 9px;
+  width: 22px;
+  height: 8px;
+  border-radius: 0 0 11px 11px;
+  background: linear-gradient(180deg, #ead38a, #b8931f);
+  transform-origin: 50% -8px;
+  transform: rotate(calc(var(--neigung, 0deg) * -1));
+  transition: transform .8s cubic-bezier(.3, 1.35, .5, 1);
+}
+.ninjos-shops .shops-waag-schale::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: -8px;
+  height: 8px;
+  border-left: 1px solid #a8821e;
+  border-right: 1px solid #a8821e;
+}
+.ninjos-shops .shops-waag-schale:first-child { left: -11px; }
+.ninjos-shops .shops-waag-schale:last-child { right: -11px; }
+.ninjos-shops .shops-waag-fuss {
+  position: absolute;
+  left: 50%;
+  top: 11px;
+  bottom: 2px;
+  width: 3px;
+  margin-left: -1.5px;
+  background: #a8821e;
+}
+.ninjos-shops .shops-waag-fuss::after {
+  content: "";
+  position: absolute;
+  left: -11px;
+  right: -11px;
+  bottom: -2px;
+  height: 3px;
+  border-radius: 2px;
+  background: #a8821e;
+}
+.ninjos-shops .shops-waagbalken.shops-gleich .shops-waag-arm {
+  box-shadow: 0 0 7px 1px rgb(212 175 55 / 75%);
+}
+
+/* ── Der Laden: der Händler spricht selbst ─────────────────────────── */
+
+.ninjos-shops .shops-banner-rechts {
+  position: relative;
+  z-index: 1;
+  flex: 0 1 auto;
+  max-width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.ninjos-shops .shops-banner-rechts .shops-banner-haendler {
+  max-width: 100%;
+  flex-direction: row-reverse;
+  padding: 6px 6px 6px 14px;
+}
+.ninjos-shops .shops-banner-rechts .shops-banner-haendler > span { align-items: flex-end; }
+.ninjos-shops .shops-sprechblase {
+  position: relative;
+  max-width: 22rem;
+  padding: 8px 13px;
+  font-size: .86rem;
+  line-height: 1.38;
+  color: var(--shops-text);
+  background-color: var(--shops-karte);
+  background-image: var(--shops-faser);
+  background-blend-mode: multiply;
+  border: 1px solid #d9cbab;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 35%);
+}
+.ninjos-shops .shops-sprechblase p { margin: 0; }
+.ninjos-shops .shops-sprechblase p + p { margin-top: .4em; }
+/* Die Spitze zeigt auf das Gesicht darunter, das rechts steht. */
+.ninjos-shops .shops-sprechblase::after {
+  content: "";
+  position: absolute;
+  right: 22px;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: var(--shops-karte);
+  border-right: 1px solid #d9cbab;
+  border-bottom: 1px solid #d9cbab;
+  transform: rotate(45deg);
+}
+
+/* ── Der Laden: Fächer ─────────────────────────────────────────────── */
+
+.ninjos-shops .shops-spieler-ware > li.shops-fach {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 2px 0;
+  padding: 0 4px 5px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #5d5138;
+  border-bottom: 1px solid #d9cbab;
+}
+.ninjos-shops .shops-spieler-ware > li.shops-spalten + li.shops-fach { margin-top: 4px; }
+.ninjos-shops .shops-spieler-ware > li.shops-fach > i { color: var(--shops-gold); }
+
+/* ── Der Laden: ausverkauft als Stempel ────────────────────────────── */
+
+/*
+ * Das Bild steckt dafür in einem Rahmen. Seine Größe steht hier noch einmal,
+ * weil die alten Regeln nur ein Bild direkt in der Zeile treffen.
+ */
+.ninjos-shops .shops-spieler-ware > li.shops-zeile > .shops-bildrahmen {
+  position: relative;
+  flex: 0 0 56px;
+  line-height: 0;
+}
+.ninjos-shops .shops-spieler-ware > li.shops-zeile > .shops-bildrahmen > img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid var(--shops-rand);
+  background: var(--shops-nav);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .12);
+  cursor: zoom-in;
+  transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+.ninjos-shops .shops-spieler-ware > li.shops-zeile:hover > .shops-bildrahmen > img {
+  transform: scale(1.04);
+  border-color: var(--shops-gold);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .2);
+}
+.ninjos-shops .shops-stempel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 2px 4px;
+  font-size: .55rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #9b1c1c;
+  background: rgb(255 250 240 / 90%);
+  border: 1.5px solid #9b1c1c;
+  border-radius: 3px;
+  transform: translate(-50%, -50%) rotate(-14deg);
+}
+.ninjos-shops .shops-spieler-ware > li.shops-ausverkauft { opacity: 1; }
+.ninjos-shops .shops-spieler-ware > li.shops-ausverkauft .shops-warenname { text-decoration: none; }
+.ninjos-shops .shops-spieler-ware > li.shops-ausverkauft > .shops-bildrahmen > img { filter: grayscale(.85); opacity: .6; }
+.ninjos-shops .shops-spieler-ware > li.shops-ausverkauft > .shops-name,
+.ninjos-shops .shops-spieler-ware > li.shops-ausverkauft > .shops-menge,
+.ninjos-shops .shops-spieler-ware > li.shops-ausverkauft > .shops-preis { opacity: .55; }
+
+/* ── Weniger Bewegung ──────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .ninjos-shops .shops-siegel { animation: none; }
+  .ninjos-shops .shops-waag-arm,
+  .ninjos-shops .shops-waag-schale { transition: none; }
+}

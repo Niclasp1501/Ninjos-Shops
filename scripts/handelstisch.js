@@ -119,6 +119,19 @@ export function tischStand(handel) {
   const offenCp = differenzCp < 0 ? differenzCp + wechselCp : differenzCp - wechselCp;
 
   /*
+   * Wie weit sich die Waage neigt, in Grad. Hoechstens zwoelf, damit sie
+   * nicht umkippt, und mindestens drei, sobald etwas fehlt: Ein Kupferstueck
+   * Unterschied soll man sehen, nicht erahnen.
+   *
+   * Beim Spieler liegt seine Seite links und die der Person rechts. Liegt bei
+   * ihr mehr (`offenCp > 0`), sinkt die rechte Schale, und das ist im
+   * Uhrzeigersinn, also positiv. Die Spielleitung sieht den Tisch gespiegelt.
+   */
+  const schwerer = Math.max(linksCp, rechtsCp, 1);
+  const neigung = offenCp === 0 ? 0
+    : Math.sign(offenCp) * Math.max(3, Math.round(12 * Math.min(1, Math.abs(offenCp) / schwerer)));
+
+  /*
    * Ein Posten ohne Preis ist eine offene Frage, keine Null. Zugesagt werden
    * kann erst, wenn fuer alles etwas genannt ist; eine ausdrueckliche 0 heisst
    * geschenkt und zaehlt als genannt.
@@ -155,6 +168,8 @@ export function tischStand(handel) {
     rechtsText: alsText(rechtsCp, kuerzel),
 
     offenCp,
+    neigung,
+    neigungGm: -neigung,
     offenText: alsText(Math.abs(offenCp), kuerzel),
     fehlt: offenCp > 0,
     zuViel: offenCp < 0,
@@ -177,6 +192,26 @@ export function tischStand(handel) {
     leer: !((handel.seiteNsc ?? []).length || (handel.seiteSpieler ?? []).length
             || geldNsc || geldSpieler)
   };
+}
+
+/**
+ * Die Waage vom alten zum neuen Winkel schwenken lassen.
+ *
+ * Beim Neuzeichnen ersetzt das Fenster sein ganzes Innenleben; ein neuer
+ * Balken stuende sofort schraeg, und die Bewegung, die zeigt, was sich eben
+ * geaendert hat, fiele aus. Deshalb wird er erst im alten Winkel gesetzt und
+ * im naechsten Bild in den neuen gedreht. Gibt den neuen Winkel zurueck, das
+ * Fenster merkt ihn sich bis zum naechsten Mal.
+ */
+function waageSchwenken(wurzel, vorher) {
+  const balken = wurzel?.querySelector(".shops-waagbalken");
+  if (!balken) return vorher;
+  const jetzt = Number(balken.dataset.neigung) || 0;
+  if (jetzt === vorher) return jetzt;
+  balken.style.setProperty("--neigung", `${vorher}deg`);
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    balken.style.setProperty("--neigung", `${jetzt}deg`)));
+  return jetzt;
 }
 
 /** Der eigene offene Handel. */
@@ -903,6 +938,12 @@ export class Handelstisch extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /* Die Lage ueber dem Tisch - siehe tisch-wahl.js. */
   wahl = new Wahl();
+  #neigung = 0;
+
+  _onRender(context, options) {
+    super._onRender?.(context, options);
+    this.#neigung = waageSchwenken(this.element, this.#neigung);
+  }
   wahlLiegt() {
     const h = eigenerTisch();
     return { posten: h?.seiteSpieler ?? [], muenzen: h?.muenzenSpieler ?? {} };
@@ -1106,6 +1147,12 @@ export class HandelstischGM extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /* Die Lage ueber dem Tisch - siehe tisch-wahl.js. Hier fuer die Seite der Person. */
   wahl = new Wahl();
+  #neigung = 0;
+
+  _onRender(context, options) {
+    super._onRender?.(context, options);
+    this.#neigung = waageSchwenken(this.element, this.#neigung);
+  }
   wahlLiegt() {
     const h = game.users.get(this.#benutzerId)?.getFlag(MODULE_ID, TISCH);
     return { posten: h?.seiteNsc ?? [], muenzen: h?.muenzenNsc ?? {} };

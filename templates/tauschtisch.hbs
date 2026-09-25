@@ -72,6 +72,7 @@
                  title="{{localize 'SHOPS.Tausch.DuHastZugesagt'}}"></i>
             {{/if}}
           </h3>
+          {{#if stand.ich.bereit}}<span class="shops-siegel" role="img" aria-label="{{localize 'SHOPS.Tisch.Zugesagt'}}" title="{{localize 'SHOPS.Tisch.Zugesagt'}}"><i class="fa-solid fa-handshake" aria-hidden="true"></i></span>{{/if}}
           <ol class="shops-ware shops-tisch-spieler">
             {{#each stand.ich.posten}}
               <li class="shops-zeile" data-item-id="{{itemId}}">
@@ -85,7 +86,7 @@
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
                   <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
-                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{shopsGeld inhaltGeldText}}{{/if}}</small>
                 {{/if}}
                 </div>
                 <span class="shops-menge">{{menge}}&times;</span>
@@ -95,7 +96,7 @@
               <li class="shops-zeile shops-geldzeile">
                 <i class="fa-solid fa-coins" aria-hidden="true"></i>
                 <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
-                <span class="shops-preis">{{stand.ich.muenzText}}</span>
+                <span class="shops-preis">{{shopsGeld stand.ich.muenzText}}</span>
               </li>
             {{/if}}
             {{#if stand.ich.leer}}
@@ -125,6 +126,7 @@
                  title="{{localize 'SHOPS.Tausch.HatZugesagt'}}"></i>
             {{/if}}
           </h3>
+          {{#if stand.er.bereit}}<span class="shops-siegel" role="img" aria-label="{{localize 'SHOPS.Tisch.Zugesagt'}}" title="{{localize 'SHOPS.Tisch.Zugesagt'}}"><i class="fa-solid fa-handshake" aria-hidden="true"></i></span>{{/if}}
           <ol class="shops-ware shops-tisch-nsc">
             {{#each stand.er.posten}}
               <li class="shops-zeile" data-item-id="{{itemId}}">
@@ -138,7 +140,7 @@
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
                   <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
-                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{shopsGeld inhaltGeldText}}{{/if}}</small>
                 {{/if}}
                 </div>
                 <span class="shops-menge">{{menge}}&times;</span>
@@ -148,7 +150,7 @@
               <li class="shops-zeile shops-geldzeile">
                 <i class="fa-solid fa-coins" aria-hidden="true"></i>
                 <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
-                <span class="shops-preis">{{stand.er.muenzText}}</span>
+                <span class="shops-preis">{{shopsGeld stand.er.muenzText}}</span>
               </li>
             {{/if}}
             {{#if stand.er.leer}}

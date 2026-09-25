@@ -43,6 +43,57 @@ const kuerzel = s => game.i18n.localize(`SHOPS.Muenze.${s}`);
 /** Das eine Fenster dieses Clients. */
 let offen = null;
 
+/**
+ * Die Faecher der Auslage, in der Reihenfolge, in der man einen Laden
+ * abgeht: erst Waffen und Ruestung, dann was man mitnimmt, zuletzt Dienste.
+ *
+ * **Warum ueberhaupt Faecher.** Seit dem 25.09.2026. Bei dreissig Stueck in
+ * einer alphabetischen Liste steht der Heiltrank zwischen Hellebarde und
+ * Hemd, und wer einen Trank sucht, liest alles. Ein Laden hat Regale.
+ * Faecher erscheinen erst ab zwei Sorten Ware; ein Kraeuterladen mit lauter
+ * Traenken braucht keine Ueberschrift, die „Traenke" sagt.
+ */
+const FAECHER = [
+  { id: "waffen", symbol: "fa-khanda" },
+  { id: "ruestung", symbol: "fa-shield-halved" },
+  { id: "ausruestung", symbol: "fa-hat-wizard" },
+  { id: "werkzeug", symbol: "fa-screwdriver-wrench" },
+  { id: "verbrauch", symbol: "fa-flask" },
+  { id: "behaelter", symbol: "fa-box-open" },
+  { id: "waren", symbol: "fa-gem" },
+  { id: "dienst", symbol: "fa-handshake" },
+  { id: "sonstiges", symbol: "fa-ellipsis" }
+];
+
+/** In welches Fach ein Stueck gehoert, nach seinem dnd5e-Typ. */
+function fachVon(item, dienst) {
+  if (dienst) return "dienst";
+  switch (item.type) {
+    case "weapon": return "waffen";
+    case "equipment": {
+      const art = item.system?.type?.value;
+      return ["light", "medium", "heavy", "shield"].includes(art) ? "ruestung" : "ausruestung";
+    }
+    case "tool": return "werkzeug";
+    case "consumable": return "verbrauch";
+    case "container":
+    case "backpack": return "behaelter";
+    case "loot": return "waren";
+    default: return "sonstiges";
+  }
+}
+
+/** Die Ware in Faecher sortieren. Leere Faecher fallen weg. */
+function faecherBilden(ware) {
+  return FAECHER
+    .map(f => ({
+      ...f,
+      titel: game.i18n.localize(`SHOPS.Fach.${f.id}`),
+      ware: ware.filter(w => w.fach === f.id)
+    }))
+    .filter(f => f.ware.length);
+}
+
 export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: `${MODULE_ID}-spieler`,
@@ -111,6 +162,8 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     const figur = eigeneFigur();
     const angebot = eigenesAngebot(laden.uuid);
     const angebotsWare = angebot ? laden.items.get(angebot.itemId) : null;
+    const ware = this.#wareAufbereiten(system);
+    const faecher = faecherBilden(ware);
 
     return Object.assign(ctx, {
       ladenName: laden.name,
@@ -123,7 +176,9 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       blick: this.#blick,
       zeigtKaufen: this.#blick === "kaufen",
       zeigtVerkaufen: this.#blick === "verkaufen",
-      ware: this.#wareAufbereiten(system),
+      ware,
+      faecher,
+      zeigtFaecher: faecher.length > 1,
       boerse: this.#boerseAufbereiten(figur),
       figurName: figur?.name ?? null,
       gesperrt: system.kaufmodus === KAUFMODUS.GESPERRT,
@@ -186,6 +241,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
           frisch: Number.isFinite(merkmal[WARE.HERVORGEHOLT])
             && (Date.now() - merkmal[WARE.HERVORGEHOLT]) < 3600000,
           dienst,
+          fach: fachVon(item, dienst),
           ausverkauft: !dienst && menge <= 0,
           /*
            * Wieviel man auf einmal nehmen darf. Der Laden kann eine Grenze je

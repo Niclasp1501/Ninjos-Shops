@@ -27,8 +27,9 @@
 
     <div class="shops-tisch-platte">
 
-      <section class="shops-tisch-seite" data-seite="spieler">
+      <section class="shops-tisch-seite {{#if stand.bereitSpieler}}shops-zugesagt-seite{{/if}}" data-seite="spieler">
         <h3>{{localize "SHOPS.Tisch.DuGibst"}}</h3>
+        {{#if stand.bereitSpieler}}<span class="shops-siegel" role="img" aria-label="{{localize 'SHOPS.Tisch.Zugesagt'}}" title="{{localize 'SHOPS.Tisch.Zugesagt'}}"><i class="fa-solid fa-handshake" aria-hidden="true"></i></span>{{/if}}
         <ol class="shops-ware shops-tisch-spieler">
           {{#each stand.seiteSpieler}}
             <li class="shops-zeile" data-item-id="{{itemId}}">
@@ -38,21 +39,21 @@
               <div class="shops-name">
                 <span class="shops-warenname" data-action="ansehen"
                       title="{{localize 'SHOPS.Ansehen.Knopf'}}">{{name}}</span>
-                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
+                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{shopsGeld grundText}}</small>{{/if}}
                 {{#if darinEtwas}}
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
                   <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
-                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{shopsGeld inhaltGeldText}}{{/if}}</small>
                 {{/if}}
               </div>
               <span class="shops-menge">{{menge}}&times;</span>
               {{!-- Was ich dafür haben will. Ein Tipp ändert es jederzeit. --}}
-              <button type="button" class="shops-tisch-preis {{#unless hatPreis}}shops-offen{{/unless}}"
+              <button type="button" class="shops-tisch-preis shops-schild {{#unless hatPreis}}shops-offen{{/unless}}"
                       data-action="preisNennen"
                       title="{{localize 'SHOPS.Tisch.PreisAendern'}}"
                       aria-label="{{localize 'SHOPS.Tisch.PreisAendern'}}: {{name}}">
-                {{#if hatPreis}}{{preisText}}
+                {{#if hatPreis}}{{shopsGeld preisText}}
                 {{else}}<i class="fa-solid fa-tag" aria-hidden="true"></i> {{localize "SHOPS.Tisch.PreisNennen"}}{{/if}}
               </button>
               <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
@@ -66,7 +67,7 @@
             <li class="shops-zeile shops-geldzeile">
               <i class="fa-solid fa-coins" aria-hidden="true"></i>
               <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
-              <span class="shops-preis">{{stand.geldSpielerText}}</span>
+              <span class="shops-preis">{{shopsGeld stand.geldSpielerText}}</span>
               <button type="button" class="shops-tisch-weg" data-action="geldWeg"
                       aria-label="{{localize 'SHOPS.Tisch.GeldWeg'}}"
                       title="{{localize 'SHOPS.Tisch.GeldWeg'}}">
@@ -92,8 +93,9 @@
         </div>
       </section>
 
-      <section class="shops-tisch-seite" data-seite="nsc">
+      <section class="shops-tisch-seite {{#if stand.bereitGm}}shops-zugesagt-seite{{/if}}" data-seite="nsc">
         <h3>{{localize "SHOPS.Tisch.SieGibt" person=stand.personName}}</h3>
+        {{#if stand.bereitGm}}<span class="shops-siegel" role="img" aria-label="{{localize 'SHOPS.Tisch.Zugesagt'}}" title="{{localize 'SHOPS.Tisch.Zugesagt'}}"><i class="fa-solid fa-handshake" aria-hidden="true"></i></span>{{/if}}
         <ol class="shops-ware shops-tisch-nsc">
           {{#each stand.seiteNsc}}
             {{!-- Anklickbar nur, wenn die Spielleitung es erlaubt. Das
@@ -110,20 +112,20 @@
                   {{!-- Was im Beutel liegt, gehört zu dem, was zugesagt wird —
                         also muss man es sehen. --}}
                   <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}}
-                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{inhaltGeldText}}{{/if}}</small>
+                    {{#each inhalt}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{#if inhaltGeldText}}{{#if inhalt.length}} &middot; {{/if}}{{shopsGeld inhaltGeldText}}{{/if}}</small>
                 {{/if}}
               </div>
               {{!-- Was sie dafür haben will, so wie die Spielleitung es
                     genannt hat. Kein gerechneter Preis. --}}
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{#if hatPreis}}{{preisText}}{{else}}<em class="shops-ohne-preis">{{localize "SHOPS.Tisch.OhnePreis"}}</em>{{/if}}</span>
+              <span class="shops-preis shops-schild {{#unless hatPreis}}shops-offen{{/unless}}">{{#if hatPreis}}{{shopsGeld preisText}}{{else}}<em class="shops-ohne-preis">{{localize "SHOPS.Tisch.OhnePreis"}}</em>{{/if}}</span>
             </li>
           {{/each}}
           {{#if stand.geldNsc}}
             <li class="shops-zeile shops-geldzeile">
               <i class="fa-solid fa-coins" aria-hidden="true"></i>
               <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
-              <span class="shops-preis">{{stand.geldNscText}}</span>
+              <span class="shops-preis">{{shopsGeld stand.geldNscText}}</span>
             </li>
           {{/if}}
           {{#unless stand.seiteNsc.length}}{{#unless stand.geldNsc}}
@@ -141,24 +143,30 @@
                 {{#if stand.zuViel}}shops-bekommt{{/if}}">
       {{!-- Die eigene Seite links, wie auf dem Tisch darueber. --}}
       <span class="shops-tisch-summe">
-        <small>{{localize "SHOPS.Tisch.Du"}}</small> {{stand.rechtsText}}
+        <small>{{localize "SHOPS.Tisch.Du"}}</small> {{shopsGeld stand.rechtsText}}
       </span>
-      <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+      {{!-- Die Waage als Waage: Der Balken neigt sich zur Seite, auf der mehr
+            liegt. Ob der Handel aufgeht, sieht man so aus zwei Metern. --}}
+      <span class="shops-waagbalken {{#if stand.ausgeglichen}}shops-gleich{{/if}}"
+            data-neigung="{{stand.neigung}}" style="--neigung: {{stand.neigung}}deg" aria-hidden="true">
+        <span class="shops-waag-arm"><span class="shops-waag-schale"></span><span class="shops-waag-schale"></span></span>
+        <span class="shops-waag-fuss"></span>
+      </span>
       <span class="shops-tisch-summe">
-        <small>{{stand.personName}}</small> {{stand.linksText}}
+        <small>{{stand.personName}}</small> {{shopsGeld stand.linksText}}
       </span>
       <strong class="shops-tisch-differenz">
         {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
-        {{else if stand.fehlt}}{{localize "SHOPS.Tisch.Fehlt" geld=stand.offenText}}
-        {{else}}{{localize "SHOPS.Tisch.ZuViel" geld=stand.offenText}}{{/if}}
+        {{else if stand.fehlt}}{{shopsGeld (localize "SHOPS.Tisch.Fehlt" geld=stand.offenText)}}
+        {{else}}{{shopsGeld (localize "SHOPS.Tisch.ZuViel" geld=stand.offenText)}}{{/if}}
       </strong>
       {{#if stand.wechselCp}}
         {{!-- Wechselgeld ist kein Fehler auf der Waage, sondern Teil des
               Tauschs. Deshalb steht es daneben und nicht als „zu viel". --}}
         <span class="shops-tisch-wechsel">
           <i class="fa-solid fa-coins" aria-hidden="true"></i>
-          {{#if stand.wechselAnSpieler}}{{localize "SHOPS.Tisch.WechselDu" geld=stand.wechselText}}
-          {{else}}{{localize "SHOPS.Tisch.WechselAn" wer=stand.personName geld=stand.wechselText}}{{/if}}
+          {{#if stand.wechselAnSpieler}}{{shopsGeld (localize "SHOPS.Tisch.WechselDu" geld=stand.wechselText)}}
+          {{else}}{{shopsGeld (localize "SHOPS.Tisch.WechselAn" wer=stand.personName geld=stand.wechselText)}}{{/if}}
         </span>
       {{/if}}
     </div>

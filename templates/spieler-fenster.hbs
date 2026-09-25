@@ -13,18 +13,24 @@
   <header class="shops-banner" style="background-image: url('{{kopfbild}}'); background-position: 50% {{kopfFokus}}%;">
     <div class="shops-banner-text">
       <h2>{{ladenName}}</h2>
-      {{#if begruessung}}<div class="shops-begruessung">{{{begruessung}}}</div>{{/if}}
+      {{#unless haendler}}{{#if begruessung}}<div class="shops-begruessung">{{{begruessung}}}</div>{{/if}}{{/unless}}
     </div>
 
     {{!-- Der Verkäufer steht rechts als Gesicht, nicht klein unter dem
           Ladennamen. Siehe laden-kopf.hbs. --}}
     {{#if haendler}}
+      {{!-- Seit dem 25.09.2026 spricht der Haendler seinen Satz selbst: als
+            Sprechblase ueber seinem Gesicht, nicht als graue Zeile unter dem
+            Ladennamen. Ohne Haendler bleibt der Satz, wo er war. --}}
+      <div class="shops-banner-rechts">
+      {{#if begruessung}}<div class="shops-sprechblase">{{{begruessung}}}</div>{{/if}}
       <div class="shops-banner-haendler" title="{{localize 'SHOPS.Haendler.Feld'}}">
         {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
         <span>
           <em>{{localize "SHOPS.Haendler.Marke"}}</em>
           <strong>{{haendler.name}}</strong>
         </span>
+      </div>
       </div>
     {{/if}}
 
@@ -47,7 +53,7 @@
         <span class="shops-angebot-kopf">{{localize "SHOPS.Angebot.FuerDich"}}</span>
         <span class="shops-angebot-ware">
           {{#if angebot.mehrere}}{{angebot.menge}}&times; {{/if}}{{angebot.name}}
-          <strong>{{angebot.summeText}}</strong>
+          <strong>{{shopsGeld angebot.summeText}}</strong>
         </span>
         {{#if angebot.text}}<span class="shops-angebot-satz">„{{angebot.text}}"</span>{{/if}}
       </div>
@@ -67,7 +73,7 @@
       </span>
       <span class="shops-boerse-muenzen">
         {{#each boerse}}
-          <span class="shops-boerse-muenze">{{wert}}&nbsp;{{kuerzel}}</span>
+          {{shopsGeld wert kuerzel}}
         {{/each}}
       </span>
     </aside>
@@ -118,13 +124,24 @@
           <span class="shops-spalte-kauf"></span>
         </li>
 
+        {{#each faecher}}
+        {{#if @root.zeigtFaecher}}
+          <li class="shops-fach" role="presentation">
+            <i class="fa-solid {{symbol}}" aria-hidden="true"></i>
+            <span>{{titel}}</span>
+            <span class="shops-anzahl">{{ware.length}}</span>
+          </li>
+        {{/if}}
         {{#each ware}}
           <li class="shops-zeile {{#if ausverkauft}}shops-ausverkauft{{/if}} {{#if dienst}}shops-dienst{{/if}}"
               data-item-id="{{id}}">
             {{!-- Bild und Name führen zur Nahansicht: Wer sich für etwas
                   interessiert, will es größer sehen und lesen, was es kann. --}}
-            <img src="{{img}}" alt="" data-action="wareAnsehen"
-                 title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+            <span class="shops-bildrahmen">
+              <img src="{{img}}" alt="" data-action="wareAnsehen"
+                   title="{{localize 'SHOPS.Ansehen.Knopf'}}">
+              {{#if ausverkauft}}<span class="shops-stempel">{{localize "SHOPS.Spieler.Ausverkauft"}}</span>{{/if}}
+            </span>
             <div class="shops-name">
               <span class="shops-warenname" data-action="wareAnsehen"
                     title="{{localize 'SHOPS.Ansehen.Knopf'}}">
@@ -148,7 +165,7 @@
               {{#if dienst}}—{{else}}{{menge}}{{/if}}
             </span>
 
-            <span class="shops-preis">{{preisText}}</span>
+            <span class="shops-preis">{{shopsGeld preisText}}</span>
 
             {{!-- Der Knopf sagt, warum er nicht geht. Ein Knopf, der ohne
                   Begruendung aus ist, laesst jeden zweimal klicken. --}}
@@ -186,6 +203,7 @@
             {{/if}}
           </li>
         {{/each}}
+        {{/each}}
       </ol>
     {{else}}
       <p class="shops-leer shops-hinweisfeld">{{localize "SHOPS.Spieler.AuslageLeer"}}</p>
@@ -222,7 +240,7 @@
                 <span class="shops-warenname">{{name}}</span>
               </div>
               <span class="shops-menge">{{menge}}</span>
-              <span class="shops-preis">{{preisText}}</span>
+              <span class="shops-preis">{{shopsGeld preisText}}</span>
               {{#if wertlos}}
                 <button type="button" class="shops-kaufen" disabled
                         title="{{localize 'SHOPS.Verkauf.Wertlos'}}">

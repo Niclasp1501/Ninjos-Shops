@@ -32,7 +32,7 @@
               {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
               <div class="shops-name"><span class="shops-warenname">{{itemName}}</span></div>
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{summeText}}</span>
+              <span class="shops-preis">{{shopsGeld summeText}}</span>
             </li>
           </ol>
 
@@ -85,7 +85,7 @@
                 {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
                 <div class="shops-name"><span class="shops-warenname">{{name}}</span></div>
                 <span class="shops-menge">{{menge}}&times;</span>
-                <span class="shops-preis">{{wertText}}</span>
+                <span class="shops-preis">{{shopsGeld wertText}}</span>
               </li>
             {{/each}}
           </ol>
@@ -103,17 +103,17 @@
               <button type="button" data-action="uebernehmen" data-wert="{{untenCp}}"
                       title="{{localize 'SHOPS.Anfrage.UntenHinweis'}}">
                 <small>{{localize "SHOPS.Anfrage.Unten"}}</small>
-                <strong>{{untenText}}</strong>
+                <strong>{{shopsGeld untenText}}</strong>
               </button>
               <button type="button" class="shops-ueblich" data-action="uebernehmen" data-wert="{{ueblichCp}}"
                       title="{{localize 'SHOPS.Anfrage.UeblichHinweis'}}">
                 <small>{{localize "SHOPS.Anfrage.Ueblich"}}</small>
-                <strong>{{ueblichText}}</strong>
+                <strong>{{shopsGeld ueblichText}}</strong>
               </button>
               <button type="button" data-action="uebernehmen" data-wert="{{obenCp}}"
                       title="{{localize 'SHOPS.Anfrage.ObenHinweis'}}">
                 <small>{{localize "SHOPS.Anfrage.Oben"}}</small>
-                <strong>{{obenText}}</strong>
+                <strong>{{shopsGeld obenText}}</strong>
               </button>
             </div>
             {{/if}}
@@ -121,7 +121,7 @@
 
           {{#if vorgeschlagen}}
             <p class="shops-blockhinweis">
-              {{localize "SHOPS.Anfrage.Geboten"}} <strong>{{angebotText}}</strong> —
+              {{localize "SHOPS.Anfrage.Geboten"}} <strong>{{shopsGeld angebotText}}</strong>.
               {{localize "SHOPS.Anfrage.WartetAufAntwort"}}
             </p>
           {{/if}}

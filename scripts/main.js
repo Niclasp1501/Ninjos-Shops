@@ -34,6 +34,7 @@ import { monitorEinstellungEinrichten } from "./monitore.js";
 import { marktbuchEinstellungEinrichten } from "./marktbuch.js";
 import { szenenBogenEinrichten } from "./szenenfeld.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
+import { muenzhelferEinrichten } from "./muenzbild.js";
 
 function einstellungenEinrichten() {
   /**
@@ -206,6 +207,8 @@ Hooks.once("init", () => {
   ladenBogenEinrichten();
   zugaengeHaken();
   willkommenEinrichten();
+  // Vor dem ersten Zeichnen: Jede Vorlage mit einem Betrag braucht ihn.
+  muenzhelferEinrichten();
   // Muss in "init" stehen: Ninjo's Foundry MCP ruft seinen registerTools-Hook
   // beim Hochfahren, also bevor "ready" laeuft. Fehlt das Modul, passiert nichts.
   mcpWerkzeugeEinrichten();

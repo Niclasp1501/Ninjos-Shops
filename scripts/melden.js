@@ -17,6 +17,7 @@
  */
 
 import { MODULE_ID, SOCKET } from "./const.js";
+import { muenzenHtml } from "./muenzbild.js";
 
 const { DialogV2 } = foundry.applications.api;
 
@@ -49,11 +50,28 @@ export function istWortbruch(grund) { return WORTBRUCH.has(grund); }
  * auf eine Meldung zurueck, damit die Auskunft nicht ganz verloren geht.
  */
 function fensterZeigen({ titel, symbol, inhalt, knopf, klasse }) {
+  // Beträge im Satz als Münzen. Der Satz ist hier schon maskiertes HTML.
+  const satz = `<p class="shops-abbruch ${klasse ?? ""}">${muenzenHtml(inhalt, { schonHtml: true })}</p>`;
+  /*
+   * **Was gelungen ist, bekommt eine Quittung.** Seit dem 25.09.2026: ein
+   * Zettel mit Kopf und Siegel statt eines Satzes im grauen Fenster. Kauf,
+   * Verkauf, Handel und Tausch sehen damit gleich aus, und man erkennt ohne zu
+   * lesen, dass es erledigt ist. Abbruch und Hinweis bleiben schlicht: Sie
+   * sollen gelesen werden, nicht aufbewahrt.
+   */
+  const quittung = klasse === "shops-gelungen";
+  const inhaltHtml = quittung
+    ? `<div class="shops-quittung">
+         <div class="shops-quittung-kopf">${game.i18n.localize("SHOPS.Quittung.Titel")}</div>
+         ${satz}
+         <span class="shops-siegel shops-quittung-siegel" aria-hidden="true"><i class="fa-solid fa-handshake"></i></span>
+       </div>`
+    : satz;
   try {
     DialogV2.prompt({
       window: { title: game.i18n.localize(titel), icon: symbol },
-      classes: ["ninjos-shops"],
-      content: `<p class="shops-abbruch ${klasse ?? ""}">${inhalt}</p>`,
+      classes: quittung ? ["ninjos-shops", "shops-quittung-fenster"] : ["ninjos-shops"],
+      content: inhaltHtml,
       ok: { label: game.i18n.localize(knopf), icon: "fa-solid fa-check" }
     }).catch(fehler => {
       // Wegklicken und Escape werfen hier ebenfalls. Das ist kein Fehler.

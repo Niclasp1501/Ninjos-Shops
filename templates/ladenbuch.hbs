@@ -43,7 +43,7 @@
 
           {{!-- Bei einem Nein ist nichts geflossen. „0 KM" laese sich wie ein
                 Kauf zum Nulltarif. --}}
-          <span class="shops-buch-summe">{{#if abgelehnt}}—{{else}}{{summeText}}{{/if}}</span>
+          <span class="shops-buch-summe">{{#if abgelehnt}}—{{else}}{{shopsGeld summeText}}{{/if}}</span>
         </li>
       {{/each}}
     </ol>
@@ -51,11 +51,11 @@
     <footer class="shops-buch-fuss">
       <span>
         <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-        {{localize "SHOPS.Buch.Ausgegeben"}} <strong>{{ausgegebenText}}</strong>
+        {{localize "SHOPS.Buch.Ausgegeben"}} <strong>{{shopsGeld ausgegebenText}}</strong>
       </span>
       <span>
         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-        {{localize "SHOPS.Buch.Eingenommen"}} <strong>{{eingenommenText}}</strong>
+        {{localize "SHOPS.Buch.Eingenommen"}} <strong>{{shopsGeld eingenommenText}}</strong>
       </span>
     </footer>
   {{else}}

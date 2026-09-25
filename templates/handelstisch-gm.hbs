@@ -26,8 +26,9 @@
 
     <div class="shops-tisch-platte">
 
-      <section class="shops-tisch-seite" data-seite="nsc">
+      <section class="shops-tisch-seite {{#if stand.bereitGm}}shops-zugesagt-seite{{/if}}" data-seite="nsc">
         <h3>{{localize "SHOPS.Tisch.SieGibt" person=stand.personName}}</h3>
+        {{#if stand.bereitGm}}<span class="shops-siegel" role="img" aria-label="{{localize 'SHOPS.Tisch.Zugesagt'}}" title="{{localize 'SHOPS.Tisch.Zugesagt'}}"><i class="fa-solid fa-handshake" aria-hidden="true"></i></span>{{/if}}
         <ol class="shops-ware shops-tisch-nsc">
           {{#each stand.seiteNsc}}
             <li class="shops-zeile" data-item-id="{{itemId}}">
@@ -36,16 +37,16 @@
               {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
               <div class="shops-name">
                 <span class="shops-warenname">{{name}}</span>
-                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
+                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{shopsGeld grundText}}</small>{{/if}}
               </div>
               <span class="shops-menge">{{menge}}&times;</span>
               {{!-- Was sie dafür haben will. Genannt wird es hier, und ein
                     Tipp ändert es jederzeit. --}}
-              <button type="button" class="shops-tisch-preis {{#unless hatPreis}}shops-offen{{/unless}}"
+              <button type="button" class="shops-tisch-preis shops-schild {{#unless hatPreis}}shops-offen{{/unless}}"
                       data-action="preisNennen"
                       title="{{localize 'SHOPS.Tisch.PreisAendern'}}"
                       aria-label="{{localize 'SHOPS.Tisch.PreisAendern'}}: {{name}}">
-                {{#if hatPreis}}{{preisText}}
+                {{#if hatPreis}}{{shopsGeld preisText}}
                 {{else}}<i class="fa-solid fa-tag" aria-hidden="true"></i> {{localize "SHOPS.Tisch.PreisNennen"}}{{/if}}
               </button>
               <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
@@ -59,7 +60,7 @@
             <li class="shops-zeile shops-geldzeile">
               <i class="fa-solid fa-coins" aria-hidden="true"></i>
               <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
-              <span class="shops-preis">{{stand.geldNscText}}</span>
+              <span class="shops-preis">{{shopsGeld stand.geldNscText}}</span>
               <button type="button" class="shops-tisch-weg" data-action="geldWeg"
                       aria-label="{{localize 'SHOPS.Tisch.GeldWeg'}}"
                       title="{{localize 'SHOPS.Tisch.GeldWeg'}}">
@@ -85,8 +86,9 @@
         </div>
       </section>
 
-      <section class="shops-tisch-seite" data-seite="spieler">
+      <section class="shops-tisch-seite {{#if stand.bereitSpieler}}shops-zugesagt-seite{{/if}}" data-seite="spieler">
         <h3>{{localize "SHOPS.Tisch.ErGibt" spieler=spielerName}}</h3>
+        {{#if stand.bereitSpieler}}<span class="shops-siegel" role="img" aria-label="{{localize 'SHOPS.Tisch.Zugesagt'}}" title="{{localize 'SHOPS.Tisch.Zugesagt'}}"><i class="fa-solid fa-handshake" aria-hidden="true"></i></span>{{/if}}
         <ol class="shops-ware shops-tisch-spieler">
           {{#each stand.seiteSpieler}}
             {{!-- Was er dafür haben will. Den Preis nennt er selbst; wer
@@ -96,10 +98,10 @@
               {{else}}<i class="fa-solid fa-cube shops-kein-bild" aria-hidden="true"></i>{{/if}}
               <div class="shops-name">
                 <span class="shops-warenname">{{name}}</span>
-                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{grundText}}</small>{{/if}}
+                {{#if grundText}}<small class="shops-grundpreis">{{localize "SHOPS.Tisch.Grundpreis"}} {{shopsGeld grundText}}</small>{{/if}}
               </div>
               <span class="shops-menge">{{menge}}&times;</span>
-              <span class="shops-preis">{{#if hatPreis}}{{preisText}}{{else}}<em class="shops-ohne-preis">{{localize "SHOPS.Tisch.OhnePreis"}}</em>{{/if}}</span>
+              <span class="shops-preis shops-schild {{#unless hatPreis}}shops-offen{{/unless}}">{{#if hatPreis}}{{shopsGeld preisText}}{{else}}<em class="shops-ohne-preis">{{localize "SHOPS.Tisch.OhnePreis"}}</em>{{/if}}</span>
               <button type="button" class="shops-tisch-weg" data-action="wegnehmen"
                       aria-label="{{localize 'SHOPS.Tisch.Wegnehmen'}}"
                       title="{{localize 'SHOPS.Tisch.Wegnehmen'}}">
@@ -111,7 +113,7 @@
             <li class="shops-zeile shops-geldzeile">
               <i class="fa-solid fa-coins" aria-hidden="true"></i>
               <div class="shops-name"><span class="shops-warenname">{{localize "SHOPS.Tisch.Geld"}}</span></div>
-              <span class="shops-preis">{{stand.geldSpielerText}}</span>
+              <span class="shops-preis">{{shopsGeld stand.geldSpielerText}}</span>
             </li>
           {{/if}}
           {{#unless stand.seiteSpieler.length}}{{#unless stand.geldSpieler}}
@@ -124,24 +126,30 @@
     <div class="shops-tisch-waage {{#if stand.fehlt}}shops-zahlt{{/if}}
                 {{#if stand.zuViel}}shops-bekommt{{/if}}">
       <span class="shops-tisch-summe">
-        <small>{{stand.personName}}</small> {{stand.linksText}}
+        <small>{{stand.personName}}</small> {{shopsGeld stand.linksText}}
       </span>
-      <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+      {{!-- Die Waage als Waage: Der Balken neigt sich zur Seite, auf der mehr
+            liegt. Ob der Handel aufgeht, sieht man so aus zwei Metern. --}}
+      <span class="shops-waagbalken {{#if stand.ausgeglichen}}shops-gleich{{/if}}"
+            data-neigung="{{stand.neigungGm}}" style="--neigung: {{stand.neigungGm}}deg" aria-hidden="true">
+        <span class="shops-waag-arm"><span class="shops-waag-schale"></span><span class="shops-waag-schale"></span></span>
+        <span class="shops-waag-fuss"></span>
+      </span>
       <span class="shops-tisch-summe">
-        <small>{{spielerName}}</small> {{stand.rechtsText}}
+        <small>{{spielerName}}</small> {{shopsGeld stand.rechtsText}}
       </span>
       <strong class="shops-tisch-differenz">
         {{#if stand.ausgeglichen}}{{localize "SHOPS.Tisch.Ausgeglichen"}}
-        {{else if stand.fehlt}}{{localize "SHOPS.Tisch.Fehlt" geld=stand.offenText}}
-        {{else}}{{localize "SHOPS.Tisch.ZuViel" geld=stand.offenText}}{{/if}}
+        {{else if stand.fehlt}}{{shopsGeld (localize "SHOPS.Tisch.Fehlt" geld=stand.offenText)}}
+        {{else}}{{shopsGeld (localize "SHOPS.Tisch.ZuViel" geld=stand.offenText)}}{{/if}}
       </strong>
       {{#if stand.wechselCp}}
         {{!-- Wechselgeld ist kein Fehler auf der Waage, sondern Teil des
               Tauschs. Deshalb steht es daneben und nicht als „zu viel". --}}
         <span class="shops-tisch-wechsel">
           <i class="fa-solid fa-coins" aria-hidden="true"></i>
-          {{#if stand.wechselAnSpieler}}{{localize "SHOPS.Tisch.WechselAn" wer=spielerName geld=stand.wechselText}}
-          {{else}}{{localize "SHOPS.Tisch.WechselAn" wer=stand.personName geld=stand.wechselText}}{{/if}}
+          {{#if stand.wechselAnSpieler}}{{shopsGeld (localize "SHOPS.Tisch.WechselAn" wer=spielerName geld=stand.wechselText)}}
+          {{else}}{{shopsGeld (localize "SHOPS.Tisch.WechselAn" wer=stand.personName geld=stand.wechselText)}}{{/if}}
         </span>
       {{/if}}
     </div>
