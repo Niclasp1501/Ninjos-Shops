@@ -39,6 +39,7 @@ jobs:
           node tools/kasse.test.mjs
           node tools/lager.test.mjs
           node tools/sprache.test.mjs
+          node tools/muenzbild.test.mjs
 
       # Was im Zip landet, ist genau das, was die Auslieferung auch auf den
       # eigenen Server schiebt (tools/deploy-shops.ps1). Konzept, Agentennotizen

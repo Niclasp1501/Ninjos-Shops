@@ -6,6 +6,21 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## Unreleased
 
 ### Added
+- **Money looks like money.** Every amount, in prices, purses, the till, the
+  trade table and the result windows, is shown as small coins in their metal
+  with the abbreviation on them: platinum, gold, electrum, silver, copper.
+- **Receipts.** A finished purchase, sale, trade or swap opens a receipt with
+  a torn edge and a wax seal instead of a plain sentence.
+- **The trade table looks like a table.** Both sides lie on one wooden
+  surface, every item carries a price tag (an empty dashed tag until a price
+  is named), an agreed side gets a wax seal, and the balance is drawn as a
+  beam that tilts towards the heavier side.
+- **Shelves in the shop.** Once a shop sells more than one kind of goods, the
+  player window groups them under headings such as weapons, armour, potions
+  and services. The merchant speaks the greeting as a speech bubble, and
+  sold out goods carry a stamp instead of a struck-through name.
+
+### Added
 - **The welcome window mentions Patreon.** Below the link to Ninjo's Forge,
   one line now says that the modules are free and stay free, and that you can
   support the work on Patreon and get premium add-ons. Only GMs see the
