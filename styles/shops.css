@@ -4922,83 +4922,68 @@
 /* ── Die Waage ─────────────────────────────────────────────────────── */
 
 /*
- * Ein Balken auf einem Fuß, zwei Schalen daran. Der Balken neigt sich um
- * `--neigung` zur schwereren Seite; die Schalen drehen sich zurück und
- * hängen gerade. Geht es auf, glimmt der Balken.
+ * Ein Balken auf einem Fuß, zwei Schalen daran, gezeichnet als SVG.
+ *
+ * Die erste Fassung vom selben Tag baute die Waage aus Kästchen. Die Fäden
+ * waren zwei senkrechte Striche über dem Schalenrand und liefen nicht am
+ * Balkenende zusammen: Ein Faden stand neben dem Balken in der Luft, der
+ * andere ragte über ihn hinaus. Am Tisch gesehen. Jetzt hängt jede Schale an
+ * einem Punkt, und die Fäden laufen von dort schräg zum Rand.
+ *
+ * Der Balken dreht sich um den Drehpunkt (`view-box`, 54/12). Jede Schale
+ * dreht sich um ihren Aufhängepunkt zurück und hängt gerade; der liegt oben
+ * in der Mitte ihres eigenen Rahmens (`fill-box`, 50 % 0).
  */
 .ninjos-shops .shops-waagbalken {
-  position: relative;
+  display: block;
   flex: 0 0 108px;
   width: 108px;
-  height: 52px;
+  height: 54px;
   margin: 0 6px;
 }
+.ninjos-shops .shops-waagbalken > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
 .ninjos-shops .shops-waag-arm {
-  position: absolute;
-  left: 15px;
-  right: 15px;
-  top: 12px;
-  height: 4px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, #e3c86f, #a8821e);
+  transform-box: view-box;
+  transform-origin: 54px 12px;
   transform: rotate(var(--neigung, 0deg));
   transition: transform .8s cubic-bezier(.3, 1.35, .5, 1);
 }
-.ninjos-shops .shops-waag-arm::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -3px;
-  width: 10px;
-  height: 10px;
-  margin-left: -5px;
-  border-radius: 50%;
-  background: #a8821e;
-}
 .ninjos-shops .shops-waag-schale {
-  position: absolute;
-  top: 13px;
-  width: 30px;
-  height: 11px;
-  border-radius: 0 0 15px 15px;
-  background: linear-gradient(180deg, #ead38a, #b8931f);
-  transform-origin: 50% -13px;
+  transform-box: fill-box;
+  transform-origin: 50% 0;
   transform: rotate(calc(var(--neigung, 0deg) * -1));
   transition: transform .8s cubic-bezier(.3, 1.35, .5, 1);
 }
-.ninjos-shops .shops-waag-schale::before {
-  content: "";
-  position: absolute;
-  left: 4px;
-  right: 4px;
-  top: -13px;
-  height: 13px;
-  border-left: 1px solid #a8821e;
-  border-right: 1px solid #a8821e;
+.ninjos-shops .shops-waag-balken {
+  fill: none;
+  stroke: #b8931f;
+  stroke-width: 4;
+  stroke-linecap: round;
 }
-.ninjos-shops .shops-waag-schale:first-child { left: -15px; }
-.ninjos-shops .shops-waag-schale:last-child { right: -15px; }
 .ninjos-shops .shops-waag-fuss {
-  position: absolute;
-  left: 50%;
-  top: 14px;
-  bottom: 3px;
-  width: 4px;
-  margin-left: -2px;
-  background: #a8821e;
+  fill: none;
+  stroke: #a8821e;
+  stroke-width: 4;
+  stroke-linecap: round;
 }
-.ninjos-shops .shops-waag-fuss::after {
-  content: "";
-  position: absolute;
-  left: -16px;
-  right: -16px;
-  bottom: -3px;
-  height: 4px;
-  border-radius: 2px;
-  background: #a8821e;
+.ninjos-shops .shops-waag-faden {
+  fill: none;
+  stroke: #8a6a14;
+  stroke-width: 1;
 }
-.ninjos-shops .shops-waagbalken.shops-gleich .shops-waag-arm {
-  box-shadow: 0 0 7px 1px rgb(212 175 55 / 75%);
+.ninjos-shops .shops-waag-mulde {
+  fill: #d8b54e;
+  stroke: #a8821e;
+  stroke-width: 1;
+}
+.ninjos-shops .shops-waag-drehpunkt { fill: #8a6a14; }
+.ninjos-shops .shops-waagbalken.shops-gleich .shops-waag-balken {
+  filter: drop-shadow(0 0 3px rgb(212 175 55 / 95%));
 }
 
 /* ── Der Laden: der Händler spricht selbst ─────────────────────────── */

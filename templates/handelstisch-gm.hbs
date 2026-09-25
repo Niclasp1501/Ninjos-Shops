@@ -132,8 +132,21 @@
             liegt. Ob der Handel aufgeht, sieht man so aus zwei Metern. --}}
       <span class="shops-waagbalken {{#if stand.ausgeglichen}}shops-gleich{{/if}}"
             data-neigung="{{stand.neigungGm}}" style="--neigung: {{stand.neigungGm}}deg" aria-hidden="true">
-        <span class="shops-waag-arm"><span class="shops-waag-schale"></span><span class="shops-waag-schale"></span></span>
-        <span class="shops-waag-fuss"></span>
+        <svg viewBox="0 0 108 54" focusable="false">
+          <path class="shops-waag-fuss" d="M54 14 V50 M40 51 H68"/>
+          <g class="shops-waag-arm">
+            <path class="shops-waag-balken" d="M14 12 H94"/>
+            <g class="shops-waag-schale">
+              <path class="shops-waag-faden" d="M14 12 L3 32 M14 12 L25 32"/>
+              <path class="shops-waag-mulde" d="M2 32 H26 C25 39 20 42 14 42 C8 42 3 39 2 32 Z"/>
+            </g>
+            <g class="shops-waag-schale">
+              <path class="shops-waag-faden" d="M94 12 L83 32 M94 12 L105 32"/>
+              <path class="shops-waag-mulde" d="M82 32 H106 C105 39 100 42 94 42 C88 42 83 39 82 32 Z"/>
+            </g>
+          </g>
+          <circle class="shops-waag-drehpunkt" cx="54" cy="12" r="4.5"/>
+        </svg>
       </span>
       <span class="shops-tisch-summe">
         <small>{{spielerName}}</small> {{shopsGeld stand.rechtsText}}
