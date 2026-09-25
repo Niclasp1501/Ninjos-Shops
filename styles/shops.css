@@ -4787,7 +4787,8 @@
   position: relative;
   margin: 4px 4px 6px;
   padding: 14px 18px 30px;
-  background-color: var(--shops-karte);
+  /* Heller als das Fenster: ein Zettel, der obenauf liegt. */
+  background-color: #fffbf2;
   background-image: var(--shops-faser);
   background-blend-mode: multiply;
   border-top: 3px solid var(--shops-gold);
@@ -5124,3 +5125,22 @@
   .ninjos-shops .shops-waag-arm,
   .ninjos-shops .shops-waag-schale { transition: none; }
 }
+
+/*
+ * „Passend zahlen" ist ein Schalter, kein Hauptknopf. Rot gefüllt sah er aus
+ * wie „Handel abschließen" und stand am Fensterrand. Aus: ein ruhiges Feld
+ * mit leerem Kästchen. An: goldener Rand und Haken.
+ */
+.ninjos-shops .shops-tisch-passend { padding: 0 16px; }
+.ninjos-shops .shops-tisch-passend > button[data-action="passendUmschalten"] {
+  color: var(--shops-text);
+  background: var(--shops-karte);
+  border: 1px solid var(--shops-rand);
+  box-shadow: none;
+}
+.ninjos-shops .shops-tisch-passend > button[data-action="passendUmschalten"] > i { color: var(--shops-text-blass); }
+.ninjos-shops .shops-tisch-passend > button[data-action="passendUmschalten"][aria-pressed="true"] {
+  background: #fbf2d8;
+  border-color: var(--shops-gold);
+}
+.ninjos-shops .shops-tisch-passend > button[data-action="passendUmschalten"][aria-pressed="true"] > i { color: var(--ninjo-akzent-text); }
