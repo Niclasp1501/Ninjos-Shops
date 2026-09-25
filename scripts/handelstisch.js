@@ -119,8 +119,8 @@ export function tischStand(handel) {
   const offenCp = differenzCp < 0 ? differenzCp + wechselCp : differenzCp - wechselCp;
 
   /*
-   * Wie weit sich die Waage neigt, in Grad. Hoechstens zwoelf, damit sie
-   * nicht umkippt, und mindestens drei, sobald etwas fehlt: Ein Kupferstueck
+   * Wie weit sich die Waage neigt, in Grad. Hoechstens vierzehn, damit sie
+   * nicht umkippt, und mindestens fuenf, sobald etwas fehlt: Ein Kupferstueck
    * Unterschied soll man sehen, nicht erahnen.
    *
    * Beim Spieler liegt seine Seite links und die der Person rechts. Liegt bei
@@ -129,7 +129,7 @@ export function tischStand(handel) {
    */
   const schwerer = Math.max(linksCp, rechtsCp, 1);
   const neigung = offenCp === 0 ? 0
-    : Math.sign(offenCp) * Math.max(3, Math.round(12 * Math.min(1, Math.abs(offenCp) / schwerer)));
+    : Math.sign(offenCp) * Math.max(5, Math.round(14 * Math.min(1, Math.abs(offenCp) / schwerer)));
 
   /*
    * Ein Posten ohne Preis ist eine offene Frage, keine Null. Zugesagt werden

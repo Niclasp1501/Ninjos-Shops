@@ -4927,16 +4927,17 @@
  */
 .ninjos-shops .shops-waagbalken {
   position: relative;
-  flex: 0 0 76px;
-  width: 76px;
-  height: 40px;
+  flex: 0 0 108px;
+  width: 108px;
+  height: 52px;
+  margin: 0 6px;
 }
 .ninjos-shops .shops-waag-arm {
   position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 9px;
-  height: 3px;
+  left: 15px;
+  right: 15px;
+  top: 12px;
+  height: 4px;
   border-radius: 2px;
   background: linear-gradient(180deg, #e3c86f, #a8821e);
   transform: rotate(var(--neigung, 0deg));
@@ -4946,52 +4947,52 @@
   content: "";
   position: absolute;
   left: 50%;
-  top: -2px;
-  width: 7px;
-  height: 7px;
-  margin-left: -3.5px;
+  top: -3px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
   border-radius: 50%;
   background: #a8821e;
 }
 .ninjos-shops .shops-waag-schale {
   position: absolute;
-  top: 9px;
-  width: 22px;
-  height: 8px;
-  border-radius: 0 0 11px 11px;
+  top: 13px;
+  width: 30px;
+  height: 11px;
+  border-radius: 0 0 15px 15px;
   background: linear-gradient(180deg, #ead38a, #b8931f);
-  transform-origin: 50% -8px;
+  transform-origin: 50% -13px;
   transform: rotate(calc(var(--neigung, 0deg) * -1));
   transition: transform .8s cubic-bezier(.3, 1.35, .5, 1);
 }
 .ninjos-shops .shops-waag-schale::before {
   content: "";
   position: absolute;
-  left: 3px;
-  right: 3px;
-  top: -8px;
-  height: 8px;
+  left: 4px;
+  right: 4px;
+  top: -13px;
+  height: 13px;
   border-left: 1px solid #a8821e;
   border-right: 1px solid #a8821e;
 }
-.ninjos-shops .shops-waag-schale:first-child { left: -11px; }
-.ninjos-shops .shops-waag-schale:last-child { right: -11px; }
+.ninjos-shops .shops-waag-schale:first-child { left: -15px; }
+.ninjos-shops .shops-waag-schale:last-child { right: -15px; }
 .ninjos-shops .shops-waag-fuss {
   position: absolute;
   left: 50%;
-  top: 11px;
-  bottom: 2px;
-  width: 3px;
-  margin-left: -1.5px;
+  top: 14px;
+  bottom: 3px;
+  width: 4px;
+  margin-left: -2px;
   background: #a8821e;
 }
 .ninjos-shops .shops-waag-fuss::after {
   content: "";
   position: absolute;
-  left: -11px;
-  right: -11px;
-  bottom: -2px;
-  height: 3px;
+  left: -16px;
+  right: -16px;
+  bottom: -3px;
+  height: 4px;
   border-radius: 2px;
   background: #a8821e;
 }
@@ -5096,11 +5097,11 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  padding: 2px 4px;
-  font-size: .55rem;
+  padding: 1px 3px;
+  font-size: .5rem;
   font-weight: 800;
   line-height: 1.2;
-  letter-spacing: .06em;
+  letter-spacing: .02em;
   text-transform: uppercase;
   white-space: nowrap;
   color: #9b1c1c;

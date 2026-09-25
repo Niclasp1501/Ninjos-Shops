@@ -54,11 +54,11 @@ let offen = null;
  * Traenken braucht keine Ueberschrift, die „Traenke" sagt.
  */
 const FAECHER = [
-  { id: "waffen", symbol: "fa-khanda" },
+  { id: "waffen", symbol: "fa-sword" },
   { id: "ruestung", symbol: "fa-shield-halved" },
   { id: "ausruestung", symbol: "fa-hat-wizard" },
   { id: "werkzeug", symbol: "fa-screwdriver-wrench" },
-  { id: "verbrauch", symbol: "fa-flask" },
+  { id: "verbrauch", symbol: "fa-flask-round-potion" },
   { id: "behaelter", symbol: "fa-box-open" },
   { id: "waren", symbol: "fa-gem" },
   { id: "dienst", symbol: "fa-handshake" },
