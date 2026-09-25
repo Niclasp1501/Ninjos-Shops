@@ -19,8 +19,6 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   player window groups them under headings such as weapons, armour, potions
   and services. The merchant speaks the greeting as a speech bubble, and
   sold out goods carry a stamp instead of a struck-through name.
-
-### Added
 - **The welcome window mentions Patreon.** Below the link to Ninjo's Forge,
   one line now says that the modules are free and stay free, and that you can
   support the work on Patreon and get premium add-ons. Only GMs see the
