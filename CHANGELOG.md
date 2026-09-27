@@ -3,7 +3,7 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
-## Unreleased
+## 14.2609.94 - 2026-09-28
 
 ### Added
 - **A central default for who may open shops.** The module settings now have
