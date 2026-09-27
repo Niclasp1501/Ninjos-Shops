@@ -162,6 +162,11 @@
               {{#if hinweis}}
                 <span class="shops-hinweiszeile">{{hinweis}}</span>
               {{/if}}
+              {{!-- Was im Behaelter liegt, wird mitgekauft. Also muss man es
+                    sehen, bevor man kauft. --}}
+              {{#if inhaltText}}
+                <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}} {{inhaltText}}</small>
+              {{/if}}
             </div>
 
             <span class="shops-menge" title="{{localize 'SHOPS.Bogen.Menge'}}">

@@ -54,10 +54,71 @@ export async function einlagern(ziel, vorlage, stueck) {
   delete kopie._id;
   kopie.system = kopie.system ?? {};
   kopie.system.quantity = menge;
+  /*
+   * Lose in den Rucksack, nicht in einen Behaelter, den es beim Empfaenger
+   * nicht gibt. Die Kennung zeigt auf einen Beutel des Abgebers; mitkopiert
+   * stand sie beim Empfaenger ins Leere.
+   */
+  if ("container" in kopie.system) kopie.system.container = null;
   // Die Ladenmerkmale gehoeren dem Laden, nicht der Ware im Rucksack.
   delete kopie.flags?.[MODULE_ID];
   await ziel.createEmbeddedDocuments("Item", [kopie]);
   return "neu";
+}
+
+/**
+ * Ist das Ware, die ein Laden anbietet?
+ *
+ * **Nur, was eine Stueckzahl hat.** Ein magischer Gegenstand, der einen
+ * Zauber wirken kann, legt in dnd5e diesen Zauber als eigenen Eintrag beim
+ * Traeger an (`flags.dnd5e.cachedFor`). Im Laden stand er dann als Ware ohne
+ * Preis: „Fett" neben dem Stab, der es wirkt. Am 28.09.2026 beim Einrichten
+ * der Salzmarsch-Laeden aufgefallen. Zauber, Merkmale und Klassen haben keine
+ * Stueckzahl und sind keine Ware.
+ *
+ * **Und nicht, was in einem Behaelter des Ladens liegt.** Das gehoert zum
+ * Behaelter und wird mit ihm verkauft; einzeln stand es daneben, als koennte
+ * man die Decke aus dem Rucksack kaufen und den Rucksack auch. Zeigt die
+ * Kennung auf einen Behaelter, den es nicht mehr gibt, ist das Stueck lose
+ * und damit Ware.
+ */
+export function istWare(item, traeger) {
+  if (!item || item.system?.quantity === undefined) return false;
+  if (item.flags?.dnd5e?.cachedFor) return false;
+  const ort = item.system?.container;
+  return !(ort && traeger?.items?.has(ort));
+}
+
+/**
+ * Was in einem Behaelter liegt, als Satzteil: „2× Fackel, Decke".
+ * Bei allem anderen nichts.
+ */
+export function inhaltText(item) {
+  if (item?.type !== "container") return "";
+  return [...(item.system?.allContainedItems ?? [])]
+    .filter(k => !k.flags?.dnd5e?.cachedFor)
+    .map(k => {
+      const n = Number(k.system?.quantity ?? 1);
+      return n > 1 ? `${n}× ${k.name}` : k.name;
+    })
+    .join(", ");
+}
+
+/**
+ * Einen Behaelter weggeben, seinen Inhalt aber behalten.
+ *
+ * Verkauft ein Spieler seinen Rucksack an einen Laden, bekommt der Laden den
+ * Rucksack; was darin war, bleibt beim Spieler. Vorher hing der Inhalt nach
+ * dem Loeschen an einer Kennung, die es nicht mehr gab. Jetzt wird er zuerst
+ * herausgenommen und liegt danach lose im Rucksack der Figur.
+ */
+export async function behaelterLeeren(traeger, item) {
+  if (item?.type !== "container" || !traeger) return;
+  const direkt = traeger.items.filter(k => k.system?.container === item.id);
+  if (direkt.length) {
+    await traeger.updateEmbeddedDocuments("Item",
+      direkt.map(k => ({ _id: k.id, "system.container": null })));
+  }
 }
 
 /**

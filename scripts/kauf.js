@@ -23,7 +23,7 @@
 
 import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.js";
 import { grundpreisCp, preisCp, alsText, wechselgeldText } from "./preise.js";
-import { einlagern, darfLeerStehen } from "./lager.js";
+import { einlagern, darfLeerStehen, istWare, uebergeben } from "./lager.js";
 import { bezahle, kasseNachKauf, vermoegenCp } from "./kasse.js";
 import { schreibeVorgang, schreibeErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
@@ -47,6 +47,8 @@ export function pruefeKauf({ laden, item, figur, menge, angebotCp = null }) {
   const merkmal = item.flags?.[MODULE_ID] ?? {};
 
   if (merkmal[WARE.VERBORGEN] === true) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch", was: item.name };
+  // Ein Zauber aus einem Stab oder die Decke im Rucksack ist keine Ware.
+  if (!istWare(item, laden)) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch", was: item.name };
   if (system.kaufmodus === KAUFMODUS.GESPERRT && angebotCp === null) {
     return { ok: false, grund: "SHOPS.Kauf.Gesperrt" };
   }
@@ -135,16 +137,29 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
 
   const { stueck, dienst, summeCp, gezahlt, bestand } = pruefung;
 
+  /*
+   * **Ein Behaelter reist samt Inhalt.** Bis zum 28.09.2026 kam ein gekaufter
+   * Rucksack leer an: Kopiert wurde nur die Huelle, geloescht auch nur sie,
+   * und der Inhalt blieb im Laden an einer Kennung haengen, die es nicht mehr
+   * gab. Jetzt nimmt der Kauf denselben Weg wie der Handelstisch; der legt
+   * Huelle und Inhalt beim Kaeufer an und nimmt beides aus dem Laden.
+   */
+  const behaelter = !dienst && item.type === "container";
+
   try {
     // 1. Erst anlegen. Bricht es danach ab, gibt es den Gegenstand doppelt
     //    statt gar nicht - das ist die verkraftbare Haelfte des Ungluecks.
-    if (!dienst) await einlagern(figur, item, stueck);
+    if (behaelter) {
+      const bericht = await uebergeben(laden, figur, [{ itemId: item.id, menge: 1 }], {});
+      if (bericht.fehler) throw new Error(bericht.fehler);
+    } else if (!dienst) await einlagern(figur, item, stueck);
 
     // 2. Dann bezahlen.
     await figur.update({ "system.currency": gezahlt.bestand });
 
-    // 3. Dann den Bestand mindern. Dienstleistungen gehen nie zur Neige.
-    if (!dienst) {
+    // 3. Dann den Bestand mindern. Dienstleistungen gehen nie zur Neige, und
+    //    ein Behaelter ist mit Schritt 1 schon aus dem Laden.
+    if (!dienst && !behaelter) {
       const rest = bestand - stueck;
       // Ausverkauft heisst nicht vergessen: Die Ware bleibt mit 0 stehen,
       // samt allem, was die Spielleitung an ihr eingestellt hat. Siehe

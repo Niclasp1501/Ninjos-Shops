@@ -21,7 +21,7 @@
 
 import { MODULE_ID, WARE, LADEN_TYP } from "./const.js";
 import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
-import { einlagern } from "./lager.js";
+import { einlagern, behaelterLeeren } from "./lager.js";
 import { bezahle, muenzenDazu, schreibeGut, vermoegenCp, zahleAus } from "./kasse.js";
 import { schreibeVerkaufVorgang, schreibeVerkaufErgebnis } from "./marktbuch.js";
 import { buchen } from "./ladenbuch.js";
@@ -140,10 +140,14 @@ export async function fuehreVerkaufAus({ ladenUuid, itemId, figurUuid, menge = 1
     // Und aus der Ladenkasse heraus, falls er eine fuehrt.
     if (ladenZahlt) await laden.update({ "system.kasse": ladenZahlt.bestand });
 
-    // Zuletzt aus dem Rucksack nehmen.
+    // Zuletzt aus dem Rucksack nehmen. Ein Behaelter gibt vorher frei, was
+    // darin liegt; das bleibt beim Spieler, siehe `behaelterLeeren`.
     const rest = bestand - stueck;
     if (rest > 0) await item.update({ "system.quantity": rest });
-    else await item.delete();
+    else {
+      await behaelterLeeren(figur, item);
+      await item.delete();
+    }
   } catch (fehler) {
     console.error(`${MODULE_ID} | Verkauf abgebrochen`, fehler);
     await schreibeVerkaufErgebnis({ laden, name, figur, verkaeufer, ok: false, grund: String(fehler) });
@@ -262,7 +266,10 @@ export async function fuehreAnkaufAus(sitzung) {
 
       const rest = Number(item.system?.quantity ?? 0) - stueck;
       if (rest > 0) await item.update({ "system.quantity": rest });
-      else await item.delete();
+      else {
+        await behaelterLeeren(figur, item);
+        await item.delete();
+      }
     }
 
     const boerse = figur.system?.currency ?? {};

@@ -45,6 +45,9 @@
               {{#if ankauf}}<i class="fa-solid fa-arrow-rotate-left shops-marke"
                     title="{{localize 'SHOPS.Bogen.KauftAn'}}" aria-hidden="true"></i>{{/if}}
             </span>
+            {{#if inhaltText}}
+              <small class="shops-inhalt">{{localize "SHOPS.Tisch.Darin"}} {{inhaltText}}</small>
+            {{/if}}
             <input type="text" data-ware-feld="hinweis" value="{{hinweis}}"
                    placeholder="{{localize 'SHOPS.Bogen.HinweisPlatzhalter'}}"
                    {{#unless @root.bearbeitbar}}disabled{{/unless}}>

@@ -17,6 +17,7 @@
  * niemand zu (KONZEPT-shops.md, Abschnitt 4). Das entscheidet sich in der Welt.
  */
 
+import { istWare, inhaltText } from "./lager.js";
 import { festpreisDialog } from "./festpreis.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, preisText, EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
@@ -172,6 +173,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
    */
   #wareAufbereiten(laden) {
     return this.document.items.contents
+      .filter(item => istWare(item, this.document))
       .map(item => {
         const merkmal = item.flags?.[MODULE_ID] ?? {};
         const grundCp = grundpreisCp(item.system?.price);
@@ -182,6 +184,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
           name: item.name,
           img: item.img,
           menge: item.system?.quantity ?? 1,
+          inhaltText: inhaltText(item),
           grundText: alsText(grundCp, kuerzel),
           preisText: preisText(preisCp(grundCp, laden, festCp), festCp === null ? null : merkmal[WARE.FESTPREIS_MUENZEN], kuerzel),
           /*

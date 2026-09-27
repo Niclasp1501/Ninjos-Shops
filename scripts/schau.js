@@ -23,6 +23,7 @@
  * Notebook ist kein Monitorbenutzer und sieht doch genauso aus.
  */
 
+import { istWare } from "./lager.js";
 import { MODULE_ID, SETTINGS, SOCKET, LADEN_TYP, WARE, OFFENER_LADEN } from "./const.js";
 import { grundpreisCp, preisCp, alsText, preisText } from "./preise.js";
 import { waereZustaendig } from "./vorsitz.js";
@@ -45,6 +46,7 @@ const JE_SEITE = 6;
  */
 export function schauWaren(laden) {
   return laden.items
+    .filter(i => istWare(i, laden))
     .filter(i => i.flags?.[MODULE_ID]?.[WARE.VERBORGEN] !== true)
     .map(item => {
       const merkmal = item.flags?.[MODULE_ID] ?? {};

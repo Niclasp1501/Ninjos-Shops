@@ -14,6 +14,7 @@
  * Ninjo's Foundry MCP unter „Module mit eigenen Werkzeugen" stehen. Ohne das
  * lehnt die Brücke die Anmeldung ab und schreibt den Grund ins Protokoll.
  */
+import { istWare } from "./lager.js";
 import { MODULE_ID, LADEN_TYP, WARE } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText } from "./preise.js";
 import { zeilenFuer } from "./ladenbuch.js";
@@ -109,6 +110,7 @@ const WERKZEUGE = [
     handler: async ({ laden: bezeichnung, auchVerborgene = true }) => {
       const laden = ladenFinden(bezeichnung);
       const waren = laden.items.contents
+        .filter(i => istWare(i, laden))
         .map(i => ware(laden, i))
         .filter(w => auchVerborgene || !w.verborgen);
       return { laden: laden.name, uuid: laden.uuid, anzahl: waren.length, waren };

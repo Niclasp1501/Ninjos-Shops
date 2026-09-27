@@ -3,6 +3,21 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## Unreleased
+
+### Fixed
+- **A bought container arrives with its contents.** Buying a backpack copied
+  only the empty backpack; its contents stayed behind in the shop, attached
+  to a container that no longer existed. The purchase now moves the container
+  and everything in it, like the trade table does.
+- **Spells from magic items are no longer listed as goods.** dnd5e adds the
+  spells a staff or wand can cast to whoever holds it, and the shop showed
+  them as goods without a price. Shops now list only items with a quantity,
+  and items inside a container appear under that container as its contents.
+- **No more items pointing at a container that is gone.** A copied item now
+  lands loose in the new inventory, and a container sold to a shop leaves its
+  contents with the player.
+
 ## 14.2609.94 - 2026-09-28
 
 ### Added

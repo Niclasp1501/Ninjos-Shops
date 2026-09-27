@@ -14,6 +14,7 @@
  * (Entscheidung 3 im Konzept).
  */
 
+import { istWare, inhaltText } from "./lager.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
 import { MODULE_ID, WARE, KAUFMODUS, SOCKET, OFFENER_LADEN } from "./const.js";
 import { grundpreisCp, preisCp, alsText, preisText, KUPFERWERT } from "./preise.js";
@@ -217,6 +218,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
     const habeCp = figur ? vermoegenCp(figur.system?.currency ?? {}) : 0;
 
     return this.#laden.items.contents
+      .filter(item => istWare(item, this.#laden))
       .filter(item => item.flags?.[MODULE_ID]?.[WARE.VERBORGEN] !== true)
       .map(item => {
         const merkmal = item.flags?.[MODULE_ID] ?? {};
@@ -231,6 +233,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
           name: item.name,
           img: item.img,
           menge,
+          inhaltText: inhaltText(item),
           preisText: preisText(preis, festCp === null ? null : merkmal[WARE.FESTPREIS_MUENZEN], kuerzel),
           hinweis: merkmal[WARE.HINWEIS] ?? "",
           /*
