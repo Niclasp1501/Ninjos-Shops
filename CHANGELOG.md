@@ -3,7 +3,7 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
-## Unreleased
+## 14.2609.95 - 2026-09-28
 
 ### Fixed
 - **A bought container arrives with its contents.** Buying a backpack copied
