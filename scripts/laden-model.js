@@ -15,7 +15,7 @@
  * jeder bestehenden Welt nicht mit um - dafuer braeuchte es eine Migration.
  */
 
-import { LADEN_TYP, LADEN_BILD, LADEN_SYMBOL, KAUFMODUS } from "./const.js";
+import { MODULE_ID, SETTINGS, LADEN_TYP, LADEN_BILD, LADEN_SYMBOL, KAUFMODUS } from "./const.js";
 import { KUPFERWERT } from "./preise.js";
 
 const { StringField, NumberField, BooleanField, SchemaField, HTMLField, SetField } =
@@ -164,14 +164,21 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
        * Modus, sondern ein Filter darueber - „alle Spieler, aber nur auf dem
        * Marktplatz". Leer heisst ueberall; so verhalten sich bestehende
        * Laeden weiter wie bisher.
+       *
+       * Seit dem 28.09.2026 zwei Modi mehr. `standard` folgt der Einstellung
+       * in den Moduleinstellungen und ist der Anfangswert. `nachVorzeigen`
+       * heisst: Bis die Spielleitung den Laden das erste Mal zeigt, kommt
+       * niemand von sich aus heran; danach jeder, der seine Szene vor sich
+       * hat. `bekannt` haelt fest, ob er schon einmal gezeigt wurde.
        */
       zugriff: new SchemaField({
         modus: new StringField({
           required: true, nullable: false,
-          choices: ["niemand", "auswahl", "alle"], initial: "niemand"
+          choices: ["standard", "niemand", "nachVorzeigen", "auswahl", "alle"], initial: "standard"
         }),
         benutzer: new SetField(new StringField()),
-        szenen: new SetField(new StringField())
+        szenen: new SetField(new StringField()),
+        bekannt: new BooleanField({ initial: false })
       })
     };
   }
@@ -195,9 +202,28 @@ export class LadenModel extends foundry.abstract.TypeDataModel {
    */
   darfSelbstOeffnen(benutzer) {
     if (benutzer?.isGM) return true;
-    if (this.zugriff.modus === "alle") return true;
-    if (this.zugriff.modus === "auswahl") return this.zugriff.benutzer.has(benutzer?.id);
-    return false;
+    switch (this.zugriffsModus) {
+      case "alle": return true;
+      case "auswahl": return this.zugriff.benutzer.has(benutzer?.id);
+      case "nachVorzeigen": return this.zugriff.bekannt === true;
+      default: return false;
+    }
+  }
+
+  /** Der Modus, der wirklich gilt: `standard` aufgeloest. */
+  get zugriffsModus() {
+    const modus = this.zugriff?.modus ?? "standard";
+    return modus === "standard" ? LadenModel.standardZugriff() : modus;
+  }
+
+  /** Was in den Moduleinstellungen als Standard steht. */
+  static standardZugriff() {
+    try {
+      const wert = game.settings.get(MODULE_ID, SETTINGS.STANDARD_ZUGRIFF);
+      return ["niemand", "nachVorzeigen", "alle"].includes(wert) ? wert : "nachVorzeigen";
+    } catch {
+      return "nachVorzeigen";
+    }
   }
 
   /**

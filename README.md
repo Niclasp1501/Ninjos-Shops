@@ -132,6 +132,12 @@ If your players should be able to look into a shop on their own, tick **Players 
 themselves** in the module settings. In the shop you then decide under **Player access** who may
 open it and on which scenes. Without a scene selected, the shop can be reached from any map.
 
+What a shop does by default is set once, in the module settings under **Shops: who may open them
+(default)**. It starts on **Shown first, then on its scene by themselves**: until you show a shop for
+the first time, players only see it when you show it. After that they can open it themselves while
+they are looking at its scene, which is the scene you showed it on unless you set another one.
+Every shop can still choose something else in its own settings.
+
 #### Approving a purchase
 
 When a shop is set to approval, the **Requests at the counter** window opens on your side as soon
@@ -331,6 +337,13 @@ Sollen deine Spieler auch von sich aus in einen Laden schauen können, hakst du 
 Moduleinstellungen **Spieler dürfen Läden selbst öffnen** an. Im Laden selbst legst du dann unter
 **Zugriff** fest, wer ihn öffnen darf und auf welchen Szenen. Wählst du keine Szene aus, ist der
 Laden von jeder Karte aus erreichbar.
+
+Was ein Laden ab Werk tut, stellst du einmal zentral ein, in den Moduleinstellungen unter
+**Läden: wer darf selbst öffnen (Standard)**. Voreingestellt ist **Erst vorzeigen, danach auf seiner
+Szene selbst**: Bis du einen Laden zum ersten Mal zeigst, sehen Spieler ihn nur, wenn du ihn zeigst.
+Danach können sie ihn selbst öffnen, solange sie seine Szene vor sich haben. Das ist die Szene, auf der
+du ihn gezeigt hast, außer du stellst am Laden eine andere ein. Jeder Laden kann in seinen eigenen
+Einstellungen davon abweichen.
 
 #### Einen Kauf freigeben
 

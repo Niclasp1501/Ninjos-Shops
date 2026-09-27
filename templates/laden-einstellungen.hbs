@@ -162,6 +162,11 @@
         </select>
       </label>
     </div>
+    {{#if zugriffStatus}}
+      <p class="shops-blockhinweis shops-zugriff-status">
+        <i class="fa-solid fa-eye" aria-hidden="true"></i> {{zugriffStatus}}
+      </p>
+    {{/if}}
 
     {{#if auswahlAktiv}}
       <ul class="shops-zugriffsliste">

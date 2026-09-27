@@ -57,6 +57,33 @@ async function flagSetzen(user, ladenUuid) {
 }
 
 /**
+ * Das erste Vorzeigen festhalten.
+ *
+ * Fuer den Modus „Erst vorzeigen" ist das der Moment, ab dem Spieler den
+ * Laden selbst oeffnen duerfen. Hat er noch keine Szene, bekommt er die, auf
+ * der die Spielleitung gerade steht: Dort wurde er gezeigt, also steht er
+ * dort. Das ist in seinen Einstellungen sichtbar und laesst sich aendern.
+ *
+ * `bekannt` wird in jedem Modus gesetzt. Wer einen Laden spaeter auf
+ * „Erst vorzeigen" stellt, soll ihn nicht noch einmal zeigen muessen.
+ */
+async function vorfuehrungMerken(laden) {
+  const zugriff = laden.system?.zugriff;
+  if (!zugriff || zugriff.bekannt) return;
+  const aenderung = { "system.zugriff.bekannt": true };
+  const szene = laden.system.constructor.hiesigeSzene?.();
+  if (laden.system.zugriffsModus === "nachVorzeigen" && !zugriff.szenen?.size && szene) {
+    aenderung["system.zugriff.szenen"] = [szene];
+  }
+  try {
+    await laden.update(aenderung);
+  } catch (fehler) {
+    // Das Vorzeigen selbst darf daran nicht scheitern.
+    console.error(`${MODULE_ID} | Erstes Vorzeigen nicht gespeichert`, fehler);
+  }
+}
+
+/**
  * Laden an die genannten Benutzer vorzeigen.
  *
  * @param {Actor} laden
@@ -83,6 +110,8 @@ export async function ladenZeigen(laden, userIds, schauIds = []) {
     if (gross.has(id)) await benutzer.setFlag(MODULE_ID, SCHAU_MERKMAL, true);
     else await benutzer.unsetFlag(MODULE_ID, SCHAU_MERKMAL);
   }
+
+  await vorfuehrungMerken(laden);
 
   const payload = { typ: SOCKET.ZEIGEN, ladenUuid: laden.uuid, an };
   game.socket.emit(SOCKET.NAME, payload);

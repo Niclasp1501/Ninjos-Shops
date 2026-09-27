@@ -69,6 +69,18 @@ export const SETTINGS = {
   SPIELER_DUERFEN_OEFFNEN: "spielerDuerfenOeffnen",
 
   /**
+   * Wer einen Laden ab Werk selbst oeffnen darf: `niemand`, `nachVorzeigen`
+   * oder `alle`. Gilt fuer jeden Laden, der in seinen eigenen Einstellungen
+   * `standard` stehen hat, und das ist jeder neue. Seit dem 28.09.2026:
+   * Vorher musste man das an jedem Laden einzeln einstellen, bei zwanzig
+   * Marktstaenden zwanzigmal dasselbe.
+   */
+  STANDARD_ZUGRIFF: "standardZugriff",
+
+  /** Einmal umgestellt: alte Laeden auf „niemand" folgen dem Standard. */
+  ZUGRIFF_UMGESTELLT: "zugriffStandardUmgestellt",
+
+  /**
    * Ob Spieler am Handelstisch die Sachen des NSC im Detailfenster ansehen
    * duerfen. Ab Werk aus: Was ein Haendler hinlegt, kann unidentifiziert sein
    * oder Eigenschaften haben, die erst beim Benutzen herauskommen sollen, und

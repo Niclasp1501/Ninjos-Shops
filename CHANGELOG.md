@@ -6,6 +6,16 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## Unreleased
 
 ### Added
+- **A central default for who may open shops.** The module settings now have
+  "Shops: who may open them (default)", so twenty market stalls no longer need
+  the same setting twenty times. Every shop follows it unless it sets
+  something else. Shops that were on "Nobody", the old starting value, follow
+  the default from now on.
+- **New access mode: shown first, then on its scene.** Until the gamemaster
+  shows a shop for the first time, players only see it when it is shown.
+  After that they can open it themselves while looking at its scene. A shop
+  without a scene is bound to the one it was first shown on; this appears in
+  its settings and can be changed. This is the new default.
 - **Money looks like money.** Every amount, in prices, purses, the till, the
   trade table and the result windows, is shown as small coins in their metal
   with the abbreviation on them: platinum, gold, electrum, silver, copper.

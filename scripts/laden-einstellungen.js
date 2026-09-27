@@ -18,8 +18,8 @@ import { KUPFERWERT } from "./preise.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
-/** Die drei Zugriffsarten. Die Werte stehen so auch im Datenmodell. */
-const ZUGRIFF = ["niemand", "auswahl", "alle"];
+/** Die Zugriffsarten. Die Werte stehen so auch im Datenmodell. */
+const ZUGRIFF = ["standard", "niemand", "nachVorzeigen", "auswahl", "alle"];
 
 /**
  * Die Begruessung als schlichter Text fuers Eingabefeld.
@@ -84,12 +84,23 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
         wert: laden.kasse?.[sorte] ?? 0
       })),
 
+      /*
+       * „Wie in den Moduleinstellungen" nennt, was dort gerade steht. Sonst
+       * muesste man nachsehen gehen, um zu wissen, was der Laden tut.
+       */
       zugriffsmodi: ZUGRIFF.map(wert => ({
         wert,
-        name: game.i18n.localize(`SHOPS.Zugriff.${wert}`),
+        name: wert === "standard"
+          ? game.i18n.format("SHOPS.Zugriff.standard", {
+              standard: game.i18n.localize(`SHOPS.Zugriff.${laden.constructor.standardZugriff()}`)
+            })
+          : game.i18n.localize(`SHOPS.Zugriff.${wert}`),
         gewaehlt: laden.zugriff?.modus === wert
       })),
-      auswahlAktiv: laden.zugriff?.modus === "auswahl",
+      auswahlAktiv: laden.zugriffsModus === "auswahl",
+      // Bei „Erst vorzeigen": Wurde er schon gezeigt? Das ist der Schalter.
+      zugriffStatus: laden.zugriffsModus !== "nachVorzeigen" ? null
+        : game.i18n.localize(laden.zugriff?.bekannt ? "SHOPS.Zugriff.StatusBekannt" : "SHOPS.Zugriff.StatusNochNicht"),
       spieler: game.users.filter(u => !u.isGM).map(u => ({
         id: u.id, name: u.name, active: u.active, erlaubt: erlaubt.has(u.id)
       })),

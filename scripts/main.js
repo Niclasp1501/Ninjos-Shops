@@ -15,7 +15,7 @@
  * Spielleiter haelt die Wahrheit" laesst sich nicht nachtraeglich einziehen.
  */
 
-import { MODULE_ID, SETTINGS, OFFENER_LADEN } from "./const.js";
+import { MODULE_ID, SETTINGS, OFFENER_LADEN, LADEN_TYP } from "./const.js";
 import { ladenTypEinrichten, ladenBilderEinrichten } from "./laden-model.js";
 import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
@@ -49,6 +49,33 @@ function einstellungenEinrichten() {
     config: true,
     type: Boolean,
     default: false
+  });
+
+  /*
+   * Der Standard fuer jeden Laden. „Auswahl" steht hier nicht zur Wahl: Eine
+   * Liste einzelner Spieler gehoert zu einem Laden, nicht zu allen.
+   */
+  game.settings.register(MODULE_ID, SETTINGS.STANDARD_ZUGRIFF, {
+    name: "SHOPS.Einstellung.StandardZugriff.Name",
+    hint: "SHOPS.Einstellung.StandardZugriff.Hinweis",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      niemand: "SHOPS.Zugriff.niemand",
+      nachVorzeigen: "SHOPS.Zugriff.nachVorzeigen",
+      alle: "SHOPS.Zugriff.alle"
+    },
+    default: "nachVorzeigen",
+    onChange: () => {
+      for (const app of foundry.applications.instances.values()) {
+        if (app.element?.classList.contains("laden-einstellungen")) app.render(false);
+      }
+    }
+  });
+
+  game.settings.register(MODULE_ID, SETTINGS.ZUGRIFF_UMGESTELLT, {
+    scope: "world", config: false, type: Boolean, default: false
   });
 
   /*
@@ -214,8 +241,31 @@ Hooks.once("init", () => {
   mcpWerkzeugeEinrichten();
 });
 
+/**
+ * Einmal, beim ersten Start mit dem zentralen Standard: Laeden, die auf
+ * „niemand" stehen, folgen ab jetzt dem Standard.
+ *
+ * „Niemand" war bis zum 28.09.2026 der Anfangswert jedes Ladens. Ob ein
+ * Laden dort steht, weil die Spielleitung es so wollte oder weil nie jemand
+ * das Feld angefasst hat, laesst sich nicht unterscheiden; das Zweite ist
+ * bei weitem der haeufigere Fall. Ohne diese Umstellung haette der neue
+ * Standard bei keinem bestehenden Laden gegriffen. Wer einen Laden bewusst
+ * verschlossen haben will, stellt ihn danach wieder auf „Niemand".
+ *
+ * Nur die aktive Spielleitung schreibt, und nur einmal je Welt.
+ */
+async function zugriffUmstellen() {
+  if (!game.user.isGM || game.users.activeGM?.id !== game.user.id) return;
+  if (game.settings.get(MODULE_ID, SETTINGS.ZUGRIFF_UMGESTELLT)) return;
+  const laeden = game.actors.filter(a => a.type === LADEN_TYP && a.system?.zugriff?.modus === "niemand");
+  for (const laden of laeden) await laden.update({ "system.zugriff.modus": "standard" });
+  await game.settings.set(MODULE_ID, SETTINGS.ZUGRIFF_UMGESTELLT, true);
+  if (laeden.length) console.log(`${MODULE_ID} | ${laeden.length} Laeden folgen jetzt dem Standardzugriff`);
+}
+
 Hooks.once("ready", async () => {
   socketEinrichten();
+  await zugriffUmstellen();
   // Muss vor dem ersten Fenster stehen: Auf einem Tablet lief das
   // Spielerfenster sonst unten aus dem Bild und war nicht mehr erreichbar.
   fensterPassenEinrichten();
