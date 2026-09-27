@@ -25,6 +25,10 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   window, and "Don't show again" still hides it for good.
 
 ### Changed
+- **Clicking the shopkeeper opens them.** The shopkeeper's face in the shop
+  header looked like a button and did nothing. For the gamemaster it now opens
+  the shopkeeper's sheet. Players see the sheet only if they are allowed to;
+  otherwise they get the portrait in large, so nothing hidden is revealed.
 - **The buy-back price in the shop sheet is labelled and only shown where it
   applies.** Every row showed a second, smaller price under the selling price
   with no label, so nobody knew which was which. It now reads "buys for 9 gp"

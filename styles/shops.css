@@ -5138,3 +5138,28 @@
 .ninjos-shops .shops-spalten:not(.shops-spieler-spalten) .shops-spalte-preis { flex-basis: 8.5rem; }
 .ninjos-shops .shops-preise .shops-ankauf { display: inline-flex; align-items: center; gap: 4px; }
 .ninjos-shops .shops-preise .shops-ankauf > i { font-size: .65rem; color: var(--shops-gold); }
+
+/*
+ * Der Verkaeufer ist ein Knopf (28.09.2026). Foundrys Knopfregeln setzen eine
+ * feste Hoehe und einen eigenen Grund; beides wird hier zurueckgenommen, damit
+ * er aussieht wie vorher, nur mit einer Reaktion unter dem Finger.
+ */
+.ninjos-shops button.shops-banner-haendler {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  font: inherit;
+  line-height: normal;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color .12s, background-color .12s;
+}
+.ninjos-shops button.shops-banner-haendler:hover,
+.ninjos-shops button.shops-banner-haendler:focus-visible {
+  background: rgba(20, 15, 8, .72);
+  border-color: var(--shops-gold);
+  outline: none;
+}

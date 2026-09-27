@@ -232,6 +232,7 @@
   "SHOPS.Buch.Ausgegeben": "Ausgegeben:",
   "SHOPS.Buch.Eingenommen": "Erhalten:",
   "SHOPS.Haendler.Feld": "Verkäufer",
+  "SHOPS.Haendler.Oeffnen": "Verkäufer ansehen",
   "SHOPS.Haendler.Ablegen": "Einen NSC hierher ziehen. Er steht dann als Verkäufer im Laden und im Buch.",
   "SHOPS.Haendler.Loesen": "Verkäufer entfernen",
   "SHOPS.Haendler.Ohne": "Verkäufer",

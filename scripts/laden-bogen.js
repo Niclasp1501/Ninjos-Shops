@@ -83,6 +83,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       angebotZurueck: LadenBogen.#angebotZurueck,
       marktbuch: LadenBogen.#marktbuch,
       ladenbuch: LadenBogen.#ladenbuch,
+      haendlerOeffnen: LadenBogen.#haendlerOeffnen,
       zeigenAllen: LadenBogen.#zeigenAllen,
       zeigenAuswahl: LadenBogen.#zeigenAuswahl,
       schliessenAllen: LadenBogen.#schliessenAllen,
@@ -459,6 +460,16 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
   }
 
   /** Das Buch dieses Ladens - was hier gehandelt wurde. */
+  /**
+   * Den Bogen des Verkaeufers oeffnen. Das Gesicht im Kopfbild sah aus wie
+   * ein Knopf und tat nichts; am Tisch gemeldet (28.09.2026).
+   */
+  static async #haendlerOeffnen() {
+    const uuid = this.document.system?.haendlerUuid;
+    const haendler = uuid ? await fromUuid(uuid) : null;
+    haendler?.sheet?.render(true);
+  }
+
   static #ladenbuch() {
     ladenbuchOeffnen(this.document);
   }

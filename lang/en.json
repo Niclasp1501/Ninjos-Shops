@@ -232,6 +232,7 @@
   "SHOPS.Buch.Ausgegeben": "Spent:",
   "SHOPS.Buch.Eingenommen": "Received:",
   "SHOPS.Haendler.Feld": "Shopkeeper",
+  "SHOPS.Haendler.Oeffnen": "View the shopkeeper",
   "SHOPS.Haendler.Ablegen": "Drag an NPC here. They will stand in the shop and appear in the ledger.",
   "SHOPS.Haendler.Loesen": "Remove shopkeeper",
   "SHOPS.Haendler.Ohne": "Shopkeeper",

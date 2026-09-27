@@ -111,6 +111,7 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
       verkaufen: SpielerFenster.#verkaufen,
       anfrageStellen: SpielerFenster.#anfrage,
       ladenbuch: SpielerFenster.#ladenbuch,
+      haendlerOeffnen: SpielerFenster.#haendlerOeffnen,
       ladenVerlassen: SpielerFenster.#verlassen,
       angebotAnnehmen: SpielerFenster.#angebotAnnehmen,
       blickWechseln: SpielerFenster.#blickWechseln
@@ -424,6 +425,26 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /** Das eigene Buch bei diesem Laden. */
+  /**
+   * Den Verkaeufer ansehen.
+   *
+   * **Den Bogen nur, wenn man ihn sehen darf.** Ein NSC-Bogen verraet
+   * Werte, Faehigkeiten und Notizen der Spielleitung. Wer dafuer kein Recht
+   * hat, bekommt stattdessen das Bild gross, das im Kopf ohnehin zu sehen
+   * ist. So tut der Knopf fuer jeden etwas, und niemand sieht mehr als vorher.
+   */
+  static async #haendlerOeffnen() {
+    const uuid = this.#laden?.system?.haendlerUuid;
+    const haendler = uuid ? await fromUuid(uuid) : null;
+    if (!haendler) return;
+    if (haendler.testUserPermission?.(game.user, "LIMITED")) return void haendler.sheet?.render(true);
+    if (!haendler.img) return;
+    new foundry.applications.apps.ImagePopout({
+      src: haendler.img,
+      window: { title: haendler.name }
+    }).render({ force: true });
+  }
+
   static async #ladenbuch() {
     const { ladenbuchOeffnen } = await import("./ladenbuch.js");
     ladenbuchOeffnen(this.#laden);

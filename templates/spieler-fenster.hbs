@@ -24,13 +24,16 @@
             Ladennamen. Ohne Haendler bleibt der Satz, wo er war. --}}
       <div class="shops-banner-rechts">
       {{#if begruessung}}<div class="shops-sprechblase">{{{begruessung}}}</div>{{/if}}
-      <div class="shops-banner-haendler" title="{{localize 'SHOPS.Haendler.Feld'}}">
+      {{!-- Ein Knopf: Wer auf den Verkaeufer tippt, will ihn sehen. --}}
+      <button type="button" class="shops-banner-haendler" data-action="haendlerOeffnen"
+              title="{{localize 'SHOPS.Haendler.Oeffnen'}}"
+              aria-label="{{localize 'SHOPS.Haendler.Oeffnen'}}: {{haendler.name}}">
         {{#if haendler.img}}<img src="{{haendler.img}}" alt="">{{/if}}
         <span>
           <em>{{localize "SHOPS.Haendler.Marke"}}</em>
           <strong>{{haendler.name}}</strong>
         </span>
-      </div>
+      </button>
       </div>
     {{/if}}
 
