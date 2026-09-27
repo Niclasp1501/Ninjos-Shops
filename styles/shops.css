@@ -5129,3 +5129,12 @@
   border-color: var(--shops-gold);
 }
 .ninjos-shops .shops-tisch-passend > button[data-action="passendUmschalten"][aria-pressed="true"] > i { color: var(--ninjo-akzent-text); }
+
+/*
+ * Der Ankaufspreis im Ladenbogen, beschriftet (28.09.2026). „kauft für"
+ * braucht Platz: Die Preisspalte wird dafür breiter, der Spaltenkopf zieht mit.
+ */
+.ninjos-shops .shops-preise { flex-basis: 8.5rem; gap: 2px; }
+.ninjos-shops .shops-spalten:not(.shops-spieler-spalten) .shops-spalte-preis { flex-basis: 8.5rem; }
+.ninjos-shops .shops-preise .shops-ankauf { display: inline-flex; align-items: center; gap: 4px; }
+.ninjos-shops .shops-preise .shops-ankauf > i { font-size: .65rem; color: var(--shops-gold); }

@@ -39,6 +39,7 @@
   "SHOPS.Bogen.Menge": "Stock",
   "SHOPS.Bogen.Grundpreis": "Base price",
   "SHOPS.Bogen.Ankauf": "What this shop pays for it",
+  "SHOPS.Bogen.KauftFuer": "buys for",
   "SHOPS.Bogen.FestpreisHinweis": "Fixed price. Empty means: markup on the base price. A 0 means: free.",
   "SHOPS.Bogen.Verborgen": "Under the counter. Players do not see it",
   "SHOPS.Bogen.Dienst": "Service: costs money, does not change hands",

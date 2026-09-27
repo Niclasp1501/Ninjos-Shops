@@ -25,6 +25,10 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   window, and "Don't show again" still hides it for good.
 
 ### Changed
+- **The buy-back price in the shop sheet is labelled and only shown where it
+  applies.** Every row showed a second, smaller price under the selling price
+  with no label, so nobody knew which was which. It now reads "buys for 9 gp"
+  and appears only on goods the shop buys back directly.
 - **Your own side is on the left.** At the trade table the player saw the
   NPC's side on the left, and in a swap the other player's side came first.
   Everyone now finds what they put down on the left and the other side on the

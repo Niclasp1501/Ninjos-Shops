@@ -59,7 +59,12 @@
             <span class="shops-preis {{#if hatFestpreis}}shops-fest{{/if}}"
                   title="{{localize 'SHOPS.Bogen.Grundpreis'}}: {{grundText}}">{{shopsGeld preisText}}</span>
             {{#if ankaufText}}
-              <span class="shops-ankauf" title="{{localize 'SHOPS.Bogen.Ankauf'}}">{{shopsGeld ankaufText}}</span>
+              {{!-- Beschriftet: Ohne „kauft für" sah die Zeile aus wie ein zweiter
+                    Verkaufspreis. --}}
+              <span class="shops-ankauf" title="{{localize 'SHOPS.Bogen.Ankauf'}}">
+                <i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i>
+                {{localize "SHOPS.Bogen.KauftFuer"}} {{shopsGeld ankaufText}}
+              </span>
             {{/if}}
           </div>
 

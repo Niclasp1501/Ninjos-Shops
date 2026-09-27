@@ -183,7 +183,16 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
           menge: item.system?.quantity ?? 1,
           grundText: alsText(grundCp, kuerzel),
           preisText: preisText(preisCp(grundCp, laden, festCp), festCp === null ? null : merkmal[WARE.FESTPREIS_MUENZEN], kuerzel),
-          ankaufText: laden.ankauf > 0 ? alsText(ankaufCp(grundCp, laden), kuerzel) : null,
+          /*
+           * Der Ankaufspreis nur dort, wo er wirklich gezahlt wird: bei Ware
+           * mit dem Haken „kauft er zurueck". Bis zum 28.09.2026 stand er
+           * unter jedem Stueck, sobald der Laden ueberhaupt einen
+           * Ankaufsfaktor hatte, ohne Beschriftung direkt unter dem
+           * Verkaufspreis. Zwei Preise uebereinander, und niemand wusste,
+           * welcher was ist. Am Tisch gefragt.
+           */
+          ankaufText: laden.ankauf > 0 && merkmal[WARE.ANKAUF] === true
+            ? alsText(ankaufCp(grundCp, laden), kuerzel) : null,
           hatFestpreis: festCp !== null,
           hinweis: merkmal[WARE.HINWEIS] ?? "",
           verborgen: merkmal[WARE.VERBORGEN] === true,

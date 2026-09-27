@@ -39,6 +39,7 @@
   "SHOPS.Bogen.Menge": "Bestand",
   "SHOPS.Bogen.Grundpreis": "Grundpreis",
   "SHOPS.Bogen.Ankauf": "Was dieser Laden dafür zahlt",
+  "SHOPS.Bogen.KauftFuer": "kauft für",
   "SHOPS.Bogen.FestpreisHinweis": "Festpreis. Leer heißt: Aufschlag auf den Grundpreis. Eine 0 heißt: geschenkt.",
   "SHOPS.Bogen.Verborgen": "Liegt unter der Theke. Die Spieler sehen es nicht",
   "SHOPS.Bogen.Dienst": "Dienstleistung: kostet Geld, wechselt nicht den Besitzer",
