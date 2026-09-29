@@ -1,0 +1,9 @@
+{{!--
+  Der Reiter „Läden" in der Szenen-Konfiguration. Nur die Hülle: Foundry reicht
+  über `tab` Kennung, Gruppe und ob er offen ist herein, wie bei seinen eigenen
+  Reitern. Den Inhalt füllt szenenfeld.js, weil die Ablage Ziehen und
+  Fallenlassen trägt, und das kann eine Vorlage nicht.
+--}}
+<div class="tab scrollable{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <div class="shops-szenenreiter"></div>
+</div>

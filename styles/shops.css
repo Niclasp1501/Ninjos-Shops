@@ -5163,3 +5163,11 @@
   border-color: var(--shops-gold);
   outline: none;
 }
+
+/* Der Reiter „Läden" in der Szenen-Konfiguration: nur ein Behälter. Foundrys
+ * Feldgruppen darin geben ihm das Aussehen der Nachbarreiter. */
+.shops-szenenreiter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

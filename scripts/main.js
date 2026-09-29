@@ -32,7 +32,7 @@ import { tauschEinrichten, tauschStarten, tauschKnopfNachziehen } from "./tausch
 import { schauWiederherstellen } from "./schau.js";
 import { monitorEinstellungEinrichten } from "./monitore.js";
 import { marktbuchEinstellungEinrichten } from "./marktbuch.js";
-import { szenenBogenEinrichten } from "./szenenfeld.js";
+import { szenenBogenEinrichten, szenenReiterEinrichten } from "./szenenfeld.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
 import { muenzhelferEinrichten } from "./muenzbild.js";
 
@@ -236,6 +236,8 @@ Hooks.once("init", () => {
   willkommenEinrichten();
   // Vor dem ersten Zeichnen: Jede Vorlage mit einem Betrag braucht ihn.
   muenzhelferEinrichten();
+  // Der Reiter „Läden" in der Szenen-Konfiguration, siehe szenenfeld.js.
+  szenenReiterEinrichten();
   // Muss in "init" stehen: Ninjo's Foundry MCP ruft seinen registerTools-Hook
   // beim Hochfahren, also bevor "ready" laeuft. Fehlt das Modul, passiert nichts.
   mcpWerkzeugeEinrichten();
@@ -262,6 +264,10 @@ async function zugriffUmstellen() {
   await game.settings.set(MODULE_ID, SETTINGS.ZUGRIFF_UMGESTELLT, true);
   if (laeden.length) console.log(`${MODULE_ID} | ${laeden.length} Laeden folgen jetzt dem Standardzugriff`);
 }
+
+// Ein zweites Mal, jetzt mit allen angemeldeten Szenenblaettern: Ein Modul mit
+// eigenem Blatt und eigenen PARTS ist erst hier bekannt.
+Hooks.once("setup", () => szenenReiterEinrichten());
 
 Hooks.once("ready", async () => {
   socketEinrichten();

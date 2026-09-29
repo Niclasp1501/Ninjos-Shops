@@ -190,18 +190,76 @@ export async function szeneWaehlen(schon = new Set()) {
 
 /* ── Das Szenenfenster ─────────────────────────────────────────────── */
 
+/** Kennung unseres Reiters in der Szenen-Konfiguration. */
+const SZENE_REITER = "ninjosShops";
+
 /**
- * Im Szenenfenster unter „Sonstiges": welche Läden auf dieser Karte stehen.
+ * Ein eigener Reiter „Läden" in der Szenen-Konfiguration.
  *
- * **Der Reiter ist `.tab[data-tab="misc"]`, und das `.tab` ist wesentlich.**
- * Zwei Elemente tragen `data-tab="misc"`: der Knopf in der Reiterleiste und
- * die Seite darunter. Der Knopf kommt im Dokument zuerst - ohne `.tab` landen
- * die Felder in der Leiste und liegen über allem.
+ * **Warum.** Bis zum 29.09.2026 stand das Feld unter „Verschiedenes", zwischen
+ * Foundrys Journal- und Wiedergabelistenfeldern, wo es niemand vermutet. Die
+ * In-Person Tools haben ihren eigenen Reiter „Am Tisch"; Shops bekommt
+ * denselben Aufbau, damit beide Module sich an derselben Stelle gleich
+ * anfühlen. Am Tisch so gewünscht.
+ *
+ * **Wie.** Ein ApplicationV2 beschreibt seine Reiter in zwei statischen
+ * Listen, PARTS fuer den Inhalt und TABS fuer die Leiste, und baut, was darin
+ * steht. Je ein Eintrag ist der vorgesehene Weg hinein, genau so wie bei den
+ * In-Person Tools (dort `sceneTabEinrichten` in main.js). Laeuft bei `init`
+ * fuer Foundrys Klasse und bei `setup` noch einmal fuer Szenenblaetter, die
+ * andere Module mit eigenen PARTS anmelden. Zweimal schadet nicht.
+ */
+export function szenenReiterEinrichten() {
+  const klassen = new Set([foundry.applications.sheets?.SceneConfig]);
+  for (const eintrag of Object.values(CONFIG.Scene?.sheetClasses?.base ?? {})) klassen.add(eintrag?.cls);
+
+  for (const cls of klassen) {
+    try {
+      reiterEinsetzen(cls);
+    } catch (fehler) {
+      // Nie den Start daran scheitern lassen. Ohne Reiter landet das Feld
+      // wieder unter „Verschiedenes", siehe amSzenenbogen.
+      console.warn(`${MODULE_ID} | Reiter in der Szenen-Konfiguration nicht eingesetzt`, cls?.name, fehler);
+    }
+  }
+}
+
+/** Eine Klasse: unser Teil vor dem Fuss, unser Eintrag ans Ende der Leiste. */
+function reiterEinsetzen(cls) {
+  const reiter = cls?.TABS?.sheet?.tabs;
+  if (!cls?.PARTS || !Array.isArray(reiter)) return;
+
+  if (!(SZENE_REITER in cls.PARTS)) {
+    const teil = { template: `modules/${MODULE_ID}/templates/szene-laeden.hbs`, scrollable: [""] };
+    // Vor den Fuss, sonst stuende der Reiter unter dem Speichern-Knopf.
+    const teile = {};
+    for (const [id, part] of Object.entries(cls.PARTS)) {
+      if (id === "footer") teile[SZENE_REITER] = teil;
+      teile[id] = part;
+    }
+    teile[SZENE_REITER] ??= teil;
+    cls.PARTS = teile;
+  }
+  if (!reiter.some(t => t.id === SZENE_REITER)) {
+    reiter.push({ id: SZENE_REITER, icon: "fa-solid fa-store", label: "SHOPS.Szenenfeld.Reiter" });
+  }
+}
+
+/**
+ * Den Reiter fuellen: welche Läden auf dieser Karte stehen.
+ *
+ * Fehlt der Reiter, weil ein fremdes Szenenblatt seine Reiter anders baut,
+ * kommt das Feld wie frueher unter „Verschiedenes". Dort ist
+ * **`.tab[data-tab="misc"]` gemeint, und das `.tab` ist wesentlich**: Zwei
+ * Elemente tragen `data-tab="misc"`, der Knopf in der Reiterleiste und die
+ * Seite darunter. Der Knopf kommt zuerst; ohne `.tab` landete das Feld in der
+ * Leiste und laege ueber allem.
  */
 function amSzenenbogen(app, element) {
   if (!game.user.isGM) return;
   const wurzel = element instanceof HTMLElement ? element : element?.[0];
-  const reiter = wurzel?.querySelector('.tab[data-tab="misc"]');
+  const reiter = wurzel?.querySelector(".shops-szenenreiter")
+    ?? wurzel?.querySelector('.tab[data-tab="misc"]');
   if (!reiter || reiter.querySelector(".shops-szenenlaeden")) return;
 
   const szene = app.document;

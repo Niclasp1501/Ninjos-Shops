@@ -434,6 +434,7 @@
   "SHOPS.Szenenfeld.KeineSzene": "That was not a scene.",
   "SHOPS.Szenenfeld.Fort": "Scene deleted",
   "SHOPS.Szenenfeld.Legende": "Shops on this map",
+  "SHOPS.Szenenfeld.Reiter": "Shops",
   "SHOPS.Szenenfeld.SzeneHinweis": "Drag a shop from the actor directory in here. It is then reachable only to whoever has this map in front of them. This is stored on the shop.",
   "SHOPS.Szenenfeld.KeinLaden": "No shop stands on this map.",
   "SHOPS.Szenenfeld.KeinLadenGezogen": "That was not a shop.",

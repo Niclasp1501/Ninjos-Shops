@@ -3,6 +3,14 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## Unreleased
+
+### Changed
+- **Shops have their own tab in the scene configuration.** Which shops stand
+  on a scene used to be set under "Misc", between Foundry's own fields, where
+  nobody looked for it. It now has a "Shops" tab of its own, built the same way
+  as the "At the table" tab of Ninjo's In-Person Tools.
+
 ## 14.2609.95 - 2026-09-28
 
 ### Fixed
