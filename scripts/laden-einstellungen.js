@@ -13,6 +13,7 @@
  * Aktion `editImage`, die den Dateiwaehler oeffnet und den Pfad zurueckschreibt.
  */
 
+import { figurVon } from "./namen.js";
 import { MODULE_ID, SETTINGS, KAUFMODUS, LADEN_BILD } from "./const.js";
 import { KUPFERWERT } from "./preise.js";
 
@@ -102,7 +103,7 @@ export class LadenEinstellungen extends HandlebarsApplicationMixin(DocumentSheet
       zugriffStatus: laden.zugriffsModus !== "nachVorzeigen" ? null
         : game.i18n.localize(laden.zugriff?.bekannt ? "SHOPS.Zugriff.StatusBekannt" : "SHOPS.Zugriff.StatusNochNicht"),
       spieler: game.users.filter(u => !u.isGM).map(u => ({
-        id: u.id, name: u.name, active: u.active, erlaubt: erlaubt.has(u.id)
+        id: u.id, name: u.name, figur: figurVon(u), active: u.active, erlaubt: erlaubt.has(u.id)
       })),
 
       /*

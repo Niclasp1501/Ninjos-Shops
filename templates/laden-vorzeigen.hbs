@@ -63,7 +63,7 @@
               <span class="{{#unless active}}shops-leer{{/unless}}">
                 {{#if active}}<i class="fa-solid fa-circle shops-online" aria-hidden="true"></i>
                 {{else}}<i class="fa-regular fa-circle" aria-hidden="true"></i>{{/if}}
-                {{name}}
+                {{#if figur}}{{figur}} <em class="shops-anmeldename">{{name}}</em>{{else}}{{name}}{{/if}}
               </span>
 
               {{#if angebot}}

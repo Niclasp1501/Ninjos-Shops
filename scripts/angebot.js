@@ -18,6 +18,7 @@
  * Spielleitung merkt nicht einmal, dass es weg ist.
  */
 
+import { namenHtml } from "./namen.js";
 import { MODULE_ID, SOCKET, OFFENES_ANGEBOT, WARE, LADEN_TYP } from "./const.js";
 import { grundpreisCp, preisCp, alsText, alsMuenzfelder, ausMuenzfeldern, eingegebeneMuenzen,
          preisText, muenzenMal, EINGABE_SORTEN } from "./preise.js";
@@ -56,7 +57,7 @@ export async function angebotDialog(laden, item) {
   const zeilen = leute.map(u => `
     <label class="shops-wahl-zeile">
       <input type="checkbox" name="user" value="${u.id}" ${sehen.has(u.id) ? "checked" : ""}>
-      <span>${foundry.utils.escapeHTML(u.name)}</span>
+      <span>${namenHtml(u)}</span>
       ${sehen.has(u.id) ? `<em class="shops-sieht">${game.i18n.localize("SHOPS.Angebot.SiehtDenLaden")}</em>` : ""}
     </label>`).join("");
 

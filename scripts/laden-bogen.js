@@ -17,6 +17,7 @@
  * niemand zu (KONZEPT-shops.md, Abschnitt 4). Das entscheidet sich in der Welt.
  */
 
+import { figurVon } from "./namen.js";
 import { istWare, inhaltText } from "./lager.js";
 import { festpreisDialog } from "./festpreis.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
@@ -143,7 +144,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         const angebot = u.getFlag(MODULE_ID, OFFENES_ANGEBOT);
         const passend = angebot?.ladenUuid === this.document.uuid ? angebot : null;
         return {
-          id: u.id, name: u.name, active: u.active,
+          id: u.id, name: u.name, figur: figurVon(u), active: u.active,
           gross: u.getFlag(MODULE_ID, "schau") === true,
           angebot: passend
             ? { name: this.document.items.get(passend.itemId)?.name ?? "?",

@@ -5171,3 +5171,11 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+/* Der Anmeldename steht klein hinter der Figur: Am Tisch zählt die Figur. */
+.ninjos-shops .shops-anmeldename {
+  margin-left: .3em;
+  font-size: .82em;
+  font-style: normal;
+  color: var(--shops-text-blass);
+}

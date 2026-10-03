@@ -178,7 +178,7 @@
                     Die Liste schreibt _onRender von Hand. --}}
               <input type="checkbox" data-zugriff="benutzer" value="{{id}}"
                      {{checked erlaubt}} {{#unless ../bearbeitbar}}disabled{{/unless}}>
-              <span class="shops-spielername">{{name}}</span>
+              <span class="shops-spielername">{{#if figur}}{{figur}} <em class="shops-anmeldename">{{name}}</em>{{else}}{{name}}{{/if}}</span>
               {{#if active}}<i class="fa-solid fa-circle shops-online"
                                title="{{localize 'SHOPS.Zugriff.Angemeldet'}}" aria-hidden="true"></i>{{/if}}
             </label>

@@ -21,6 +21,7 @@
  * die aufbereitete Auslage ueber den Socket mit - wie der Tausch.
  */
 
+import { namenHtml } from "./namen.js";
 import { MODULE_ID, SOCKET, OFFENER_LADEN, LADEN_TYP } from "./const.js";
 import { istMonitor } from "./monitore.js";
 import {
@@ -264,7 +265,7 @@ export async function benutzerWaehlen(laden) {
     return `<div class="shops-wahl-zeile">
       <label class="shops-wahl-wer">
         <input type="checkbox" name="user" value="${u.id}" ${checked}>
-        <span>${foundry.utils.escapeHTML(u.name)}${mark}</span>
+        <span>${namenHtml(u)}${mark}</span>
       </label>
       <label class="shops-wahl-gross" data-tooltip="${game.i18n.localize("SHOPS.Schau.GrossHinweis")}">
         <input type="checkbox" name="gross" value="${u.id}" ${grossAn}>

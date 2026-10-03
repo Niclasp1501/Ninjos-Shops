@@ -6,6 +6,11 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## Unreleased
 
 ### Changed
+- **Players are listed by their character.** Showing a shop, making an offer,
+  the visitor list and the access list named people by their login, which at
+  the table says little. They now show the character's name first and the
+  login small behind it; accounts without a character, such as displays, keep
+  their login.
 - **Shops have their own tab in the scene configuration.** Which shops stand
   on a scene used to be set under "Misc", between Foundry's own fields, where
   nobody looked for it. It now has a "Shops" tab of its own, built the same way
