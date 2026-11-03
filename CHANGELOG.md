@@ -6,7 +6,7 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
 ## 14.2611.1 - unreleased
 
 ### Added
-- **An interface for add-on modules.** Other modules can now dock onto Shops:
+- **An interface for add-on modules.** Other modules can now dock onto Shop:
   hooks after every purchase, sale and trade, entries in the menu of a goods row,
   price calculations, and selling at an agreed price. It is documented in
   `API.md`. Nothing changes on your table unless you install an add-on.

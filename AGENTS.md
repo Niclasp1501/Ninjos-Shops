@@ -1199,10 +1199,10 @@ fremde Autoren richtet. Der erste Abnehmer ist `Foundry-Module/Ninjos-Shops-Prem
 Ohne Zusatzmodul ändert sie nichts: Die Hooks laufen ins Leere, das Warenmenü
 bleibt, wie es ist.
 
-**Das Modul heißt beim Namen.** Ninjo am 03.11.2026: Dieses Modul wird nicht „frei"
-oder „free" genannt, auch nicht im Gegensatz zu Premium. Es heißt Ninjo's DnD Shops
-& Trade. Der feste Satz zu Patreon („Die Module sind kostenlos und bleiben es")
-sagt etwas über den Preis und bleibt.
+**Die beiden heißen Shop und Shop Premium.** Ninjo am 03.11.2026: nicht „frei" und nicht
+„free", auch nicht im Gegensatz zu Premium. Der volle Modulname Ninjo's DnD Shops & Trade
+und die Kennung in der `module.json` bleiben. Der feste Satz zu Patreon („Die Module
+sind kostenlos und bleiben es") sagt etwas über den Preis und bleibt.
 
 - **Die Regel dahinter** ist dieselbe wie bei FANG: Neue wesentliche Funktionen
   entstehen im Premium-Modul, Verbesserungen und Fehlerbehebungen hier. Dieses
