@@ -1,6 +1,6 @@
 # Ninjo's DnD Shops & Trade API for add-on modules
 
-Shop exposes one object for other modules: `game.modules.get("ninjos-shops").api`. It is created at the end of Shop' `init` hook, so an add-on can use it in its own `init`, `setup` or `ready`. The hook `ninjosShopsReady` fires once the object exists.
+Shop exposes one object for other modules: `game.modules.get("ninjos-shops").api`. It is created at the end of Shop's `init` hook, so an add-on can use it in its own `init`, `setup` or `ready`. The hook `ninjosShopsReady` fires once the object exists.
 
 What this file promises stays stable. Additions can come with any version; a change to a documented signature bumps `api.interface`.
 
@@ -12,7 +12,7 @@ if (!shops?.register) return;          // Shop missing, inactive, or too old to 
 if (shops.interface < 1) return;       // interface version of this document
 ```
 
-- `api.version` Shop' module version, as in its `module.json`.
+- `api.version` Shop's module version, as in its `module.json`.
 - `api.interface` version of this interface. Currently `1`.
 - `api.atLeast(version)` true when Shop is at least that version (house scheme `<foundry>.<yymm>.<n>`).
 
@@ -22,7 +22,7 @@ Shop follows one rule throughout: **the gamemaster's client executes.** A player
 
 ## Reading
 
-- `api.shops.list()` the shop actors this user can see. Shop are invisible to players, so on a player's client this is empty.
+- `api.shops.list()` the shop actors this user can see. Shop actors are invisible to players, so on a player's client this is empty.
 - `api.prices.baseCp(price)` an item's `system.price` in copper.
 - `api.prices.priceCp(baseCp, shop, fixedCp?)` what the shop asks, after its markup; a fixed price wins.
 - `api.prices.buyBackCp(baseCp, shop)` what the shop pays when buying back.
@@ -44,7 +44,7 @@ Returns a promise for `{ ok: true, text }`, or `{ ok: false, grund, fehltCp? }`,
 
 ## Adding to the interface
 
-- `api.register({ id, requires, setup })` for add-ons that install deeper hooks. `id` is lowercase letters, digits and hyphens. `requires` is the interface version needed; `setup(extension)` runs once, or not at all when Shop' interface is older, in which case the gamemaster is told once. If `setup` throws, the add-on counts as not registered.
+- `api.register({ id, requires, setup })` for add-ons that install deeper hooks. `id` is lowercase letters, digits and hyphens. `requires` is the interface version needed; `setup(extension)` runs once, or not at all when Shop's interface is older, in which case the gamemaster is told once. If `setup` throws, the add-on counts as not registered.
 - `api.registerFeature(id)` / `api.hasFeature(id)` named capabilities. Where Shop has a built-in version of something, it asks here whether an add-on took over.
 - `api.registerItemMenuEntry({ id, icon?, label, gmOnly?, when?(item, shop), onClick(item, shop, sheet) })` an entry in the ⋯ menu of a goods row in the shop sheet. `label` is a string, a localisation key, or a function returning one. `icon` is a Font Awesome class such as `"fa-gavel"`. `gmOnly` defaults to `true`. `when` decides per row; omit it to always show. The same `id` registered again replaces the entry. An entry whose `when`, `label` or `onClick` throws is skipped; the rest of the menu is unaffected.
 
@@ -54,7 +54,7 @@ Called with Foundry's `Hooks.on`. Each receives **one object**, so a field added
 
 | Hook | Payload | When |
 |---|---|---|
-| `ninjosShopsReady` | `api` | the api object exists (end of Shop' `init`) |
+| `ninjosShopsReady` | `api` | the api object exists (end of Shop's `init`) |
 | `ninjosShops.purchaseCompleted` | `{ shop, actor, user, items, totalCp, service, specialPrice }` | a purchase went through and is booked |
 | `ninjosShops.saleCompleted` | `{ shop, person, actor, user, items, totalCp, negotiated }` | a player sold something, directly (`negotiated: false`) or after a price was named (`true`). Exactly one of `shop` and `person` is set. |
 | `ninjosShops.tableCompleted` | `{ user, actor, personUuid, personName, npcItems, playerItems, npcCoins, playerCoins, changeCp, changeTo }` | a trade at the table with a person closed. `npcCoins` and `playerCoins` are what each side put on the table; `changeCp` came back to `changeTo` (`"player"`, `"npc"` or `null`) on top of that |
