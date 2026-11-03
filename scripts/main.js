@@ -15,7 +15,7 @@
  * Spielleiter haelt die Wahrheit" laesst sich nicht nachtraeglich einziehen.
  */
 
-import { MODULE_ID, SETTINGS, OFFENER_LADEN, LADEN_TYP } from "./const.js";
+import { MODULE_ID, SETTINGS, OFFENER_LADEN, LADEN_TYP, WARE } from "./const.js";
 import { ladenTypEinrichten, ladenBilderEinrichten } from "./laden-model.js";
 import { ladenBogenEinrichten } from "./laden-bogen.js";
 import { willkommenEinrichten, willkommenZeigen } from "./willkommen.js";
@@ -46,6 +46,7 @@ import { LadenBogen } from "./laden-bogen.js";
 import { SpielerFenster } from "./spieler-fenster.js";
 import { verkaufeZumPreis } from "./kauf.js";
 import { buchen } from "./ladenbuch.js";
+import { schreibeErgebnis } from "./marktbuch.js";
 import { istMonitor, angemeldeteMonitore } from "./monitore.js";
 import { schauZuschauer, SCHAU_MERKMAL } from "./schau.js";
 import { figurVon, namenHtml } from "./namen.js";
@@ -259,13 +260,13 @@ function schnittstelleEinrichten() {
   });
 
   erweiterung.internals = Object.freeze({
-    MODULE_ID, LADEN_TYP, HOOKS, LadenBogen, SpielerFenster,
+    MODULE_ID, LADEN_TYP, WARE, HOOKS, LadenBogen, SpielerFenster,
     vorsitz: { darfIchAusfuehren, bittenKennung, waereZustaendig },
     lager: { uebergeben, pruefeSeite, einlagern, darfLeerStehen, inhaltVon, istWare },
     kasse: { bezahle, schreibeGut, vermoegenCp, kasseNachKauf },
     melden: { erfolgZeigen, erfolgMelden, hinweisZeigen, hinweisMelden, abbruchZeigen },
     chip: { chipHinlegen, chipWegnehmen },
-    buch: { buchen },
+    buch: { buchen, schreibeErgebnis },
     schau: { schauZuschauer, SCHAU_MERKMAL },
     namen: { figurVon, namenHtml }
   });
