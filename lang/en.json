@@ -485,5 +485,6 @@
   "SHOPS.Einstellung.TischAnsehen.Name": "Trade table: inspect the NPC's items",
   "SHOPS.Einstellung.TischAnsehen.Hinweis": "Players at the trade table with an NPC may tap the NPC's items and read them in the detail window. Off means they only see picture, name and price.",
   "SHOPS.Einstellung.TauschAnsage.Name": "Announce trades in chat",
-  "SHOPS.Einstellung.TauschAnsage.Hinweis": "A card after each trade showing what changed hands."
+  "SHOPS.Einstellung.TauschAnsage.Hinweis": "A card after each trade showing what changed hands.",
+  "SHOPS.Erweiterung.ZuAlt": "The add-on {id} needs a newer Ninjo's DnD Shops & Trade (interface {requires}, found {hier}). Please update Shops."
 }

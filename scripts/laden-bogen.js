@@ -20,6 +20,7 @@
 import { figurVon } from "./namen.js";
 import { istWare, inhaltText } from "./lager.js";
 import { festpreisDialog } from "./festpreis.js";
+import { HOOKS, erweiterung } from "./erweiterung.js";
 import { MODULE_ID, LADEN_TYP, WARE, OFFENES_ANGEBOT } from "./const.js";
 import { grundpreisCp, preisCp, ankaufCp, alsText, preisText, EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
 import { einstellungenOeffnen } from "./laden-einstellungen.js";
@@ -86,6 +87,18 @@ export function menueSetzen(menue, anker) {
 
   menue.style.top = `${Math.round(oben)}px`;
   menue.style.left = `${Math.round(Math.max(RAND, links))}px`;
+}
+
+/**
+ * Die Eintraege, die Zusatzmodule fuer diese Zeile angemeldet haben.
+ *
+ * Mit eigenem Trenner davor, damit fremde Eintraege nicht zwischen den
+ * eigenen stehen, und ohne ihn, wenn es keine gibt.
+ */
+function zusatzEintraege(item, laden) {
+  const fremde = erweiterung.itemMenuEntries({ item, shop: laden, isGM: game.user.isGM });
+  if (!fremde.length) return [];
+  return [{ trenner: true }, ...fremde.map(e => ({ tat: `ext:${e.id}`, symbol: e.icon, fremd: e.label }))];
 }
 
 export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
@@ -260,6 +273,9 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     // steht dann verwaist im Bild.
     document.querySelector(".shops-menue")?.remove();
 
+    // Fuer Zusatzmodule, auch am nur lesbaren Bogen. Siehe API.md.
+    Hooks.callAll(HOOKS.BOGEN, { sheet: this, element: this.element, shop: this.document });
+
     if (!this.isEditable) return;
 
     /*
@@ -389,6 +405,7 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
         an: Number.isFinite(merkmal[WARE.FESTPREIS]) },
       { tat: "anbieten", symbol: "fa-hand-holding", text: "SHOPS.Menue.Anbieten" },
       { tat: "oeffnen", symbol: "fa-up-right-from-square", text: "SHOPS.Menue.Oeffnen" },
+      ...zusatzEintraege(item, this.document),
       { trenner: true },
       { tat: "loeschen", symbol: "fa-trash", text: "SHOPS.Menue.Entfernen", gefahr: true }
     ];
@@ -405,7 +422,9 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       ? `<hr>`
       : `<button type="button" data-tat="${e.tat}" class="${e.an ? "shops-an" : ""} ${e.gefahr ? "shops-gefahr" : ""}">
            <i class="fa-solid ${e.symbol}"></i>
-           <span>${game.i18n.localize(e.text)}</span>
+           <span>${e.fremd !== undefined
+             ? foundry.utils.escapeHTML(game.i18n.localize(e.fremd))
+             : game.i18n.localize(e.text)}</span>
            ${e.an ? '<i class="fa-solid fa-check shops-haken"></i>' : ""}
          </button>`).join("");
 
@@ -423,6 +442,14 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
       if (!knopf) return;
       menue.remove();
       const tat = knopf.dataset.tat;
+
+      // Ein Eintrag eines Zusatzmoduls. Wirft er, trifft es nur ihn.
+      if (tat.startsWith("ext:")) {
+        const eintrag = erweiterung.itemMenuEntry(tat.slice(4));
+        try { await eintrag?.onClick(item, this.document, this); }
+        catch (fehler) { console.error(`${MODULE_ID} | Menueeintrag ${tat} fehlgeschlagen`, fehler); }
+        return;
+      }
 
       if (["verborgen", "dienst", "ankauf"].includes(tat)) {
         const an = !(item.flags?.[MODULE_ID]?.[tat] === true);

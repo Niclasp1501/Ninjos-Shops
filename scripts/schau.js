@@ -25,6 +25,7 @@
 
 import { istWare } from "./lager.js";
 import { MODULE_ID, SETTINGS, SOCKET, LADEN_TYP, WARE, OFFENER_LADEN } from "./const.js";
+import { HOOKS } from "./erweiterung.js";
 import { grundpreisCp, preisCp, alsText, preisText } from "./preise.js";
 import { waereZustaendig } from "./vorsitz.js";
 
@@ -201,6 +202,9 @@ export async function schauZeichnen(laden, { seite = 0, seiten = 1, takt = 0 } =
       unten.style.transform = "translateY(0)";
     }, 30);
   }
+
+  // Fuer Zusatzmodule, siehe API.md: etwa eine andere Gestaltung der Schau.
+  Hooks.callAll(HOOKS.SCHAU, { element: el, shop: laden, page: seite, pages: seiten });
 }
 
 /* ── Was die Spielleitung treibt ───────────────────────────────────── */

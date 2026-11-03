@@ -3,7 +3,13 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
-## Unreleased
+## 14.2611.1 - unreleased
+
+### Added
+- **An interface for add-on modules.** Other modules can now dock onto Shops:
+  hooks after every purchase, sale and trade, entries in the menu of a goods row,
+  price calculations, and selling at an agreed price. It is documented in
+  `API.md`. Nothing changes on your table unless you install an add-on.
 
 ### Changed
 - **Players are listed by their character.** Showing a shop, making an offer,

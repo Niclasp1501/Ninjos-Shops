@@ -22,6 +22,7 @@
  */
 
 import { MODULE_ID, WARE, KAUFMODUS, OFFENES_ANGEBOT, LADEN_TYP } from "./const.js";
+import { HOOKS } from "./erweiterung.js";
 import { grundpreisCp, preisCp, alsText, wechselgeldText } from "./preise.js";
 import { einlagern, darfLeerStehen, istWare, uebergeben } from "./lager.js";
 import { bezahle, kasseNachKauf, vermoegenCp } from "./kasse.js";
@@ -135,6 +136,50 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
   await schreibeVorgang({ laden, item, figur, kaeufer, pruefung, ausAngebot: giltFuerDiesenKauf });
   if (!pruefung.ok) return { ok: false, grund: pruefung.grund, fehltCp: pruefung.fehltCp };
 
+  return kaufAbwickeln({ laden, item, figur, kaeufer, pruefung, ausAngebot: giltFuerDiesenKauf });
+}
+
+/**
+ * Verkaufen zu einem Preis, der schon feststeht. **Nur bei der Spielleitung.**
+ *
+ * Fuer Zusatzmodule, als `api.sell` in API.md: ein Zuschlag bei einer Auktion,
+ * die Abholung einer Bestellung. Der Preis ist hier Vereinbarung, also greifen
+ * Kaufmodus, Hoechstmenge, „verborgen" und „passend zahlen" nicht; sie regeln
+ * den Kauf ueber die Theke. Dass der Bestand und das Geld reichen, wird trotzdem
+ * geprueft. Danach derselbe Weg wie jeder Kauf, mit Bestand, Kasse und Buechern.
+ */
+export async function verkaufeZumPreis({ laden, item, figur, kaeufer, menge = 1, summeCp, satz = null }) {
+  if (!game.user.isGM) return { ok: false, grund: "SHOPS.Kauf.KeinSpielleiter" };
+  if (laden?.type !== LADEN_TYP) return { ok: false, grund: "SHOPS.Kauf.KeinLaden" };
+  if (!item || item.parent !== laden) return { ok: false, grund: "SHOPS.Kauf.WegVomTisch", was: item?.name ?? "" };
+  if (!figur) return { ok: false, grund: "SHOPS.Kauf.KeineFigur" };
+
+  const stueck = Math.max(1, Math.floor(Number(menge) || 1));
+  const dienst = item.flags?.[MODULE_ID]?.[WARE.DIENST] === true;
+  const bestand = Number(item.system?.quantity ?? 1);
+  if (!dienst && bestand < stueck) return { ok: false, grund: "SHOPS.Kauf.NichtGenugDa", was: item.name };
+
+  const betragCp = Math.max(0, Math.round(Number(summeCp) || 0));
+  const boerse = figur.system?.currency ?? {};
+  const gezahlt = bezahle(boerse, betragCp);
+  if (!gezahlt) return { ok: false, grund: "SHOPS.Kauf.ZuWenigGeld", fehltCp: betragCp - vermoegenCp(boerse) };
+
+  return kaufAbwickeln({
+    laden, item, figur, kaeufer, satz, ausAngebot: false, zumPreis: true,
+    pruefung: { stueck, dienst, summeCp: betragCp, gezahlt, bestand }
+  });
+}
+
+/**
+ * Was jeder Kauf tut, sobald er geprueft ist: Ware, Geld, Bestand, Kasse, Buecher.
+ *
+ * Aus `fuehreKaufAus` herausgezogen, damit `verkaufeZumPreis` denselben Weg geht
+ * und keine zweite Fassung davon entsteht, die beim naechsten Fehler vergessen wird.
+ */
+async function kaufAbwickeln({ laden, item, figur, kaeufer, pruefung, ausAngebot, zumPreis = false, satz: buchSatz = null }) {
+  const giltFuerDiesenKauf = ausAngebot;
+  const kaeuferId = kaeufer?.id ?? null;
+  const itemId = item.id;
   const { stueck, dienst, summeCp, gezahlt, bestand } = pruefung;
 
   /*
@@ -195,7 +240,16 @@ export async function fuehreKaufAus({ ladenUuid, itemId, figurUuid, menge = 1, k
     figurName: figur.name,
     was: [{ name: item.name, menge: stueck }],
     summeCp,
-    sonderpreis: giltFuerDiesenKauf
+    sonderpreis: giltFuerDiesenKauf,
+    satz: buchSatz
+  });
+
+  // Fuer Zusatzmodule, siehe API.md. Erst nach allen Buchungen: Wer hier
+  // zuhoert, soll einen abgeschlossenen Kauf sehen und keinen halben.
+  Hooks.callAll(HOOKS.KAUF, {
+    shop: laden, actor: figur, user: kaeufer ?? null,
+    items: [{ itemId, name: item.name, quantity: stueck }],
+    totalCp: summeCp, service: dienst, specialPrice: giltFuerDiesenKauf || zumPreis
   });
 
   // Was zurueckkam, gehoert in den Satz: Der Beutel rechnet richtig, aber

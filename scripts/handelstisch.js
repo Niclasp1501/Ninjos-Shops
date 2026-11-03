@@ -46,6 +46,7 @@
  */
 
 import { MODULE_ID, SOCKET, WARE, SETTINGS } from "./const.js";
+import { HOOKS } from "./erweiterung.js";
 import { grundpreisCp, alsText, alsMuenzfelder, muenzfelderVon, preisText, eingegebeneMuenzen,
          EINGABE_SORTEN, KUPFERWERT } from "./preise.js";
 import { vermoegenCp, muenzenAbziehen, muenzenDazu, zahleAus } from "./kasse.js";
@@ -530,6 +531,21 @@ async function abschliessen(benutzerId) {
       geld: stand ? stand.linksText : ""
     }));
     foundry.applications.instances.get(`${MODULE_ID}-tisch-gm-${benutzerId}`)?.close();
+
+    // Fuer Zusatzmodule, siehe API.md. Der Stand von vor dem Abraeumen.
+    const posten = liste => (liste ?? []).map(p => ({ itemId: p.itemId, name: p.name, quantity: p.menge }));
+    Hooks.callAll(HOOKS.TISCH, {
+      user: spieler ?? null,
+      actor: spieler?.character ?? null,
+      personUuid: vorher?.personUuid ?? null,
+      personName: vorher?.personName ?? "",
+      npcItems: posten(vorher?.seiteNsc),
+      playerItems: posten(vorher?.seiteSpieler),
+      npcCoins: { ...(vorher?.muenzenNsc ?? {}) },
+      playerCoins: { ...(vorher?.muenzenSpieler ?? {}) },
+      changeCp: stand?.wechselCp ?? 0,
+      changeTo: stand?.wechselAn === "spieler" ? "player" : stand?.wechselAn === "nsc" ? "npc" : null
+    });
   } else if (ergebnis?.grund) {
     // Scheitert es, bleibt der Tisch stehen - aber ohne Zusagen.
     const jetzt = spieler?.getFlag(MODULE_ID, TISCH);

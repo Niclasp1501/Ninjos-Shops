@@ -35,6 +35,20 @@ import { marktbuchEinstellungEinrichten } from "./marktbuch.js";
 import { szenenBogenEinrichten, szenenReiterEinrichten } from "./szenenfeld.js";
 import { fensterPassenEinrichten } from "./fensterpassen.js";
 import { muenzhelferEinrichten } from "./muenzbild.js";
+import { erweiterung, warnungWeiterleiten, SCHNITTSTELLE, HOOKS } from "./erweiterung.js";
+import { grundpreisCp, preisCp, ankaufCp, alsText, alsMuenzfelder, ausMuenzfeldern } from "./preise.js";
+import { bezahle, schreibeGut, vermoegenCp, kasseNachKauf } from "./kasse.js";
+import { uebergeben, pruefeSeite, einlagern, darfLeerStehen, inhaltVon, istWare } from "./lager.js";
+import { darfIchAusfuehren, bittenKennung, waereZustaendig } from "./vorsitz.js";
+import { erfolgZeigen, erfolgMelden, hinweisZeigen, hinweisMelden, abbruchZeigen } from "./melden.js";
+import { chipHinlegen, chipWegnehmen } from "./chip.js";
+import { LadenBogen } from "./laden-bogen.js";
+import { SpielerFenster } from "./spieler-fenster.js";
+import { verkaufeZumPreis } from "./kauf.js";
+import { buchen } from "./ladenbuch.js";
+import { istMonitor, angemeldeteMonitore } from "./monitore.js";
+import { schauZuschauer, SCHAU_MERKMAL } from "./schau.js";
+import { figurVon, namenHtml } from "./namen.js";
 
 function einstellungenEinrichten() {
   /**
@@ -222,6 +236,70 @@ function einstellungenEinrichten() {
   });
 }
 
+/**
+ * **Die Schnittstelle nach draussen.** Zwei Abnehmer, zwei Versprechen.
+ *
+ * `tauschStarten` ruft die In-Person Tools: Der Tausch lag bis zum 08.09.2026
+ * dort, und drueben steht jetzt nur noch ein Knopf, der hier hereinruft.
+ *
+ * Alles andere ist fuer Zusatzmodule und steht in API.md. Es entsteht in
+ * `init` und nicht mehr in `ready`, damit ein Zusatzmodul es in seinem eigenen
+ * `init` schon findet; dasselbe macht FANG. Was unter `extension.internals`
+ * liegt, ist ausdruecklich nicht versprochen.
+ */
+function schnittstelleEinrichten() {
+  const modul = game.modules.get(MODULE_ID);
+  if (!modul) return;
+  const kuerzel = sorte => game.i18n.localize(`SHOPS.Muenze.${sorte}`);
+
+  warnungWeiterleiten((id, requires) => {
+    if (!game.user?.isGM) return;
+    ui.notifications.warn(game.i18n.format("SHOPS.Erweiterung.ZuAlt",
+      { id, requires, hier: SCHNITTSTELLE }));
+  });
+
+  erweiterung.internals = Object.freeze({
+    MODULE_ID, LADEN_TYP, HOOKS, LadenBogen, SpielerFenster,
+    vorsitz: { darfIchAusfuehren, bittenKennung, waereZustaendig },
+    lager: { uebergeben, pruefeSeite, einlagern, darfLeerStehen, inhaltVon, istWare },
+    kasse: { bezahle, schreibeGut, vermoegenCp, kasseNachKauf },
+    melden: { erfolgZeigen, erfolgMelden, hinweisZeigen, hinweisMelden, abbruchZeigen },
+    chip: { chipHinlegen, chipWegnehmen },
+    buch: { buchen },
+    schau: { schauZuschauer, SCHAU_MERKMAL },
+    namen: { figurVon, namenHtml }
+  });
+
+  modul.api = {
+    ...(modul.api ?? {}),
+    version: modul.version,
+    interface: SCHNITTSTELLE,
+    atLeast: version => !foundry.utils.isNewerVersion(version, modul.version),
+    tauschStarten,
+    hooks: HOOKS,
+    shops: { list: () => game.actors?.filter(a => a.type === LADEN_TYP) ?? [] },
+    prices: {
+      baseCp: preis => grundpreisCp(preis),
+      priceCp: (grundCp, laden, festCp = null) => preisCp(grundCp, laden?.system ?? laden, festCp),
+      buyBackCp: (grundCp, laden) => ankaufCp(grundCp, laden?.system ?? laden),
+      format: cp => alsText(cp, kuerzel),
+      toCoins: cp => alsMuenzfelder(cp),
+      fromCoins: felder => ausMuenzfeldern(felder)
+    },
+    monitors: { isMonitor: benutzer => istMonitor(benutzer), active: () => angemeldeteMonitore() },
+    sell: auftrag => verkaufeZumPreis({
+      laden: auftrag?.shop, item: auftrag?.item, figur: auftrag?.actor, kaeufer: auftrag?.user,
+      menge: auftrag?.quantity, summeCp: auftrag?.totalCp, satz: auftrag?.note
+    }),
+    register: def => erweiterung.register(def),
+    registerFeature: id => erweiterung.registerFeature(id),
+    hasFeature: id => erweiterung.hasFeature(id),
+    registerItemMenuEntry: def => erweiterung.registerItemMenuEntry(def),
+    extension: erweiterung
+  };
+  Hooks.callAll(HOOKS.BEREIT, modul.api);
+}
+
 Hooks.once("init", () => {
   einstellungenEinrichten();
   monitorEinstellungEinrichten();
@@ -241,6 +319,9 @@ Hooks.once("init", () => {
   // Muss in "init" stehen: Ninjo's Foundry MCP ruft seinen registerTools-Hook
   // beim Hochfahren, also bevor "ready" laeuft. Fehlt das Modul, passiert nichts.
   mcpWerkzeugeEinrichten();
+  // Zuletzt: Ein Zusatzmodul, das auf `ninjosShopsReady` hoert, soll ein
+  // fertig eingerichtetes Modul vorfinden.
+  schnittstelleEinrichten();
 });
 
 /**
@@ -299,14 +380,6 @@ Hooks.once("ready", async () => {
   tischEinrichten();
   tauschEinrichten();
 
-  /*
-   * **Die Schnittstelle nach draussen.** Der Tausch lag bis zum 08.09.2026 in
-   * den In-Person Tools; dort steht jetzt nur noch der Hinweis und ein Knopf,
-   * der hier hereinruft. Deshalb genau eine Funktion und ein fester Name -
-   * was hier steht, ist ein Versprechen an ein fremdes Modul.
-   */
-  const modul = game.modules.get(MODULE_ID);
-  if (modul) modul.api = { ...(modul.api ?? {}), tauschStarten };
   szenenBogenEinrichten();
   await leisteNachziehen();
   await verknuepfungNachtragen();

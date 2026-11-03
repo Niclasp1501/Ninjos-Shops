@@ -485,5 +485,6 @@
   "SHOPS.Einstellung.TischAnsehen.Name": "Handelstisch: Sachen des NSC ansehen",
   "SHOPS.Einstellung.TischAnsehen.Hinweis": "Spieler dürfen am Handelstisch mit einem NSC dessen Gegenstände antippen und im Detailfenster lesen. Aus heißt: Sie sehen nur Bild, Name und Preis.",
   "SHOPS.Einstellung.TauschAnsage.Name": "Tausch im Chat ansagen",
-  "SHOPS.Einstellung.TauschAnsage.Hinweis": "Nach jedem Tausch eine Karte, die zeigt, was die Seite gewechselt hat."
+  "SHOPS.Einstellung.TauschAnsage.Hinweis": "Nach jedem Tausch eine Karte, die zeigt, was die Seite gewechselt hat.",
+  "SHOPS.Erweiterung.ZuAlt": "Das Zusatzmodul {id} braucht eine neuere Fassung von Ninjo's DnD Shops & Trade (Schnittstelle {requires}, vorhanden {hier}). Bitte Shops aktualisieren."
 }

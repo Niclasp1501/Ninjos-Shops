@@ -20,6 +20,7 @@
  */
 
 import { MODULE_ID, WARE, LADEN_TYP } from "./const.js";
+import { HOOKS } from "./erweiterung.js";
 import { grundpreisCp, ankaufCp, alsText } from "./preise.js";
 import { einlagern, behaelterLeeren } from "./lager.js";
 import { bezahle, muenzenDazu, schreibeGut, vermoegenCp, zahleAus } from "./kasse.js";
@@ -162,6 +163,12 @@ export async function fuehreVerkaufAus({ ladenUuid, itemId, figurUuid, menge = 1
     figurName: figur.name,
     was: [{ name, menge: stueck }],
     summeCp
+  });
+
+  Hooks.callAll(HOOKS.VERKAUF, {
+    shop: laden, person: null, actor: figur, user: verkaeufer ?? null,
+    items: [{ itemId, name, quantity: stueck }],
+    totalCp: summeCp, negotiated: false
   });
 
   return {
@@ -312,6 +319,13 @@ export async function fuehreAnkaufAus(sitzung) {
     const { schreibeHandelVerkauf } = await import("./marktbuch.js");
     await schreibeHandelVerkauf({ person: gegenueber, verkaeufer, figur, ok: true, was, summeCp });
   }
+
+  Hooks.callAll(HOOKS.VERKAUF, {
+    shop: istLaden ? gegenueber : null, person: istLaden ? null : gegenueber,
+    actor: figur, user: verkaeufer ?? null,
+    items: sitzung.posten.map(p => ({ itemId: p.itemId, name: p.name, quantity: p.menge })),
+    totalCp: summeCp, negotiated: true
+  });
 
   return { ok: true, text: game.i18n.format("SHOPS.Anfrage.Erledigt", { preis: alsText(summeCp, kuerzel) }) };
 }

@@ -16,6 +16,7 @@
 
 import { istWare, inhaltText } from "./lager.js";
 import { chipHinlegen, chipWegnehmen } from "./chip.js";
+import { HOOKS } from "./erweiterung.js";
 import { MODULE_ID, WARE, KAUFMODUS, SOCKET, OFFENER_LADEN } from "./const.js";
 import { grundpreisCp, preisCp, alsText, preisText, KUPFERWERT } from "./preise.js";
 import { vermoegenCp } from "./kasse.js";
@@ -260,6 +261,12 @@ export class SpielerFenster extends HandlebarsApplicationMixin(ApplicationV2) {
         };
       })
       .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
+  }
+
+  /** Fuer Zusatzmodule, siehe API.md. */
+  _onRender(context, options) {
+    super._onRender(context, options);
+    Hooks.callAll(HOOKS.SPIELERFENSTER, { window: this, element: this.element, shop: this.#laden ?? null });
   }
 
   /** Eigene Boerse als Muenzzeilen, oder null wenn keine Figur. */

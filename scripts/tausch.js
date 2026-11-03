@@ -38,6 +38,7 @@
  */
 
 import { MODULE_ID, SOCKET, SETTINGS } from "./const.js";
+import { HOOKS } from "./erweiterung.js";
 import { uebergeben, pruefeSeite, inhaltVon, muenzenIn, stecktIn } from "./lager.js";
 import { darfIchAusfuehren, bittenKennung } from "./vorsitz.js";
 import { Wahl, WAHL_AKTIONEN, muenzText, muenzenSaeubern } from "./tisch-wahl.js";
@@ -432,6 +433,17 @@ async function ausfuehren(tausch) {
   if (fehler.length) {
     ui.notifications.error(`${game.i18n.localize("SHOPS.Tausch.Steckengeblieben")} ${fehler.join(" | ")}`);
   }
+  // Fuer Zusatzmodule, siehe API.md.
+  const seiteFuer = (seite, figur) => ({
+    user: game.users.get(tausch[seite].benutzerId) ?? null,
+    actor: figur,
+    items: (tausch[seite].posten ?? []).map(p => ({ itemId: p.itemId, name: p.name, quantity: p.menge })),
+    coins: { ...(tausch[seite].muenzen ?? {}) }
+  });
+  Hooks.callAll(HOOKS.TAUSCH, {
+    a: seiteFuer("a", figurA), b: seiteFuer("b", figurB), incomplete: fehler.length > 0
+  });
+
   await ansage(tausch, figurA, figurB, fehler.length > 0);
 }
 

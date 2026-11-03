@@ -1190,3 +1190,38 @@ dass eine Rolle fehlt — dann gehört sie in die Marke, nicht in `shops.css`.
 **Offen:** `title=`-Tooltips gibt es auf Touch nicht; wo eine Erklärung nötig
 ist, gehört sie in den sichtbaren Text. Die `aria`-Lücke, die hier bis zum
 13.09.2026 stand (vier Attribute auf 14 Vorlagen), ist zu: 136 auf 16.
+
+## Die Schnittstelle für Zusatzmodule
+
+Entstanden am 13.09.2026, seit dem 03.11.2026 auf `master`, erscheint mit
+14.2611.1. Beschrieben ist sie in [API.md](API.md), auf Englisch, weil sie sich an
+fremde Autoren richtet. Der erste Abnehmer ist `Foundry-Module/Ninjos-Shops-Premium`.
+Ohne Zusatzmodul ändert sie nichts: Die Hooks laufen ins Leere, das Warenmenü
+bleibt, wie es ist.
+
+**Das Modul heißt beim Namen.** Ninjo am 03.11.2026: Dieses Modul wird nicht „frei"
+oder „free" genannt, auch nicht im Gegensatz zu Premium. Es heißt Ninjo's DnD Shops
+& Trade. Der feste Satz zu Patreon („Die Module sind kostenlos und bleiben es")
+sagt etwas über den Preis und bleibt.
+
+- **Die Regel dahinter** ist dieselbe wie bei FANG: Neue wesentliche Funktionen
+  entstehen im Premium-Modul, Verbesserungen und Fehlerbehebungen hier. Dieses
+  Modul bekommt Andockstellen, nie die Funktion selbst.
+- **Die Anmeldestelle** (`scripts/erweiterung.js`) weiß nichts von Foundry,
+  damit sie sich ohne Welt prüfen lässt: `node tools/erweiterung.test.mjs`.
+  Genau dort kann ein fremdes Modul scheitern, und es soll dabei nur sich
+  selbst treffen.
+- **Die api entsteht jetzt am Ende von `init`**, nicht mehr in `ready`. Ein
+  Zusatzmodul soll sie in seinem eigenen `init` finden. `tauschStarten` für die
+  In-Person Tools steht unverändert darin.
+- **`api.sell` ist der Kauf zu einem vereinbarten Preis.** Er nimmt mit
+  `kaufAbwickeln` in `kauf.js` denselben Weg wie jeder Kauf, damit Bestand, Kasse
+  und Bücher an genau einer Stelle stehen. Auktion und Bestellungen brauchen ihn.
+- **Die `*Completed`-Hooks** stehen hinter allen Buchungen und laufen nur auf
+  der ausführenden Spielleiter-Verbindung. Die `*Rendered`-Hooks laufen überall.
+- **Ändert sich eine Signatur aus API.md**, steigt `SCHNITTSTELLE`. Was unter
+  `extension.internals` liegt, ist nicht versprochen.
+- **`tableCompleted` trug bis zum 03.11.2026 `askedCp`.** Das stammte aus der Zeit,
+  in der die Spielleitung einen Preis forderte; seit jede Seite ihren Preis nennt,
+  gibt es den Wert nicht mehr. Beim Übertragen auf `master` wäre er still immer
+  `null` gewesen. Jetzt steht dort das Wechselgeld.
