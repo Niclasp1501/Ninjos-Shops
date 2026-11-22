@@ -26,7 +26,7 @@ import { anfrageFensterEinrichten } from "./anfrage-fenster.js";
 import { buchFensterEinrichten } from "./ladenbuch.js";
 import { offenenLadenWiederherstellen } from "./vorzeigen.js";
 import { verknuepfungEinrichten, verknuepfungNachtragen } from "./verknuepfung.js";
-import { ladenChipNachziehen } from "./spieler-fenster.js";
+import { ladenChipNachziehen, boerseNachziehenEinrichten } from "./spieler-fenster.js";
 import { tischEinrichten } from "./handelstisch.js";
 import { tauschEinrichten, tauschStarten, tauschKnopfNachziehen } from "./tausch.js";
 import { schauWiederherstellen } from "./schau.js";
@@ -361,6 +361,7 @@ Hooks.once("ready", async () => {
   anfrageFensterEinrichten();
   buchFensterEinrichten();
   verknuepfungEinrichten();
+  boerseNachziehenEinrichten();
   // Das Preisfeld aus drei Muenzsorten. Wird in mehreren Fenstern gebraucht.
   foundry.applications.handlebars.loadTemplates({
     "shops-muenzfelder": `modules/${MODULE_ID}/templates/muenzfelder.hbs`

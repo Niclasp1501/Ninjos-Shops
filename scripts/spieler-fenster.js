@@ -667,3 +667,39 @@ export function spielerFensterAktualisieren(laden) {
 export function spielerFensterIstOffen() {
   return !!offen;
 }
+
+/**
+ * Die eigene Boerse und der eigene Rucksack, wenn sie sich von aussen aendern.
+ *
+ * Das Fenster zeichnete sich bisher nur neu, wenn der Laden sich aenderte
+ * oder ein eigener Kauf eine Antwort bekam. Bucht jemand anderes vom Geld
+ * der Figur ab, etwa die Spielleitung beim Zuschlag einer Auktion oder bei
+ * der Anzahlung auf eine Bestellung, stand oben weiter der alte Betrag, und
+ * die Verkaufsliste kannte das neue Stueck nicht. Am 22.11.2026 zeigte das
+ * Fenster nach einem Zuschlag 200 GM, die Figur hatte 147.
+ *
+ * Gezeichnet wird nur fuer die eigene Figur und gebuendelt: Ein Kauf aendert
+ * Geld und mehrere Gegenstaende kurz nacheinander, und das soll ein Neuzeichnen
+ * sein, nicht vier. Auch der Handelstisch zeigt die eigene Boerse und folgt
+ * deshalb mit.
+ */
+export function boerseNachziehenEinrichten() {
+  let wartet = null;
+  const nachziehen = akteur => {
+    const figur = eigeneFigur();
+    if (!figur || akteur?.id !== figur.id) return;
+    clearTimeout(wartet);
+    wartet = setTimeout(() => {
+      for (const id of [`${MODULE_ID}-spieler`, `${MODULE_ID}-tisch`]) {
+        const app = foundry.applications.instances.get(id);
+        if (app?.rendered) app.render(false);
+      }
+    }, 120);
+  };
+  Hooks.on("updateActor", (akteur, aenderungen) => {
+    if (foundry.utils.hasProperty(aenderungen, "system.currency")) nachziehen(akteur);
+  });
+  for (const hook of ["createItem", "updateItem", "deleteItem"]) {
+    Hooks.on(hook, item => nachziehen(item?.parent));
+  }
+}

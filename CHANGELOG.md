@@ -3,6 +3,15 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## 14.2611.2 - 2026-11-22
+
+### Fixed
+- **The purse in the shop window stays current.** When money left or reached a
+  character from outside the window, for example a deposit taken by the gamemaster
+  or a sale closed at an auction, the shop window still showed the old amount at
+  the top, and the sell list missed new items. The window now redraws as soon as
+  the character's money or items change. The trade table follows the same way.
+
 ## 14.2611.1 - 2026-11-22
 
 ### Added
