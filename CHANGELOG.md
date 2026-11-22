@@ -3,7 +3,7 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
-## 14.2611.1 - unreleased
+## 14.2611.1 - 2026-11-22
 
 ### Added
 - **An interface for add-on modules.** Other modules can now dock onto Shop:
