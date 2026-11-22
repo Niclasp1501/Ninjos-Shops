@@ -34,6 +34,9 @@ go in as a **service**. With a **till** of its own, a merchant can eventually ru
 your players sell too much. And if you like, an NPC stands behind the counter, whose sheet then
 gets a button to open their shop.
 
+![The shop sheet of the GM](docs/images/shop-sheet.png)
+*The shop sheet: the till, showing the shop, who has it open, and the goods with stock and price. The lantern under the counter stays hidden from the players.*
+
 ### Show it when you want
 
 You decide who gets to see a shop. Show it to everyone, show it only to the player who is
@@ -43,6 +46,9 @@ their own. A shown shop stays open through a reload.
 When you all play in one room, the shop can go up on the big screen as well. The **display view**
 shows the goods large as cards with prices in gold and turns the pages by itself, while you pause
 or go back from the shop sheet.
+
+![The display view on the big screen](docs/images/display-view.png)
+*The display view on the big screen at the table: large cards, prices in gold, turning pages.*
 
 ### Buying and selling
 
@@ -60,6 +66,14 @@ ceiling before you name a price. Only you ever see those numbers.
 Every purchase and sale is written into the **shop ledger**. The **market ledger** shows all
 shops together, including the purchases you declined and why.
 
+| ![The shop window of a player, sorted into sections](docs/images/player-window.png) | ![A purchase with the receipt in the window](docs/images/receipt.png) |
+|---|---|
+| *The shop window of a player, sorted into sections* | *A purchase with the receipt in the window* |
+
+| ![Selling to the shop at its buy-back price](docs/images/selling.png) | ![The shop ledger of the GM](docs/images/shop-ledger.png) |
+|---|---|
+| *Selling to the shop at its buy-back price* | *The shop ledger of the GM* |
+
 ### Trading without a shop
 
 Not everyone your party trades with runs a shop. For the stranger at the campfire or the farmer
@@ -72,6 +86,13 @@ both have to agree again.
 same table lies in front of both. Nobody works out what an item is worth here; all that counts is
 what the two of them agree on. Everything can be tapped, quantities have step buttons and coins
 are added per denomination, so trading works comfortably on a tablet too.
+
+### Shop Premium
+
+For patrons there is **Shop Premium**, an add-on that brings **auctions** with a clock and bids from
+the tablets, shown large on the display, and **orders and commissions** with a deposit and a waiting
+time in game time. Shop itself stays complete without it. More on the
+[premium page of Ninjo's Forge](https://ninjos-forge.web.app/en/premium).
 
 ### Installation
 
@@ -196,6 +217,7 @@ only with their own entries.
 node tools/kasse.test.mjs          # till and prices, no running world needed
 node tools/lager.test.mjs          # stock and stacking
 node tools/sprache.test.mjs        # language files: same keys, no dashes
+node tools/erweiterung.test.mjs    # the interface for add-on modules
 pwsh tools/deploy-shops.ps1 -Target testv14
 pwsh tools/deploy-shops.ps1 -Target prod
 ```
@@ -205,6 +227,10 @@ not own, so they send a request, and the GM's client checks it from scratch and 
 Which connection does that is decided in `scripts/vorsitz.js`, because `activeGM` names a user,
 and two tabs of the same GM would otherwise run every purchase twice. The full design rationale
 is in `KONZEPT-shops.md` (German), and anyone working on the module also reads `AGENTS.md`.
+
+Other modules can dock onto Shop through the interface described in [API.md](API.md): hooks after
+every purchase, sale and trade, entries in the menu of a goods row, price calculations and selling at
+an agreed price. Shop Premium is built on it.
 
 ---
 
@@ -236,6 +262,9 @@ ein Pferd für einen Tag trägst du als **Dienstleistung** ein. Mit einer eigene
 Händler irgendwann das Geld ausgehen, wenn ihm deine Spieler zu viel verkaufen. Und hinter der
 Theke steht auf Wunsch ein NSC, dessen Bogen dann einen Knopf zum Öffnen seines Ladens bekommt.
 
+![Der Ladenbogen der Spielleitung](docs/images/shop-sheet.png)
+*Der Ladenbogen: die Kasse, das Vorzeigen, wer den Laden offen hat, und die Ware mit Bestand und Preis. Die Laterne unter der Theke sehen die Spieler nicht.*
+
 ### Vorzeigen, wann du willst
 
 Du bestimmst, wer einen Laden zu sehen bekommt. Zeig ihn allen, zeig ihn nur dem Spieler, der
@@ -246,6 +275,9 @@ offen.
 Spielt ihr zusammen in einem Raum, kommt der Laden auch auf den großen Bildschirm. Die
 **Schauansicht** zeigt die Ware groß als Karten mit Preisen in Gold und blättert von selbst weiter,
 während du im Ladenbogen anhalten oder zurückblättern kannst.
+
+![Die Schauansicht auf dem großen Bildschirm](docs/images/display-view.png)
+*Die Schauansicht auf dem großen Bildschirm am Tisch: große Karten, Preise in Gold, Seiten, die sich selbst umblättern.*
 
 ### Kaufen und Verkaufen
 
@@ -264,6 +296,14 @@ du zu sehen.
 Jeder Kauf und Verkauf landet im **Ladenbuch** des Ladens. Im **Marktbuch** siehst du alle Läden
 zusammen, auch mit den Käufen, die du abgelehnt hast, und warum.
 
+| ![Das Ladenfenster eines Spielers, nach Fächern sortiert](docs/images/player-window.png) | ![Ein Kauf mit Quittung im Fenster](docs/images/receipt.png) |
+|---|---|
+| *Das Ladenfenster eines Spielers, nach Fächern sortiert* | *Ein Kauf mit Quittung im Fenster* |
+
+| ![Verkaufen an den Laden zum Ankaufspreis](docs/images/selling.png) | ![Das Ladenbuch der Spielleitung](docs/images/shop-ledger.png) |
+|---|---|
+| *Verkaufen an den Laden zum Ankaufspreis* | *Das Ladenbuch der Spielleitung* |
+
 ### Handeln ohne Laden
 
 Nicht jeder, mit dem deine Gruppe handelt, führt einen Laden. Für den Fremden am Lagerfeuer oder
@@ -276,6 +316,13 @@ Genauso tauschen **zwei Spieler** untereinander. Einer wählt den anderen aus, d
 dann liegt vor beiden derselbe Tisch. Hier rechnet niemand nach, was ein Stück wert ist, es zählt
 nur, worauf sich die beiden einigen. Alles lässt sich antippen, die Menge mit Knöpfen einstellen
 und Münzen je Sorte hinzufügen, deshalb klappt der Tausch auch bequem auf dem Tablet.
+
+### Shop Premium
+
+Für Patrons gibt es **Shop Premium**, eine Erweiterung mit **Auktionen** samt Uhr und Geboten vom
+Tablet, groß auf dem Bildschirm am Tisch, und mit **Bestellungen und Aufträgen** mit Anzahlung und
+Wartezeit in der Spielzeit. Shop selbst ist ohne sie vollständig. Mehr dazu auf der
+[Premium-Seite der Forge](https://ninjos-forge.web.app/premium).
 
 ### Installation
 
@@ -406,6 +453,7 @@ Ladenbuch, allerdings nur mit ihren eigenen Einträgen.
 node tools/kasse.test.mjs          # Kasse und Preise, ohne laufende Welt
 node tools/lager.test.mjs          # Bestand und Stapeln
 node tools/sprache.test.mjs        # Sprachdateien: gleiche Schlüssel, keine Gedankenstriche
+node tools/erweiterung.test.mjs    # die Schnittstelle für Zusatzmodule
 pwsh tools/deploy-shops.ps1 -Target testv14
 pwsh tools/deploy-shops.ps1 -Target prod
 ```
@@ -416,6 +464,10 @@ und führt sie aus. Welche Verbindung das übernimmt, entscheidet `scripts/vorsi
 `activeGM` benennt einen Benutzer, und zwei Tabs desselben Spielleiters würden sonst jeden Kauf
 doppelt ausführen. Warum das Modul so gebaut ist, steht ausführlich in `KONZEPT-shops.md`, und wer
 daran mitarbeitet, liest zusätzlich `AGENTS.md`.
+
+Andere Module docken über die Schnittstelle in [API.md](API.md) an: Hooks nach jedem Kauf, Verkauf
+und Handel, Einträge im Menü einer Ware, Preisberechnung und Verkauf zu einem vereinbarten Preis.
+Shop Premium baut darauf auf.
 
 ---
 
