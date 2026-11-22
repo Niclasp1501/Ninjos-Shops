@@ -44,6 +44,50 @@ function kuerzel(sorte) {
   return game.i18n.localize(`SHOPS.Muenze.${sorte}`);
 }
 
+/**
+ * Setzt ein aufklappendes Menue an seinen Knopf: darunter, wenn es dort
+ * Platz hat, sonst darueber, und immer vollstaendig im Bild.
+ *
+ * **Alle vier Kanten werden gesetzt, keine geleert.** Vorher klappte das
+ * Menue nach oben, indem es `top` leerte und `bottom` setzte. Das leere
+ * `top` gab den Wert aus dem Stylesheet frei, und mit beiden Kanten
+ * gesetzt schrumpfte das Menue am untersten Eintrag auf einen zehn Pixel
+ * hohen Streifen am Bildrand. Am Spieltisch sah das aus wie ein Menue, das
+ * hinter dem Fenster aufgeht und sich nicht bedienen laesst.
+ *
+ * Passt es weder darunter noch darueber, wird es gegen den sichtbaren
+ * Bereich gedeckelt und rollt.
+ *
+ * @param {HTMLElement} menue  schon im Dokument, sonst hat es keine Groesse
+ * @param {DOMRect} anker      der Knopf, an dem es haengt
+ */
+export function menueSetzen(menue, anker) {
+  const RAND = 8;
+  const ABSTAND = 4;
+  const breite = window.innerWidth;
+  const hoehe = window.innerHeight;
+
+  Object.assign(menue.style, {
+    position: "fixed", top: "0px", left: "0px", right: "auto", bottom: "auto",
+    maxHeight: `${hoehe - 2 * RAND}px`, maxWidth: `${breite - 2 * RAND}px`,
+    overflowY: "auto"
+  });
+  const masse = menue.getBoundingClientRect();
+
+  const untenFrei = hoehe - RAND - (anker.bottom + ABSTAND);
+  const obenFrei = anker.top - ABSTAND - RAND;
+  let oben;
+  if (masse.height <= untenFrei) oben = anker.bottom + ABSTAND;
+  else if (masse.height <= obenFrei) oben = anker.top - ABSTAND - masse.height;
+  else oben = Math.max(RAND, hoehe - RAND - masse.height);
+
+  // Rechtsbuendig am Knopf, aber nie ueber den linken oder rechten Rand.
+  const links = Math.min(Math.max(RAND, anker.right - masse.width), breite - RAND - masse.width);
+
+  menue.style.top = `${Math.round(oben)}px`;
+  menue.style.left = `${Math.round(Math.max(RAND, links))}px`;
+}
+
 export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: ["ninjos-shops", "laden-bogen"],
@@ -316,8 +360,12 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     const item = this.document.items.get(zeile?.dataset.itemId);
     if (!item) return;
 
-    // Ein zweiter Klick auf denselben Knopf schliesst wieder.
-    const offen = this.element.querySelector(".shops-menue");
+    /*
+     * Ein zweiter Klick auf denselben Knopf schliesst wieder. Gesucht wird im
+     * ganzen Dokument: Das Menue haengt am Koerper, im Fenster fand die Suche
+     * es nie, und jeder zweite Klick oeffnete es nur neu.
+     */
+    const offen = document.querySelector(".shops-menue");
     const warMeins = offen?.dataset.fuer === item.id;
     offen?.remove();
     if (warMeins) return;
@@ -367,18 +415,8 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
      * abgeschnitten - bei der vorletzten Zeile sah man zwei von sieben
      * Eintraegen. Fest positioniert am Knopf entkommt es dem Rahmen.
      */
-    const anker = ziel.getBoundingClientRect();
-    menue.style.position = "fixed";
-    menue.style.top = `${anker.bottom + 4}px`;
-    menue.style.right = `${window.innerWidth - anker.right}px`;
     document.body.append(menue);
-
-    // Unten kein Platz mehr? Dann klappt es nach oben auf.
-    const eigen = menue.getBoundingClientRect();
-    if (eigen.bottom > window.innerHeight - 8) {
-      menue.style.top = "";
-      menue.style.bottom = `${window.innerHeight - anker.top + 4}px`;
-    }
+    menueSetzen(menue, ziel.getBoundingClientRect());
 
     menue.addEventListener("click", async ereignis2 => {
       const knopf = ereignis2.target.closest("[data-tat]");
@@ -411,17 +449,22 @@ export class LadenBogen extends HandlebarsApplicationMixin(ActorSheetV2) {
     /*
      * Ein Klick daneben schliesst - wie jedes Menue. Und ein Scrollen
      * ebenfalls: Das Menue haengt jetzt am Koerper und wanderte sonst
-     * ueber die Liste, waehrend seine Zeile darunter wegrutscht.
+     * ueber die Liste, waehrend seine Zeile darunter wegrutscht. Nur das
+     * Scrollen im Menue selbst nicht: Auf einem kleinen Bild ist es
+     * gedeckelt und rollt, und es schloss sich sonst beim ersten Wischen.
+     * Dreht sich das Tablet, stimmt die Lage nicht mehr, also auch zu.
      */
     setTimeout(() => {
       const zu = e => {
-        if (e?.type === "click" && menue.contains(e.target)) return;
+        if (e?.type !== "resize" && menue.contains(e?.target)) return;
         menue.remove();
         document.removeEventListener("click", zu);
         window.removeEventListener("scroll", zu, true);
+        window.removeEventListener("resize", zu);
       };
       document.addEventListener("click", zu);
       window.addEventListener("scroll", zu, true);
+      window.addEventListener("resize", zu);
     }, 0);
   }
 

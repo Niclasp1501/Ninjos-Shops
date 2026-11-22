@@ -2204,9 +2204,13 @@
 /* Das Menue haengt am Koerper; die Zeile braucht keinen Bezugsrahmen mehr. */
 
 .shops-menue {
-  position: absolute;
-  top: calc(100% - 4px);
-  right: 6px;
+  /*
+   * Die Lage setzt allein `menueSetzen()` in laden-bogen.js. Hier stand
+   * früher noch `top: calc(100% - 4px)` aus der Zeit, als das Menü in der
+   * Zeile hing. Sobald das Skript `top` leerte, griff dieser Wert wieder,
+   * und das Menü am untersten Eintrag schrumpfte auf einen Streifen.
+   */
+  position: fixed;
   /*
    * **Über den Fenstern, nicht über der Zeile.** Das Menü hängt am
    * `document.body` (siehe laden-bogen.js: In der scrollenden Liste wurde es

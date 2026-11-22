@@ -16,6 +16,14 @@ versioning `<foundry-major>.<YYMM>.<patch>`.
   nobody looked for it. It now has a "Shops" tab of its own, built the same way
   as the "At the table" tab of Ninjo's In-Person Tools.
 
+### Fixed
+- **The menu of the last item in a shop opens properly again.** With no room
+  below, it was meant to open upwards, but it shrank to a thin strip at the
+  bottom edge of the screen and could not be used. It now opens below the
+  button, above it, or as close as fits, and always stays fully on screen.
+- **A second click on the same menu button closes the menu** instead of
+  opening it again.
+
 ## 14.2609.95 - 2026-09-28
 
 ### Fixed
