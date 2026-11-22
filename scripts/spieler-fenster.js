@@ -654,10 +654,23 @@ export function spielerFensterSchliessen() {
   offen = null;
 }
 
-/** Offenes Fenster dieses Ladens aktualisieren (STAND). */
+/**
+ * Offenes Fenster dieses Ladens aktualisieren (STAND).
+ *
+ * **Ein Stand oeffnet nie.** Er kommt bei jeder Aenderung im Laden, bei jedem
+ * Kauf eines anderen und jeder Bestandsaenderung der Spielleitung. Vorher
+ * oeffnete er das Fenster, wenn gerade keins offen war. Wer es weggeklickt
+ * hatte und nur noch den Zettel unten rechts sah, bekam es so beim naechsten
+ * Kauf am Tisch wieder vor die Nase (Spielabend 21.11.2026). Aufgehen darf
+ * das Fenster nur, wenn die Spielleitung den Laden zeigt oder der Spieler ihn
+ * selbst holt.
+ *
+ * Ist es minimiert, bleibt es das: `render(false)` zeichnet nur den Inhalt
+ * neu, erst `force` holt es nach vorn und vergroessert es.
+ */
 export function spielerFensterAktualisieren(laden) {
   if (!offen || offen.ladenUuid !== laden.uuid) {
-    spielerFensterOeffnen(laden);
+    ladenChipNachziehen();
     return;
   }
   offen.ladenSetzen(laden);

@@ -3,6 +3,17 @@
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 versioning `<foundry-major>.<YYMM>.<patch>`.
 
+## 14.2611.3 - 2026-11-22
+
+### Fixed
+- **A closed shop window stays closed.** When a player closed the shop window and
+  only the note in the bottom right corner was left, the next change in the shop,
+  such as a purchase by someone else, opened the window again in the middle of the
+  screen. It now opens only when the gamemaster shows the shop or the player
+  brings it back.
+- **A minimized window stays minimized.** Every redraw grew the minimized title bar
+  into half a window. It now stays small and only updates its contents.
+
 ## 14.2611.2 - 2026-11-22
 
 ### Fixed
